@@ -1,0 +1,20 @@
+/* Estilo para limitar la imagen de detalle */
+.detalle-imagen-limitada {
+    /* 1. Define una altura máxima razonable para pantallas grandes */
+    max-height: 500px;
+
+    /* 2. El ancho se ajusta automáticamente, pero nunca supera el 100% del contenedor */
+    width: auto;
+    max-width: 100%;
+
+    /* 3. MAGIA: Asegura que se vea la imagen completa sin deformarse,
+       añadiendo "aire" a los lados si es necesario */
+    object-fit: contain;
+
+    /* 4. Centra la imagen horizontalmente si es más angosta que el contenedor */
+    display: block;
+    margin: 0 auto;
+
+    /* Opcional: un color de fondo suave para el espacio sobrante si la imagen es muy angosta */
+    background-color: #f8f9fa;
+}

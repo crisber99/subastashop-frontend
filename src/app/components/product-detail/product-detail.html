@@ -1,0 +1,84 @@
+<div class="container mt-5" *ngIf="producto">
+
+  <a routerLink="/" class="btn btn-outline-secondary mb-3">
+    <i class="bi bi-arrow-left"></i> &larr; Volver al catálogo
+  </a>
+
+  <div class="row">
+    <div class="col-md-6 mb-4 d-flex align-items-center justify-content-center bg-light rounded p-3">
+      <img [src]="producto.imagenUrl" 
+           class="img-fluid rounded shadow-sm detalle-imagen-limitada" 
+           alt="Producto">
+    </div>
+
+    <div class="col-md-6">
+      <h2 class="fw-bold">{{ producto.nombre }}</h2>
+      <p class="text-muted">{{ producto.descripcion }}</p>
+
+      <hr>
+
+      <div *ngIf="producto.tipoVenta === 'SUBASTA'" class="card">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <span class="badge bg-danger">🔥 En Subasta</span>
+          <small>Cierra: {{ producto.fechaFinSubasta | date:'medium' }}</small>
+        </div>
+
+        <div class="card-body">
+          <h3 class="fw-bold text-center mb-4">
+            Precio Actual: <span class="text-primary">${{ producto.precioActual | number }}</span>
+          </h3>
+
+          <div *ngIf="subastaFinalizada" class="alert alert-warning text-center fw-bold">
+            🔒 Esta subasta ha finalizado
+          </div>
+
+          @if (authService.estaLogueado()) {
+            
+            <div class="mb-3">
+              <label class="form-label">Tu oferta ($):</label>
+              
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" 
+                       class="form-control" 
+                       [(ngModel)]="montoOferta"
+                       [disabled]="subastaFinalizada">
+
+                <button class="btn btn-primary" 
+                        (click)="pujar()"
+                        [disabled]="subastaFinalizada">
+                  Confirmar Puja
+                </button>
+              </div>
+              
+              <div class="form-text text-muted" *ngIf="!subastaFinalizada">
+                Debe ser mayor a ${{ producto.precioActual | number }}
+              </div>
+            </div>
+
+          } @else {
+            
+            <div class="alert alert-info text-center">
+              Para realizar una puja debes 
+              <a routerLink="/login" class="alert-link">iniciar sesión</a>.
+            </div>
+
+          }
+
+          <div *ngIf="mensaje" 
+               class="alert mt-3" 
+               [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
+            {{ mensaje }}
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="producto.tipoVenta === 'DIRECTA'" class="p-4 bg-light rounded border">
+        <span class="badge bg-success mb-2">Venta Directa</span>
+        <h3 class="fw-bold text-success">${{ producto.precioBase | number }}</h3>
+        <button class="btn btn-success w-100 mt-3">Comprar Ahora</button>
+      </div>
+
+    </div>
+  </div>
+</div>

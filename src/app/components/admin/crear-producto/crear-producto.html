@@ -1,0 +1,64 @@
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Publicar Nuevo Producto</h4>
+        </div>
+        <div class="card-body">
+
+          <div *ngIf="mensajeError" class="alert alert-danger">
+            {{ mensajeError }}
+          </div>
+
+          <form (ngSubmit)="onSubmit()">
+            
+            <div class="mb-3">
+              <label class="form-label">Nombre del Producto</label>
+              <input type="text" class="form-control" [(ngModel)]="producto.nombre" name="nombre" required placeholder="Ej: Nintendo 64">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              <textarea class="form-control" [(ngModel)]="producto.descripcion" name="descripcion" rows="3" required></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Tipo de Venta</label>
+                <select class="form-select" [(ngModel)]="producto.tipoVenta" name="tipoVenta">
+                  <option value="SUBASTA">Subasta 🔥</option>
+                  <option value="DIRECTA">Venta Directa 🛒</option>
+                </select>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Precio Base / Venta ($)</label>
+                <input type="number" class="form-control" [(ngModel)]="producto.precioBase" name="precioBase" required>
+              </div>
+            </div>
+
+            <div class="mb-3" *ngIf="producto.tipoVenta === 'SUBASTA'">
+              <label class="form-label fw-bold text-danger">Fecha de Cierre</label>
+              <input type="datetime-local" class="form-control" [(ngModel)]="producto.fechaFin" name="fechaFin" required>
+              <div class="form-text">¿Cuándo termina la subasta?</div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Foto del Producto</label>
+              <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" required>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="cargando">
+                <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+                {{ cargando ? 'Publicando...' : 'Publicar Producto 🚀' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

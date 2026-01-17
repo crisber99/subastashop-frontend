@@ -1,0 +1,91 @@
+<div class="container mt-5">
+    <h2 class="mb-4">Mi Actividad</h2>
+
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <button class="nav-link" [class.active]="tabActual === 'pujas'" (click)="tabActual = 'pujas'">
+                Mis Pujas 🔨
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" [class.active]="tabActual === 'compras'" (click)="tabActual = 'compras'">
+                Ganadas / Compras 🏆
+            </button>
+        </li>
+    </ul>
+
+    @if (tabActual === 'pujas') {
+    <div class="table-responsive">
+        <table class="table table-hover border">
+            <thead class="table-light">
+                <tr>
+                    <th>Producto</th>
+                    <th>Fecha</th>
+                    <th>Monto Ofertado</th>
+                    <th>Estado Producto</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (puja of pujas; track puja.id) {
+                <tr>
+                    <td>
+                        <a [routerLink]="['/producto', puja.producto.id]" class="text-decoration-none fw-bold">
+                            {{ puja.producto.nombre }}
+                        </a>
+                    </td>
+                    <td>{{ puja.fechaPuja | date:'short' }}</td>
+                    <td class="text-primary fw-bold">${{ puja.monto | number }}</td>
+                    <td>
+                        <span class="badge" [ngClass]="{
+                        'bg-success': puja.producto.estado === 'ADJUDICADO',
+                        'bg-danger': puja.producto.estado === 'SUBASTA'
+                      }">
+                            {{ puja.producto.estado }}
+                        </span>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="4" class="text-center p-4">No has realizado pujas aún.</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+
+    @if (tabActual === 'compras') {
+    <div class="row">
+        @for (orden of ordenes; track orden.id) {
+        <div class="col-md-6 mb-3">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white d-flex justify-content-between">
+                    <span>Orden #{{ orden.id }}</span>
+                    <span>{{ orden.estado }}</span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">¡Ganaste la subasta! 🎉</h5>
+                    <p class="card-text">Total a pagar: <strong>${{ orden.montoFinal | number }}</strong></p>
+                    <p class="small text-muted">Tienes hasta: {{ orden.fechaExpiracionReserva | date:'medium' }} para
+                        pagar.</p>
+                    @if (orden.estado !== 'PAGADO') {
+                    <a [routerLink]="['/checkout', orden.id]" class="btn btn-success w-100">
+                        Ir a Pagar 💳
+                    </a>
+                    } @else {
+                    <button class="btn btn-secondary w-100" disabled>
+                        Completado ✅
+                    </button>
+                    }
+                </div>
+            </div>
+        </div>
+        } @empty {
+        <div class="col-12 text-center p-5 bg-light rounded">
+            <h4>Aún no has ganado ninguna subasta 😢</h4>
+            <p>¡Sigue intentándolo!</p>
+        </div>
+        }
+    </div>
+    }
+</div>

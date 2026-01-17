@@ -1,0 +1,26 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Catálogo de Subastas</h1>
+  <div class="row">
+    @for (producto of productos; track producto.id) {
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <img [src]="producto.imagenUrl" class="card-img-top" alt="..." style="height: 200px; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title">{{ producto.nombre }}</h5>
+            
+            @if (producto.tipoVenta === 'SUBASTA') {
+              <span class="badge bg-danger mb-2">🔥 Subasta</span>
+              <p class="card-text fw-bold">Oferta actual: ${{ producto.precioActual }}</p>
+            } @else {
+              <span class="badge bg-success mb-2">Venta Directa</span>
+              <p class="card-text fw-bold">Precio: ${{ producto.precioBase }}</p>
+            }
+            
+            <p class="text-muted">{{ producto.descripcion }}</p>
+            <a [routerLink]="['/producto', producto.id]" class="btn btn-primary w-100">Ver Detalle</a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

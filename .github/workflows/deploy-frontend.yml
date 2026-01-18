@@ -32,6 +32,6 @@ jobs:
               --account-name storagesubastasapp \
               --auth-mode key \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" \
-              --source ./dist/subastashop/browser \
+              --source ./dist/subasta-frontend/browser \
               --destination '$web' \
               --overwrite

@@ -1,0 +1,65 @@
+<div class="container mt-4">
+  <h2 class="mb-4">👑 Panel de Control</h2>
+
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios</h5>
+          <p class="card-text display-6">{{ stats.totalUsuarios }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Ventas</h5>
+          <p class="card-text display-6">{{ stats.ventasCerradas }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-body">
+          <h5 class="card-title">En Subasta</h5>
+          <p class="card-text display-6">{{ stats.subastasActivas }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-dark mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Ingresos ($)</h5>
+          <p class="card-text display-6">${{ stats.gananciasTotales | number }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header">Resumen de Inventario</div>
+        <div class="card-body">
+            <canvas baseChart
+              [data]="pieChartData"
+              [type]="'pie'"
+              [options]="pieChartOptions"
+              [legend]="pieChartLegend">
+            </canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header">Acciones Rápidas</div>
+        <div class="card-body d-grid gap-2">
+            <button class="btn btn-outline-danger">🚨 Detener todas las Subastas</button>
+            <button class="btn btn-outline-primary">📩 Enviar Email Masivo</button>
+            <button class="btn btn-outline-secondary">📂 Exportar Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

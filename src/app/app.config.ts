@@ -7,12 +7,14 @@ import { tenantInterceptor } from './interceptors/tenant-interceptor';
 
 import { authInterceptor } from './interceptors/auth-interceptor';
 import { loaderInterceptor } from './interceptors/loader-interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor, tenantInterceptor, loaderInterceptor]))
+    provideHttpClient(withInterceptors([authInterceptor, tenantInterceptor, loaderInterceptor])),
+    provideCharts(withDefaultRegisterables())
   ]
 };

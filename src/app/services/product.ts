@@ -55,9 +55,7 @@ export class ProductService {
   }
 
   // Pagar la orden
-  pagarOrden(id: number): Observable<any> {
-    // Enviamos un POST vacío porque no hay datos de tarjeta reales
-    // En la vida real, aquí enviarías el token de Stripe/Transbank
-    return this.http.post(`${this.apiUrlOrdenes}/${id}/pagar`, {}, { responseType: 'text' });
-  }
+  pagarOrden(id: number, datosPago: any) {
+  return this.http.post(`${this.apiUrlOrdenes}/${id}/pagar`, datosPago);
+}
 }

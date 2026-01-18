@@ -23,40 +23,48 @@ export class Checkout implements OnInit {
 
   // Datos simulados de tarjeta
   datosTarjeta = {
-    numero: '',
     nombre: '',
+    numeroTarjeta: '',
     expiracion: '',
     cvv: ''
   };
 
   ngOnInit() {
+    // Obtener ID de la URL
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.productService.getOrdenById(Number(id)).subscribe({
-        next: (data) => this.orden = data,
-        error: (err) => console.error(err)
-      });
+      this.cargarOrden(Number(id));
     }
+  }
+
+  cargarOrden(id: number) {
+    this.productService.getOrdenById(id).subscribe({
+      next: (data) => {
+        this.orden = data;
+        this.cargando = false;
+      },
+      error: () => {
+        alert('Error al cargar la orden');
+        this.router.navigate(['/mi-cuenta']);
+      }
+    });
   }
 
   confirmarPago() {
     this.procesandoPago = true;
     
-    // Simulamos un delay de 2 segundos para dar emoción
+    // Simulamos un pequeño delay para dar realismo
     setTimeout(() => {
-      if (this.orden) {
-        this.productService.pagarOrden(this.orden.id).subscribe({
-          next: (resp) => {
-            this.procesandoPago = false;
-            this.pagoExitoso = true;
+        this.productService.pagarOrden(this.orden.id, this.datosTarjeta).subscribe({
+          next: () => {
+            alert('¡Pago realizado con éxito! 🥳');
+            this.router.navigate(['/mi-cuenta']); // Volver al perfil
           },
-          error: (err) => {
-            console.error(err);
+          error: () => {
+            alert('Error al procesar el pago');
             this.procesandoPago = false;
-            alert('Error en el pago');
           }
         });
-      }
-    }, 2000);
+    }, 1500);
   }
 }

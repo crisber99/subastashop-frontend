@@ -1,71 +1,78 @@
 <div class="container mt-5 mb-5">
-  
-  <div *ngIf="!orden && !pagoExitoso" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p>Cargando información de tu compra...</p>
-  </div>
+  @if (cargando) {
+    <div class="text-center">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p>Cargando detalles del pago...</p>
+    </div>
+  } @else {
+    <div class="row">
+      <div class="col-md-5 order-md-2 mb-4">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-primary">Tu Carrito</span>
+          <span class="badge bg-primary rounded-pill">1</span>
+        </h4>
+        <ul class="list-group mb-3 shadow-sm">
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+              <h6 class="my-0">Producto Ganado</h6>
+              <small class="text-muted">Subasta #{{orden.id}}</small>
+            </div>
+          </li>
+          <li class="list-group-item d-flex justify-content-between bg-light">
+            <div class="text-success">
+              <h6 class="my-0">Código Promocional</h6>
+              <small>GANADOR_SUBASTA</small>
+            </div>
+            <span class="text-success">-$0</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total a Pagar (CLP)</span>
+            <strong>${{ orden.montoFinal | number }}</strong>
+          </li>
+        </ul>
+      </div>
 
-  <div class="row justify-content-center" *ngIf="orden && !pagoExitoso">
-    <div class="col-md-5">
-      <div class="card mb-3 shadow-sm">
-        <div class="card-header bg-light">Resumen de Orden #{{ orden.id }}</div>
-        <div class="card-body">
-          <h5 class="card-title">{{ orden.producto?.nombre }}</h5>
-          <p class="text-muted small">Adjudicado por subasta</p>
-          <hr>
-          <div class="d-flex justify-content-between fw-bold fs-4">
-            <span>Total a Pagar:</span>
-            <span class="text-success">${{ orden.montoFinal | number }}</span>
+      <div class="col-md-7 order-md-1">
+        <h4 class="mb-3">Datos de Pago 💳</h4>
+        
+        <form (ngSubmit)="confirmarPago()" class="needs-validation">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Nombre en la tarjeta</label>
+              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.nombre" name="nombre" placeholder="Ej: BERNARDO BRAVO" required>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Número de tarjeta</label>
+              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.numeroTarjeta" name="numero" placeholder="0000 0000 0000 0000" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Expiración</label>
+              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.expiracion" name="exp" placeholder="MM/YY" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">CVV</label>
+              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.cvv" name="cvv" placeholder="123" required>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="card shadow">
-        <div class="card-header bg-dark text-white">
-          💳 Pago Seguro
-        </div>
-        <div class="card-body">
-          <form (ngSubmit)="confirmarPago()">
-            <div class="mb-3">
-              <label class="form-label">Número de Tarjeta</label>
-              <input type="text" class="form-control" placeholder="0000 0000 0000 0000" required [(ngModel)]="datosTarjeta.numero" name="numero">
-            </div>
-            
-            <div class="row">
-              <div class="col-6 mb-3">
-                <label class="form-label">Vencimiento</label>
-                <input type="text" class="form-control" placeholder="MM/YY" required [(ngModel)]="datosTarjeta.expiracion" name="exp">
-              </div>
-              <div class="col-6 mb-3">
-                <label class="form-label">CVV</label>
-                <input type="password" class="form-control" placeholder="123" required [(ngModel)]="datosTarjeta.cvv" name="cvv">
-              </div>
-            </div>
+          <hr class="my-4">
 
-            <div class="mb-3">
-              <label class="form-label">Nombre Titular</label>
-              <input type="text" class="form-control" placeholder="Como aparece en la tarjeta" required [(ngModel)]="datosTarjeta.nombre" name="nombre">
-            </div>
-
-            <button type="submit" class="btn btn-success w-100 btn-lg" [disabled]="procesandoPago">
-              <span *ngIf="procesandoPago" class="spinner-border spinner-border-sm me-2"></span>
-              {{ procesandoPago ? 'Procesando...' : 'Pagar Ahora' }}
-            </button>
-          </form>
-        </div>
+          <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="procesandoPago">
+            @if (procesandoPago) {
+                <span class="spinner-border spinner-border-sm"></span> Procesando...
+            } @else {
+                Pagar ${{ orden.montoFinal | number }}
+            }
+          </button>
+          
+          <div class="mt-3 text-center">
+             <a routerLink="/mi-cuenta" class="text-muted">Cancelar y volver</a>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
-
-  <div *ngIf="pagoExitoso" class="text-center py-5">
-    <div class="mb-4 text-success display-1">
-      <i class="bi bi-check-circle-fill"></i> ✅
-    </div>
-    <h2 class="fw-bold text-success">¡Pago Exitoso!</h2>
-    <p class="lead">Tu orden ha sido procesada correctamente.</p>
-    <p>Te enviaremos el comprobante a tu correo.</p>
-    
-    <a routerLink="/mi-cuenta" class="btn btn-primary mt-3">Volver a Mis Compras</a>
-  </div>
-
+  }
 </div>

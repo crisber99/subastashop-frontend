@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class AuthService {
   private router = inject(Router);
   
   // URL de tu Backend en Azure
-  private apiUrl = 'https://api-subastashop-dhd5gec8hecxfbc9.centralus-01.azurewebsites.net/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'subasta_token';
   private userKey = 'subasta_user'; // Clave nueva para guardar datos del usuario
 

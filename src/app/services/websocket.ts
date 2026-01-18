@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class Websocket {
 
   conectar(onConnectedCallback?: () => void) {
     // Tu URL de Azure (¡NO LA CAMBIES!)
-    const socket = new SockJS('https://api-subastashop-dhd5gec8hecxfbc9.centralus-01.azurewebsites.net/ws-subastas'); 
+    const socket = new SockJS(environment.wsUrl); 
     
     this.stompClient = new Client({
       webSocketFactory: () => socket,

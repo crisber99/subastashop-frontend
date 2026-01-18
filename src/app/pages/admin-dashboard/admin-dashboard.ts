@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -40,7 +41,7 @@ export class AdminDashboard implements OnInit {
   cargarDatos() {
     // Recuerda usar tu URL de API real o environment
     // Aquí asumimos que tienes un servicio, pero lo llamaremos directo por simplicidad del ejemplo
-    this.http.get<any>('https://TU-API-AZURE/api/admin/stats').subscribe(data => {
+    this.http.get<any>(`${environment.apiUrl}/admin/stats`).subscribe(data => {
       this.stats = data;
       
       // Actualizar gráfico dinámicamente

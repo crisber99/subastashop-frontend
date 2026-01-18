@@ -8,6 +8,7 @@ import { Checkout } from './components/checkout/checkout';
 import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
 import { authGuard } from './guards/auth-guard';
 import { Register } from './components/register/register';
+import { EditarProducto } from './components/admin/editar-producto/editar-producto';
 
 export const routes: Routes = [
     { path: '', component: CatalogComponent },
@@ -23,4 +24,5 @@ export const routes: Routes = [
         // Idealmente crearías un adminGuard que verifique el rol
     },
     { path: 'registro', component: Register },
+    { path: 'admin/editar/:id', component: EditarProducto, canActivate: [authGuard] },
 ];

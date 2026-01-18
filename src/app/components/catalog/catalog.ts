@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-catalog',
@@ -12,6 +13,7 @@ import { RouterModule } from '@angular/router';
 })
 export class CatalogComponent implements OnInit {
   private productService = inject(ProductService);
+  public authService = inject(AuthService);
   productos: any[] = [];
 
   ngOnInit(): void {

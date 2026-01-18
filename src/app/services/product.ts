@@ -21,6 +21,21 @@ export class ProductService {
     return this.http.get<any>(`${this.apiUrlProductos}/${id}`);
   }
 
+  updateProducto(id: number, producto: any, imagen?: File) {
+    const formData = new FormData();
+    formData.append('nombre', producto.nombre);
+    formData.append('descripcion', producto.descripcion);
+    formData.append('precioBase', producto.precioBase);
+    formData.append('fechaFin', producto.fechaFin);
+
+    if (imagen) {
+      formData.append('imagen', imagen);
+    }
+
+    // Usamos PUT para actualizar
+    return this.http.put(`${this.apiUrlProductos}/${id}`, formData);
+  }
+
   // Enviar una puja
   realizarPuja(productoId: number, monto: number): Observable<any> {
     // Por ahora enviamos usuarioId: 1 fijo (simulado) hasta que tengamos Login real

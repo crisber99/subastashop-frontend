@@ -1,21 +1,36 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private router = inject(Router);
+  
+  // URL de tu Backend en Azure
   private apiUrl = 'https://api-subastashop-dhd5gec8hecxfbc9.centralus-01.azurewebsites.net/api/auth';
-  private tokenKey = 'subasta_token'; // Nombre para guardar en el navegador
+  private tokenKey = 'subasta_token';
+  private userKey = 'subasta_user'; // Clave nueva para guardar datos del usuario
+
+  // --- SEÑALES (SIGNALS) ---
+  // Esto permite que el HTML se actualice solo cuando cambian los datos
+  currentUser = signal<any>(null);
+  isLoggedIn = signal<boolean>(false);
+
+  constructor() {
+    this.recuperarSesion(); // Intentar recuperar login al iniciar la app
+  }
 
   // --- REGISTRO ---
   register(datos: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, datos).pipe(
       tap((response: any) => {
         if (response.token) {
-          this.guardarSesion(response.token);
+          // Asumimos que el backend devuelve: { token: "...", usuario: { nombre: "...", role: "..." } }
+          this.guardarSesion(response.token, response.usuario);
         }
       })
     );
@@ -26,7 +41,7 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/login`, datos).pipe(
       tap((response: any) => {
         if (response.token) {
-          this.guardarSesion(response.token);
+          this.guardarSesion(response.token, response.usuario);
         }
       })
     );
@@ -34,20 +49,55 @@ export class AuthService {
 
   // --- CERRAR SESIÓN ---
   logout() {
+    // 1. Borrar de disco
     localStorage.removeItem(this.tokenKey);
-    window.location.reload(); // Recargar para limpiar estados
+    localStorage.removeItem(this.userKey);
+    
+    // 2. Borrar de memoria (Señales)
+    this.currentUser.set(null);
+    this.isLoggedIn.set(false);
+
+    // 3. Redirigir suavemente sin recargar toda la página
+    this.router.navigate(['/login']);
   }
 
-  // --- MÉTODOS AUXILIARES ---
-  private guardarSesion(token: string) {
+  // --- MÉTODOS PRIVADOS Y AUXILIARES ---
+
+  private guardarSesion(token: string, usuario: any) {
+    // Guardar Token
     localStorage.setItem(this.tokenKey, token);
+    
+    // Guardar Usuario (si viene nulo, guardamos un objeto vacío para que no rompa)
+    const usuarioAGuardar = usuario || { nombre: 'Usuario', role: 'USER' };
+    localStorage.setItem(this.userKey, JSON.stringify(usuarioAGuardar));
+
+    // Actualizar Señales
+    this.currentUser.set(usuarioAGuardar);
+    this.isLoggedIn.set(true);
+  }
+
+  private recuperarSesion() {
+    const token = localStorage.getItem(this.tokenKey);
+    const userStr = localStorage.getItem(this.userKey);
+
+    if (token && userStr) {
+      this.isLoggedIn.set(true);
+      try {
+        this.currentUser.set(JSON.parse(userStr));
+      } catch (e) {
+        console.error("Error al leer usuario del storage", e);
+      }
+    }
   }
 
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  estaLogueado(): boolean {
-    return !!this.getToken(); // Devuelve true si existe el token
+  // Verificar si es Admin (Útil para tu menú)
+  isAdmin(): boolean {
+    const user = this.currentUser();
+    // Ajusta esto según cómo venga el rol desde Java ("ADMIN", "ROLE_ADMIN", etc.)
+    return user && (user.role === 'ADMIN' || user.roles?.includes('ADMIN'));
   }
 }

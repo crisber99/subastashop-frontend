@@ -7,30 +7,41 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center"> @if (authService.isLoggedIn()) {
 
-                @if (authService.estaLogueado()) {
+                    @if (authService.isAdmin()) {
+                        <li class="nav-item me-2">
+                            <a class="btn btn-sm btn-outline-danger fw-bold" routerLink="/admin">
+                                👑 Admin
+                            </a>
+                        </li>
+                    }
 
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/mi-cuenta" routerLinkActive="active">
-                        Mi Cuenta 📋
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-warning" routerLink="/admin/crear">Publicar Item ➕</a>
-                </li>
-                <li class="nav-item">
-                    <span class="nav-link text-white">Hola, Usuario</span>
-                </li>
-                <li class="nav-item">
-                    <button class="btn btn-outline-danger btn-sm ms-2 mt-1" (click)="logout()">Salir</button>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/mi-cuenta" routerLinkActive="active">
+                            Mi Cuenta 📋
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" routerLink="/admin/crear">Publicar Item ➕</a>
+                    </li>
+                    
+                    <li class="nav-item ms-2">
+                        <span class="nav-link text-white border border-secondary rounded px-2">
+                            Hola, <strong>{{ authService.currentUser()?.nombre || 'Usuario' }}</strong>
+                        </span>
+                    </li>
+                    
+                    <li class="nav-item ms-2">
+                        <button class="btn btn-danger btn-sm" (click)="authService.logout()">Salir</button>
+                    </li>
                 }
 
                 @else {
-                <li class="nav-item">
-                    <a class="btn btn-primary btn-sm mt-1" routerLink="/login">Iniciar Sesión</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-sm mt-1" routerLink="/login">Iniciar Sesión</a>
+                    </li>
                 }
 
             </ul>

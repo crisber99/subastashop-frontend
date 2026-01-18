@@ -32,7 +32,7 @@
             🔒 Esta subasta ha finalizado
           </div>
 
-          @if (authService.estaLogueado()) {
+          @if (authService.isLoggedIn()) {
             
             <div class="mb-3">
               <label class="form-label">Tu oferta ($):</label>

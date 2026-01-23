@@ -22,7 +22,7 @@ export class EditarProducto implements OnInit {
     precioBase: 0,
     fechaFin: ''
   };
-  
+
   archivoSeleccionado: File | null = null;
   imagenPreview: string | null = null;
   cargando = false;
@@ -47,10 +47,22 @@ export class EditarProducto implements OnInit {
         }
 
         this.producto = data;
+        if (this.producto.fechaFinSubasta) {
+          this.producto.fechaFinSubasta = this.formatearFechaParaInput(this.producto.fechaFinSubasta);
+        }
+
+
         this.imagenPreview = data.urlImagen;
       },
       error: () => this.router.navigate(['/admin'])
     });
+  }
+
+  private formatearFechaParaInput(fechaIso: string): string {
+    if (!fechaIso) return '';
+    // El backend suele enviar: 2026-01-20T15:30:00
+    // El input quiere: 2026-01-20T15:30 (sin segundos si no los soporta, o formato exacto)
+    return fechaIso.substring(0, 16); // Cortamos los segundos y milisegundos extra
   }
 
   onFileSelected(event: any) {

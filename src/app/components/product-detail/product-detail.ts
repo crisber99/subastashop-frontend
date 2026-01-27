@@ -10,7 +10,7 @@ import { Websocket } from '../../services/websocket';
   selector: 'app-product-detail',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './product-detail.html', // Asegúrate que el nombre del archivo coincida
+  templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })
 export class ProductDetail implements OnInit, OnDestroy {
@@ -37,22 +37,33 @@ export class ProductDetail implements OnInit, OnDestroy {
       this.cargarProducto(Number(id));
     }
 
-    // ❌ ELIMINADO DE AQUÍ: La lógica de RIFA y WebSocket estaba causando error
-    // porque 'this.producto' todavía era null al iniciar.
-    // La moví dentro de 'cargarProducto'.
+    // ESCUCHAR ACTUALIZACIONES EN TIEMPO REAL ⚡
+    this.websocketService.obtenerActualizaciones().subscribe((mensaje: any) => {
+      console.log("⚡ Mensaje Socket recibido:", mensaje);
 
-    // ESCUCHAR ACTUALIZACIONES (Esto sí puede ir aquí, espera eventos pasivamente)
-    this.websocketService.obtenerActualizaciones().subscribe((nuevaPuja: any) => {
-      console.log("⚡ Actualización en tiempo real recibida:", nuevaPuja);
-
-      if (this.producto && this.producto.id === nuevaPuja.producto.id) {
-        this.producto.precioActual = nuevaPuja.monto; 
+      // Validamos que el mensaje sea para ESTE producto
+      if (this.producto && this.producto.id === mensaje.productoId) {
         
-        // Efecto visual
-        const badge = document.getElementById('precio-badge');
-        if (badge) {
-          badge.classList.add('bg-warning');
-          setTimeout(() => badge.classList.remove('bg-warning'), 500);
+        // OPCIÓN A: ES UN TICKET VENDIDO (RIFA) 🎟️
+        if (mensaje.tipo === 'TICKET_VENDIDO') {
+           const num = mensaje.numero;
+           // Si no lo teníamos marcado como vendido, lo agregamos ahora
+           if (!this.ticketsVendidos.includes(num)) {
+             this.ticketsVendidos.push(num); 
+             // Angular detectará el cambio y pondrá el botón rojo automáticamente
+           }
+        }
+
+        // OPCIÓN B: ES UNA PUJA (SUBASTA) 🔨
+        else if (mensaje.monto) {
+          this.producto.precioActual = mensaje.monto; 
+          
+          // Efecto visual (Parpadeo)
+          const badge = document.getElementById('precio-badge');
+          if (badge) {
+            badge.classList.add('bg-warning');
+            setTimeout(() => badge.classList.remove('bg-warning'), 500);
+          }
         }
       }
     });
@@ -130,18 +141,34 @@ export class ProductDetail implements OnInit, OnDestroy {
     if (!confirm(`¿Comprar el número ${num}?`)) return;
 
     this.productService.comprarTicket(this.producto.id, num).subscribe({
-      next: () => {
+      next: (resp) => {
+        // ÉXITO REAL
         alert('¡Comprado! 🎉');
         this.cargarVendidos();
       },
-      error: (err) => alert('Error: ' + err.error)
+      error: (err) => {
+        // MANEJO INTELIGENTE DE ERRORES
+        console.error("Detalle del error:", err);
+
+        // Si el status es 200 (OK) pero cayó aquí, es el error de Parseo (Texto vs JSON)
+        // Significa que SÍ funcionó.
+        if (err.status === 200) {
+            alert('¡Comprado! 🎉 (Texto recibido)');
+            this.cargarVendidos();
+            return;
+        }
+
+        // Si es otro error, mostramos el mensaje real convirtiendo el objeto a texto
+        const mensajeError = err.error ? JSON.stringify(err.error) : 'Error desconocido';
+        alert('Ocurrió un error: ' + mensajeError);
+      }
     });
   }
 
   lanzarSorteo() {
     this.productService.lanzarRifa(this.producto.id).subscribe(ganadores => {
       console.log(ganadores);
-      alert('¡Sorteo realizado! Revisa la consola o el historial para ver ganadores.');
+      alert('¡Sorteo realizado! Ganadores: ' + ganadores);
     });
   }
 

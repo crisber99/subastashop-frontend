@@ -71,6 +71,18 @@ export class ProductService {
 
   // Pagar la orden
   pagarOrden(id: number, datosPago: any) {
-  return this.http.post(`${this.apiUrlOrdenes}/${id}/pagar`, datosPago);
-}
+    return this.http.post(`${this.apiUrlOrdenes}/${id}/pagar`, datosPago);
+  }
+
+  comprarTicket(productoId: number, numero: number) {
+    return this.http.post(`${this.apiUrlUsuario}/rifas/${productoId}/comprar/${numero}`, {});
+  }
+
+  getTicketsVendidos(productoId: number) {
+    return this.http.get<number[]>(`${this.apiUrlUsuario}/rifas/${productoId}/tickets`);
+  }
+
+  lanzarRifa(productoId: number) {
+    return this.http.post(`${this.apiUrlUsuario}/rifas/${productoId}/lanzar`, {});
+  }
 }

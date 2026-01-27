@@ -24,9 +24,12 @@ export class ProductDetail implements OnInit {
   montoOferta: number = 0;
   mensaje: string = '';
   esError: boolean = false;
-  
+
+  numerosRifa: number[] = [];
+  ticketsVendidos: number[] = [];
+
   // Variable para controlar el estado visual
-  subastaFinalizada: boolean = false; 
+  subastaFinalizada: boolean = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -34,27 +37,32 @@ export class ProductDetail implements OnInit {
       this.cargarProducto(Number(id));
     }
 
+    if (this.producto.tipoVenta === 'RIFA') {
+      this.generarNumeros(this.producto.cantidadNumeros);
+      this.cargarVendidos();
+    }
+
     this.websocketService.conectar(() => {
-      
+
       // Esta línea solo se ejecuta cuando ya estamos conectados ✅
       if (this.producto) {
         this.websocketService.suscribirseProducto(this.producto.id);
       }
-      
+
     });
 
     // ESCUCHAR ACTUALIZACIONES (Igual que antes)
     this.websocketService.obtenerActualizaciones().subscribe((nuevaPuja: any) => {
       console.log("⚡ Actualización en tiempo real recibida:", nuevaPuja);
-      
+
       if (this.producto && this.producto.id === nuevaPuja.producto.id) {
         this.producto.precioActual = nuevaPuja.monto; // ¡Aquí ocurre la magia!
-        
+
         // Efecto visual (opcional)
         const badge = document.getElementById('precio-badge');
-        if(badge) {
-             badge.classList.add('bg-warning'); // Parpadeo amarillo
-             setTimeout(() => badge.classList.remove('bg-warning'), 500);
+        if (badge) {
+          badge.classList.add('bg-warning'); // Parpadeo amarillo
+          setTimeout(() => badge.classList.remove('bg-warning'), 500);
         }
       }
     });
@@ -64,12 +72,12 @@ export class ProductDetail implements OnInit {
     this.productService.getProductoById(id).subscribe({
       next: (data) => {
         this.producto = data;
-        
+
         // --- LÓGICA DE VALIDACIÓN VISUAL ---
         if (data.tipoVenta === 'SUBASTA' && data.fechaFinSubasta) {
           const fechaFin = new Date(data.fechaFinSubasta);
           const ahora = new Date(); // Toma la hora de tu navegador
-          
+
           // Si la fecha de fin es menor a ahora, bloqueamos
           if (fechaFin < ahora) {
             this.subastaFinalizada = true;
@@ -100,6 +108,39 @@ export class ProductDetail implements OnInit {
         this.mensaje = err.error || 'Error al realizar la puja';
         this.esError = true;
       }
+    });
+  }
+
+  generarNumeros(cantidad: number) {
+    this.numerosRifa = Array.from({ length: cantidad }, (_, i) => i + 1);
+  }
+
+  cargarVendidos() {
+    this.productService.getTicketsVendidos(this.producto.id).subscribe(data => {
+      this.ticketsVendidos = data;
+    });
+  }
+
+  isTicketVendido(num: number): boolean {
+    return this.ticketsVendidos.includes(num);
+  }
+
+  comprarNumero(num: number) {
+    if (!confirm(`¿Comprar el número ${num}?`)) return;
+
+    this.productService.comprarTicket(this.producto.id, num).subscribe({
+      next: () => {
+        alert('¡Comprado! 🎉');
+        this.cargarVendidos(); // Refrescar grilla
+      },
+      error: (err) => alert('Error: ' + err.error)
+    });
+  }
+
+  lanzarSorteo() {
+    this.productService.lanzarRifa(this.producto.id).subscribe(ganadores => {
+      console.log(ganadores);
+      alert('¡Sorteo realizado! Revisa la consola o el historial para ver ganadores.');
     });
   }
 

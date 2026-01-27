@@ -6,9 +6,7 @@
 
   <div class="row">
     <div class="col-md-6 mb-4 d-flex align-items-center justify-content-center bg-light rounded p-3">
-      <img [src]="producto.imagenUrl" 
-           class="img-fluid rounded shadow-sm detalle-imagen-limitada" 
-           alt="Producto">
+      <img [src]="producto.imagenUrl" class="img-fluid rounded shadow-sm detalle-imagen-limitada" alt="Producto">
     </div>
 
     <div class="col-md-6">
@@ -33,41 +31,65 @@
           </div>
 
           @if (authService.isLoggedIn()) {
-            
-            <div class="mb-3">
-              <label class="form-label">Tu oferta ($):</label>
-              
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="number" 
-                       class="form-control" 
-                       [(ngModel)]="montoOferta"
-                       [disabled]="subastaFinalizada">
 
-                <button class="btn btn-primary" 
-                        (click)="pujar()"
-                        [disabled]="subastaFinalizada">
-                  Confirmar Puja
-                </button>
-              </div>
-              
-              <div class="form-text text-muted" *ngIf="!subastaFinalizada">
-                Debe ser mayor a ${{ producto.precioActual | number }}
-              </div>
+          <div class="mb-3">
+            <label class="form-label">Tu oferta ($):</label>
+
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" [(ngModel)]="montoOferta" [disabled]="subastaFinalizada">
+
+              <button class="btn btn-primary" (click)="pujar()" [disabled]="subastaFinalizada">
+                Confirmar Puja
+              </button>
             </div>
+
+            <div class="form-text text-muted" *ngIf="!subastaFinalizada">
+              Debe ser mayor a ${{ producto.precioActual | number }}
+            </div>
+          </div>
 
           } @else {
-            
-            <div class="alert alert-info text-center">
-              Para realizar una puja debes 
-              <a routerLink="/login" class="alert-link">iniciar sesión</a>.
-            </div>
+
+          <div class="alert alert-info text-center">
+            Para realizar una puja debes
+            <a routerLink="/login" class="alert-link">iniciar sesión</a>.
+          </div>
 
           }
 
-          <div *ngIf="mensaje" 
-               class="alert mt-3" 
-               [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
+          @if (producto.tipoVenta === 'RIFA') {
+          <div class="mt-4">
+            <h4>🎟️ Selecciona tu número de la suerte</h4>
+            <p class="text-muted">Precio por ticket: ${{ producto.precioTicket | number }}</p>
+
+            <div class="d-flex flex-wrap gap-2">
+              @for (num of numerosRifa; track num) {
+              <button class="btn" [class.btn-outline-primary]="!isTicketVendido(num)"
+                [class.btn-danger]="isTicketVendido(num)" [class.disabled]="isTicketVendido(num)"
+                (click)="comprarNumero(num)" style="width: 50px; height: 50px;">
+
+                @if (isTicketVendido(num)) {
+                ❌
+                } @else {
+                {{ num }}
+                }
+              </button>
+              }
+            </div>
+
+            @if (authService.isLoggedIn() && ticketsVendidos.length === producto.cantidadNumeros) {
+            <div class="mt-4 alert alert-warning text-center">
+              <h5>¡Todos los números vendidos!</h5>
+              <button (click)="lanzarSorteo()" class="btn btn-warning btn-lg fw-bold">
+                🎲 LANZAR RIFA AHORA
+              </button>
+            </div>
+            }
+          </div>
+          }
+
+          <div *ngIf="mensaje" class="alert mt-3" [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
             {{ mensaje }}
           </div>
         </div>

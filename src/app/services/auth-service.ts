@@ -95,10 +95,9 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  // Verificar si es Admin (Útil para tu menú)
   isAdmin(): boolean {
     const user = this.currentUser();
-    // Ajusta esto según cómo venga el rol desde Java ("ADMIN", "ROLE_ADMIN", etc.)
-    return user && (user.role === 'ADMIN' || user.roles?.includes('ADMIN'));
-  }
+    console.log('Usuario actual:', user); 
+    return user && (user.role === 'ROLE_ADMIN');
+}
 }

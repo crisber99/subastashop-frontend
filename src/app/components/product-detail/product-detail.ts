@@ -27,6 +27,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   // Variables Rifa
   numerosRifa: number[] = [];
   ticketsVendidos: number[] = [];
+  ticketsDetalle: any[] = [];
 
   // Estado visual
   subastaFinalizada: boolean = false;
@@ -43,21 +44,21 @@ export class ProductDetail implements OnInit, OnDestroy {
 
       // Validamos que el mensaje sea para ESTE producto
       if (this.producto && this.producto.id === mensaje.productoId) {
-        
+
         // OPCIÓN A: ES UN TICKET VENDIDO (RIFA) 🎟️
         if (mensaje.tipo === 'TICKET_VENDIDO') {
-           const num = mensaje.numero;
-           // Si no lo teníamos marcado como vendido, lo agregamos ahora
-           if (!this.ticketsVendidos.includes(num)) {
-             this.ticketsVendidos.push(num); 
-             // Angular detectará el cambio y pondrá el botón rojo automáticamente
-           }
+          const num = mensaje.numero;
+          // Si no lo teníamos marcado como vendido, lo agregamos ahora
+          if (!this.ticketsVendidos.includes(num)) {
+            this.ticketsVendidos.push(num);
+            // Angular detectará el cambio y pondrá el botón rojo automáticamente
+          }
         }
 
         // OPCIÓN B: ES UNA PUJA (SUBASTA) 🔨
         else if (mensaje.monto) {
-          this.producto.precioActual = mensaje.monto; 
-          
+          this.producto.precioActual = mensaje.monto;
+
           // Efecto visual (Parpadeo)
           const badge = document.getElementById('precio-badge');
           if (badge) {
@@ -76,13 +77,16 @@ export class ProductDetail implements OnInit, OnDestroy {
 
         // 1. INICIALIZAR RIFA (Solo si es rifa)
         if (this.producto.tipoVenta === 'RIFA') {
-           this.generarNumeros(this.producto.cantidadNumeros);
-           this.cargarVendidos();
+          this.generarNumeros(this.producto.cantidadNumeros);
+          this.cargarVendidos();
+          if (this.authService.isAdmin()) {
+            this.cargarTablaAdmin();
+          }
         }
 
         // 2. CONECTAR WEBSOCKET (Ahora que tenemos ID seguro)
         this.websocketService.conectar(() => {
-            this.websocketService.suscribirseProducto(this.producto.id);
+          this.websocketService.suscribirseProducto(this.producto.id);
         });
 
         // 3. LÓGICA DE SUBASTA (Validación de fechas)
@@ -122,6 +126,12 @@ export class ProductDetail implements OnInit, OnDestroy {
     });
   }
 
+  cargarTablaAdmin() {
+    this.productService.getDetallesRifaAdmin(this.producto.id).subscribe(data => {
+      this.ticketsDetalle = data;
+    });
+  }
+
   // --- MÉTODOS DE RIFA ---
   generarNumeros(cantidad: number) {
     this.numerosRifa = Array.from({ length: cantidad }, (_, i) => i + 1);
@@ -153,9 +163,9 @@ export class ProductDetail implements OnInit, OnDestroy {
         // Si el status es 200 (OK) pero cayó aquí, es el error de Parseo (Texto vs JSON)
         // Significa que SÍ funcionó.
         if (err.status === 200) {
-            alert('¡Comprado! 🎉 (Texto recibido)');
-            this.cargarVendidos();
-            return;
+          alert('¡Comprado! 🎉');
+          this.cargarVendidos();
+          return;
         }
 
         // Si es otro error, mostramos el mensaje real convirtiendo el objeto a texto

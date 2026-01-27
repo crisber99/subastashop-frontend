@@ -6,7 +6,8 @@
 
   <div class="row">
     <div class="col-md-6 mb-4 d-flex align-items-center justify-content-center bg-light rounded p-3">
-      <img [src]="producto.imagenUrl || 'assets/no-image.png'" class="img-fluid rounded shadow-sm" alt="{{ producto.nombre }}" style="max-height: 400px;">
+      <img [src]="producto.imagenUrl || 'assets/no-image.png'" class="img-fluid rounded shadow-sm"
+        alt="{{ producto.nombre }}" style="max-height: 400px;">
     </div>
 
     <div class="col-md-6">
@@ -23,7 +24,7 @@
 
         <div class="card-body">
           <h3 class="fw-bold text-center mb-4">
-            Precio Actual: 
+            Precio Actual:
             <span id="precio-badge" class="badge bg-primary text-white transition-badge">
               ${{ producto.precioActual | number }}
             </span>
@@ -48,7 +49,7 @@
               </div>
             </div>
           </div>
-          
+
           <ng-template #loginSubasta>
             <div class="alert alert-info text-center">
               Para realizar una puja debes <a routerLink="/login" class="alert-link">iniciar sesión</a>.
@@ -62,35 +63,81 @@
           <h5 class="mb-0">🎟️ Rifa / Sorteo</h5>
         </div>
         <div class="card-body">
-            <h4 class="text-center mb-3">Valor Ticket: <span class="fw-bold text-success">${{ producto.precioTicket | number }}</span></h4>
-            <p class="text-center text-muted small">
-                Total Números: {{ producto.cantidadNumeros }} | Ganadores: {{ producto.cantidadGanadores }}
-            </p>
+          <h4 class="text-center mb-3">Valor Ticket: <span class="fw-bold text-success">${{ producto.precioTicket |
+              number }}</span></h4>
+          <p class="text-center text-muted small">
+            Total Números: {{ producto.cantidadNumeros }} | Ganadores: {{ producto.cantidadGanadores }}
+          </p>
 
-            <h5 class="mt-4">Elige tu número:</h5>
-            <div class="d-flex flex-wrap gap-2 justify-content-center mt-2" style="max-height: 300px; overflow-y: auto;">
-                @for (num of numerosRifa; track num) {
-                    <button class="btn shadow-sm" 
-                            [class.btn-outline-primary]="!isTicketVendido(num)"
-                            [class.btn-danger]="isTicketVendido(num)" 
-                            [class.disabled]="isTicketVendido(num)"
-                            (click)="!isTicketVendido(num) && comprarNumero(num)" 
-                            style="width: 50px; height: 50px; font-weight: bold;">
-                    
-                    @if (isTicketVendido(num)) { ❌ } @else { {{ num }} }
-                    </button>
-                }
-            </div>
+          <h5 class="mt-4">Elige tu número:</h5>
+          <div class="d-flex flex-wrap gap-2 justify-content-center mt-2" style="max-height: 300px; overflow-y: auto;">
+            @for (num of numerosRifa; track num) {
+            <button class="btn shadow-sm" [class.btn-outline-primary]="!isTicketVendido(num)"
+              [class.btn-danger]="isTicketVendido(num)" [class.disabled]="isTicketVendido(num)"
+              (click)="!isTicketVendido(num) && comprarNumero(num)"
+              style="width: 50px; height: 50px; font-weight: bold;">
 
-            <div *ngIf="authService.isLoggedIn() && ticketsVendidos.length === producto.cantidadNumeros" class="mt-4 text-center">
-                <div class="alert alert-warning">
-                    <h5>¡Todos los números vendidos!</h5>
-                    <button (click)="lanzarSorteo()" class="btn btn-warning btn-lg fw-bold w-100">
-                        🎲 LANZAR RIFA AHORA
-                    </button>
-                </div>
+              @if (isTicketVendido(num)) { ❌ } @else { {{ num }} }
+            </button>
+            }
+          </div>
+
+          <div *ngIf="authService.isLoggedIn() && ticketsVendidos.length === producto.cantidadNumeros"
+            class="mt-4 text-center">
+            <div class="alert alert-warning">
+              <h5>¡Todos los números vendidos!</h5>
+              <button (click)="lanzarSorteo()" class="btn btn-warning btn-lg fw-bold w-100">
+                🎲 LANZAR RIFA AHORA
+              </button>
             </div>
+          </div>
         </div>
+
+        <div *ngIf="authService.isAdmin()" class="mt-5">
+          <div class="card border-warning">
+            <div class="card-header bg-warning text-dark fw-bold">
+              👮‍♂️ Panel de Administración de Rifa
+            </div>
+            <div class="card-body">
+
+              <h5 class="card-title mb-3">Listado de Ventas ({{ ticketsDetalle.length }} tickets vendidos)</h5>
+
+              <div class="table-responsive">
+                <table class="table table-striped table-hover table-sm">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Ticket #</th>
+                      <th>Comprador</th>
+                      <th>Fecha Compra</th>
+                      <th>Estado Pago</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (ticket of ticketsDetalle; track ticket.numero) {
+                    <tr>
+                      <td class="fw-bold text-center">{{ ticket.numero }}</td>
+                      <td>{{ ticket.comprador }}</td>
+                      <td>{{ ticket.fecha | date:'short' }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="ticket.pagado ? 'bg-success' : 'bg-danger'">
+                          {{ ticket.pagado ? 'PAGADO ✅' : 'PENDIENTE ⏳' }}
+                        </span>
+                      </td>
+                    </tr>
+                    }
+                    @empty {
+                    <tr>
+                      <td colspan="4" class="text-center py-3">Aún no hay ventas registradas.</td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div *ngIf="producto.tipoVenta === 'DIRECTA'" class="p-4 bg-light rounded border">
@@ -108,8 +155,8 @@
 </div>
 
 <ng-template #loadingTemplate>
-    <div class="d-flex flex-column justify-content-center align-items-center vh-50 mt-5">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-        <h4 class="mt-3 text-muted">Cargando producto...</h4>
-    </div>
+  <div class="d-flex flex-column justify-content-center align-items-center vh-50 mt-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+    <h4 class="mt-3 text-muted">Cargando producto...</h4>
+  </div>
 </ng-template>

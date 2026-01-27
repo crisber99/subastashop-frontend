@@ -86,4 +86,8 @@ export class ProductService {
   lanzarRifa(productoId: number) {
     return this.http.post(`${this.apiUrlRifas}/${productoId}/lanzar`, {});
   }
+
+  getDetallesRifaAdmin(productoId: number) {
+    return this.http.get<any[]>(`${this.apiUrlRifas}/rifas/${productoId}/admin/detalles`);
+  }
 }

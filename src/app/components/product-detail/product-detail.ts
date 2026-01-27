@@ -53,6 +53,12 @@ export class ProductDetail implements OnInit, OnDestroy {
             this.ticketsVendidos.push(num);
             // Angular detectará el cambio y pondrá el botón rojo automáticamente
           }
+
+          // Si soy Admin, recargo la tabla para ver quién fue el comprador
+         if (this.authService.isAdmin()) {
+            this.cargarTablaAdmin(); 
+         }
+         
         }
 
         // OPCIÓN B: ES UNA PUJA (SUBASTA) 🔨

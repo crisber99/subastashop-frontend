@@ -12,6 +12,7 @@ export class ProductService {
   private apiUrlSubastas = `${environment.apiUrl}/subastas`;
   private apiUrlUsuario = `${environment.apiUrl}/usuario`;
   private apiUrlOrdenes = `${environment.apiUrl}/ordenes`;
+  private apiUrlRifas = `${environment.apiUrl}/rifas`;
 
   getProductos(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrlProductos);
@@ -75,14 +76,14 @@ export class ProductService {
   }
 
   comprarTicket(productoId: number, numero: number) {
-    return this.http.post(`${this.apiUrlUsuario}/rifas/${productoId}/comprar/${numero}`, {});
+    return this.http.post(`${this.apiUrlRifas}/${productoId}/comprar/${numero}`, {});
   }
 
   getTicketsVendidos(productoId: number) {
-    return this.http.get<number[]>(`${this.apiUrlUsuario}/rifas/${productoId}/tickets`);
+    return this.http.get<number[]>(`${this.apiUrlRifas}/${productoId}/tickets`);
   }
 
   lanzarRifa(productoId: number) {
-    return this.http.post(`${this.apiUrlUsuario}/rifas/${productoId}/lanzar`, {});
+    return this.http.post(`${this.apiUrlRifas}/${productoId}/lanzar`, {});
   }
 }

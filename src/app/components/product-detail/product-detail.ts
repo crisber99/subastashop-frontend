@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
@@ -10,14 +10,13 @@ import { Websocket } from '../../services/websocket';
   selector: 'app-product-detail',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './product-detail.html',
+  templateUrl: './product-detail.html', // Asegúrate que el nombre del archivo coincida
   styleUrl: './product-detail.scss',
 })
-export class ProductDetail implements OnInit {
+export class ProductDetail implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   websocketService = inject(Websocket);
-
   authService = inject(AuthService);
 
   producto: any = null;
@@ -25,10 +24,11 @@ export class ProductDetail implements OnInit {
   mensaje: string = '';
   esError: boolean = false;
 
+  // Variables Rifa
   numerosRifa: number[] = [];
   ticketsVendidos: number[] = [];
 
-  // Variable para controlar el estado visual
+  // Estado visual
   subastaFinalizada: boolean = false;
 
   ngOnInit(): void {
@@ -37,31 +37,21 @@ export class ProductDetail implements OnInit {
       this.cargarProducto(Number(id));
     }
 
-    if (this.producto.tipoVenta === 'RIFA') {
-      this.generarNumeros(this.producto.cantidadNumeros);
-      this.cargarVendidos();
-    }
+    // ❌ ELIMINADO DE AQUÍ: La lógica de RIFA y WebSocket estaba causando error
+    // porque 'this.producto' todavía era null al iniciar.
+    // La moví dentro de 'cargarProducto'.
 
-    this.websocketService.conectar(() => {
-
-      // Esta línea solo se ejecuta cuando ya estamos conectados ✅
-      if (this.producto) {
-        this.websocketService.suscribirseProducto(this.producto.id);
-      }
-
-    });
-
-    // ESCUCHAR ACTUALIZACIONES (Igual que antes)
+    // ESCUCHAR ACTUALIZACIONES (Esto sí puede ir aquí, espera eventos pasivamente)
     this.websocketService.obtenerActualizaciones().subscribe((nuevaPuja: any) => {
       console.log("⚡ Actualización en tiempo real recibida:", nuevaPuja);
 
       if (this.producto && this.producto.id === nuevaPuja.producto.id) {
-        this.producto.precioActual = nuevaPuja.monto; // ¡Aquí ocurre la magia!
-
-        // Efecto visual (opcional)
+        this.producto.precioActual = nuevaPuja.monto; 
+        
+        // Efecto visual
         const badge = document.getElementById('precio-badge');
         if (badge) {
-          badge.classList.add('bg-warning'); // Parpadeo amarillo
+          badge.classList.add('bg-warning');
           setTimeout(() => badge.classList.remove('bg-warning'), 500);
         }
       }
@@ -71,18 +61,28 @@ export class ProductDetail implements OnInit {
   cargarProducto(id: number) {
     this.productService.getProductoById(id).subscribe({
       next: (data) => {
-        this.producto = data;
+        this.producto = data; // ✅ AQUÍ ya tenemos datos
 
-        // --- LÓGICA DE VALIDACIÓN VISUAL ---
+        // 1. INICIALIZAR RIFA (Solo si es rifa)
+        if (this.producto.tipoVenta === 'RIFA') {
+           this.generarNumeros(this.producto.cantidadNumeros);
+           this.cargarVendidos();
+        }
+
+        // 2. CONECTAR WEBSOCKET (Ahora que tenemos ID seguro)
+        this.websocketService.conectar(() => {
+            this.websocketService.suscribirseProducto(this.producto.id);
+        });
+
+        // 3. LÓGICA DE SUBASTA (Validación de fechas)
         if (data.tipoVenta === 'SUBASTA' && data.fechaFinSubasta) {
           const fechaFin = new Date(data.fechaFinSubasta);
-          const ahora = new Date(); // Toma la hora de tu navegador
+          const ahora = new Date();
 
-          // Si la fecha de fin es menor a ahora, bloqueamos
           if (fechaFin < ahora) {
             this.subastaFinalizada = true;
             this.mensaje = 'Esta subasta ha finalizado.';
-            this.esError = true; // Lo marcamos como alerta visual
+            this.esError = true;
           } else {
             this.subastaFinalizada = false;
             // Sugerir monto
@@ -90,27 +90,28 @@ export class ProductDetail implements OnInit {
           }
         }
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error('Error cargando producto:', err)
     });
   }
 
+  // --- MÉTODOS DE SUBASTA ---
   pujar() {
-    if (!this.producto || this.subastaFinalizada) return; // Doble protección
+    if (!this.producto || this.subastaFinalizada) return;
 
     this.productService.realizarPuja(this.producto.id, this.montoOferta).subscribe({
       next: (resp) => {
         this.mensaje = '¡Oferta realizada con éxito!';
         this.esError = false;
-        this.cargarProducto(this.producto.id);
+        this.cargarProducto(this.producto.id); // Recargar para ver cambios
       },
       error: (err) => {
-        // Si el backend nos rechaza (ej: por milisegundos), mostramos el error bonito
         this.mensaje = err.error || 'Error al realizar la puja';
         this.esError = true;
       }
     });
   }
 
+  // --- MÉTODOS DE RIFA ---
   generarNumeros(cantidad: number) {
     this.numerosRifa = Array.from({ length: cantidad }, (_, i) => i + 1);
   }
@@ -131,7 +132,7 @@ export class ProductDetail implements OnInit {
     this.productService.comprarTicket(this.producto.id, num).subscribe({
       next: () => {
         alert('¡Comprado! 🎉');
-        this.cargarVendidos(); // Refrescar grilla
+        this.cargarVendidos();
       },
       error: (err) => alert('Error: ' + err.error)
     });
@@ -145,6 +146,6 @@ export class ProductDetail implements OnInit {
   }
 
   ngOnDestroy() {
-    this.websocketService.desconectar(); // Limpiar al salir
+    this.websocketService.desconectar();
   }
 }

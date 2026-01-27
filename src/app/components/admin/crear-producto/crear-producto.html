@@ -29,15 +29,46 @@
                 <select class="form-select" [(ngModel)]="producto.tipoVenta" name="tipoVenta">
                   <option value="SUBASTA">Subasta 🔥</option>
                   <option value="DIRECTA">Venta Directa 🛒</option>
+                  <option value="RIFA">Rifa / Sorteo 🎟️</option>
                 </select>
               </div>
 
-              <div class="col-md-6 mb-3">
+              <div class="col-md-6 mb-3" *ngIf="producto.tipoVenta !== 'RIFA'">
                 <label class="form-label">Precio Base / Venta ($)</label>
-                <input type="number" class="form-control" [(ngModel)]="producto.precioBase" name="precioBase" required>
+                <input type="number" class="form-control" [(ngModel)]="producto.precioBase" name="precioBase" [required]="producto.tipoVenta !== 'RIFA'">
               </div>
             </div>
 
+            <div class="card p-3 mb-4 bg-light border-info" *ngIf="producto.tipoVenta === 'RIFA'">
+              <div class="d-flex align-items-center mb-3">
+                <span class="fs-4 me-2">🎟️</span>
+                <h5 class="text-primary m-0">Configuración de la Rifa</h5>
+              </div>
+
+              <div class="row g-2">
+                <div class="col-md-4">
+                  <label class="form-label fw-bold small">Precio Ticket ($)</label>
+                  <input type="number" class="form-control" [(ngModel)]="producto.precioTicket" name="precioTicket" placeholder="Ej: 1000">
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label fw-bold small">Total Números</label>
+                  <input type="number" class="form-control" [(ngModel)]="producto.cantidadNumeros" name="cantidadNumeros" placeholder="Ej: 100">
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label fw-bold small">Ganadores</label>
+                  <select class="form-select" [(ngModel)]="producto.cantidadGanadores" name="cantidadGanadores">
+                    <option [ngValue]="1">1 Ganador</option>
+                    <option [ngValue]="2">2 Ganadores</option>
+                    <option [ngValue]="3">3 Ganadores</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-text mt-2 text-muted">
+                <small>La rifa se cerrará automáticamente cuando se vendan todos los números.</small>
+              </div>
+            </div>
             <div class="mb-3" *ngIf="producto.tipoVenta === 'SUBASTA'">
               <label class="form-label fw-bold text-danger">Fecha de Cierre</label>
               <input type="datetime-local" class="form-control" [(ngModel)]="producto.fechaFin" name="fechaFin" required>

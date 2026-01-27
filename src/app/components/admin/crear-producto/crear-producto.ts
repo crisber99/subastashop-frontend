@@ -22,7 +22,10 @@ export class CrearProducto {
     tipoVenta: 'SUBASTA', // Valor por defecto
     precioBase: 0,
     stock: 1,
-    fechaFin: ''
+    fechaFin: '',
+    precioTicket: 0,
+    cantidadNumeros: 100,
+    cantidadGanadores: 1
   };
 
   archivoSeleccionado: File | null = null;
@@ -42,7 +45,7 @@ export class CrearProducto {
 
     this.cargando = true;
     const formData = new FormData();
-    
+
     // Agregamos los campos tal cual los espera el Backend (@RequestParam)
     formData.append('file', this.archivoSeleccionado);
     formData.append('nombre', this.producto.nombre);
@@ -53,6 +56,12 @@ export class CrearProducto {
 
     if (this.producto.tipoVenta === 'SUBASTA' && this.producto.fechaFin) {
       formData.append('fechaFin', this.producto.fechaFin);
+    }
+
+    if (this.producto.tipoVenta === 'RIFA') {
+      formData.append('precioTicket', this.producto.precioTicket.toString());
+      formData.append('cantidadNumeros', this.producto.cantidadNumeros.toString());
+      formData.append('cantidadGanadores', this.producto.cantidadGanadores.toString());
     }
 
     this.productService.crearProducto(formData).subscribe({

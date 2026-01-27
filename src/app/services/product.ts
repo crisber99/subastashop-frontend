@@ -88,6 +88,6 @@ export class ProductService {
   }
 
   getDetallesRifaAdmin(productoId: number) {
-    return this.http.get<any[]>(`${this.apiUrlRifas}/rifas/${productoId}/admin/detalles`);
+    return this.http.get<any[]>(`${this.apiUrlRifas}/${productoId}/admin/detalles`);
   }
 }

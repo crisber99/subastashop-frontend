@@ -82,13 +82,39 @@
             }
           </div>
 
-          <div *ngIf="authService.isLoggedIn() && ticketsVendidos.length === producto.cantidadNumeros"
-            class="mt-4 text-center">
-            <div class="alert alert-warning">
+          <div class="mt-4">
+
+            <div
+              *ngIf="authService.isAdmin() && ticketsVendidos.length === producto.cantidadNumeros && !ganadores.length"
+              class="alert alert-warning text-center shadow-sm">
               <h5>¡Todos los números vendidos!</h5>
+              <p class="mb-2">Como administrador, puedes iniciar el sorteo.</p>
               <button (click)="lanzarSorteo()" class="btn btn-warning btn-lg fw-bold w-100">
                 🎲 LANZAR RIFA AHORA
               </button>
+            </div>
+
+            <div *ngIf="ganadores.length > 0 || producto.ganadores?.length > 0"
+              class="card border-success shadow mb-4 animate__animated animate__fadeIn">
+              <div class="card-header bg-success text-white text-center">
+                <h3 class="mb-0">🏆 ¡Ganadores Oficiales! 🏆</h3>
+              </div>
+              <div class="card-body bg-light">
+                <ul class="list-group list-group-flush">
+                  @for (ganador of (ganadores.length ? ganadores : producto.ganadores); track $index) {
+                  <li class="list-group-item d-flex justify-content-between align-items-center fs-5">
+                    <span>
+                      <span class="me-2 fs-4">
+                        @if($index === 0) { 🥇 } @else if($index === 1) { 🥈 } @else { 🥉 }
+                      </span>
+                      <strong>{{ $index + 1 }}º Lugar:</strong>
+                      <span class="text-muted ms-2">{{ ganador.comprador?.email || ganador.comprador }}</span>
+                    </span>
+                    <span class="badge bg-primary rounded-pill">Ticket #{{ ganador.numeroTicket }}</span>
+                  </li>
+                  }
+                </ul>
+              </div>
             </div>
           </div>
         </div>

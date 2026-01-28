@@ -29,6 +29,8 @@ export class ProductDetail implements OnInit, OnDestroy {
   ticketsVendidos: number[] = [];
   ticketsDetalle: any[] = [];
 
+  ganadores: any[] = [];
+
   // Estado visual
   subastaFinalizada: boolean = false;
 
@@ -55,10 +57,10 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
 
           // Si soy Admin, recargo la tabla para ver quién fue el comprador
-         if (this.authService.isAdmin()) {
-            this.cargarTablaAdmin(); 
-         }
-         
+          if (this.authService.isAdmin()) {
+            this.cargarTablaAdmin();
+          }
+
         }
 
         // OPCIÓN B: ES UNA PUJA (SUBASTA) 🔨
@@ -134,7 +136,7 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   cargarTablaAdmin() {
     this.productService.getDetallesRifaAdmin(this.producto.id).subscribe(data => {
-      this.ticketsDetalle = data;
+      this.ticketsDetalle = data.sort((a: any, b: any) => a.numero - b.numero);
     });
   }
 
@@ -182,9 +184,26 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   lanzarSorteo() {
-    this.productService.lanzarRifa(this.producto.id).subscribe(ganadores => {
-      console.log(ganadores);
-      alert('¡Sorteo realizado! Ganadores: ' + ganadores);
+    this.productService.lanzarRifa(this.producto.id).subscribe({
+      next: (listaGanadores: any) => {
+        this.ganadores = listaGanadores;
+
+        // Construimos un mensaje de texto legible
+        let mensaje = '🏆 ¡GANADORES SELECCIONADOS! 🏆\n\n';
+        listaGanadores.forEach((g: any, index: number) => { 
+        const comprador = g.comprador?.email || g.comprador || 'Anónimo';
+        mensaje += `${index + 1}º Lugar: Ticket #${g.numeroTicket} - ${comprador}\n`;
+      });
+
+        alert(mensaje);
+
+        // Recargamos para que todos vean el podio
+        this.cargarProducto(this.producto.id);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al realizar el sorteo. Revisa la consola.');
+      }
     });
   }
 

@@ -102,6 +102,6 @@ export class ProductService {
   }
 
   getProductosPorTienda(slug: string) {
-  return this.http.get<any[]>(`${this.apiUrlPublic}/productos/tienda/${slug}`);
-}
+    return this.http.get<any[]>(`${this.apiUrlPublic}/productos/tienda/${slug}`);
+  }
 }

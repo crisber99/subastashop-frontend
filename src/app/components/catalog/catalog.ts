@@ -23,11 +23,11 @@ export class CatalogComponent implements OnInit {
   ngOnInit() {
     // Nos suscribimos a los parámetros de la URL
     this.route.paramMap.subscribe(params => {
-      const slug = params.get('slug'); // ¿Viene algo como 'don-bernardo'?
+      const slug = params.get('slug');
 
       if (slug) {
         // MODO TIENDA: Cargar productos específicos
-        this.nombreTienda = slug.replace(/-/g, ' ').toUpperCase(); // Estético: 'don-bernardo' -> 'DON BERNARDO'
+        this.nombreTienda = slug.replace(/-/g, ' ').toUpperCase();
         this.cargarPorTienda(slug);
       } else {
         // MODO GLOBAL: Cargar todo (como lo tenías antes)

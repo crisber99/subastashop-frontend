@@ -1,0 +1,82 @@
+<div class="container mt-5">
+    <h2 class="mb-4">👑 Super Admin: Gestión de Tiendas</h2>
+
+    <div class="row">
+        
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🏢 Nueva Tienda</h5>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="crear()">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de la Tienda</label>
+                            <input type="text" class="form-control" [(ngModel)]="nuevaTienda.nombre" name="nombre" placeholder="Ej: Importadora Gamer" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">URL Amigable (Slug)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">/tienda/</span>
+                                <input type="text" class="form-control" [(ngModel)]="nuevaTienda.slug" name="slug" placeholder="importadora-gamer">
+                            </div>
+                            <div class="form-text">Si lo dejas vacío, se genera solo.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email del Dueño (Admin)</label>
+                            <input type="email" class="form-control" [(ngModel)]="nuevaTienda.emailAdmin" name="email" placeholder="usuario@gmail.com" required>
+                            <div class="form-text text-danger">⚠️ El usuario debe estar registrado previamente.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            🚀 Crear y Asignar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Tiendas Activas ({{ tiendas.length }})</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>URL (Slug)</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (tienda of tiendas; track tienda.id) {
+                                <tr>
+                                    <td>{{ tienda.id }}</td>
+                                    <td class="fw-bold">{{ tienda.nombre }}</td>
+                                    <td>
+                                        <a [routerLink]="['/tienda', tienda.slug]" target="_blank" class="text-decoration-none">
+                                            /{{ tienda.slug }} <i class="bi bi-box-arrow-up-right small"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">⚙️ Editar</button>
+                                    </td>
+                                </tr>
+                                }
+                                @empty {
+                                    <tr><td colspan="4" class="text-center p-3">No hay tiendas creadas.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

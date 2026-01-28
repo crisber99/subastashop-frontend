@@ -1,6 +1,11 @@
 <div class="container mt-4">
   <h2 class="mb-4">👑 Panel de Control</h2>
 
+  <h2 class="mb-4">
+    👑 Panel de Control
+    <small class="text-muted fs-5">| {{ stats.nombreTienda || 'Cargando...' }}</small>
+  </h2>
+
   <div class="row mb-4">
     <div class="col-md-3">
       <div class="card text-white bg-primary mb-3">
@@ -41,23 +46,19 @@
       <div class="card shadow">
         <div class="card-header">Resumen de Inventario</div>
         <div class="card-body">
-            <canvas baseChart
-              [data]="pieChartData"
-              [type]="'pie'"
-              [options]="pieChartOptions"
-              [legend]="pieChartLegend">
-            </canvas>
+          <canvas baseChart [data]="pieChartData" [type]="'pie'" [options]="pieChartOptions" [legend]="pieChartLegend">
+          </canvas>
         </div>
       </div>
     </div>
-    
+
     <div class="col-md-6">
       <div class="card shadow">
         <div class="card-header">Acciones Rápidas</div>
         <div class="card-body d-grid gap-2">
-            <button class="btn btn-outline-danger">🚨 Detener todas las Subastas</button>
-            <button class="btn btn-outline-primary">📩 Enviar Email Masivo</button>
-            <button class="btn btn-outline-secondary">📂 Exportar Excel</button>
+          <button class="btn btn-outline-danger">🚨 Detener todas las Subastas</button>
+          <button class="btn btn-outline-primary">📩 Enviar Email Masivo</button>
+          <button class="btn btn-outline-secondary">📂 Exportar Excel</button>
         </div>
       </div>
     </div>

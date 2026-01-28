@@ -1,44 +1,101 @@
 <div class="container mt-5">
-  <h1 class="mb-4">Catálogo 🛍️</h1>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-primary mb-0">
+        🏪 {{ nombreTienda || 'Catálogo General' }}
+      </h2>
+      <p class="text-muted small mb-0" *ngIf="nombreTienda">Bienvenido a nuestra tienda oficial</p>
+    </div>
+
+    <a routerLink="/" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-shop"></i> Cambiar de Tienda
+    </a>
+  </div>
+
+  <hr class="mb-4">
+
   <div class="row">
     @for (producto of productos; track producto.id) {
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
-          
-          <img [src]="producto.imagenUrl || producto.urlImagen" class="card-img-top" alt="Producto" style="height: 200px; object-fit: cover;">
-          
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ producto.nombre }}</h5>
-            
-            @if (producto.tipoVenta === 'SUBASTA' || producto.estado === 'SUBASTA') {
-              <span class="badge bg-danger mb-2 align-self-start">🔥 Subasta</span>
-              <p class="card-text fw-bold">Oferta actual: ${{ producto.precioActual | number }}</p>
+    <div class="col-md-4 mb-4 animate__animated animate__fadeIn">
+      <div class="card h-100 shadow-sm border-0 hover-effect">
+
+        <div class="position-relative">
+          <img [src]="producto.imagenUrl || 'assets/no-image.png'" class="card-img-top" alt="Producto"
+            style="height: 220px; object-fit: cover;">
+
+          <div class="position-absolute top-0 end-0 m-2">
+            @if (producto.tipoVenta === 'SUBASTA') {
+            <span class="badge bg-danger shadow">🔥 Subasta</span>
+            } @else if (producto.tipoVenta === 'RIFA') {
+            <span class="badge bg-info text-dark shadow">🎟️ Rifa</span>
             } @else {
-              <span class="badge bg-success mb-2 align-self-start">Venta Directa</span>
-              <p class="card-text fw-bold">Precio: ${{ producto.precioBase | number }}</p>
+            <span class="badge bg-success shadow">💰 Venta</span>
             }
-            
-            <p class="text-muted small flex-grow-1">{{ producto.descripcion }}</p>
-            
-            <a [routerLink]="['/producto', producto.id]" class="btn btn-primary w-100 mb-2">Ver Detalle</a>
-
-            @if (authService.isAdmin()) {
-                <div class="border-top pt-2 mt-auto">
-                    @if (producto.estado !== 'SUBASTA' && producto.estado !== 'ADJUDICADO' && producto.estado !== 'PAGADO') {
-                        <a [routerLink]="['/admin/editar', producto.id]" class="btn btn-outline-warning w-100 btn-sm fw-bold">
-                            ✏️ Editar Producto
-                        </a>
-                    } @else {
-                        <button class="btn btn-secondary w-100 btn-sm" disabled>
-                            🔒 Bloqueado ({{ producto.estado }})
-                        </button>
-                    }
-                </div>
-            }
-
           </div>
         </div>
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-bold text-truncate">{{ producto.nombre }}</h5>
+
+          <div class="mb-3">
+            @if (producto.tipoVenta === 'SUBASTA') {
+            <p class="card-text text-danger fw-bold fs-5 mb-0">
+              ${{ producto.precioActual | number }}
+            </p>
+            <small class="text-muted">Oferta Actual</small>
+            }
+            @else if (producto.tipoVenta === 'RIFA') {
+            <p class="card-text text-info fw-bold fs-5 mb-0">
+              ${{ producto.precioTicket | number }}
+            </p>
+            <small class="text-muted">Valor del Ticket</small>
+            }
+            @else {
+            <p class="card-text text-success fw-bold fs-5 mb-0">
+              ${{ producto.precioBase | number }}
+            </p>
+            <small class="text-muted">Precio Directo</small>
+            }
+          </div>
+
+          <p class="text-muted small flex-grow-1"
+            style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            {{ producto.descripcion }}
+          </p>
+
+          <a [routerLink]="['/producto', producto.id]" class="btn btn-primary w-100 mb-2 rounded-pill fw-bold">
+            Ver Detalle
+          </a>
+
+          @if (authService.isAdmin()) {
+          <div class="border-top pt-2 mt-auto">
+            @if (producto.estado !== 'FINALIZADA' && producto.estado !== 'VENDIDO') {
+            <a [routerLink]="['/admin/editar', producto.id]" class="btn btn-outline-warning w-100 btn-sm fw-bold">
+              ✏️ Editar
+            </a>
+            } @else {
+            <button class="btn btn-secondary w-100 btn-sm" disabled>
+              🔒 Cerrado
+            </button>
+            }
+          </div>
+          }
+
+        </div>
       </div>
+    </div>
+    }
+
+    @empty {
+    <div class="col-12 text-center py-5">
+      <div class="text-muted mb-3">
+        <i class="bi bi-box-seam fs-1" style="font-size: 4rem;"></i>
+      </div>
+      <h3>Esta tienda aún no tiene productos.</h3>
+      <p>Vuelve más tarde o revisa otras tiendas.</p>
+      <a routerLink="/" class="btn btn-primary mt-2">Explorar otras tiendas</a>
+    </div>
     }
   </div>
 </div>

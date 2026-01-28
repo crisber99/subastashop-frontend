@@ -14,6 +14,7 @@ export class ProductService {
   private apiUrlOrdenes = `${environment.apiUrl}/ordenes`;
   private apiUrlRifas = `${environment.apiUrl}/rifas`;
   private apiUrlAdmin = `${environment.apiUrl}/admin`;
+  private apiUrlPublic = `${environment.apiUrl}/public`;
 
   getProductos(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrlProductos);
@@ -99,4 +100,8 @@ export class ProductService {
   getGanadoresRifa(id: number) {
     return this.http.get<any[]>(`${this.apiUrlRifas}/${id}/ganadores`);
   }
+
+  getProductosPorTienda(slug: string) {
+  return this.http.get<any[]>(`${this.apiUrlPublic}/productos/tienda/${slug}`);
+}
 }

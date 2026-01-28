@@ -12,20 +12,25 @@ import { EditarProducto } from './components/admin/editar-producto/editar-produc
 import { Landing } from './pages/landing/landing';
 
 export const routes: Routes = [
-    { path: '', component: CatalogComponent },
+    // 1. LA RAÍZ: Ahora carga la Landing Page (Buscador de tiendas)
+    { path: '', component: Landing },
+
+    // 2. LA TIENDA ESPECÍFICA: Carga el Catálogo, pero filtrado (lo haremos en el paso 2)
+    { path: 'tienda/:slug', component: CatalogComponent },
+
+    // 3. RUTA OPCIONAL: Si quieres ver "todo mezclado" sin filtro
+    { path: 'catalogo-global', component: CatalogComponent },
+
+    // ... Resto de tus rutas (sin cambios)
     { path: 'producto/:id', component: ProductDetail },
     { path: 'login', component: LoginComponent },
     { path: 'mi-cuenta', component: Dashboard },
     { path: 'admin/crear', component: CrearProducto },
     { path: 'checkout/:id', component: Checkout },
-    {
-        path: 'admin',
-        component: AdminDashboard,
-        canActivate: [authGuard] // ¡Importante protegerla!
-        // Idealmente crearías un adminGuard que verifique el rol
-    },
+    { path: 'admin', component: AdminDashboard, canActivate: [authGuard] },
     { path: 'registro', component: Register },
     { path: 'admin/editar/:id', component: EditarProducto, canActivate: [authGuard] },
-    { path: '', component: Landing },
-    { path: 'tienda/:slug', component: CatalogComponent },
+    
+    // Redirección por defecto
+    { path: '**', redirectTo: '' }
 ];

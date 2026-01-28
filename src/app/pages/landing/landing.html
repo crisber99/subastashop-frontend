@@ -1,0 +1,65 @@
+<div class="hero-section text-center text-white d-flex flex-column justify-content-center align-items-center mb-5">
+    <h1 class="display-3 fw-bold animate__animated animate__fadeInDown">Bienvenido a SubastaShop 🚀</h1>
+    <p class="lead fs-4 animate__animated animate__fadeInUp">La plataforma donde cada tienda es un mundo de oportunidades.</p>
+    <p class="mb-4 text-white-50">Explora subastas, rifas y ventas directas de nuestros vendedores verificados.</p>
+    
+    <div class="search-container bg-white p-2 rounded-pill shadow-lg d-flex mt-3 animate__animated animate__fadeInUp" style="max-width: 600px; width: 90%;">
+        <input type="text" 
+               class="form-control border-0 rounded-pill px-4 shadow-none" 
+               placeholder="Buscar una tienda (ej: Don Bernardo)..."
+               [(ngModel)]="busqueda"
+               (keyup)="filtrar()">
+        <button class="btn btn-primary rounded-pill px-4 fw-bold">Buscar</button>
+    </div>
+</div>
+
+<div class="container pb-5">
+    
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h3 class="fw-bold text-dark">Tiendas Destacadas 🏪</h3>
+            <p class="text-muted">Elige una tienda para ver su catálogo exclusivo.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        @for (tienda of tiendasFiltradas; track tienda.id) {
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-card text-center overflow-hidden">
+                    
+                    <div class="card-img-top bg-light" style="height: 100px; background: linear-gradient(45deg, #f3f4f6, #e5e7eb);"></div>
+                    
+                    <div class="card-body mt-n5">
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center shadow border border-4 border-white position-relative"
+                             [ngClass]="getColor(tienda.nombre)"
+                             style="width: 80px; height: 80px; top: -40px; background-color: white;">
+                             
+                             @if(tienda.logoUrl) {
+                                <img [src]="tienda.logoUrl" class="img-fluid rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                             } @else {
+                                <span class="fs-2 text-white fw-bold">{{ tienda.nombre.charAt(0).toUpperCase() }}</span>
+                             }
+                        </div>
+
+                        <h5 class="card-title fw-bold mt-n3">{{ tienda.nombre }}</h5>
+                        <p class="card-text text-muted small">
+                            Encuentra las mejores rifas y subastas exclusivas aquí.
+                        </p>
+                        
+                        <a [routerLink]="['/tienda', tienda.slug]" class="btn btn-outline-primary w-100 rounded-pill fw-bold mt-2">
+                            Visitar Tienda &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        @empty {
+            <div class="col-12 text-center py-5">
+                <div class="text-muted">
+                    <i class="bi bi-shop fs-1"></i>
+                    <p class="mt-2">No encontramos tiendas con ese nombre.</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

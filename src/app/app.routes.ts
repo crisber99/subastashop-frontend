@@ -9,6 +9,7 @@ import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
 import { authGuard } from './guards/auth-guard';
 import { Register } from './components/register/register';
 import { EditarProducto } from './components/admin/editar-producto/editar-producto';
+import { Landing } from './pages/landing/landing';
 
 export const routes: Routes = [
     { path: '', component: CatalogComponent },
@@ -25,4 +26,6 @@ export const routes: Routes = [
     },
     { path: 'registro', component: Register },
     { path: 'admin/editar/:id', component: EditarProducto, canActivate: [authGuard] },
+    { path: '', component: Landing },
+    { path: 'tienda/:slug', component: CatalogComponent },
 ];

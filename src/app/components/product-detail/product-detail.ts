@@ -50,24 +50,33 @@ export class ProductDetail implements OnInit, OnDestroy {
         // OPCIÓN A: ES UN TICKET VENDIDO (RIFA) 🎟️
         if (mensaje.tipo === 'TICKET_VENDIDO') {
           const num = mensaje.numero;
-          // Si no lo teníamos marcado como vendido, lo agregamos ahora
           if (!this.ticketsVendidos.includes(num)) {
             this.ticketsVendidos.push(num);
-            // Angular detectará el cambio y pondrá el botón rojo automáticamente
           }
-
-          // Si soy Admin, recargo la tabla para ver quién fue el comprador
           if (this.authService.isAdmin()) {
             this.cargarTablaAdmin();
           }
-
         }
 
-        // OPCIÓN B: ES UNA PUJA (SUBASTA) 🔨
+        // 👇 OPCIÓN B: ¡SORTEO FINALIZADO! 🏆 (NUEVO)
+        // Esto se ejecuta en TODOS los usuarios conectados
+        else if (mensaje.tipo === 'SORTEO_FINALIZADO') {
+            console.log("🏆 Ganadores recibidos:", mensaje.ganadores);
+            
+            // 1. Actualizamos la variable local para que aparezca el Podio HTML
+            this.ganadores = mensaje.ganadores; 
+
+            // 2. Alert o Scroll suave para llamar la atención
+            setTimeout(() => {
+                alert('¡Atención! El sorteo ha finalizado. 🎉');
+                // Opcional: Recargar producto para bloquear botones de compra si quedaron activos
+                // this.cargarProducto(this.producto.id); 
+            }, 500);
+        }
+
+        // OPCIÓN C: ES UNA PUJA (SUBASTA) 🔨
         else if (mensaje.monto) {
           this.producto.precioActual = mensaje.monto;
-
-          // Efecto visual (Parpadeo)
           const badge = document.getElementById('precio-badge');
           if (badge) {
             badge.classList.add('bg-warning');

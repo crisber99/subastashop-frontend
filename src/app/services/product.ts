@@ -97,6 +97,6 @@ export class ProductService {
   }
 
   getGanadoresRifa(id: number) {
-    return this.http.get<any[]>(`${this.apiUrlAdmin}/${id}/ganadores`);
+    return this.http.get<any[]>(`${this.apiUrlRifas}/${id}/ganadores`);
   }
 }

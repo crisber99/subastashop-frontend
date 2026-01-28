@@ -93,6 +93,10 @@ export class ProductService {
   }
 
   getAdminStats() {
-  return this.http.get<any>(`${this.apiUrlAdmin}/stats`);
-}
+    return this.http.get<any>(`${this.apiUrlAdmin}/stats`);
+  }
+
+  getGanadoresRifa(id: number) {
+    return this.http.get<any[]>(`${this.apiUrlAdmin}/${id}/ganadores`);
+  }
 }

@@ -61,17 +61,17 @@ export class ProductDetail implements OnInit, OnDestroy {
         // 👇 OPCIÓN B: ¡SORTEO FINALIZADO! 🏆 (NUEVO)
         // Esto se ejecuta en TODOS los usuarios conectados
         else if (mensaje.tipo === 'SORTEO_FINALIZADO') {
-            console.log("🏆 Ganadores recibidos:", mensaje.ganadores);
-            
-            // 1. Actualizamos la variable local para que aparezca el Podio HTML
-            this.ganadores = mensaje.ganadores; 
+          console.log("🏆 Ganadores recibidos:", mensaje.ganadores);
 
-            // 2. Alert o Scroll suave para llamar la atención
-            setTimeout(() => {
-                alert('¡Atención! El sorteo ha finalizado. 🎉');
-                // Opcional: Recargar producto para bloquear botones de compra si quedaron activos
-                // this.cargarProducto(this.producto.id); 
-            }, 500);
+          // 1. Actualizamos la variable local para que aparezca el Podio HTML
+          this.ganadores = mensaje.ganadores;
+
+          // 2. Alert o Scroll suave para llamar la atención
+          setTimeout(() => {
+            alert('¡Atención! El sorteo ha finalizado. 🎉');
+            // Opcional: Recargar producto para bloquear botones de compra si quedaron activos
+            // this.cargarProducto(this.producto.id); 
+          }, 500);
         }
 
         // OPCIÓN C: ES UNA PUJA (SUBASTA) 🔨
@@ -98,6 +98,9 @@ export class ProductDetail implements OnInit, OnDestroy {
           this.cargarVendidos();
           if (this.authService.isAdmin()) {
             this.cargarTablaAdmin();
+          }
+          if (this.producto.estado === 'FINALIZADA' || this.producto.estado === 'VENDIDO') {
+            this.cargarGanadoresHistorial();
           }
         }
 
@@ -146,6 +149,12 @@ export class ProductDetail implements OnInit, OnDestroy {
   cargarTablaAdmin() {
     this.productService.getDetallesRifaAdmin(this.producto.id).subscribe(data => {
       this.ticketsDetalle = data.sort((a: any, b: any) => a.numero - b.numero);
+    });
+  }
+
+  cargarGanadoresHistorial() {
+    this.productService.getGanadoresRifa(this.producto.id).subscribe(data => {
+      this.ganadores = data; // ¡Esto hará que aparezca el podio verde automáticamente!
     });
   }
 
@@ -199,19 +208,24 @@ export class ProductDetail implements OnInit, OnDestroy {
 
         // Construimos un mensaje de texto legible
         let mensaje = '🏆 ¡GANADORES SELECCIONADOS! 🏆\n\n';
-        listaGanadores.forEach((g: any, index: number) => { 
-        const comprador = g.comprador?.email || g.comprador || 'Anónimo';
-        mensaje += `${index + 1}º Lugar: Ticket #${g.numeroTicket} - ${comprador}\n`;
-      });
+        listaGanadores.forEach((g: any, index: number) => {
+          const comprador = g.comprador?.email || g.comprador || 'Anónimo';
+          mensaje += `${index + 1}º Lugar: Ticket #${g.numeroTicket} - ${comprador}\n`;
+        });
 
         alert(mensaje);
 
-        // Recargamos para que todos vean el podio
         this.cargarProducto(this.producto.id);
       },
       error: (err) => {
-        console.error(err);
-        alert('Error al realizar el sorteo. Revisa la consola.');
+        console.error('Error desde backend:', err);
+        const mensajeServidor = err.error;
+
+        if (typeof mensajeServidor === 'string') {
+          alert('⚠️ Aviso: ' + mensajeServidor);
+        } else {
+          alert('❌ Ocurrió un error inesperado. Revisa la consola.');
+        }
       }
     });
   }

@@ -70,7 +70,7 @@ export class ProductDetail implements OnInit, OnDestroy {
           setTimeout(() => {
             alert('¡Atención! El sorteo ha finalizado. 🎉');
             // Opcional: Recargar producto para bloquear botones de compra si quedaron activos
-            this.cargarProducto(this.producto.id); 
+            this.cargarProducto(this.producto.id);
           }, 500);
         }
 
@@ -153,8 +153,21 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   cargarGanadoresHistorial() {
-    this.productService.getGanadoresRifa(this.producto.id).subscribe(data => {
-      this.ganadores = data; // ¡Esto hará que aparezca el podio verde automáticamente!
+    this.productService.getGanadoresRifa(this.producto.id).subscribe({
+      next: (data) => {
+        // Si data existe y tiene longitud, asignamos. Si no, array vacío.
+        if (data && data.length > 0) {
+          this.ganadores = data;
+          console.log("Historial de ganadores cargado:", this.ganadores);
+        } else {
+          this.ganadores = [];
+        }
+      },
+      error: (err) => {
+        // Es normal que de error 404 si aun no hay ganadores (depende de tu backend)
+        // Lo ignoramos silenciosamente o seteamos vacío
+        this.ganadores = [];
+      }
     });
   }
 

@@ -1,8 +1,17 @@
 <div class="container mt-5 mb-5" *ngIf="producto; else loadingTemplate">
 
-  <a routerLink="/" class="btn btn-outline-secondary mb-3">
-    <i class="bi bi-arrow-left"></i> &larr; Volver al catálogo
-  </a>
+  <div class="mb-3">
+    @if (producto.tienda) {
+    <a [routerLink]="['/tienda', producto.tienda.slug]" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> &larr; Volver a {{ producto.tienda.nombre }}
+    </a>
+    }
+    @else {
+    <a routerLink="/" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> &larr; Volver al catálogo
+    </a>
+    }
+  </div>
 
   <div class="row">
     <div class="col-md-6 mb-4 d-flex align-items-center justify-content-center bg-light rounded p-3">
@@ -63,7 +72,8 @@
           <h5 class="mb-0">🎟️ Rifa / Sorteo</h5>
         </div>
         <div class="card-body">
-          <h4 class="text-center mb-3">Valor Ticket: <span class="fw-bold text-success">${{ producto.precioTicket | number }}</span></h4>
+          <h4 class="text-center mb-3">Valor Ticket: <span class="fw-bold text-success">${{ producto.precioTicket |
+              number }}</span></h4>
           <p class="text-center text-muted small">
             Total Números: {{ producto.cantidadNumeros }} | Ganadores: {{ producto.cantidadGanadores }}
           </p>
@@ -83,7 +93,8 @@
 
           <div class="mt-4">
 
-            <div *ngIf="authService.isAdmin() && ticketsVendidos.length === producto.cantidadNumeros && ganadores.length === 0"
+            <div
+              *ngIf="authService.isAdmin() && ticketsVendidos.length === producto.cantidadNumeros && ganadores.length === 0"
               class="alert alert-warning text-center shadow-sm">
               <h5>¡Todos los números vendidos!</h5>
               <p class="mb-2">Como administrador, puedes iniciar el sorteo.</p>
@@ -125,7 +136,7 @@
                 </ul>
               </div>
             </div>
-            
+
           </div>
         </div>
 

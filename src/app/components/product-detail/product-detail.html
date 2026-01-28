@@ -63,8 +63,7 @@
           <h5 class="mb-0">🎟️ Rifa / Sorteo</h5>
         </div>
         <div class="card-body">
-          <h4 class="text-center mb-3">Valor Ticket: <span class="fw-bold text-success">${{ producto.precioTicket |
-              number }}</span></h4>
+          <h4 class="text-center mb-3">Valor Ticket: <span class="fw-bold text-success">${{ producto.precioTicket | number }}</span></h4>
           <p class="text-center text-muted small">
             Total Números: {{ producto.cantidadNumeros }} | Ganadores: {{ producto.cantidadGanadores }}
           </p>
@@ -84,8 +83,7 @@
 
           <div class="mt-4">
 
-            <div
-              *ngIf="authService.isAdmin() && ticketsVendidos.length === producto.cantidadNumeros && !ganadores.length"
+            <div *ngIf="authService.isAdmin() && ticketsVendidos.length === producto.cantidadNumeros && ganadores.length === 0"
               class="alert alert-warning text-center shadow-sm">
               <h5>¡Todos los números vendidos!</h5>
               <p class="mb-2">Como administrador, puedes iniciar el sorteo.</p>
@@ -94,41 +92,41 @@
               </button>
             </div>
 
-            <div *ngIf="ganadores.length > 0 || producto.ganadores?.length > 0"
-              class="card border-success shadow mb-4 animate__animated animate__fadeIn">
+            <div *ngIf="ganadores.length > 0" class="card border-success shadow mb-4 animate__animated animate__fadeIn">
               <div class="card-header bg-success text-white text-center">
                 <h3 class="mb-0">🏆 ¡Ganadores Oficiales! 🏆</h3>
               </div>
-              
-              <div class="card-body bg-light p-2 p-md-3"> 
+
+              <div class="card-body bg-light p-2 p-md-3">
                 <ul class="list-group list-group-flush">
-                  @for (ganador of (ganadores.length ? ganadores : producto.ganadores); track $index) {
+                  @for (ganador of ganadores; track $index) {
                   <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                    
+
                     <div class="d-flex align-items-center overflow-hidden me-2">
-                        <span class="me-2 fs-4 flex-shrink-0">
-                          @if($index === 0) { 🥇 } @else if($index === 1) { 🥈 } @else { 🥉 }
+                      <span class="me-2 fs-4 flex-shrink-0">
+                        @if($index === 0) { 🥇 } @else if($index === 1) { 🥈 } @else { 🥉 }
+                      </span>
+
+                      <div class="d-flex flex-column text-truncate">
+                        <span class="fw-bold text-dark" style="font-size: 0.9rem;">
+                          {{ $index + 1 }}º Lugar:
                         </span>
-                        
-                        <div class="d-flex flex-column text-truncate">
-                            <span class="fw-bold text-dark" style="font-size: 0.9rem;">
-                                {{ $index + 1 }}º Lugar:
-                            </span>
-                            <span class="text-muted text-truncate small" style="max-width: 150px;">
-                                {{ ganador.comprador?.email || ganador.comprador }}
-                            </span>
-                        </div>
+                        <span class="text-muted text-truncate small" style="max-width: 150px;">
+                          {{ ganador.comprador?.email || ganador.comprador || 'Anónimo' }}
+                        </span>
+                      </div>
                     </div>
 
                     <span class="badge bg-primary rounded-pill flex-shrink-0 fs-6">
-                        Ticket #{{ ganador.numeroTicket }}
+                      Ticket #{{ ganador.numeroTicket || ganador.numero }}
                     </span>
                   </li>
                   }
                 </ul>
               </div>
             </div>
-            </div>
+            
+          </div>
         </div>
 
         <div *ngIf="authService.isAdmin()" class="mt-5">
@@ -137,9 +135,7 @@
               👮‍♂️ Panel de Administración de Rifa
             </div>
             <div class="card-body">
-
               <h5 class="card-title mb-3">Listado de Ventas ({{ ticketsDetalle.length }} tickets vendidos)</h5>
-
               <div class="table-responsive">
                 <table class="table table-striped table-hover table-sm">
                   <thead class="table-dark">
@@ -171,7 +167,6 @@
                   </tbody>
                 </table>
               </div>
-
             </div>
           </div>
         </div>

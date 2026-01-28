@@ -70,7 +70,7 @@ export class ProductDetail implements OnInit, OnDestroy {
           setTimeout(() => {
             alert('¡Atención! El sorteo ha finalizado. 🎉');
             // Opcional: Recargar producto para bloquear botones de compra si quedaron activos
-            // this.cargarProducto(this.producto.id); 
+            this.cargarProducto(this.producto.id); 
           }, 500);
         }
 

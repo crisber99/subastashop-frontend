@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  
+
   // URL de tu Backend en Azure
   private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'subasta_token';
@@ -53,7 +53,7 @@ export class AuthService {
     // 1. Borrar de disco
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
-    
+
     // 2. Borrar de memoria (Señales)
     this.currentUser.set(null);
     this.isLoggedIn.set(false);
@@ -67,7 +67,7 @@ export class AuthService {
   private guardarSesion(token: string, usuario: any) {
     // Guardar Token
     localStorage.setItem(this.tokenKey, token);
-    
+
     // Guardar Usuario (si viene nulo, guardamos un objeto vacío para que no rompa)
     const usuarioAGuardar = usuario || { nombre: 'Usuario', role: 'USER' };
     localStorage.setItem(this.userKey, JSON.stringify(usuarioAGuardar));
@@ -97,7 +97,14 @@ export class AuthService {
 
   isAdmin(): boolean {
     const user = this.currentUser();
-    console.log('Usuario actual:', user); 
+    console.log('Usuario actual:', user);
     return user && (user.role === 'ROLE_ADMIN');
-}
+  }
+
+  isSuperAdmin(): boolean {
+    const user = this.currentUser();
+    // Ajusta según cómo guardes el rol en tu token/usuario
+    console.log('Super Usuario actual:', user);
+    return user?.rol === 'ROLE_SUPER_ADMIN' || user?.role === 'ROLE_SUPER_ADMIN';
+  }
 }

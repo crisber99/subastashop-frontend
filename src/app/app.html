@@ -9,6 +9,14 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center"> @if (authService.isLoggedIn()) {
 
+                @if (authService.isSuperAdmin()) {
+                <li class="nav-item me-2">
+                    <a class="btn btn-warning fw-bold text-dark border-dark" routerLink="/super-admin">
+                        👑 Super Admin
+                    </a>
+                </li>
+                }
+
                 @if (authService.isAdmin()) {
                 <li class="nav-item me-2">
                     <a class="btn btn-sm btn-outline-danger fw-bold" routerLink="/admin">

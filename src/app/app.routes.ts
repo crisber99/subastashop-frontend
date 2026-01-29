@@ -11,6 +11,7 @@ import { Register } from './components/register/register';
 import { EditarProducto } from './components/admin/editar-producto/editar-producto';
 import { Landing } from './pages/landing/landing';
 import { SuperAdminTiendas } from './pages/super-admin-tiendas/super-admin-tiendas';
+import { SuperAdminReportes } from './pages/super-admin-reportes/super-admin-reportes';
 
 export const routes: Routes = [
     // 1. LA RAÍZ: Ahora carga la Landing Page (Buscador de tiendas)
@@ -36,6 +37,7 @@ export const routes: Routes = [
         component: SuperAdminTiendas,
         canActivate: [authGuard] // Idealmente crear un superAdminGuard
     },
+    { path: 'super-admin/reportes', component: SuperAdminReportes, canActivate: [authGuard] },
 
     // Redirección por defecto
     { path: '**', redirectTo: '' }

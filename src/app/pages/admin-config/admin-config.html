@@ -1,0 +1,84 @@
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>⚙️ Configuración de Tienda</h2>
+        <a routerLink="/admin" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Panel
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    🔐 Datos de Identidad y Pagos
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="guardarCambios()">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">RUT Empresa o Personal</label>
+                            <input type="text" class="form-control" [(ngModel)]="config.rutEmpresa" name="rut" 
+                                   placeholder="Ej: 12.345.678-9">
+                            <div class="form-text">Necesario para validar tu identidad como vendedor.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Datos Bancarios para Transferencias</label>
+                            <textarea class="form-control" rows="5" [(ngModel)]="config.datosBancarios" name="banco"
+                                placeholder="Ej:&#10;Banco: Estado&#10;Tipo de Cuenta: RUT&#10;Nro: 12345678&#10;Titular: Juan Pérez&#10;Email: pagos@mitienda.com"></textarea>
+                            <div class="alert alert-warning mt-2 py-2 small">
+                                <i class="bi bi-info-circle"></i> Estos datos se mostrarán al ganador de la subasta para que te transfiera el dinero.
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">Verificación de Identidad (Confidencial)</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Foto Carnet (Frente)</label>
+                                <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event, 'anverso')">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Foto Carnet (Dorso)</label>
+                                <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event, 'reverso')">
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">Personalización Visual</h5>
+                        <div class="mb-3 d-flex align-items-center">
+                            <input type="color" class="form-control form-control-color me-2" 
+                                   [(ngModel)]="config.colorPrimario" name="color" title="Elige tu color">
+                            <label class="form-label mb-0">Color Principal de tu Tienda</label>
+                        </div>
+
+                        <hr>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100" [disabled]="loading">
+                            @if (loading) {
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Guardando...
+                            } @else {
+                                💾 Guardar Configuración
+                            }
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light border-0">
+                <div class="card-body">
+                    <h5>💡 ¿Por qué pedimos esto?</h5>
+                    <p class="text-muted small">
+                        Para mantener la seguridad de SubastaShop, necesitamos verificar que eres una persona real.
+                    </p>
+                    <ul class="small ps-3 text-muted">
+                        <li>El <strong>RUT</strong> y las <strong>Fotos</strong> son solo para uso interno de validación.</li>
+                        <li>Los <strong>Datos Bancarios</strong> son públicos para tus compradores ganadores.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

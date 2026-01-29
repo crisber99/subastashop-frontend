@@ -1,0 +1,60 @@
+<div class="container mt-4">
+    <h2 class="text-danger mb-4">🚨 Moderación de Contenido</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Reportes Pendientes</h5>
+            
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Producto</th>
+                            <th>Motivo Denuncia</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (rep of reportes; track rep.id) {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img [src]="rep.producto.imagenUrl" width="40" height="40" class="rounded me-2">
+                                    <div>
+                                        <strong>{{ rep.producto.nombre }}</strong><br>
+                                        <small class="text-muted">{{ rep.producto.tienda?.nombre }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-danger fw-bold">{{ rep.motivo }}</td>
+                            <td>{{ rep.fechaReporte | date:'short' }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a [routerLink]="['/producto', rep.producto.id]" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                        👁️ Ver
+                                    </a>
+                                    
+                                    <button class="btn btn-success btn-sm" (click)="tomarAccion(rep.id, 'DESCARTAR')">
+                                        ✅ OK
+                                    </button>
+
+                                    <button class="btn btn-warning btn-sm" (click)="tomarAccion(rep.id, 'OCULTAR')">
+                                        🔒 Ocultar
+                                    </button>
+
+                                    <button class="btn btn-danger btn-sm" (click)="tomarAccion(rep.id, 'ELIMINAR')">
+                                        🗑️ Borrar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        } @empty {
+                            <tr><td colspan="4" class="text-center p-4">🎉 No hay reportes pendientes. Todo limpio.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

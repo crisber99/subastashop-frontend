@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
 import { Websocket } from '../../services/websocket';
+import { SuperAdminService } from '../../services/super-admin';
 
 @Component({
   selector: 'app-product-detail',
@@ -16,6 +17,7 @@ import { Websocket } from '../../services/websocket';
 export class ProductDetail implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
+  private superAdminService = inject(SuperAdminService);
   websocketService = inject(Websocket);
   authService = inject(AuthService);
 
@@ -241,6 +243,24 @@ export class ProductDetail implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  reportarProducto() {
+    if (!this.producto) return; // Validación extra por seguridad
+
+    // Usamos el prompt nativo del navegador (simple y efectivo)
+    const motivo = prompt("¿Por qué quieres reportar este producto? (Ej: Fraude, Ilegal)");
+
+    if (motivo) {
+      // Llamamos al servicio en lugar de usar http directo
+      this.superAdminService.reportarProducto(this.producto.id, motivo).subscribe({
+        next: () => alert("✅ Gracias. Hemos recibido tu reporte y lo revisaremos."),
+        error: (err) => {
+          console.error(err);
+          alert("❌ Error al enviar el reporte. Intenta nuevamente.");
+        }
+      });
+    }
   }
 
   ngOnDestroy() {

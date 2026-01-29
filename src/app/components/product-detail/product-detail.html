@@ -19,6 +19,12 @@
         alt="{{ producto.nombre }}" style="max-height: 400px;">
     </div>
 
+    <div class="mt-4 border-top pt-3 text-center">
+      <button class="btn btn-link text-danger text-decoration-none btn-sm" (click)="reportarProducto()">
+        <i class="bi bi-flag-fill"></i> Reportar publicación sospechosa
+      </button>
+    </div>
+
     <div class="col-md-6">
       <h2 class="fw-bold">{{ producto.nombre }}</h2>
       <p class="text-muted">{{ producto.descripcion }}</p>

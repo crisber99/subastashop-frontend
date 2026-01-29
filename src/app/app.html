@@ -8,57 +8,59 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                
+
                 @if (authService.isLoggedIn()) {
 
-                    @if (authService.isSuperAdmin()) {
-                    <li class="nav-item dropdown ms-2">
-                        <a class="nav-link dropdown-toggle btn btn-warning text-dark fw-bold px-3 rounded shadow-sm" 
-                           href="#" 
-                           role="button" 
-                           data-bs-toggle="dropdown"
-                           style="color: #000 !important;"> 👑 Super Admin
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" routerLink="/super-admin">Gestionar Tiendas</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger fw-bold" routerLink="/super-admin/reportes">🚨 Ver Denuncias</a></li>
-                        </ul>
-                    </li>
-                    }
+                @if (authService.isSuperAdmin()) {
+                <li class="nav-item dropdown ms-2">
+                    <a class="nav-link dropdown-toggle btn btn-warning text-dark fw-bold px-3 rounded shadow-sm"
+                        href="#" role="button" data-bs-toggle="dropdown"
+                        style="color: #000 !important; background-color: #ffc107 !important; border-color: #ffc107 !important;">
+                        👑 Super Admin
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" routerLink="/super-admin">Gestionar Tiendas</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger fw-bold" routerLink="/super-admin/reportes">🚨 Ver
+                                Denuncias</a></li>
+                    </ul>
+                </li>
+                }
 
-                    @if (authService.isAdmin()) {
-                    <li class="nav-item ms-2">
-                        <a class="btn btn-sm btn-outline-light fw-bold" routerLink="/admin">
-                            📊 Mi Tienda
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-warning" routerLink="/admin/crear">Publicar Item ➕</a>
-                    </li>
-                    }
+                @if (authService.isAdmin()) {
+                <li class="nav-item ms-2">
+                    <a class="btn btn-sm btn-outline-light fw-bold" routerLink="/admin">
+                        📊 Mi Tienda
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-warning" routerLink="/admin/crear">Publicar Item ➕</a>
+                </li>
+                }
 
-                    <li class="nav-item">
-                        <a class="nav-link" routerLink="/mi-cuenta" routerLinkActive="active">
-                            Mi Cuenta 📋
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/mi-cuenta" routerLinkActive="active">
+                        Mi Cuenta 📋
+                    </a>
+                </li>
 
-                    <li class="nav-item ms-2">
-                        <span class="nav-link text-white border border-secondary rounded px-2">
-                            Hola, <strong>{{ authService.currentUser()?.nombre || 'Usuario' }}</strong>
-                        </span>
-                    </li>
+                <li class="nav-item ms-2">
+                    <span class="nav-link text-white border border-secondary rounded px-2">
+                        Hola, <strong>{{ authService.currentUser()?.nombre || 'Usuario' }}</strong>
+                    </span>
+                </li>
 
-                    <li class="nav-item ms-2">
-                        <button class="btn btn-danger btn-sm" (click)="authService.logout()">Salir</button>
-                    </li>
+                <li class="nav-item ms-2">
+                    <button class="btn btn-danger btn-sm" (click)="authService.logout()">Salir</button>
+                </li>
                 }
 
                 @else {
-                    <li class="nav-item">
-                        <a class="btn btn-primary btn-sm mt-1" routerLink="/login">Iniciar Sesión</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="btn btn-primary btn-sm mt-1" routerLink="/login">Iniciar Sesión</a>
+                </li>
                 }
 
             </ul>

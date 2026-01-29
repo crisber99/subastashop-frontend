@@ -10,8 +10,9 @@
             <ul class="navbar-nav ms-auto align-items-center"> @if (authService.isLoggedIn()) {
 
                 @if (authService.isSuperAdmin()) {
-                <li class="nav-item me-2">
-                    <a class="btn btn-warning fw-bold text-dark border-dark" routerLink="/super-admin">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle btn btn-warning text-dark fw-bold mx-2" href="#" role="button"
+                        data-bs-toggle="dropdown">
                         👑 Super Admin
                     </a>
                     <ul class="dropdown-menu">

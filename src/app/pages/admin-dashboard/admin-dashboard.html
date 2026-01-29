@@ -1,42 +1,41 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>👑 Panel de Control</h1>
-
-    <a routerLink="/super-admin/reportes" class="btn btn-danger">
-      <i class="bi bi-shield-exclamation"></i> Ver Denuncias
+    <h1>📊 Panel de Control de Tienda</h1>
+    <a routerLink="/admin/crear" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Nuevo Producto
     </a>
   </div>
 
   <div class="row mb-4">
     <div class="col-md-3">
-      <div class="card text-white bg-primary mb-3">
+      <div class="card text-white bg-primary mb-3 shadow-sm">
         <div class="card-body">
           <h5 class="card-title">Usuarios</h5>
-          <p class="card-text display-6">{{ stats.totalUsuarios }}</p>
+          <p class="card-text display-6 fw-bold">{{ stats.totalUsuarios }}</p>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card text-white bg-success mb-3">
+      <div class="card text-white bg-success mb-3 shadow-sm">
         <div class="card-body">
           <h5 class="card-title">Ventas</h5>
-          <p class="card-text display-6">{{ stats.ventasCerradas }}</p>
+          <p class="card-text display-6 fw-bold">{{ stats.ventasCerradas }}</p>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card text-white bg-warning mb-3">
+      <div class="card text-white bg-warning mb-3 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title">En Subasta</h5>
-          <p class="card-text display-6">{{ stats.subastasActivas }}</p>
+          <h5 class="card-title text-dark">En Subasta</h5>
+          <p class="card-text display-6 fw-bold text-dark">{{ stats.subastasActivas }}</p>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card text-white bg-dark mb-3">
+      <div class="card text-white bg-dark mb-3 shadow-sm">
         <div class="card-body">
           <h5 class="card-title">Ingresos ($)</h5>
-          <p class="card-text display-6">${{ stats.gananciasTotales | number }}</p>
+          <p class="card-text display-6 fw-bold">${{ stats.gananciasTotales | number }}</p>
         </div>
       </div>
     </div>
@@ -44,8 +43,8 @@
 
   <div class="row">
     <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-header">Resumen de Inventario</div>
+      <div class="card shadow mb-4">
+        <div class="card-header bg-light fw-bold">Resumen de Inventario</div>
         <div class="card-body">
           <canvas baseChart [data]="pieChartData" [type]="'pie'" [options]="pieChartOptions" [legend]="pieChartLegend">
           </canvas>
@@ -54,12 +53,18 @@
     </div>
 
     <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-header">Acciones Rápidas</div>
-        <div class="card-body d-grid gap-2">
-          <button class="btn btn-outline-danger">🚨 Detener todas las Subastas</button>
-          <button class="btn btn-outline-primary">📩 Enviar Email Masivo</button>
-          <button class="btn btn-outline-secondary">📂 Exportar Excel</button>
+      <div class="card shadow mb-4">
+        <div class="card-header bg-light fw-bold">Acciones Rápidas</div>
+        <div class="card-body d-grid gap-3">
+          <button class="btn btn-outline-danger text-start">
+            <i class="bi bi-stop-circle me-2"></i> Detener subastas activas
+          </button>
+          <button class="btn btn-outline-primary text-start">
+            <i class="bi bi-envelope me-2"></i> Enviar Email a Ganadores
+          </button>
+          <button class="btn btn-outline-secondary text-start">
+            <i class="bi bi-file-earmark-excel me-2"></i> Exportar Ventas (Excel)
+          </button>
         </div>
       </div>
     </div>

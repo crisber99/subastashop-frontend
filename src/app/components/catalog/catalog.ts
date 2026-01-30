@@ -49,19 +49,24 @@ export class CatalogComponent implements OnInit {
   }
 
   cargarPorTienda(slug: string) {
-    // 👇 2. USAMOS EL MÉTODO QUE TRAE DATOS DE TIENDA + PRODUCTOS
-    // (Asegúrate de que este método exista en tu ProductService, 
-    // si se llama 'getProductosPorTienda' pero devuelve el objeto completo, úsalo).
+    // 1. PRIMERA LLAMADA: Traemos la info de la tienda (Color, Nombre, Rut)
     this.productService.obtenerTiendaPorSlug(slug).subscribe({
       next: (data: any) => {
-        console.log("Datos tienda recibidos:", data);
-
-        // 👇 3. GUARDAMOS EL OBJETO COMPLETO
-        this.tienda = data; 
+        console.log("🏪 Datos Tienda (Identidad):", data);
         
-        // Asignamos el resto de variables
-        this.productos = data.productos || []; 
-        this.nombreTienda = data.nombre; // Usamos el nombre real de la BD
+        // Guardamos la identidad visual
+        this.tienda = data; 
+        this.nombreTienda = data.nombre;
+
+        // 2. SEGUNDA LLAMADA: Traemos los productos (Usando el endpoint específico de productos)
+        // Esto soluciona que la lista llegue vacía
+        this.productService.getProductosPorTienda(slug).subscribe({
+            next: (prods: any[]) => {
+                console.log("📦 Productos recibidos:", prods);
+                this.productos = prods; // ¡Aquí sí llegarán los productos!
+            },
+            error: (err) => console.error("Error cargando productos:", err)
+        });
       },
       error: (err) => {
         console.error('Error cargando tienda:', err);

@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth-service';
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterModule], // Importante para pipes como currency si los usas
+  imports: [CommonModule, RouterModule],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss'
 })
@@ -17,21 +17,25 @@ export class CatalogComponent implements OnInit {
 
   public authService = inject(AuthService);
 
+  // ==========================================
+  // 👇 1. AQUÍ DEFINIMOS LA VARIABLE FALTANTE
+  // ==========================================
+  tienda: any = null; // Necesario para que el HTML lea 'tienda.colorPrimario'
+  
   productos: any[] = [];
   nombreTienda: string = '';
 
   ngOnInit() {
-    // Nos suscribimos a los parámetros de la URL
     this.route.paramMap.subscribe(params => {
       const slug = params.get('slug');
 
       if (slug) {
-        // MODO TIENDA: Cargar productos específicos
-        this.nombreTienda = slug.replace(/-/g, ' ').toUpperCase();
+        // MODO TIENDA
         this.cargarPorTienda(slug);
       } else {
-        // MODO GLOBAL: Cargar todo (como lo tenías antes)
+        // MODO GLOBAL
         this.nombreTienda = 'Catálogo Global';
+        this.tienda = null; // Reseteamos tienda
         this.cargarTodos();
       }
     });
@@ -40,16 +44,29 @@ export class CatalogComponent implements OnInit {
   cargarTodos() {
     this.productService.getProductos().subscribe(data => {
       this.productos = data;
+      this.tienda = null; // No hay tienda específica
     });
   }
 
   cargarPorTienda(slug: string) {
-    // Usamos el método que ya tienes en tu ProductService
-    this.productService.getProductosPorTienda(slug).subscribe({
-      next: (data) => {
-        this.productos = data;
+    // 👇 2. USAMOS EL MÉTODO QUE TRAE DATOS DE TIENDA + PRODUCTOS
+    // (Asegúrate de que este método exista en tu ProductService, 
+    // si se llama 'getProductosPorTienda' pero devuelve el objeto completo, úsalo).
+    this.productService.obtenerTiendaPorSlug(slug).subscribe({
+      next: (data: any) => {
+        console.log("Datos tienda recibidos:", data);
+
+        // 👇 3. GUARDAMOS EL OBJETO COMPLETO
+        this.tienda = data; 
+        
+        // Asignamos el resto de variables
+        this.productos = data.productos || []; 
+        this.nombreTienda = data.nombre; // Usamos el nombre real de la BD
       },
-      error: (err) => console.error('Error cargando tienda:', err)
+      error: (err) => {
+        console.error('Error cargando tienda:', err);
+        this.nombreTienda = 'Tienda no encontrada';
+      }
     });
   }
 }

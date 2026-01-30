@@ -2,7 +2,7 @@
 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h2 class="fw-bold text-primary mb-0">
+      <h2 class="fw-bold mb-0" [style.color]="tienda?.colorPrimario || '#0d6efd'">
         🏪 {{ nombreTienda || 'Catálogo General' }}
       </h2>
       <p class="text-muted small mb-0" *ngIf="nombreTienda">Bienvenido a nuestra tienda oficial</p>
@@ -13,9 +13,7 @@
     </a>
   </div>
 
-  <hr class="mb-4">
-
-  <div class="row">
+  <hr class="mb-4" [style.border-color]="tienda?.colorPrimario"> <div class="row">
     @for (producto of productos; track producto.id) {
     <div class="col-md-4 mb-4 animate__animated animate__fadeIn">
       <div class="card h-100 shadow-sm border-0 hover-effect">
@@ -64,7 +62,10 @@
             {{ producto.descripcion }}
           </p>
 
-          <a [routerLink]="['/producto', producto.id]" class="btn btn-primary w-100 mb-2 rounded-pill fw-bold">
+          <a [routerLink]="['/producto', producto.id]" 
+             class="btn w-100 mb-2 rounded-pill fw-bold text-white"
+             [style.background-color]="tienda?.colorPrimario || '#0d6efd'"
+             [style.border-color]="tienda?.colorPrimario || '#0d6efd'">
             Ver Detalle
           </a>
 
@@ -90,7 +91,8 @@
     @empty {
     <div class="col-12 text-center py-5">
       <div class="text-muted mb-3">
-        <i class="bi bi-box-seam fs-1" style="font-size: 4rem;"></i>
+        <i class="bi bi-box-seam fs-1" style="font-size: 4rem;" 
+           [style.color]="tienda?.colorPrimario || '#6c757d'"></i>
       </div>
       <h3>Esta tienda aún no tiene productos.</h3>
       <p>Vuelve más tarde o revisa otras tiendas.</p>

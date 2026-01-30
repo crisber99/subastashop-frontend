@@ -18,6 +18,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private superAdminService = inject(SuperAdminService);
+  
   websocketService = inject(Websocket);
   authService = inject(AuthService);
 
@@ -32,6 +33,11 @@ export class ProductDetail implements OnInit, OnDestroy {
   ticketsDetalle: any[] = [];
 
   ganadores: any[] = [];
+  
+  // Variables de Tienda (Nuevas para arreglar el error del HTML)
+  productos: any[] = []; // Aunque en detalle usualmente vemos 1, dejamos esto por compatibilidad
+  nombreTienda: string = '';
+  tienda: any = null; // 👈 Variable necesaria para el color de la tienda
 
   // Estado visual
   subastaFinalizada: boolean = false;
@@ -61,7 +67,6 @@ export class ProductDetail implements OnInit, OnDestroy {
         }
 
         // 👇 OPCIÓN B: ¡SORTEO FINALIZADO! 🏆 (NUEVO)
-        // Esto se ejecuta en TODOS los usuarios conectados
         else if (mensaje.tipo === 'SORTEO_FINALIZADO') {
           console.log("🏆 Ganadores recibidos:", mensaje.ganadores);
 
@@ -246,13 +251,11 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   reportarProducto() {
-    if (!this.producto) return; // Validación extra por seguridad
+    if (!this.producto) return; 
 
-    // Usamos el prompt nativo del navegador (simple y efectivo)
     const motivo = prompt("¿Por qué quieres reportar este producto? (Ej: Fraude, Ilegal)");
 
     if (motivo) {
-      // Llamamos al servicio en lugar de usar http directo
       this.superAdminService.reportarProducto(this.producto.id, motivo).subscribe({
         next: () => alert("✅ Gracias. Hemos recibido tu reporte y lo revisaremos."),
         error: (err) => {

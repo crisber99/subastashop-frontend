@@ -190,10 +190,15 @@
 
       </div>
 
-      <div *ngIf="producto.tipoVenta === 'DIRECTA'" class="p-4 bg-light rounded border">
-        <span class="badge bg-success mb-2">Venta Directa</span>
-        <h3 class="fw-bold text-success">${{ producto.precioBase | number }}</h3>
-        <button class="btn btn-success w-100 mt-3 btn-lg">Comprar Ahora</button>
+      @if (producto.tipoVenta === 'DIRECTA') {
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalPago">
+          Comprar por ${{ producto.precioBase | number }}
+        </button>
+      </div>
+      }
+
+      <div class="modal fade" id="modalPago" tabindex="-1">
       </div>
 
       <div *ngIf="mensaje" class="alert mt-3" [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">

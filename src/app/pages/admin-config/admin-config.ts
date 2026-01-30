@@ -2,11 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // 👈 Importante para ngModel
 import { TiendaService } from '../../services/tienda';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-admin-config',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './admin-config.html',
   styleUrl: './admin-config.scss',
 })

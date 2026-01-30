@@ -48,7 +48,7 @@
 
     <ul class="nav nav-pills mb-4 gap-2">
         <li class="nav-item">
-            <button class="nav-link" [class.active]="tabActual === 'carrito'" (click)="tabActual = 'carrito'">
+            <button class="nav-link" [class.active]="tabActual === 'carrito'" (click)="cambiarTab('carrito')">
                 🛒 Mi Carrito 
                 <span class="badge bg-danger rounded-pill" *ngIf="cartService.cantidadItems() > 0">
                     {{ cartService.cantidadItems() }}
@@ -56,12 +56,12 @@
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" [class.active]="tabActual === 'compras'" (click)="tabActual = 'compras'">
+            <button class="nav-link" [class.active]="tabActual === 'compras'" (click)="cambiarTab('compras')">
                 📦 Mis Pedidos / Compras
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" [class.active]="tabActual === 'pujas'" (click)="tabActual = 'pujas'">
+            <button class="nav-link" [class.active]="tabActual === 'pujas'" (click)="cambiarTab('pujas')">
                 🔨 Mis Pujas
             </button>
         </li>

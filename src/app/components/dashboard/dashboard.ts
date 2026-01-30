@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth-service';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  
+
   // Inyecciones
   private productService = inject(ProductService);
   private ordenService = inject(OrdenService);
@@ -25,7 +25,7 @@ export class Dashboard implements OnInit {
   // Datos
   pujas: any[] = [];
   ordenes: any[] = [];
-  
+
   // Pestaña activa por defecto
   tabActual: string = 'carrito'; // Empezamos en carrito si hay cosas, o 'pujas'
 
@@ -41,7 +41,11 @@ export class Dashboard implements OnInit {
 
   ngOnInit() {
     this.cargarDatos();
-    
+
+    if (this.cartService.items().length > 0) {
+        this.verificarDisponibilidadCarrito();
+    }
+
     // Si el carrito tiene items, mostramos esa tab primero
     if (this.cartService.cantidadItems() > 0) {
       this.tabActual = 'carrito';
@@ -87,7 +91,7 @@ export class Dashboard implements OnInit {
     const detallesBackend = this.cartService.items().map(item => ({
       productoId: item.producto.id,
       cantidad: item.cantidad,
-      tipoCompra: item.tipo, 
+      tipoCompra: item.tipo,
       datosExtra: item.extra ? String(item.extra) : null
     }));
 
@@ -97,7 +101,7 @@ export class Dashboard implements OnInit {
       next: (orden) => {
         this.loading = false;
         alert('✅ ¡Orden creada exitosamente!');
-        
+
         this.cartService.limpiarCarrito(); // Vaciamos carrito
         this.cargarDatos();                // Recargamos la lista de compras
         this.tabActual = 'compras';        // Movemos al usuario a la pestaña de compras
@@ -107,5 +111,40 @@ export class Dashboard implements OnInit {
         alert('❌ Error al procesar: ' + (err.error || 'Intente nuevamente'));
       }
     });
+  }
+
+  // Agregar al ngOnInit o al cambiar a tab 'carrito'
+  verificarDisponibilidadCarrito() {
+    console.log("🕵️ Verificando disponibilidad de productos...");
+    
+    const items = this.cartService.items();
+
+    items.forEach(item => {
+        // Solo nos preocupa el stock en VENTA DIRECTA (Subastas y Rifas tienen otra lógica)
+        if (item.tipo === 'DIRECTA') {
+            
+            this.productService.getProductoById(item.producto.id).subscribe({
+                next: (prodActualizado) => {
+                    // Si el estado en BD ya no es DISPONIBLE
+                    if (prodActualizado.estado !== 'DISPONIBLE') {
+                        
+                        // A. Avisamos al usuario
+                        alert(`⚠️ El producto "${prodActualizado.nombre}" se acaba de vender a otro usuario. Lo eliminaremos de tu carrito.`);
+                        
+                        // B. Lo sacamos del carrito localmente
+                        this.cartService.eliminarItemPorId(prodActualizado.id);
+                    }
+                },
+                error: (err) => console.error("Error verificando stock", err)
+            });
+        }
+    });
+  }
+
+  cambiarTab(tab: string) {
+      this.tabActual = tab;
+      if (tab === 'carrito') {
+          this.verificarDisponibilidadCarrito();
+      }
   }
 }

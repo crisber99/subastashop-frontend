@@ -50,6 +50,10 @@ export class CartService {
     this.items.update(lista => lista.filter((_, i) => i !== index));
   }
 
+  eliminarItemPorId(productoId: number) {
+    this.items.update(lista => lista.filter(item => item.producto.id !== productoId));
+  }
+
   limpiarCarrito() {
     this.items.set([]);
   }

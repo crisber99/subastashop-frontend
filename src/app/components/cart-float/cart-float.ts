@@ -15,8 +15,8 @@ declare var bootstrap: any;
 })
 export class CartFloat {
 
-// 👈 ARREGLA EL ERROR 'Property cartService does not exist'
-  public cartService = inject(CartService); 
+  // 👈 ARREGLA EL ERROR 'Property cartService does not exist'
+  public cartService = inject(CartService);
   private ordenService = inject(OrdenService);
   private router = inject(Router);
 
@@ -43,7 +43,7 @@ export class CartFloat {
     this.ordenService.crearOrden(request).subscribe({
       next: (ordenCreada: any) => {
         this.loading = false;
-        
+
         // 1. Cerrar Modal
         const modalEl = document.getElementById('modalCarrito');
         const modal = bootstrap.Modal.getInstance(modalEl);
@@ -59,7 +59,23 @@ export class CartFloat {
       error: (err) => {
         this.loading = false;
         console.error(err);
-        alert('❌ Error al crear la orden: ' + (err.error || 'Intente nuevamente'));
+        const mensajeError = err.error || 'Error desconocido';
+
+        if (mensajeError.includes('ya no está disponible')) {
+          alert('⚠️ ¡Ups! Alguien fue más rápido.\n\n' + mensajeError);
+
+          // 🔥 SOLUCIÓN PRO: Limpiamos el carrito automáticamente
+          // O idealmente, solo borramos el item conflictivo, 
+          // pero para empezar, limpiar todo evita inconsistencias.
+          this.cartService.limpiarCarrito();
+
+          // Cerrar el modal para que no sigan intentando
+          const modalEl = document.getElementById('modalCarrito');
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          modal?.hide();
+        } else {
+          alert('❌ Error al procesar: ' + mensajeError);
+        }
       }
     });
   }

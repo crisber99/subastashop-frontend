@@ -14,11 +14,11 @@
                 </div>
                 <div class="card-body">
                     <form (ngSubmit)="guardarCambios()">
-                        
+
                         <div class="mb-3">
                             <label class="form-label fw-bold">RUT Empresa o Personal</label>
-                            <input type="text" class="form-control" [(ngModel)]="config.rutEmpresa" name="rut" 
-                                   placeholder="Ej: 12.345.678-9">
+                            <input type="text" class="form-control" [(ngModel)]="config.rutEmpresa" name="rut"
+                                placeholder="Ej: 12.345.678-9">
                             <div class="form-text">Necesario para validar tu identidad como vendedor.</div>
                         </div>
 
@@ -27,7 +27,8 @@
                             <textarea class="form-control" rows="5" [(ngModel)]="config.datosBancarios" name="banco"
                                 placeholder="Ej:&#10;Banco: Estado&#10;Tipo de Cuenta: RUT&#10;Nro: 12345678&#10;Titular: Juan Pérez&#10;Email: pagos@mitienda.com"></textarea>
                             <div class="alert alert-warning mt-2 py-2 small">
-                                <i class="bi bi-info-circle"></i> Estos datos se mostrarán al ganador de la subasta para que te transfiera el dinero.
+                                <i class="bi bi-info-circle"></i> Estos datos se mostrarán al ganador de la subasta para
+                                que te transfiera el dinero.
                             </div>
                         </div>
 
@@ -35,29 +36,47 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Foto Carnet (Frente)</label>
-                                <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event, 'anverso')">
+                                <input type="file" class="form-control" accept="image/*"
+                                    (change)="onFileSelected($event, 'anverso')">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Foto Carnet (Dorso)</label>
-                                <input type="file" class="form-control" accept="image/*" (change)="onFileSelected($event, 'reverso')">
+                                <input type="file" class="form-control" accept="image/*"
+                                    (change)="onFileSelected($event, 'reverso')">
                             </div>
                         </div>
 
                         <h5 class="mt-4 mb-3 border-bottom pb-2">Personalización Visual</h5>
                         <div class="mb-3 d-flex align-items-center">
-                            <input type="color" class="form-control form-control-color me-2" 
-                                   [(ngModel)]="config.colorPrimario" name="color" title="Elige tu color">
+                            <input type="color" class="form-control form-control-color me-2"
+                                [(ngModel)]="config.colorPrimario" name="color" title="Elige tu color">
                             <label class="form-label mb-0">Color Principal de tu Tienda</label>
                         </div>
 
-                        <hr>
+                        <hr class="my-4">
 
-                        <button type="submit" class="btn btn-success btn-lg w-100" [disabled]="loading">
-                            @if (loading) {
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                Guardando...
+                        <div class="alert alert-secondary border-0">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkLegal"
+                                    [(ngModel)]="aceptaTerminos" name="aceptaTerminos">
+                                <label class="form-check-label small" for="checkLegal">
+                                    Declaro que la información proporcionada es real y acepto los
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modalTerminos"
+                                        class="fw-bold text-decoration-underline">
+                                        Términos y Condiciones de Venta
+                                    </a>.
+                                    Entiendo que soy el único responsable por el cumplimiento de la entrega de los
+                                    productos.
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100"
+                            [disabled]="loading || !aceptaTerminos"> @if (loading) {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Guardando...
                             } @else {
-                                💾 Guardar Configuración
+                            💾 Guardar y Firmar
                             }
                         </button>
 
@@ -74,9 +93,48 @@
                         Para mantener la seguridad de SubastaShop, necesitamos verificar que eres una persona real.
                     </p>
                     <ul class="small ps-3 text-muted">
-                        <li>El <strong>RUT</strong> y las <strong>Fotos</strong> son solo para uso interno de validación.</li>
+                        <li>El <strong>RUT</strong> y las <strong>Fotos</strong> son solo para uso interno de
+                            validación.</li>
                         <li>Los <strong>Datos Bancarios</strong> son públicos para tus compradores ganadores.</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalTerminos" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">📜 Términos y Responsabilidad del Vendedor</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="p-3 bg-white border rounded">
+                        <h6 class="fw-bold">1. Veracidad de la Información</h6>
+                        <p class="small text-muted">El Vendedor declara que el RUT y los Datos Bancarios ingresados son
+                            fidedignos y corresponden a su persona o empresa titular.</p>
+
+                        <h6 class="fw-bold">2. Responsabilidad de Entrega</h6>
+                        <p class="small text-muted">SubastaShop actúa únicamente como intermediario tecnológico. El
+                            Vendedor asume la total responsabilidad legal y financiera de entregar el producto al
+                            comprador una vez recibido el pago.</p>
+
+                        <h6 class="fw-bold">3. Productos Prohibidos</h6>
+                        <p class="small text-muted">Queda estrictamente prohibida la venta de artículos ilegales,
+                            robados o que infrinjan derechos de autor. SubastaShop cooperará con las autoridades ante
+                            cualquier denuncia.</p>
+
+                        <h6 class="fw-bold">4. Liberación de Responsabilidad</h6>
+                        <p class="small text-muted">El Vendedor libera a SubastaShop de cualquier demanda, disputa o
+                            reclamo derivado de la calidad, entrega o garantía de los productos subastados.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal"
+                        (click)="aceptaTerminos = true">
+                        He leído y Acepto la Responsabilidad
+                    </button>
                 </div>
             </div>
         </div>

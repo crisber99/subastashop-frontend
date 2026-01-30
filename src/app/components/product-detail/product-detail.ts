@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
 import { Websocket } from '../../services/websocket';
 import { SuperAdminService } from '../../services/super-admin';
+import { CartService } from '../../services/cart';
 
 declare var bootstrap: any;
 
@@ -20,6 +21,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private superAdminService = inject(SuperAdminService);
+  cartService = inject(CartService);
   
   websocketService = inject(Websocket);
   authService = inject(AuthService);
@@ -158,6 +160,10 @@ export class ProductDetail implements OnInit, OnDestroy {
         this.esError = true;
       }
     });
+  }
+
+  agregarAlCarrito() {
+    this.cartService.agregarItem(this.producto, 'DIRECTA');
   }
 
   cargarTablaAdmin() {

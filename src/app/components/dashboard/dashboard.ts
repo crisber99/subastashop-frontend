@@ -1,7 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { OrdenService } from '../../services/orden';
+import { CartService } from '../../services/cart';   // 👈 Nuevo servicio
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,45 +14,98 @@ import { RouterModule } from '@angular/router';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
+  
+  // Inyecciones
   private productService = inject(ProductService);
+  private ordenService = inject(OrdenService);
+  public cartService = inject(CartService); // Public para usar signals en HTML
+  public authService = inject(AuthService);
+  private router = inject(Router);
 
+  // Datos
   pujas: any[] = [];
   ordenes: any[] = [];
-  tabActual: string = 'pujas'; // 'pujas' o 'compras'
+  
+  // Pestaña activa por defecto
+  tabActual: string = 'carrito'; // Empezamos en carrito si hay cosas, o 'pujas'
 
+  // Estadísticas Admin
   stats = {
-  usuarios: 0,
-  ventas: 0,
-  subastasActivas: 0,
-  ingresos: 0
-};
+    usuarios: 0,
+    ventas: 0,
+    subastasActivas: 0,
+    ingresos: 0
+  };
+
+  loading = false;
 
   ngOnInit() {
     this.cargarDatos();
+    
+    // Si el carrito tiene items, mostramos esa tab primero
+    if (this.cartService.cantidadItems() > 0) {
+      this.tabActual = 'carrito';
+    } else {
+      this.tabActual = 'compras';
+    }
   }
 
   cargarDatos() {
     // 1. CARGAR ESTADÍSTICAS (Solo si es Admin)
-    // Aquí conectamos con el endpoint que creaste
-    this.productService.getAdminStats().subscribe({
-      next: (data: any) => {
-        console.log('Datos del Dashboard:', data);
-        
-        // Mapeamos lo que llega del Backend a tu objeto local
-        this.stats = {
-          usuarios: data.totalUsuarios,       // Backend: totalUsuarios -> Frontend: usuarios
-          subastasActivas: data.subastasActivas,
-          ventas: data.ventasCerradas,        // Backend: ventasCerradas -> Frontend: ventas
-          ingresos: data.gananciasTotales     // Backend: gananciasTotales -> Frontend: ingresos
-        };
-      },
-      error: (err) => console.error('Error cargando stats:', err)
-    });
+    if (this.authService.isAdmin()) {
+      this.productService.getAdminStats().subscribe({
+        next: (data: any) => {
+          this.stats = {
+            usuarios: data.totalUsuarios,
+            subastasActivas: data.subastasActivas,
+            ventas: data.ventasCerradas,
+            ingresos: data.gananciasTotales
+          };
+        },
+        error: (err) => console.error('Error stats:', err)
+      });
+    }
 
-    // 2. CARGAR TABLAS (Pujas y Compras)
-    // Esto está bien, pero recuerda que "getMisPujas" trae las del usuario logueado.
-    // Si quieres ver TODAS las pujas del sistema (como Admin), necesitarías otro endpoint.
+    // 2. CARGAR MIS PUJAS (Historial)
+    // Asumimos que sigue en ProductService o muévelo a OrdenService si prefieres
     this.productService.getMisPujas().subscribe(data => this.pujas = data);
-    this.productService.getMisCompras().subscribe(data => this.ordenes = data);
+
+    // 3. CARGAR MIS COMPRAS (Órdenes creadas)
+    // Usamos el OrdenService que creamos recientemente
+    this.ordenService.getMisOrdenes().subscribe({
+      next: (data) => this.ordenes = data,
+      error: (err) => console.error('Error cargando órdenes', err)
+    });
+  }
+
+  // --- LÓGICA DEL CARRITO DESDE EL DASHBOARD ---
+  procesarCompraCarrito() {
+    if (this.cartService.cantidadItems() === 0) return;
+    this.loading = true;
+
+    // Convertimos carrito a formato Backend
+    const detallesBackend = this.cartService.items().map(item => ({
+      productoId: item.producto.id,
+      cantidad: item.cantidad,
+      tipoCompra: item.tipo, 
+      datosExtra: item.extra ? String(item.extra) : null
+    }));
+
+    const request = { detalles: detallesBackend };
+
+    this.ordenService.crearOrden(request).subscribe({
+      next: (orden) => {
+        this.loading = false;
+        alert('✅ ¡Orden creada exitosamente!');
+        
+        this.cartService.limpiarCarrito(); // Vaciamos carrito
+        this.cargarDatos();                // Recargamos la lista de compras
+        this.tabActual = 'compras';        // Movemos al usuario a la pestaña de compras
+      },
+      error: (err) => {
+        this.loading = false;
+        alert('❌ Error al procesar: ' + (err.error || 'Intente nuevamente'));
+      }
+    });
   }
 }

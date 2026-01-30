@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './admin-config.scss',
 })
 export class AdminConfig implements OnInit {
-  
+
   private tiendaService = inject(TiendaService);
 
   // Modelo de datos del formulario
@@ -25,10 +25,12 @@ export class AdminConfig implements OnInit {
   // Variables para las fotos
   fileAnverso: File | null = null;
   fileReverso: File | null = null;
-  
+
   // Variables de estado (para mostrar spinners o mensajes)
   loading = false;
   mensaje = '';
+
+  aceptaTerminos: boolean = false;
 
   ngOnInit() {
     this.cargarDatosActuales();
@@ -41,6 +43,10 @@ export class AdminConfig implements OnInit {
         this.config.rutEmpresa = data.rutEmpresa || '';
         this.config.datosBancarios = data.datosBancarios || '';
         this.config.colorPrimario = data.colorPrimario || '#0d6efd';
+
+        if (data.fechaAceptacionTerminos) {
+          this.aceptaTerminos = true;
+        }
       },
       error: (err) => console.error('Error cargando tienda', err)
     });
@@ -64,6 +70,7 @@ export class AdminConfig implements OnInit {
     formData.append('rutEmpresa', this.config.rutEmpresa);
     formData.append('datosBancarios', this.config.datosBancarios);
     formData.append('colorPrimario', this.config.colorPrimario);
+    formData.append('aceptaTerminos', this.aceptaTerminos.toString());
 
     if (this.fileAnverso) formData.append('fotoAnverso', this.fileAnverso);
     if (this.fileReverso) formData.append('fotoReverso', this.fileReverso);

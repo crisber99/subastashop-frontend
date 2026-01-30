@@ -102,6 +102,10 @@ export class ProductDetail implements OnInit, OnDestroy {
       next: (data) => {
         this.producto = data; // ✅ AQUÍ ya tenemos datos
 
+        if (data.tienda) {
+            this.tienda = data.tienda; // Aquí guardamos los datos bancarios que vienen de Java
+        }
+
         // 1. INICIALIZAR RIFA (Solo si es rifa)
         if (this.producto.tipoVenta === 'RIFA') {
           this.generarNumeros(this.producto.cantidadNumeros);

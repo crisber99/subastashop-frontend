@@ -7,6 +7,8 @@ import { AuthService } from '../../services/auth-service';
 import { Websocket } from '../../services/websocket';
 import { SuperAdminService } from '../../services/super-admin';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-product-detail',
   standalone: true,
@@ -21,6 +23,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   
   websocketService = inject(Websocket);
   authService = inject(AuthService);
+  
 
   producto: any = null;
   montoOferta: number = 0;
@@ -263,6 +266,16 @@ export class ProductDetail implements OnInit, OnDestroy {
           alert("❌ Error al enviar el reporte. Intenta nuevamente.");
         }
       });
+    }
+  }
+
+  abrirModalPago() {
+    const modalElement = document.getElementById('modalPago');
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    } else {
+      console.error('El modal no se encuentra en el HTML');
     }
   }
 

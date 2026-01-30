@@ -3,6 +3,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { CartService } from './cart';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private cartService = inject(CartService);
 
   // URL de tu Backend en Azure
   private apiUrl = `${environment.apiUrl}/auth`;
@@ -53,6 +55,7 @@ export class AuthService {
     // 1. Borrar de disco
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+    this.cartService.limpiarCarrito();
 
     // 2. Borrar de memoria (Señales)
     this.currentUser.set(null);

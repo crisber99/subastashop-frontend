@@ -20,6 +20,13 @@ export class CartService {
   cantidadItems = computed(() => this.items().length);
 
   agregarItem(producto: any, tipo: 'DIRECTA' | 'SUBASTA' | 'RIFA', cantidad: number = 1, extra: any = null) {
+    const yaExiste = this.items().some(item => item.producto.id === producto.id);
+
+    if (yaExiste) {
+      alert('⚠️ Este producto es único y ya está en tu carrito.');
+      return;
+    }
+
     const precio = tipo === 'SUBASTA' ? producto.precioActual :
       tipo === 'RIFA' ? producto.precioTicket :
         producto.precioBase;
@@ -45,5 +52,9 @@ export class CartService {
 
   limpiarCarrito() {
     this.items.set([]);
+  }
+
+  estaEnCarrito(productoId: number): boolean {
+    return this.items().some(item => item.producto.id === productoId);
   }
 }

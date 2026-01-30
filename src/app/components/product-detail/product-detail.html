@@ -126,16 +126,35 @@
 
       @if (producto.tipoVenta === 'DIRECTA' || !producto.tipoVenta) {
       <div class="card bg-light border-0 shadow-sm mb-4">
-        <div class="card-body text-center">
-          <h2 class="display-6 fw-bold text-success mb-3">
+        <div class="card-body">
+          <h2 class="display-6 fw-bold text-success mb-3 text-center">
             ${{ producto.precioBase | number }}
           </h2>
-          <button class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" (click)="abrirModalPago()">
-            Comprar Ahora
-          </button>
-          <button class="btn btn-outline-primary btn-lg w-100 fw-bold shadow-sm" (click)="agregarAlCarrito()">
-            <i class="bi bi-cart-plus"></i> Agregar al Carrito
-          </button>
+
+          <div class="d-grid gap-3"> <button class="btn btn-primary btn-lg fw-bold shadow-sm" (click)="abrirModalPago()"
+              [disabled]="cartService.estaEnCarrito(producto.id)">
+              @if (cartService.estaEnCarrito(producto.id)) {
+              <i class="bi bi-cart-check"></i> Ya está en tu carrito
+              } @else {
+              ⚡ Comprar Ahora
+              }
+            </button>
+
+            <button class="btn btn-outline-primary btn-lg fw-bold" (click)="agregarAlCarrito()"
+              [disabled]="cartService.estaEnCarrito(producto.id)">
+              <i class="bi bi-cart-plus"></i> Agregar al Carrito
+            </button>
+
+          </div>
+
+          @if (cartService.estaEnCarrito(producto.id)) {
+          <div class="text-center mt-2">
+            <small class="text-muted">
+              Este producto ya está reservado en tu <a routerLink="/dashboard" class="fw-bold">carrito</a>.
+            </small>
+          </div>
+          }
+
         </div>
       </div>
       }

@@ -1,47 +1,59 @@
 <nav id="sidebar" class="sidebar" [class.toggled]="layoutService.sidebarOpen()">
-    <div class="sidebar-content js-simplebar">
-        <a class="sidebar-brand" href="/dashboard">
-            <span class="align-middle">SubastaShop 🚀</span>
+    <div class="sidebar-brand">
+        <a routerLink="/" class="text-white text-decoration-none fw-bold fs-4">
+            SubastaShop 🚀
         </a>
+    </div>
 
+    <div class="sidebar-content">
         <ul class="sidebar-nav">
-            <li class="sidebar-header">
-                Principal
-            </li>
 
-            <li class="sidebar-item active">
-                <a class="sidebar-link" href="/dashboard">
-                    <i class="bi bi-speedometer2"></i> <span class="align-middle">Dashboard</span>
-                </a>
-            </li>
+            <ng-container *ngIf="isComprador">
+                <li class="sidebar-header">Principal</li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" routerLink="/mi-cuenta" routerLinkActive="active">
+                        <i class="bi bi-person-badge"></i> <span class="align-middle">Mi Perfil</span>
+                    </a>
+                </li>
+            </ng-container>
 
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="/mis-compras">
-                    <i class="bi bi-bag-check"></i> <span class="align-middle">Mis Pedidos</span>
-                </a>
-            </li>
+            <ng-container *ngIf="isAdmin">
+                <li class="sidebar-item">
+                    <a class="sidebar-link" routerLink="/admin/configuracion" routerLinkActive="active">
+                        <i class="bi bi-gear"></i> <span class="align-middle">Config. Transferencias</span>
+                    </a>
+                </li>
+            </ng-container>
 
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="/mis-pujas">
-                    <i class="bi bi-hammer"></i> <span class="align-middle">Mis Pujas</span>
-                </a>
-            </li>
+            <ng-container *ngIf="isAdmin || isSuperAdmin">
+                <li class="sidebar-header">Gestión</li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" routerLink="/admin" routerLinkActive="active">
+                        <i class="bi bi-person-badge"></i> <span class="align-middle">Panel de Administración</span>
+                    </a>
+                </li>
 
-            <li class="sidebar-header">
-                Administración
-            </li>
+            </ng-container>
 
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="/super-admin/usuarios">
-                    <i class="bi bi-people"></i> <span class="align-middle">Usuarios</span>
-                </a>
-            </li>
+            <ng-container *ngIf="isSuperAdmin">
+                <li class="sidebar-header">Súper Admin</li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" routerLink="/super-admin/usuarios" routerLinkActive="active">
+                        <i class="bi bi-people"></i> <span class="align-middle">Usuarios del Sistema</span>
+                    </a>
+                </li>
+            </ng-container>
 
-            <li class="sidebar-item mt-4">
-                <a class="sidebar-link logout-link" (click)="authService.logout()">
+            <li class="sidebar-item mt-5">
+                <a class="sidebar-link text-danger" (click)="authService.logout()" style="cursor: pointer;">
                     <i class="bi bi-box-arrow-left"></i> <span class="align-middle">Cerrar Sesión</span>
                 </a>
             </li>
         </ul>
     </div>
 </nav>
+
+<div class="sidebar-backdrop d-lg-none" *ngIf="layoutService.sidebarOpen()" (click)="layoutService.toggleSidebar()"
+    (keydown)="layoutService.toggleSidebar()" tabindex="0"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;">
+</div>

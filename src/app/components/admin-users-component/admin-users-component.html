@@ -1,5 +1,5 @@
 <div class="container-fluid p-4 fade-in">
-    
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-0">Gestión de Usuarios</h2>
@@ -36,8 +36,8 @@
                     <tr *ngFor="let user of usuarios">
                         <td class="ps-4 py-3">
                             <div class="d-flex align-items-center">
-                                <div class="avatar-initials bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                     style="width: 40px; height: 40px; font-weight: bold;">
+                                <div class="avatar-initials bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                    style="width: 40px; height: 40px; font-weight: bold;">
                                     {{ user.nombreCompleto?.charAt(0) || 'U' }}
                                 </div>
                                 <div>
@@ -56,25 +56,19 @@
 
                         <td class="text-center">
                             <div class="btn-group shadow-sm" role="group" *ngIf="user.rol !== 'ROLE_SUPER_ADMIN'">
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-secondary" 
-                                        [class.active]="user.rol === 'ROLE_COMPRADOR'"
-                                        (click)="cambiarRol(user, 'ROLE_COMPRADOR')"
-                                        title="Degradar a Comprador">
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    [class.active]="user.rol === 'ROLE_COMPRADOR'"
+                                    (click)="cambiarRol(user, 'ROLE_COMPRADOR')" title="Degradar a Comprador">
                                     👤
                                 </button>
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-success" 
-                                        [class.active]="user.rol === 'ROLE_VENDEDOR'"
-                                        (click)="cambiarRol(user, 'ROLE_VENDEDOR')"
-                                        title="Ascender a Vendedor">
+                                <button type="button" class="btn btn-sm btn-outline-success"
+                                    [class.active]="user.rol === 'ROLE_VENDEDOR'"
+                                    (click)="cambiarRol(user, 'ROLE_VENDEDOR')" title="Ascender a Vendedor">
                                     💼
                                 </button>
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-danger" 
-                                        [class.active]="user.rol === 'ROLE_ADMIN'"
-                                        (click)="cambiarRol(user, 'ROLE_ADMIN')"
-                                        title="Hacer Administrador">
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                    [class.active]="user.rol === 'ROLE_ADMIN'" (click)="cambiarRol(user, 'ROLE_ADMIN')"
+                                    title="Hacer Administrador">
                                     👑
                                 </button>
                             </div>
@@ -84,18 +78,28 @@
                         </td>
 
                         <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-light text-danger border-0" 
-                                    *ngIf="user.rol !== 'ROLE_SUPER_ADMIN'"
-                                    (click)="eliminarUsuario(user)"
-                                    title="Eliminar usuario permanentemente">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            <div class="d-flex justify-content-end gap-2">
+
+                                <button
+                                    class="btn btn-outline-primary btn-sm rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                    style="width: 35px; height: 35px;" title="Editar Usuario"
+                                    (click)="editarUsuario(user)">
+                                    <i class="bi bi-pencil-fill"></i> </button>
+
+                                <button
+                                    class="btn btn-outline-danger btn-sm rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                    *ngIf="user.role !== 'ROLE_SUPER_ADMIN'" style="width: 35px; height: 35px;"
+                                    title="Eliminar Usuario" (click)="eliminarUsuario(user)">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+
+                            </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        
+
         <div *ngIf="usuarios.length === 0" class="text-center py-5">
             <p class="text-muted">No se encontraron usuarios.</p>
         </div>

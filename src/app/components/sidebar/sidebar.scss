@@ -1,23 +1,36 @@
-/* Variables de colores (puedes cambiarlas a tu gusto) */
+/* --- 1. VARIABLES --- */
 $sidebar-bg: #222e3c;
 $text-color: #e9ecef;
 $hover-bg: rgba(255, 255, 255, 0.08);
 $active-border: #3b7ddd;
+$danger-color: #ff6b6b;
 
+/* --- 2. CONFIGURACIÓN DEL COMPONENTE --- */
 :host {
   display: block;
+  position: relative;
+  z-index: 100; /* Asegura que esté por encima del contenido en móvil */
 }
 
+/* --- 3. CONTENEDOR PRINCIPAL DEL SIDEBAR --- */
 .sidebar {
   min-width: 260px;
   max-width: 260px;
   background: $sidebar-bg;
   color: $text-color;
+  
+  /* Altura y Scroll */
   min-height: 100vh;
-  transition: all 0.3s ease;
+  height: 100%;       /* Ocupa todo el alto */
+  overflow-y: auto;   /* 👈 ESTO ARREGLA QUE SE CORTE: Agrega scroll si es necesario */
+  
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.35s ease-in-out;
 }
 
-/* Marca / Logo */
+/* --- 4. MARCA / LOGO --- */
 .sidebar-brand {
   font-weight: bold;
   font-size: 1.5rem;
@@ -29,10 +42,15 @@ $active-border: #3b7ddd;
   text-align: center;
 }
 
-/* Contenedor de la navegación */
+/* --- 5. CONTENIDO INTERNO --- */
+.sidebar-content {
+  flex-grow: 1; /* Empuja el contenido para llenar espacio si sobra */
+}
+
+/* --- 6. LISTA DE NAVEGACIÓN --- */
 .sidebar-nav {
   padding: 0;
-  list-style: none; /* 👈 ESTO QUITA LOS PUNTITOS FEOS */
+  list-style: none; /* 👈 IMPORTANTE: Quita los puntos */
   margin-bottom: 0;
 }
 
@@ -44,14 +62,14 @@ $active-border: #3b7ddd;
   text-transform: uppercase;
 }
 
-/* Enlaces del menú */
+/* --- 7. ENLACES (ITEMS) --- */
 .sidebar-link {
   display: flex;
   align-items: center;
   padding: 0.8rem 1.5rem;
   color: rgba(233, 236, 239, 0.7);
   text-decoration: none;
-  border-left: 3px solid transparent; /* Borde invisible por defecto */
+  border-left: 3px solid transparent;
   transition: background 0.2s, color 0.2s, border-left 0.2s;
   cursor: pointer;
 
@@ -60,42 +78,46 @@ $active-border: #3b7ddd;
     font-size: 1.1rem;
   }
 
+  /* Hover */
   &:hover {
     background: $hover-bg;
     color: #fff;
-    border-left-color: $active-border; /* Borde azul al pasar el mouse */
+    border-left-color: $active-border;
   }
 }
 
-/* Clase para el ítem activo (cuando estás en esa página) */
-.sidebar-item.active .sidebar-link {
+/* Item Activo (Ruta actual) */
+.sidebar-link.active {
   color: #fff;
   background: linear-gradient(90deg, rgba(59, 125, 221, 0.1), transparent);
   border-left-color: $active-border;
 }
 
-/* Estilo especial para el botón Logout integrado */
+/* Botón Logout (Rojo) */
 .logout-link {
-  color: #ff6b6b !important; /* Rojo suave */
+  color: $danger-color !important;
   
   &:hover {
     background: rgba(255, 107, 107, 0.1);
-    border-left-color: #ff6b6b;
+    border-left-color: $danger-color;
   }
 }
 
-/* RESPONSIVIDAD */
-@media (max-width: 768px) {
+/* --- 8. RESPONSIVIDAD (MÓVIL / TABLET) --- */
+/* Usamos 992px para cubrir tablets y celulares */
+@media (max-width: 992px) {
   .sidebar {
-    margin-left: -260px; /* Oculto por defecto en móvil */
-    position: fixed; /* Flotante */
-    z-index: 1000;
+    margin-left: -260px; /* Oculto por defecto */
+    position: fixed;     /* Flotante */
+    top: 0;
+    left: 0;
+    z-index: 1000;       /* Muy arriba */
     height: 100vh;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5); /* Sombra para profundidad */
   }
 
-  /* Cuando la clase .toggled está activa (click en hamburguesa) */
+  /* Clase que agrega Angular cuando abres el menú */
   .sidebar.toggled {
-    margin-left: 0; /* Aparece */
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    margin-left: 0 !important; /* Aparece */
   }
 }

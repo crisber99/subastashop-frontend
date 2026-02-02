@@ -1,7 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Para @for, pipes, etc
-import { RouterModule } from '@angular/router'; // Para routerLink
+import { CommonModule } from '@angular/common'; 
+import { RouterModule } from '@angular/router'; 
 import { SuperAdminService } from '../../services/super-admin';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-super-admin-reportes',
   standalone: true,
@@ -11,7 +13,6 @@ import { SuperAdminService } from '../../services/super-admin';
 })
 export class SuperAdminReportes implements OnInit {
 
-  // 👇 Solución Error 3: Inyectamos el servicio, no el HttpClient directo
   private superAdminService = inject(SuperAdminService);
 
   reportes: any[] = [];
@@ -20,26 +21,33 @@ export class SuperAdminReportes implements OnInit {
     this.cargarReportes();
   }
 
-  // 👇 Solución Error 1: Creamos el método que faltaba
   cargarReportes() {
     this.superAdminService.getReportesPendientes().subscribe({
       next: (data) => {
         this.reportes = data;
-        console.log('Reportes cargados:', data);
       },
       error: (err) => console.error('Error al cargar reportes:', err)
     });
   }
 
   tomarAccion(reporteId: number, accion: string) {
-    if (!confirm(`¿Confirmas la acción: ${accion}?`)) return;
-
-    this.superAdminService.gestionarReporte(reporteId, accion).subscribe({
-      next: () => {
-        alert("Acción realizada correctamente ✅");
-        this.cargarReportes(); // Recargamos la tabla para que desaparezca el reporte
-      },
-      error: (err) => alert("Error al procesar la acción ❌")
+    Swal.fire({
+        title: `¿Acción: ${accion}?`,
+        text: 'Esta acción podría afectar al usuario o producto reportado.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, Ejecutar',
+        confirmButtonColor: accion === 'BLOQUEAR' ? '#d33' : '#3085d6'
+    }).then((result) => {
+        if(result.isConfirmed) {
+            this.superAdminService.gestionarReporte(reporteId, accion).subscribe({
+              next: () => {
+                Swal.fire('¡Listo!', 'La acción se realizó correctamente.', 'success');
+                this.cargarReportes(); 
+              },
+              error: (err) => Swal.fire('Error', 'No se pudo procesar la acción.', 'error')
+            });
+        }
     });
   }
 }

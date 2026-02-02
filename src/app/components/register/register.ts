@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -21,15 +22,28 @@ export class Register {
 
   onSubmit() {
     this.cargando = true;
+    
+    Swal.fire({
+        title: 'Creando cuenta...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
     this.authService.register(this.form).subscribe({
       next: () => {
-        alert('¡Registro exitoso! Ahora inicia sesión.');
-        this.router.navigate(['/login']);
+        Swal.fire({
+            icon: 'success',
+            title: '¡Cuenta Creada!',
+            text: 'Ahora puedes iniciar sesión con tus datos.',
+            confirmButtonText: 'Ir al Login'
+        }).then(() => {
+            this.router.navigate(['/login']);
+        });
       },
       error: (err) => {
         this.cargando = false;
-        // Manejo básico de errores del backend
-        this.mensajeError = err.error || 'Error al registrarse. Intenta nuevamente.';
+        this.mensajeError = err.error || 'Error al registrarse.';
+        Swal.fire('Error', this.mensajeError, 'error');
       }
     });
   }

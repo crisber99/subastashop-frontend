@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SuperAdminService } from '../../services/super-admin';
+import Swal from 'sweetalert2'; // 👈 Importamos SweetAlert
 
 @Component({
   selector: 'app-admin-users-component',
@@ -10,10 +11,10 @@ import { SuperAdminService } from '../../services/super-admin';
   styleUrl: './admin-users-component.scss',
 })
 export class AdminUsersComponent implements OnInit {
-  
+
   // Inyectamos el servicio que creamos antes
   private adminService = inject(SuperAdminService);
-  
+
   // Variables de estado
   usuarios: any[] = [];
   loading: boolean = true;
@@ -39,6 +40,14 @@ export class AdminUsersComponent implements OnInit {
         console.error('Error cargando usuarios:', err);
         this.error = 'No se pudieron cargar los usuarios. Verifica tu conexión o permisos.';
         this.loading = false;
+        
+        // Alerta de error al cargar
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de conexión',
+          text: 'No se pudieron cargar los usuarios. Intenta recargar la página.',
+          confirmButtonText: 'Entendido'
+        });
       }
     });
   }
@@ -50,20 +59,44 @@ export class AdminUsersComponent implements OnInit {
     // 1. Evitar acciones redundantes
     if (user.rol === nuevoRol) return;
 
-    // 2. Confirmación de seguridad
-    const confirmacion = confirm(`¿Estás seguro de cambiar a ${user.nombreCompleto || user.email} al rol de ${nuevoRol}?`);
-    if (!confirmacion) return;
-
-    // 3. Llamada al servicio
-    this.adminService.cambiarRol(user.id, nuevoRol).subscribe({
-      next: (response) => {
-        // Actualizamos la vista localmente para que se vea rápido
-        user.rol = nuevoRol;
-        alert(`✅ Rol actualizado correctamente a ${nuevoRol}`);
-      },
-      error: (err) => {
-        console.error(err);
-        alert('❌ Error al cambiar el rol. Revisa la consola.');
+    // 2. Confirmación de seguridad con SweetAlert
+    Swal.fire({
+      title: '¿Cambiar Rol?',
+      text: `¿Estás seguro de cambiar a ${user.nombreCompleto || user.email} al rol de ${nuevoRol}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cambiar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      
+      if (result.isConfirmed) {
+        // 3. Llamada al servicio
+        this.adminService.cambiarRol(user.id, nuevoRol).subscribe({
+          next: (response) => {
+            // Actualizamos la vista localmente
+            user.rol = nuevoRol;
+            
+            // Alerta de Éxito
+            Swal.fire({
+              icon: 'success',
+              title: '¡Rol Actualizado!',
+              text: `El usuario ahora es ${nuevoRol}`,
+              timer: 2000, // Se cierra solo a los 2 segundos
+              showConfirmButton: false
+            });
+          },
+          error: (err) => {
+            console.error(err);
+            // Alerta de Error
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo cambiar el rol. Revisa la consola o intenta más tarde.'
+            });
+          }
+        });
       }
     });
   }
@@ -72,27 +105,62 @@ export class AdminUsersComponent implements OnInit {
    * Elimina un usuario permanentemente
    */
   eliminarUsuario(user: any) {
-    // Seguridad: No permitir borrar al Super Admin (aunque el backend lo proteja)
+    // Seguridad: No permitir borrar al Super Admin
     if (user.rol === 'ROLE_SUPER_ADMIN') {
-      alert('⛔ No puedes eliminar al Super Admin.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Acción Prohibida',
+        text: '⛔ No puedes eliminar al Super Admin principal.'
+      });
       return;
     }
 
-    const confirmacion = confirm(`⚠️ ¡CUIDADO! \n\nEstás a punto de eliminar a: ${user.nombreCompleto}\nEsta acción NO se puede deshacer.\n\n¿Continuar?`);
-    
-    if (confirmacion) {
-      this.adminService.eliminarUsuario(user.id).subscribe({
-        next: () => {
-          // Filtramos la lista para quitar al usuario eliminado
-          this.usuarios = this.usuarios.filter(u => u.id !== user.id);
-          alert('🗑️ Usuario eliminado con éxito.');
-        },
-        error: (err) => {
-          console.error(err);
-          alert('❌ Error al eliminar el usuario.');
-        }
-      });
-    }
+    // Confirmación crítica con SweetAlert
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Vas a eliminar a ${user.nombreCompleto || user.email}. Esta acción NO se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33', // Rojo para peligro
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar usuario',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      
+      if (result.isConfirmed) {
+        // Llamada al servicio
+        this.adminService.eliminarUsuario(user.id).subscribe({
+          next: () => {
+            // Filtramos la lista para quitar al usuario eliminado
+            this.usuarios = this.usuarios.filter(u => u.id !== user.id);
+            
+            Swal.fire(
+              '¡Eliminado!',
+              'El usuario ha sido eliminado correctamente.',
+              'success'
+            );
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Ocurrió un problema al intentar eliminar el usuario.'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  editarUsuario(user: any) {
+    // Alerta informativa de "En construcción"
+    Swal.fire({
+      title: 'En Construcción 🚧',
+      text: `La funcionalidad para editar a ${user.nombreCompleto || 'este usuario'} estará disponible pronto.`,
+      icon: 'info',
+      confirmButtonText: 'Vale'
+    });
   }
 
   /**

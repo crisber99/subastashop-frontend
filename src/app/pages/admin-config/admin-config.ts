@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // 👈 Importante para ngModel
+import { FormsModule } from '@angular/forms'; 
 import { TiendaService } from '../../services/tienda';
 import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-config',
@@ -15,18 +16,15 @@ export class AdminConfig implements OnInit {
 
   private tiendaService = inject(TiendaService);
 
-  // Modelo de datos del formulario
   config = {
     rutEmpresa: '',
     datosBancarios: '',
-    colorPrimario: '#0d6efd' // Azul por defecto
+    colorPrimario: '#0d6efd' 
   };
 
-  // Variables para las fotos
   fileAnverso: File | null = null;
   fileReverso: File | null = null;
 
-  // Variables de estado (para mostrar spinners o mensajes)
   loading = false;
   mensaje = '';
 
@@ -37,9 +35,9 @@ export class AdminConfig implements OnInit {
   }
 
   cargarDatosActuales() {
+    Swal.fire({title: 'Cargando configuración...', didOpen: () => Swal.showLoading(), timer: 1000});
     this.tiendaService.getMiTienda().subscribe({
       next: (data) => {
-        // Rellenamos el formulario con lo que venga de la BD
         this.config.rutEmpresa = data.rutEmpresa || '';
         this.config.datosBancarios = data.datosBancarios || '';
         this.config.colorPrimario = data.colorPrimario || '#0d6efd';
@@ -52,7 +50,6 @@ export class AdminConfig implements OnInit {
     });
   }
 
-  // Detectar cuando el usuario selecciona un archivo
   onFileSelected(event: any, tipo: 'anverso' | 'reverso') {
     const file = event.target.files[0];
     if (file) {
@@ -65,7 +62,12 @@ export class AdminConfig implements OnInit {
     this.loading = true;
     this.mensaje = '';
 
-    // Creamos el FormData (necesario para enviar archivos + texto)
+    Swal.fire({
+        title: 'Guardando...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
     const formData = new FormData();
     formData.append('rutEmpresa', this.config.rutEmpresa);
     formData.append('datosBancarios', this.config.datosBancarios);
@@ -78,12 +80,12 @@ export class AdminConfig implements OnInit {
     this.tiendaService.actualizarConfiguracion(formData).subscribe({
       next: () => {
         this.loading = false;
-        alert('✅ Configuración guardada exitosamente.');
+        Swal.fire('¡Guardado!', 'La configuración se actualizó correctamente.', 'success');
       },
       error: (err) => {
         this.loading = false;
         console.error(err);
-        alert('❌ Error al guardar cambios.');
+        Swal.fire('Error', 'No se pudieron guardar los cambios.', 'error');
       }
     });
   }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../services/product';
+import Swal from 'sweetalert2'; // 👈 Importamos SweetAlert
 
 @Component({
   selector: 'app-editar-producto',
@@ -37,12 +38,27 @@ export class EditarProducto implements OnInit {
   }
 
   cargarProducto(id: number) {
+    // Loader inicial
+    Swal.fire({
+      title: 'Cargando datos...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
     this.productService.getProductoById(id).subscribe({
       next: (data: any) => {
+        Swal.close(); // Cerramos el loader
+
         // Validar si es editable antes de mostrar el formulario
         if (['SUBASTA', 'ADJUDICADO', 'PAGADO'].includes(data.estado)) {
-          alert('⛔ Este producto no se puede editar porque está activo o vendido.');
-          this.router.navigate(['/admin']);
+          Swal.fire({
+            icon: 'error',
+            title: 'Acción Bloqueada',
+            text: '⛔ Este producto no se puede editar porque la subasta ya inició o finalizó.',
+            confirmButtonText: 'Volver'
+          }).then(() => {
+            this.router.navigate(['/admin']);
+          });
           return;
         }
 
@@ -51,18 +67,18 @@ export class EditarProducto implements OnInit {
           this.producto.fechaFinSubasta = this.formatearFechaParaInput(this.producto.fechaFinSubasta);
         }
 
-
         this.imagenPreview = data.urlImagen;
       },
-      error: () => this.router.navigate(['/admin'])
+      error: () => {
+        Swal.fire('Error', 'No se pudo cargar el producto', 'error');
+        this.router.navigate(['/admin']);
+      }
     });
   }
 
   private formatearFechaParaInput(fechaIso: string): string {
     if (!fechaIso) return '';
-    // El backend suele enviar: 2026-01-20T15:30:00
-    // El input quiere: 2026-01-20T15:30 (sin segundos si no los soporta, o formato exacto)
-    return fechaIso.substring(0, 16); // Cortamos los segundos y milisegundos extra
+    return fechaIso.substring(0, 16); 
   }
 
   onFileSelected(event: any) {
@@ -77,17 +93,48 @@ export class EditarProducto implements OnInit {
   }
 
   guardarCambios() {
-    this.cargando = true;
-    this.productService.updateProducto(this.idProducto, this.producto, this.archivoSeleccionado || undefined)
-      .subscribe({
-        next: () => {
-          alert('¡Producto actualizado correctamente! ✅');
-          this.router.navigate(['/admin']);
-        },
-        error: (err) => {
-          alert('Error al actualizar: ' + (err.error || 'Intente nuevamente'));
-          this.cargando = false;
-        }
-      });
+    Swal.fire({
+      title: '¿Guardar Cambios?',
+      text: 'Se actualizará la información del producto.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, Guardar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      
+      if (result.isConfirmed) {
+        this.cargando = true;
+        
+        Swal.fire({
+          title: 'Actualizando...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
+
+        this.productService.updateProducto(this.idProducto, this.producto, this.archivoSeleccionado || undefined)
+          .subscribe({
+            next: () => {
+              this.cargando = false;
+              Swal.fire({
+                icon: 'success',
+                title: '¡Actualizado!',
+                text: 'El producto se ha modificado correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+              }).then(() => {
+                this.router.navigate(['/admin']);
+              });
+            },
+            error: (err) => {
+              this.cargando = false;
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al actualizar',
+                text: err.error || 'Ocurrió un problema inesperado.'
+              });
+            }
+          });
+      }
+    });
   }
 }

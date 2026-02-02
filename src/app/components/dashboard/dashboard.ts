@@ -3,8 +3,9 @@ import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { OrdenService } from '../../services/orden';
-import { CartService } from '../../services/cart';   // 👈 Nuevo servicio
+import { CartService } from '../../services/cart';   
 import { AuthService } from '../../services/auth-service';
+import Swal from 'sweetalert2'; // 👈 Importar
 
 @Component({
   selector: 'app-dashboard',
@@ -15,21 +16,16 @@ import { AuthService } from '../../services/auth-service';
 })
 export class Dashboard implements OnInit {
 
-  // Inyecciones
   private productService = inject(ProductService);
   private ordenService = inject(OrdenService);
-  public cartService = inject(CartService); // Public para usar signals en HTML
+  public cartService = inject(CartService); 
   public authService = inject(AuthService);
   private router = inject(Router);
 
-  // Datos
   pujas: any[] = [];
   ordenes: any[] = [];
+  tabActual: string = 'carrito'; 
 
-  // Pestaña activa por defecto
-  tabActual: string = 'carrito'; // Empezamos en carrito si hay cosas, o 'pujas'
-
-  // Estadísticas Admin
   stats = {
     usuarios: 0,
     ventas: 0,
@@ -46,7 +42,6 @@ export class Dashboard implements OnInit {
         this.verificarDisponibilidadCarrito();
     }
 
-    // Si el carrito tiene items, mostramos esa tab primero
     if (this.cartService.cantidadItems() > 0) {
       this.tabActual = 'carrito';
     } else {
@@ -55,7 +50,6 @@ export class Dashboard implements OnInit {
   }
 
   cargarDatos() {
-    // 1. CARGAR ESTADÍSTICAS (Solo si es Admin)
     if (this.authService.isAdmin()) {
       this.productService.getAdminStats().subscribe({
         next: (data: any) => {
@@ -70,24 +64,34 @@ export class Dashboard implements OnInit {
       });
     }
 
-    // 2. CARGAR MIS PUJAS (Historial)
-    // Asumimos que sigue en ProductService o muévelo a OrdenService si prefieres
     this.productService.getMisPujas().subscribe(data => this.pujas = data);
-
-    // 3. CARGAR MIS COMPRAS (Órdenes creadas)
-    // Usamos el OrdenService que creamos recientemente
     this.ordenService.getMisOrdenes().subscribe({
       next: (data) => this.ordenes = data,
       error: (err) => console.error('Error cargando órdenes', err)
     });
   }
 
-  // --- LÓGICA DEL CARRITO DESDE EL DASHBOARD ---
   procesarCompraCarrito() {
     if (this.cartService.cantidadItems() === 0) return;
-    this.loading = true;
+    
+    Swal.fire({
+        title: '¿Finalizar Compra?',
+        text: `Vas a generar una orden por ${this.cartService.cantidadItems()} productos.`,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, Comprar',
+        confirmButtonColor: '#3085d6'
+    }).then((result) => {
+        if(result.isConfirmed) {
+            this.ejecutarCompra();
+        }
+    });
+  }
 
-    // Convertimos carrito a formato Backend
+  ejecutarCompra() {
+    this.loading = true;
+    Swal.fire({title: 'Procesando...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+
     const detallesBackend = this.cartService.items().map(item => ({
       productoId: item.producto.id,
       cantidad: item.cantidad,
@@ -100,38 +104,40 @@ export class Dashboard implements OnInit {
     this.ordenService.crearOrden(request).subscribe({
       next: (orden) => {
         this.loading = false;
-        alert('✅ ¡Orden creada exitosamente!');
+        
+        Swal.fire({
+            icon: 'success',
+            title: '¡Orden Creada!',
+            text: 'Revisa la pestaña "Mis Compras" para ver el detalle.',
+            timer: 2000
+        });
 
-        this.cartService.limpiarCarrito(); // Vaciamos carrito
-        this.cargarDatos();                // Recargamos la lista de compras
-        this.tabActual = 'compras';        // Movemos al usuario a la pestaña de compras
+        this.cartService.limpiarCarrito(); 
+        this.cargarDatos();                
+        this.tabActual = 'compras';        
       },
       error: (err) => {
         this.loading = false;
-        alert('❌ Error al procesar: ' + (err.error || 'Intente nuevamente'));
+        Swal.fire('Error', err.error || 'No se pudo procesar la compra.', 'error');
       }
     });
   }
 
-  // Agregar al ngOnInit o al cambiar a tab 'carrito'
   verificarDisponibilidadCarrito() {
-    console.log("🕵️ Verificando disponibilidad de productos...");
-    
     const items = this.cartService.items();
-
     items.forEach(item => {
-        // Solo nos preocupa el stock en VENTA DIRECTA (Subastas y Rifas tienen otra lógica)
         if (item.tipo === 'DIRECTA') {
-            
             this.productService.getProductoById(item.producto.id).subscribe({
                 next: (prodActualizado) => {
-                    // Si el estado en BD ya no es DISPONIBLE
                     if (prodActualizado.estado !== 'DISPONIBLE') {
-                        
-                        // A. Avisamos al usuario
-                        alert(`⚠️ El producto "${prodActualizado.nombre}" se acaba de vender a otro usuario. Lo eliminaremos de tu carrito.`);
-                        
-                        // B. Lo sacamos del carrito localmente
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Producto Agotado',
+                            text: `El producto "${prodActualizado.nombre}" ya no está disponible. Fue eliminado del carrito.`,
+                            toast: true,
+                            position: 'top-end',
+                            timer: 5000
+                        });
                         this.cartService.eliminarItemPorId(prodActualizado.id);
                     }
                 },
@@ -142,26 +148,20 @@ export class Dashboard implements OnInit {
   }
 
   cambiarTab(tab: string) {
-    this.tabActual = tab; // 1. Cambia la vista
-
-    // 2. Lógica específica por pestaña
+    this.tabActual = tab; 
     if (tab === 'carrito') {
-        // Ya lo teníamos: Verifica si algo se vendió mientras no mirabas
         this.verificarDisponibilidadCarrito();
     } 
     else if (tab === 'compras') {
-        // 👇 NUEVO: Refrescar órdenes para ver si ya me aprobaron el pago
         this.recargarOrdenes();
     }
     else if (tab === 'pujas') {
-        // Opcional: Refrescar pujas por si alguien me superó
         this.recargarPujas();
     }
   }
 
-  // Métodos auxiliares para no repetir código
   recargarOrdenes() {
-    this.loading = true; // (Opcional) Puedes poner un spinner pequeño
+    this.loading = true; 
     this.ordenService.getMisOrdenes().subscribe({
         next: (data) => {
             this.ordenes = data;

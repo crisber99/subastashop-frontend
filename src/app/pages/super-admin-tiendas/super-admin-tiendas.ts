@@ -3,6 +3,7 @@ import { SuperAdminService } from '../../services/super-admin';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-super-admin-tiendas',
@@ -16,7 +17,6 @@ export class SuperAdminTiendas implements OnInit {
 
   tiendas: any[] = [];
   
-  // Modelo para el formulario
   nuevaTienda = {
     nombre: '',
     slug: '',
@@ -32,21 +32,25 @@ export class SuperAdminTiendas implements OnInit {
   }
 
   crear() {
-    if(!this.nuevaTienda.nombre || !this.nuevaTienda.emailAdmin) return;
+    if(!this.nuevaTienda.nombre || !this.nuevaTienda.emailAdmin) {
+        Swal.fire('Campos vacíos', 'Completa el nombre y el correo del administrador.', 'warning');
+        return;
+    }
 
-    // Autogenerar slug si está vacío (Ej: "Don Pepe" -> "don-pepe")
     if (!this.nuevaTienda.slug) {
       this.nuevaTienda.slug = this.nuevaTienda.nombre.toLowerCase().replace(/ /g, '-');
     }
 
+    Swal.fire({title: 'Creando...', didOpen: () => Swal.showLoading()});
+
     this.superAdminService.crearTienda(this.nuevaTienda).subscribe({
       next: (resp) => {
-        alert(resp); // Mensaje de éxito del backend
-        this.cargarTiendas(); // Recargar tabla
-        this.nuevaTienda = { nombre: '', slug: '', emailAdmin: '' }; // Limpiar form
+        Swal.fire('¡Creada!', String(resp), 'success');
+        this.cargarTiendas(); 
+        this.nuevaTienda = { nombre: '', slug: '', emailAdmin: '' }; 
       },
       error: (err) => {
-        alert(err.error || 'Error al crear tienda');
+        Swal.fire('Error', err.error || 'Error al crear tienda', 'error');
         console.error(err);
       }
     });

@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Navbar } from '../../components/navbar/navbar';
 import { Footer } from '../../components/footer/footer';
+import { Sidebar } from '../../components/sidebar/sidebar';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, Navbar, Footer],
+  imports: [CommonModule, RouterModule, FormsModule, Navbar, Footer, Sidebar],
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
 })

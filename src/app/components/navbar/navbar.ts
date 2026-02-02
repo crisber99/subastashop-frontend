@@ -15,11 +15,22 @@ export class Navbar {
   authService = inject(AuthService); // Inyectamos el servicio
   layoutService = inject(LayoutService);  
 
+  esAdmin(): boolean {
+    const rol = this.authService.currentUser()?.role;
+    // Verifica que 'ROLE_ADMIN' esté escrito igual que en tu base de datos (mayúsculas)
+    return rol === 'ROLE_ADMIN' || rol === 'ROLE_SUPER_ADMIN';
+  }
+
   toggleSidebar() {
     this.layoutService.toggleSidebar();
   }
-  
+
   logout() {
     this.authService.logout();
+  }
+
+  // 3. ¿Es Comprador/Vendedor normal? (No es ninguno de los anteriores)
+  isComprador(): boolean {
+    return !this.esAdmin;
   }
 }

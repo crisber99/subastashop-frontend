@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrdenService } from '../../services/orden';
+import Swal from 'sweetalert2'; // 👈 Importar
+
 @Component({
   selector: 'app-checkout',
   standalone: true,
@@ -12,7 +14,7 @@ import { OrdenService } from '../../services/orden';
 export class Checkout implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private ordenService = inject(OrdenService);
+  private OrdenService = inject(OrdenService);
 
   ordenId: number = 0;
   orden: any = null;
@@ -26,13 +28,17 @@ export class Checkout implements OnInit {
   }
 
   cargarOrden() {
-    this.ordenService.getOrdenById(this.ordenId).subscribe({
+    Swal.fire({title: 'Cargando...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+    
+    this.OrdenService.getOrdenById(this.ordenId).subscribe({
       next: (data) => {
         this.orden = data;
-        // La orden ya viene del backend con el TOTAL calculado y la lista de detalles
-        // gracias a que arreglamos el controlador antes.
+        Swal.close();
       },
-      error: (err) => alert('Error al cargar la orden')
+      error: (err) => {
+        Swal.fire('Error', 'No se pudo cargar la información de la orden', 'error');
+        this.router.navigate(['/dashboard']);
+      }
     });
   }
 
@@ -40,31 +46,44 @@ export class Checkout implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.archivoComprobante = file;
-      this.intentoEnviar = false; // Reseteamos el error visual
+      this.intentoEnviar = false; 
     }
   }
 
   confirmarTransferencia() {
     this.intentoEnviar = true;
 
-    // 1. Validación de seguridad (aunque el botón esté disabled)
     if (!this.archivoComprobante) {
-      alert("⚠️ Por favor sube el comprobante de pago.");
+      Swal.fire('Falta Comprobante', 'Por favor sube la foto o captura del pago.', 'warning');
       return;
     }
 
     this.loading = true;
+    
+    // Simulación de envío
+    Swal.fire({
+      title: 'Enviando...',
+      text: 'Subiendo tu comprobante',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
 
-    // 2. Aquí llamarías a tu servicio para subir el archivo
-    // this.ordenService.subirComprobante(this.orden.id, this.archivoComprobante)...
-
-    // Simulación por ahora:
+    // AQUÍ IRÍA LA LLAMADA REAL AL SERVICIO
+    // this.ordenService.subirComprobante(...)
+    
     console.log("Enviando archivo:", this.archivoComprobante.name);
 
     setTimeout(() => {
-      alert('🚀 ¡Comprobante recibido! El vendedor validará tu pago.');
-      this.router.navigate(['/dashboard']);
       this.loading = false;
+      Swal.fire({
+        icon: 'success',
+        title: '¡Comprobante Enviado!',
+        text: 'El vendedor verificará tu pago pronto.',
+        timer: 3000,
+        showConfirmButton: false
+      }).then(() => {
+        this.router.navigate(['/dashboard']);
+      });
     }, 1500);
   }
 }

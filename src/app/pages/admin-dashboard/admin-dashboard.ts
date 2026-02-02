@@ -23,11 +23,10 @@ export class AdminDashboard implements OnInit {
     gananciasTotales: 0
   };
 
-  // Configuración del Gráfico de Torta (Pie Chart)
   public pieChartData: ChartConfiguration<'pie'>['data'] = {
     labels: [ 'Subastas Activas', 'Vendidos', 'Cancelados' ],
     datasets: [ {
-      data: [ 0, 0, 0 ] // Se llenará con datos reales
+      data: [ 0, 0, 0 ] 
     } ]
   };
   public pieChartOptions: ChartOptions<'pie'> = {
@@ -40,12 +39,9 @@ export class AdminDashboard implements OnInit {
   }
 
   cargarDatos() {
-    // Recuerda usar tu URL de API real o environment
-    // Aquí asumimos que tienes un servicio, pero lo llamaremos directo por simplicidad del ejemplo
     this.http.get<any>(`${environment.apiUrl}/admin/stats`).subscribe(data => {
       this.stats = data;
       
-      // Actualizar gráfico dinámicamente
       this.pieChartData = {
         labels: ['Subastas Activas', 'Ventas Cerradas'],
         datasets: [{

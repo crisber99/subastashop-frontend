@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Vital para los inputs
 import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product';
+import Swal from 'sweetalert2'; // 👈 Importamos SweetAlert
 
 @Component({
   selector: 'app-crear-producto',
@@ -39,15 +40,49 @@ export class CrearProducto {
 
   onSubmit() {
     if (!this.archivoSeleccionado) {
-      this.mensajeError = 'Debes seleccionar una imagen';
+      Swal.fire({
+        icon: 'warning',
+        title: 'Falta Imagen',
+        text: 'Debes seleccionar una imagen para el producto.'
+      });
       return;
     }
 
+    // Confirmación antes de enviar
+    Swal.fire({
+      title: '¿Publicar Producto?',
+      text: `Estás creando una ${this.producto.tipoVenta === 'SUBASTA' ? 'Subasta' : 'Venta Directa/Rifa'} por $${this.producto.precioBase}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, Publicar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.procesarEnvio();
+      }
+    });
+  }
+
+  procesarEnvio() {
     this.cargando = true;
+    
+    // Mostrar loader mientras sube
+    Swal.fire({
+      title: 'Subiendo Producto...',
+      html: 'Por favor espera un momento.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const formData = new FormData();
 
     // Agregamos los campos tal cual los espera el Backend (@RequestParam)
-    formData.append('file', this.archivoSeleccionado);
+    if (this.archivoSeleccionado) {
+      formData.append('file', this.archivoSeleccionado);
+    }
     formData.append('nombre', this.producto.nombre);
     formData.append('descripcion', this.producto.descripcion);
     formData.append('tipoVenta', this.producto.tipoVenta);
@@ -66,13 +101,26 @@ export class CrearProducto {
 
     this.productService.crearProducto(formData).subscribe({
       next: (resp) => {
-        alert('¡Producto publicado con éxito!');
-        this.router.navigate(['/']); // Volver al catálogo
+        this.cargando = false;
+        
+        Swal.fire({
+          icon: 'success',
+          title: '¡Publicado!',
+          text: 'Tu producto ya está disponible en la tienda.',
+          timer: 2000,
+          showConfirmButton: false
+        }).then(() => {
+          this.router.navigate(['/admin']); // Volver al panel de admin
+        });
       },
       error: (err) => {
         console.error(err);
-        this.mensajeError = 'Error al subir el producto. Revisa la consola.';
         this.cargando = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al Publicar',
+          text: 'Ocurrió un problema al subir el producto. Revisa los datos e intenta nuevamente.'
+        });
       }
     });
   }

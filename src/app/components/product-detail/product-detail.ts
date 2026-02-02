@@ -9,13 +9,15 @@ import { SuperAdminService } from '../../services/super-admin';
 import { CartService } from '../../services/cart';
 import { Navbar } from '../navbar/navbar';
 import { Footer } from '../footer/footer';
+import Swal from 'sweetalert2';
+import { Sidebar } from '../../components/sidebar/sidebar';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, Navbar, Footer],
+  imports: [CommonModule, FormsModule, RouterModule, Navbar, Footer, Sidebar],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })
@@ -27,7 +29,6 @@ export class ProductDetail implements OnInit, OnDestroy {
   
   websocketService = inject(Websocket);
   authService = inject(AuthService);
-  
 
   producto: any = null;
   montoOferta: number = 0;
@@ -41,10 +42,10 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   ganadores: any[] = [];
   
-  // Variables de Tienda (Nuevas para arreglar el error del HTML)
-  productos: any[] = []; // Aunque en detalle usualmente vemos 1, dejamos esto por compatibilidad
+  // Variables de Tienda
+  productos: any[] = [];
   nombreTienda: string = '';
-  tienda: any = null; // 👈 Variable necesaria para el color de la tienda
+  tienda: any = null; 
 
   // Estado visual
   subastaFinalizada: boolean = false;
@@ -59,7 +60,6 @@ export class ProductDetail implements OnInit, OnDestroy {
     this.websocketService.obtenerActualizaciones().subscribe((mensaje: any) => {
       console.log("⚡ Mensaje Socket recibido:", mensaje);
 
-      // Validamos que el mensaje sea para ESTE producto
       if (this.producto && this.producto.id === mensaje.productoId) {
 
         // OPCIÓN A: ES UN TICKET VENDIDO (RIFA) 🎟️
@@ -73,19 +73,22 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
         }
 
-        // 👇 OPCIÓN B: ¡SORTEO FINALIZADO! 🏆 (NUEVO)
+        // 👇 OPCIÓN B: ¡SORTEO FINALIZADO! 🏆
         else if (mensaje.tipo === 'SORTEO_FINALIZADO') {
           console.log("🏆 Ganadores recibidos:", mensaje.ganadores);
 
-          // 1. Actualizamos la variable local para que aparezca el Podio HTML
           this.ganadores = mensaje.ganadores;
 
-          // 2. Alert o Scroll suave para llamar la atención
-          setTimeout(() => {
-            alert('¡Atención! El sorteo ha finalizado. 🎉');
-            // Opcional: Recargar producto para bloquear botones de compra si quedaron activos
-            this.cargarProducto(this.producto.id);
-          }, 500);
+          // Alerta bonita de finalización
+          Swal.fire({
+            title: '¡Sorteo Finalizado! 🎉',
+            text: 'Los ganadores han sido seleccionados. Revisa la lista oficial.',
+            icon: 'info',
+            timer: 5000,
+            timerProgressBar: true
+          });
+          
+          this.cargarProducto(this.producto.id);
         }
 
         // OPCIÓN C: ES UNA PUJA (SUBASTA) 🔨
@@ -96,6 +99,12 @@ export class ProductDetail implements OnInit, OnDestroy {
             badge.classList.add('bg-warning');
             setTimeout(() => badge.classList.remove('bg-warning'), 500);
           }
+          
+          // Toast opcional para avisar nueva puja
+          const Toast = Swal.mixin({
+             toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
+          });
+          Toast.fire({ icon: 'info', title: `Nueva puja: $${mensaje.monto}` });
         }
       }
     });
@@ -104,13 +113,13 @@ export class ProductDetail implements OnInit, OnDestroy {
   cargarProducto(id: number) {
     this.productService.getProductoById(id).subscribe({
       next: (data) => {
-        this.producto = data; // ✅ AQUÍ ya tenemos datos
+        this.producto = data; 
 
         if (data.tienda) {
-            this.tienda = data.tienda; // Aquí guardamos los datos bancarios que vienen de Java
+            this.tienda = data.tienda; 
         }
 
-        // 1. INICIALIZAR RIFA (Solo si es rifa)
+        // 1. INICIALIZAR RIFA
         if (this.producto.tipoVenta === 'RIFA') {
           this.generarNumeros(this.producto.cantidadNumeros);
           this.cargarVendidos();
@@ -122,12 +131,12 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
         }
 
-        // 2. CONECTAR WEBSOCKET (Ahora que tenemos ID seguro)
+        // 2. CONECTAR WEBSOCKET
         this.websocketService.conectar(() => {
           this.websocketService.suscribirseProducto(this.producto.id);
         });
 
-        // 3. LÓGICA DE SUBASTA (Validación de fechas)
+        // 3. LÓGICA DE SUBASTA
         if (data.tipoVenta === 'SUBASTA' && data.fechaFinSubasta) {
           const fechaFin = new Date(data.fechaFinSubasta);
           const ahora = new Date();
@@ -138,7 +147,6 @@ export class ProductDetail implements OnInit, OnDestroy {
             this.esError = true;
           } else {
             this.subastaFinalizada = false;
-            // Sugerir monto
             this.montoOferta = (data.precioActual || data.precioBase) + 1000;
           }
         }
@@ -153,19 +161,40 @@ export class ProductDetail implements OnInit, OnDestroy {
 
     this.productService.realizarPuja(this.producto.id, this.montoOferta).subscribe({
       next: (resp) => {
+        // Feedback visual con Swal Toast
+        Swal.fire({
+            icon: 'success',
+            title: '¡Oferta realizada!',
+            text: 'Eres el mayor postor por ahora.',
+            toast: true,
+            position: 'top-end',
+            timer: 3000,
+            showConfirmButton: false
+        });
         this.mensaje = '¡Oferta realizada con éxito!';
         this.esError = false;
-        this.cargarProducto(this.producto.id); // Recargar para ver cambios
+        this.cargarProducto(this.producto.id); 
       },
       error: (err) => {
-        this.mensaje = err.error || 'Error al realizar la puja';
+        const msg = err.error || 'Error al realizar la puja';
+        this.mensaje = msg;
         this.esError = true;
+        Swal.fire('Error', msg, 'error');
       }
     });
   }
 
   agregarAlCarrito() {
     this.cartService.agregarItem(this.producto, 'DIRECTA');
+    Swal.fire({
+        icon: 'success',
+        title: 'Agregado',
+        text: 'Producto añadido al carrito',
+        toast: true,
+        position: 'bottom-end',
+        timer: 2000,
+        showConfirmButton: false
+    });
   }
 
   cargarTablaAdmin() {
@@ -177,17 +206,13 @@ export class ProductDetail implements OnInit, OnDestroy {
   cargarGanadoresHistorial() {
     this.productService.getGanadoresRifa(this.producto.id).subscribe({
       next: (data) => {
-        // Si data existe y tiene longitud, asignamos. Si no, array vacío.
         if (data && data.length > 0) {
           this.ganadores = data;
-          console.log("Historial de ganadores cargado:", this.ganadores);
         } else {
           this.ganadores = [];
         }
       },
       error: (err) => {
-        // Es normal que de error 404 si aun no hay ganadores (depende de tu backend)
-        // Lo ignoramos silenciosamente o seteamos vacío
         this.ganadores = [];
       }
     });
@@ -209,76 +234,118 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   comprarNumero(num: number) {
-    if (!confirm(`¿Comprar el número ${num}?`)) return;
-
-    this.productService.comprarTicket(this.producto.id, num).subscribe({
-      next: (resp) => {
-        // ÉXITO REAL
-        alert('¡Comprado! 🎉');
-        this.cargarVendidos();
-      },
-      error: (err) => {
-        // MANEJO INTELIGENTE DE ERRORES
-        console.error("Detalle del error:", err);
-
-        // Si el status es 200 (OK) pero cayó aquí, es el error de Parseo (Texto vs JSON)
-        // Significa que SÍ funcionó.
-        if (err.status === 200) {
-          alert('¡Comprado! 🎉');
-          this.cargarVendidos();
-          return;
+    // Confirmación con Swal
+    Swal.fire({
+        title: `¿Comprar el #${num}?`,
+        text: `El precio es $${this.producto.precioTicket}`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, comprar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            this.productService.comprarTicket(this.producto.id, num).subscribe({
+                next: (resp) => {
+                  Swal.fire('¡Comprado!', `Ticket #${num} reservado exitosamente.`, 'success');
+                  this.cargarVendidos();
+                },
+                error: (err) => {
+                  console.error("Detalle del error:", err);
+          
+                  // Manejo especial de parseo OK (200)
+                  if (err.status === 200) {
+                    Swal.fire('¡Comprado!', `Ticket #${num} reservado exitosamente.`, 'success');
+                    this.cargarVendidos();
+                    return;
+                  }
+          
+                  const mensajeError = err.error ? JSON.stringify(err.error) : 'Error desconocido';
+                  Swal.fire('Error', 'No se pudo comprar el ticket: ' + mensajeError, 'error');
+                }
+            });
         }
-
-        // Si es otro error, mostramos el mensaje real convirtiendo el objeto a texto
-        const mensajeError = err.error ? JSON.stringify(err.error) : 'Error desconocido';
-        alert('Ocurrió un error: ' + mensajeError);
-      }
     });
   }
 
   lanzarSorteo() {
-    this.productService.lanzarRifa(this.producto.id).subscribe({
-      next: (listaGanadores: any) => {
-        this.ganadores = listaGanadores;
+    Swal.fire({
+        title: '¿Lanzar Sorteo?',
+        text: 'Se seleccionarán los ganadores aleatoriamente.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '¡Girar Tómbola!',
+        confirmButtonColor: '#198754'
+    }).then((res) => {
+        if(res.isConfirmed) {
+            
+            // Loader
+            Swal.fire({
+                title: 'Sorteando...',
+                html: 'La tómbola está girando 🎰',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
 
-        // Construimos un mensaje de texto legible
-        let mensaje = '🏆 ¡GANADORES SELECCIONADOS! 🏆\n\n';
-        listaGanadores.forEach((g: any, index: number) => {
-          const comprador = g.comprador?.email || g.comprador || 'Anónimo';
-          mensaje += `${index + 1}º Lugar: Ticket #${g.numeroTicket} - ${comprador}\n`;
-        });
-
-        alert(mensaje);
-
-        this.cargarProducto(this.producto.id);
-      },
-      error: (err) => {
-        console.error('Error desde backend:', err);
-        const mensajeServidor = err.error;
-
-        if (typeof mensajeServidor === 'string') {
-          alert('⚠️ Aviso: ' + mensajeServidor);
-        } else {
-          alert('❌ Ocurrió un error inesperado. Revisa la consola.');
+            this.productService.lanzarRifa(this.producto.id).subscribe({
+                next: (listaGanadores: any) => {
+                  this.ganadores = listaGanadores;
+          
+                  // Construimos HTML para el SweetAlert
+                  let mensajeHtml = '<ul style="text-align: left;">';
+                  listaGanadores.forEach((g: any, index: number) => {
+                    const comprador = g.comprador?.email || g.comprador || 'Anónimo';
+                    mensajeHtml += `<li><strong>${index + 1}º Lugar:</strong> Ticket #${g.numeroTicket} <br> <small>${comprador}</small></li>`;
+                  });
+                  mensajeHtml += '</ul>';
+          
+                  Swal.fire({
+                      title: '🏆 ¡GANADORES!',
+                      html: mensajeHtml,
+                      icon: 'success'
+                  });
+          
+                  this.cargarProducto(this.producto.id);
+                },
+                error: (err) => {
+                  console.error('Error backend:', err);
+                  const mensajeServidor = typeof err.error === 'string' ? err.error : 'Error inesperado';
+                  Swal.fire('Error', mensajeServidor, 'error');
+                }
+            });
         }
-      }
     });
   }
 
   reportarProducto() {
     if (!this.producto) return; 
 
-    const motivo = prompt("¿Por qué quieres reportar este producto? (Ej: Fraude, Ilegal)");
-
-    if (motivo) {
-      this.superAdminService.reportarProducto(this.producto.id, motivo).subscribe({
-        next: () => alert("✅ Gracias. Hemos recibido tu reporte y lo revisaremos."),
-        error: (err) => {
-          console.error(err);
-          alert("❌ Error al enviar el reporte. Intenta nuevamente.");
+    // Reemplazo de Prompt
+    Swal.fire({
+        title: 'Reportar Producto',
+        input: 'textarea',
+        inputLabel: 'Motivo del reporte',
+        inputPlaceholder: 'Ej: Es una estafa, producto ilegal...',
+        inputAttributes: {
+            'aria-label': 'Escribe tu motivo aquí'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Enviar Reporte',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            
+            this.superAdminService.reportarProducto(this.producto.id, result.value).subscribe({
+                next: () => Swal.fire('Enviado', 'Gracias. Revisaremos tu reporte.', 'success'),
+                error: (err) => {
+                  console.error(err);
+                  Swal.fire('Error', 'No se pudo enviar el reporte.', 'error');
+                }
+            });
         }
-      });
-    }
+    });
   }
 
   abrirModalPago() {

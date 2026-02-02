@@ -13,37 +13,52 @@ import { Landing } from './pages/landing/landing';
 import { SuperAdminTiendas } from './pages/super-admin-tiendas/super-admin-tiendas';
 import { SuperAdminReportes } from './pages/super-admin-reportes/super-admin-reportes';
 import { AdminConfig } from './pages/admin-config/admin-config';
+import { AdminUsersComponent } from './components/admin-users-component/admin-users-component';
+import { MainLayout } from './layout/main-layout/main-layout';
 
 export const routes: Routes = [
-    // 1. LA RAÍZ: Ahora carga la Landing Page (Buscador de tiendas)
+    // ==========================================
+    // 1. RUTAS PÚBLICAS (Accesibles para todos)
+    // ==========================================
+    // No llevan Sidebar de Admin, ni AuthGuard.
     { path: '', component: Landing },
-
-    // 2. LA TIENDA ESPECÍFICA: Carga el Catálogo, pero filtrado (lo haremos en el paso 2)
+    { path: 'login', component: LoginComponent },      // 👈 ¡Ahora está fuera del Guard!
+    { path: 'registro', component: Register },         // 👈 ¡Ahora está fuera del Guard!
+    
+    // El catálogo y productos suelen ser públicos (para que compren sin loguearse primero)
     { path: 'tienda/:slug', component: CatalogComponent },
-
-    // 3. RUTA OPCIONAL: Si quieres ver "todo mezclado" sin filtro
     { path: 'catalogo-global', component: CatalogComponent },
-
-    // ... Resto de tus rutas (sin cambios)
     { path: 'producto/:id', component: ProductDetail },
-    { path: 'login', component: LoginComponent },
-    { path: 'mi-cuenta', component: Dashboard },
-    { path: 'admin/crear', component: CrearProducto },
-    { path: 'checkout/:id', component: Checkout },
-    { path: 'admin', component: AdminDashboard, canActivate: [authGuard] },
-    { path: 'registro', component: Register },
-    { path: 'admin/editar/:id', component: EditarProducto, canActivate: [authGuard] },
+
+    // ==========================================
+    // 2. RUTAS PRIVADAS (Panel de Control)
+    // ==========================================
+    // Estas SÍ llevan Sidebar y Protección
     {
-        path: 'super-admin',
-        component: SuperAdminTiendas,
-        canActivate: [authGuard]
+        path: '',
+        component: MainLayout, // El esqueleto con Sidebar y Navbar
+        canActivate: [authGuard], // 🔒 Candado de seguridad
+        children: [
+            // Dashboard del Usuario
+            { path: 'dashboard', component: Dashboard }, // Ojo: antes lo tenías como 'mi-cuenta'
+            { path: 'mi-cuenta', redirectTo: 'dashboard', pathMatch: 'full' }, // Redirección por compatibilidad
+
+            // Proceso de Compra (Checkout)
+            { path: 'checkout/:id', component: Checkout },
+
+            // Administración de Tienda
+            { path: 'admin', component: AdminDashboard },
+            { path: 'admin/crear', component: CrearProducto },
+            { path: 'admin/editar/:id', component: EditarProducto },
+            { path: 'admin/configuracion', component: AdminConfig },
+
+            // Súper Admin
+            { path: 'super-admin', component: SuperAdminTiendas },
+            { path: 'super-admin/reportes', component: SuperAdminReportes },
+            { path: 'super-admin/usuarios', component: AdminUsersComponent },
+        ]
     },
-    { path: 'super-admin/reportes', component: SuperAdminReportes, canActivate: [authGuard] },
-    {
-        path: 'admin/configuracion',
-        component: AdminConfig,
-        canActivate: [authGuard]
-    },
-    // Redirección por defecto
+
+    // 3. Comodín para errores 404
     { path: '**', redirectTo: '' }
 ];

@@ -30,4 +30,16 @@ export class SuperAdminService {
     const body = { motivo: motivo };
     return this.http.post(`${environment.apiUrl}/reportes/${productoId}`, body);
   }
+
+  getUsuarios() {
+    return this.http.get<any[]>(`${this.apiUrlSuperAdmin}`);
+  }
+
+  cambiarRol(userId: number, nuevoRol: string) {
+    return this.http.put(`${this.apiUrlSuperAdmin}/${userId}/rol`, { rol: nuevoRol }, { responseType: 'text' });
+  }
+
+  eliminarUsuario(userId: number) {
+    return this.http.delete(`${this.apiUrlSuperAdmin}/${userId}`);
+  }
 }

@@ -3,10 +3,11 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth-service';
 import { Loader } from './services/loader';
+import { LogoutButton } from './components/logout-button/logout-button';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, RouterModule],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, RouterModule, LogoutButton],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -1,0 +1,120 @@
+:host {
+  --btn-bg: #1a1a1a;        /* Fondo oscuro del botón */
+  --btn-hover: #ff4d4d;     /* Color rojo al pasar el mouse (o usa tu color primario) */
+  --text-color: #ffffff;
+  --figure-color: #ffffff;
+  --door-bg: #333;
+  --animation-speed: 1.5s;
+}
+
+.logout-btn {
+  position: relative;
+  border: none;
+  background-color: var(--btn-bg);
+  color: var(--text-color);
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+  min-width: 120px;
+  height: 45px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+
+  &:hover {
+    background-color: var(--btn-hover);
+    
+    .figure {
+      animation: walkOut var(--animation-speed) forwards;
+      opacity: 1; /* Se hace visible al hover */
+    }
+
+    .door {
+      transform: perspective(400px) rotateY(-45deg); /* Abre la puerta */
+    }
+  }
+}
+
+.text {
+  z-index: 2;
+  transition: opacity 0.3s;
+}
+
+/* --- ANIMACIÓN DE LA FIGURA --- */
+.figure {
+  position: absolute;
+  right: 25px; /* Empieza un poco a la derecha */
+  bottom: 8px;
+  width: 15px;
+  height: 25px;
+  opacity: 0; /* Oculto normalmente */
+  transform: translateX(0);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.head {
+  width: 6px;
+  height: 6px;
+  background: var(--figure-color);
+  border-radius: 50%;
+  margin: 0 auto 2px;
+}
+
+.body {
+  width: 8px;
+  height: 10px;
+  background: var(--figure-color);
+  border-radius: 2px;
+  margin: 0 auto;
+}
+
+/* --- LA PUERTA --- */
+.door {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  width: 20px;
+  height: 28px;
+  background-color: var(--door-bg);
+  border: 2px solid #555;
+  border-radius: 2px;
+  transform-origin: right; /* Bisagra a la derecha */
+  transition: transform 0.4s ease;
+  z-index: 0;
+  
+  &::before { /* Pomo de la puerta */
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    width: 3px;
+    height: 3px;
+    background: #bbb;
+    border-radius: 50%;
+  }
+}
+
+/* Animación de caminar hacia la puerta */
+@keyframes walkOut {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(10px) scale(1); /* Avanza */
+  }
+  80% {
+    transform: translateX(18px) scale(0.8); /* Entra y se hace pequeño */
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(25px) scale(0); /* Desaparece */
+    opacity: 0;
+  }
+}

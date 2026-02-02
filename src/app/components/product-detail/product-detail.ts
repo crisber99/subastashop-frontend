@@ -7,13 +7,15 @@ import { AuthService } from '../../services/auth-service';
 import { Websocket } from '../../services/websocket';
 import { SuperAdminService } from '../../services/super-admin';
 import { CartService } from '../../services/cart';
+import { Navbar } from '../navbar/navbar';
+import { Footer } from '../footer/footer';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, Navbar, Footer],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })

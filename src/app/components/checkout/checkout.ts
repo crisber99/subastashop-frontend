@@ -1,70 +1,70 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { OrdenService } from '../../services/orden';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
 export class Checkout implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private productService = inject(ProductService);
+  private ordenService = inject(OrdenService);
 
+  ordenId: number = 0;
   orden: any = null;
-  cargando = false;
-  procesandoPago = false;
-  pagoExitoso = false;
-
-  // Datos simulados de tarjeta
-  datosTarjeta = {
-    nombre: '',
-    numeroTarjeta: '',
-    expiracion: '',
-    cvv: ''
-  };
+  loading = false;
+  archivoComprobante: File | null = null;
+  intentoEnviar = false;
 
   ngOnInit() {
-    // Obtener ID de la URL
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.cargarOrden(Number(id));
-    }
+    this.ordenId = Number(this.route.snapshot.paramMap.get('id'));
+    this.cargarOrden();
   }
 
-  cargarOrden(id: number) {
-    this.productService.getOrdenById(id).subscribe({
+  cargarOrden() {
+    this.ordenService.getOrdenById(this.ordenId).subscribe({
       next: (data) => {
         this.orden = data;
-        this.cargando = false;
+        // La orden ya viene del backend con el TOTAL calculado y la lista de detalles
+        // gracias a que arreglamos el controlador antes.
       },
-      error: () => {
-        alert('Error al cargar la orden');
-        this.router.navigate(['/mi-cuenta']);
-      }
+      error: (err) => alert('Error al cargar la orden')
     });
   }
 
-  confirmarPago() {
-    this.procesandoPago = true;
-    
-    // Simulamos un pequeño delay para dar realismo
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.archivoComprobante = file;
+      this.intentoEnviar = false; // Reseteamos el error visual
+    }
+  }
+
+  confirmarTransferencia() {
+    this.intentoEnviar = true;
+
+    // 1. Validación de seguridad (aunque el botón esté disabled)
+    if (!this.archivoComprobante) {
+      alert("⚠️ Por favor sube el comprobante de pago.");
+      return;
+    }
+
+    this.loading = true;
+
+    // 2. Aquí llamarías a tu servicio para subir el archivo
+    // this.ordenService.subirComprobante(this.orden.id, this.archivoComprobante)...
+
+    // Simulación por ahora:
+    console.log("Enviando archivo:", this.archivoComprobante.name);
+
     setTimeout(() => {
-        this.productService.pagarOrden(this.orden.id, this.datosTarjeta).subscribe({
-          next: () => {
-            alert('¡Pago realizado con éxito! 🥳');
-            this.router.navigate(['/mi-cuenta']); // Volver al perfil
-          },
-          error: () => {
-            alert('Error al procesar el pago');
-            this.procesandoPago = false;
-          }
-        });
+      alert('🚀 ¡Comprobante recibido! El vendedor validará tu pago.');
+      this.router.navigate(['/dashboard']);
+      this.loading = false;
     }, 1500);
   }
 }

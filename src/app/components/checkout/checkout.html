@@ -1,78 +1,87 @@
-<div class="container mt-5 mb-5">
-  @if (cargando) {
-    <div class="text-center">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p>Cargando detalles del pago...</p>
-    </div>
-  } @else {
+<div class="container mt-5 mb-5" *ngIf="orden">
     <div class="row">
-      <div class="col-md-5 order-md-2 mb-4">
-        <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-primary">Tu Carrito</span>
-          <span class="badge bg-primary rounded-pill">1</span>
-        </h4>
-        <ul class="list-group mb-3 shadow-sm">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Producto Ganado</h6>
-              <small class="text-muted">Subasta #{{orden.id}}</small>
-            </div>
-          </li>
-          <li class="list-group-item d-flex justify-content-between bg-light">
-            <div class="text-success">
-              <h6 class="my-0">Código Promocional</h6>
-              <small>GANADOR_SUBASTA</small>
-            </div>
-            <span class="text-success">-$0</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Total a Pagar (CLP)</span>
-            <strong>${{ orden.montoFinal | number }}</strong>
-          </li>
-        </ul>
-      </div>
 
-      <div class="col-md-7 order-md-1">
-        <h4 class="mb-3">Datos de Pago 💳</h4>
-        
-        <form (ngSubmit)="confirmarPago()" class="needs-validation">
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label">Nombre en la tarjeta</label>
-              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.nombre" name="nombre" placeholder="Ej: MiniMundo" required>
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-bank"></i> Datos para Transferir</h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted">Por favor, realiza la transferencia exacta a la cuenta del vendedor:</p>
+
+                    <div class="bg-light p-3 rounded border mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">Nombre Tienda:</span>
+                            <span>{{ orden.tienda.nombre }}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">RUT / ID:</span>
+                            <span>{{ orden.tienda.rutEmpresa || 'No informado' }}</span>
+                        </div>
+
+                        <div class="mt-3">
+                            <span class="fw-bold d-block mb-1">Datos Bancarios:</span>
+                            <p class="mb-0 text-break" style="white-space: pre-line;">
+                                {{ orden.tienda.datosBancarios || 'Contactar al vendedor para datos de pago' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <strong>Importante:</strong> En el comentario de la transferencia indica el ID de Orden:
+                        <span class="badge bg-dark fs-6">#{{ orden.id }}</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Subir Comprobante (Obligatorio)</label>
+                        <input type="file" class="form-control" (change)="onFileSelected($event)"
+                            accept="image/*,application/pdf" [class.is-invalid]="intentoEnviar && !archivoComprobante">
+                        <div class="invalid-feedback">
+                            Debes adjuntar una captura o PDF de la transferencia.
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success w-100 btn-lg" (click)="confirmarTransferencia()"
+                        [disabled]="loading || !archivoComprobante"> <span *ngIf="loading"
+                            class="spinner-border spinner-border-sm me-2"></span>
+
+                        <span *ngIf="!archivoComprobante">📂 Sube el comprobante para continuar</span>
+                        <span *ngIf="archivoComprobante && !loading">✅ Informar Pago</span>
+                        <span *ngIf="loading">Enviando...</span>
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <div class="col-12">
-              <label class="form-label">Número de tarjeta</label>
-              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.numeroTarjeta" name="numero" placeholder="0000 0000 0000 0000" required>
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Resumen del Pedido #{{ orden.id }}</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+
+                        @for (detalle of orden.detalles; track detalle.id) {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="my-0">{{ detalle.producto.nombre }}</h6>
+                                <small class="text-muted">Cant: {{ detalle.cantidad }} x ${{ detalle.precioUnitario |
+                                    number }}</small>
+                            </div>
+                            <span class="text-muted">${{ (detalle.precioUnitario * detalle.cantidad) | number }}</span>
+                        </li>
+                        }
+
+                        <li class="list-group-item d-flex justify-content-between bg-light">
+                            <span class="fw-bold">Total a Transferir (CLP)</span>
+                            <strong class="fs-4 text-success">${{ orden.total | number }}</strong>
+                        </li>
+                    </ul>
+                </div>
             </div>
+        </div>
 
-            <div class="col-md-6">
-              <label class="form-label">Expiración</label>
-              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.expiracion" name="exp" placeholder="MM/YY" required>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label">CVV</label>
-              <input type="text" class="form-control" [(ngModel)]="datosTarjeta.cvv" name="cvv" placeholder="123" required>
-            </div>
-          </div>
-
-          <hr class="my-4">
-
-          <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="procesandoPago">
-            @if (procesandoPago) {
-                <span class="spinner-border spinner-border-sm"></span> Procesando...
-            } @else {
-                Pagar ${{ orden.montoFinal | number }}
-            }
-          </button>
-          
-          <div class="mt-3 text-center">
-             <a routerLink="/mi-cuenta" class="text-muted">Cancelar y volver</a>
-          </div>
-        </form>
-      </div>
     </div>
-  }
 </div>

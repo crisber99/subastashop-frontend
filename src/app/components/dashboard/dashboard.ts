@@ -142,9 +142,39 @@ export class Dashboard implements OnInit {
   }
 
   cambiarTab(tab: string) {
-      this.tabActual = tab;
-      if (tab === 'carrito') {
-          this.verificarDisponibilidadCarrito();
-      }
+    this.tabActual = tab; // 1. Cambia la vista
+
+    // 2. Lógica específica por pestaña
+    if (tab === 'carrito') {
+        // Ya lo teníamos: Verifica si algo se vendió mientras no mirabas
+        this.verificarDisponibilidadCarrito();
+    } 
+    else if (tab === 'compras') {
+        // 👇 NUEVO: Refrescar órdenes para ver si ya me aprobaron el pago
+        this.recargarOrdenes();
+    }
+    else if (tab === 'pujas') {
+        // Opcional: Refrescar pujas por si alguien me superó
+        this.recargarPujas();
+    }
+  }
+
+  // Métodos auxiliares para no repetir código
+  recargarOrdenes() {
+    this.loading = true; // (Opcional) Puedes poner un spinner pequeño
+    this.ordenService.getMisOrdenes().subscribe({
+        next: (data) => {
+            this.ordenes = data;
+            this.loading = false;
+        },
+        error: (err) => {
+            console.error(err);
+            this.loading = false;
+        }
+    });
+  }
+
+  recargarPujas() {
+      this.productService.getMisPujas().subscribe(data => this.pujas = data);
   }
 }

@@ -1,0 +1,101 @@
+/* Variables de colores (puedes cambiarlas a tu gusto) */
+$sidebar-bg: #222e3c;
+$text-color: #e9ecef;
+$hover-bg: rgba(255, 255, 255, 0.08);
+$active-border: #3b7ddd;
+
+:host {
+  display: block;
+}
+
+.sidebar {
+  min-width: 260px;
+  max-width: 260px;
+  background: $sidebar-bg;
+  color: $text-color;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+/* Marca / Logo */
+.sidebar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+  padding: 1.5rem;
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  background-color: rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+/* Contenedor de la navegación */
+.sidebar-nav {
+  padding: 0;
+  list-style: none; /* 👈 ESTO QUITA LOS PUNTITOS FEOS */
+  margin-bottom: 0;
+}
+
+.sidebar-header {
+  color: #ced4da;
+  padding: 1.5rem 1.5rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Enlaces del menú */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  color: rgba(233, 236, 239, 0.7);
+  text-decoration: none;
+  border-left: 3px solid transparent; /* Borde invisible por defecto */
+  transition: background 0.2s, color 0.2s, border-left 0.2s;
+  cursor: pointer;
+
+  i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background: $hover-bg;
+    color: #fff;
+    border-left-color: $active-border; /* Borde azul al pasar el mouse */
+  }
+}
+
+/* Clase para el ítem activo (cuando estás en esa página) */
+.sidebar-item.active .sidebar-link {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(59, 125, 221, 0.1), transparent);
+  border-left-color: $active-border;
+}
+
+/* Estilo especial para el botón Logout integrado */
+.logout-link {
+  color: #ff6b6b !important; /* Rojo suave */
+  
+  &:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-left-color: #ff6b6b;
+  }
+}
+
+/* RESPONSIVIDAD */
+@media (max-width: 768px) {
+  .sidebar {
+    margin-left: -260px; /* Oculto por defecto en móvil */
+    position: fixed; /* Flotante */
+    z-index: 1000;
+    height: 100vh;
+  }
+
+  /* Cuando la clase .toggled está activa (click en hamburguesa) */
+  .sidebar.toggled {
+    margin-left: 0; /* Aparece */
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  }
+}

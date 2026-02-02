@@ -6,6 +6,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
+  console.log('🛑 INTERCEPTOR EJECUTÁNDOSE. Token:', token ? 'SI TIENE' : 'NO TIENE', 'URL:', req.url);
+  
   // Si tenemos token, clonamos la petición y lo agregamos
   if (token) {
     const authReq = req.clone({

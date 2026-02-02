@@ -34,4 +34,8 @@ export class OrdenService {
   pagarOrden(idOrden: number) {
     return this.http.post(`${this.apiUrl}/${idOrden}/pagar`, {});
   }
+
+  getOrdenById(id: number) {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
 }

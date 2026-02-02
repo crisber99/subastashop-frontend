@@ -1,0 +1,47 @@
+<nav id="sidebar" class="sidebar" [class.toggled]="layoutService.sidebarOpen()">
+    <div class="sidebar-content js-simplebar">
+        <a class="sidebar-brand" href="/dashboard">
+            <span class="align-middle">SubastaShop 🚀</span>
+        </a>
+
+        <ul class="sidebar-nav">
+            <li class="sidebar-header">
+                Principal
+            </li>
+
+            <li class="sidebar-item active">
+                <a class="sidebar-link" href="/dashboard">
+                    <i class="bi bi-speedometer2"></i> <span class="align-middle">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="/mis-compras">
+                    <i class="bi bi-bag-check"></i> <span class="align-middle">Mis Pedidos</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="/mis-pujas">
+                    <i class="bi bi-hammer"></i> <span class="align-middle">Mis Pujas</span>
+                </a>
+            </li>
+
+            <li class="sidebar-header">
+                Administración
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="/super-admin/usuarios">
+                    <i class="bi bi-people"></i> <span class="align-middle">Usuarios</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item mt-4">
+                <a class="sidebar-link logout-link" (click)="authService.logout()">
+                    <i class="bi bi-box-arrow-left"></i> <span class="align-middle">Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand navbar-light bg-white shadow-sm px-4 py-3">
+    <a class="sidebar-toggle d-flex me-2" (click)="toggleSidebar()" style="cursor: pointer;">
+    <i class="bi bi-list fs-3 text-secondary"></i>
+</a>
+
+    <form class="d-none d-sm-inline-block">
+        <div class="input-group input-group-navbar">
+            <input type="text" class="form-control" placeholder="Buscar..." aria-label="Search">
+            <button class="btn btn-outline-secondary" type="button">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </form>
+
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav ms-auto">
+
+            <li class="nav-item dropdown me-3">
+                <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#">
+                    <i class="bi bi-bell"></i>
+                </a>
+                <a class="nav-link" href="#">
+                    <div class="position-relative">
+                        <i class="bi bi-bell fs-4 text-secondary"></i>
+                        <span
+                            class="indicator bg-danger rounded-circle position-absolute top-0 start-100 translate-middle p-1"></span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+                    data-bs-toggle="dropdown">
+                    <img src="assets/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Usuario"
+                        style="width: 40px; height: 40px; object-fit: cover;"
+                        onerror="this.src='https://ui-avatars.com/api/?name=User+Name'">
+                    <span class="text-dark ms-2 fw-bold">Mi Cuenta</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" routerLink="/mi-cuenta">
+                        <i class="bi bi-person me-2"></i> Perfil
+                    </a>
+                    <a class="dropdown-item" routerLink="/admin/configuracion">
+                        <i class="bi bi-gear me-2"></i> Configuración
+                    </a>
+                    <div class="dropdown-divider"></div>
+
+                    <a class="dropdown-item text-danger" style="cursor: pointer;" (click)="logout()">
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

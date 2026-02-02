@@ -6,7 +6,8 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    # 👇 CAMBIO CLAVE: Usamos una versión específica para evitar la cola saturada de 'latest'
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout Code
@@ -19,6 +20,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
+        # Mantenemos el flag legacy-peer-deps que nos salvó en local
         run: npm ci --legacy-peer-deps
 
       - name: Build Angular App

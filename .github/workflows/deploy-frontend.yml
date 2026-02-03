@@ -6,8 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    # 👇 CAMBIO CLAVE: Usamos una versión específica para evitar la cola saturada de 'latest'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -20,8 +19,8 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        # Mantenemos el flag legacy-peer-deps que nos salvó en local
-        run: npm ci --legacy-peer-deps
+        # 👇 CAMBIO 1: Usamos 'install' en lugar de 'ci' para arreglar dependencias rotas
+        run: npm install --legacy-peer-deps
 
       - name: Build Angular App
         run: npm run build
@@ -34,6 +33,6 @@ jobs:
               --account-name storagesubastasapp \
               --auth-mode key \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" \
-              --source ./dist/subasta-frontend/browser \
+              --source ./dist/subasta-frontend \
               --destination '$web' \
               --overwrite

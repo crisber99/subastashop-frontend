@@ -13,7 +13,7 @@ import { LayoutService } from '../../services/layout';
 })
 export class Navbar {
   authService = inject(AuthService); // Inyectamos el servicio
-  layoutService = inject(LayoutService);  
+  public layoutService = inject(LayoutService);  
 
   esAdmin(): boolean {
     const rol = this.authService.currentUser()?.role;

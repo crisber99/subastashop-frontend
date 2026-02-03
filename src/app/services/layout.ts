@@ -4,8 +4,8 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class LayoutService {
-  // Usamos 'signals' (la forma moderna de Angular)
-  sidebarOpen = signal(false); // Empieza cerrado en móviles por defecto
+  
+  sidebarOpen = signal(true);
 
   toggleSidebar() {
     this.sidebarOpen.update(value => !value);

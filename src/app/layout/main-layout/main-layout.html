@@ -1,5 +1,7 @@
 <div class="wrapper d-flex align-items-stretch">
-    <app-sidebar></app-sidebar>
+    @if (layoutService.sidebarOpen()) {
+        <app-sidebar class="border-end"></app-sidebar>
+    }<app-sidebar></app-sidebar>
 
     <div class="main w-100">
         <app-navbar></app-navbar> 

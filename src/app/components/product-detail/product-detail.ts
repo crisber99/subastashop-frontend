@@ -11,6 +11,7 @@ import { Navbar } from '../navbar/navbar';
 import { Footer } from '../footer/footer';
 import Swal from 'sweetalert2';
 import { Sidebar } from '../../components/sidebar/sidebar';
+import { LayoutService } from '../../services/layout';
 
 declare var bootstrap: any;
 
@@ -25,6 +26,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private superAdminService = inject(SuperAdminService);
+  public layoutService = inject(LayoutService);
   cartService = inject(CartService);
   
   websocketService = inject(Websocket);

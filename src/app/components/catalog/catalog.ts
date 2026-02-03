@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth-service';
 import { Navbar } from '../navbar/navbar';
 import { Footer } from '../footer/footer';
 import { Sidebar } from '../../components/sidebar/sidebar';
+import { LayoutService } from '../../services/layout';
 
 @Component({
   selector: 'app-catalog',
@@ -18,6 +19,7 @@ export class CatalogComponent implements OnInit {
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
   public authService = inject(AuthService);
+  public layoutService = inject(LayoutService);
 
   tienda: any = null; 
   productos: any[] = [];

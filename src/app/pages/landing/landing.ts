@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Navbar } from '../../components/navbar/navbar';
 import { Footer } from '../../components/footer/footer';
 import { Sidebar } from '../../components/sidebar/sidebar';
+import { LayoutService } from '../../services/layout';
 
 @Component({
   selector: 'app-landing',
@@ -16,6 +17,7 @@ import { Sidebar } from '../../components/sidebar/sidebar';
 })
 export class Landing implements OnInit {
   private shopService = inject(Shop);
+  public layoutService = inject(LayoutService);
 
   tiendas: any[] = [];
   tiendasFiltradas: any[] = [];

@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { Navbar } from '../../components/navbar/navbar';
 import { Footer } from '../../components/footer/footer';
+import { LayoutService } from '../../services/layout';
 
 @Component({
   selector: 'app-main-layout',
@@ -19,5 +20,6 @@ import { Footer } from '../../components/footer/footer';
   styleUrl: './main-layout.scss',
 })
 export class MainLayout {
+  public layoutService = inject(LayoutService);
 
 }

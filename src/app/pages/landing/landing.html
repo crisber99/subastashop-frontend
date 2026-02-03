@@ -1,5 +1,7 @@
 <div class="d-flex w-100 overflow-hidden">
-    <app-sidebar></app-sidebar>
+    @if (layoutService.sidebarOpen()) {
+        <app-sidebar class="border-end"></app-sidebar>
+    }
     <div class="d-flex flex-column w-100" style="height: 100vh; overflow-y: auto;">
         <app-navbar></app-navbar>
         <div

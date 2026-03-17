@@ -1,59 +1,37 @@
-<nav id="sidebar" class="sidebar" [class.toggled]="layoutService.sidebarOpen()">
+<nav id="sidebar" class="sidebar" 
+     [class.toggled]="layoutService.sidebarOpen()"
+     [class.collapsed]="!layoutService.sidebarOpen()">
     <div class="sidebar-brand">
-        <a routerLink="/" class="text-white text-decoration-none fw-bold fs-4">
+        <a routerLink="/" class="text-decoration-none fw-bold">
             SubastaShop 🚀
         </a>
     </div>
 
-    <div class="sidebar-content">
+    <div class="sidebar-content" *ngIf="menuService.fullMenu().length > 0">
         <ul class="sidebar-nav">
+            <li class="sidebar-header">Navegación</li>
 
-            <ng-container *ngIf="isComprador">
-                <li class="sidebar-header">Principal</li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" routerLink="/mi-cuenta" routerLinkActive="active">
-                        <i class="bi bi-person-badge"></i> <span class="align-middle">Mi Perfil</span>
-                    </a>
-                </li>
-            </ng-container>
-
-            <ng-container *ngIf="isAdmin">
-                <li class="sidebar-item">
-                    <a class="sidebar-link" routerLink="/admin/configuracion" routerLinkActive="active">
-                        <i class="bi bi-gear"></i> <span class="align-middle">Config. Transferencias</span>
-                    </a>
-                </li>
-            </ng-container>
-
-            <ng-container *ngIf="isAdmin || isSuperAdmin">
-                <li class="sidebar-header">Gestión</li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" routerLink="/admin" routerLinkActive="active">
-                        <i class="bi bi-person-badge"></i> <span class="align-middle">Panel de Administración</span>
-                    </a>
-                </li>
-
-            </ng-container>
-
-            <ng-container *ngIf="isSuperAdmin">
-                <li class="sidebar-header">Súper Admin</li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" routerLink="/super-admin/usuarios" routerLinkActive="active">
-                        <i class="bi bi-people"></i> <span class="align-middle">Usuarios del Sistema</span>
-                    </a>
-                </li>
-            </ng-container>
-
-            <li class="sidebar-item mt-5">
-                <a class="sidebar-link text-danger" (click)="authService.logout()" style="cursor: pointer;">
-                    <i class="bi bi-box-arrow-left"></i> <span class="align-middle">Cerrar Sesión</span>
+            <li class="sidebar-item" *ngFor="let item of menuService.fullMenu()">
+                <a class="sidebar-link" [routerLink]="item.route" routerLinkActive="active" 
+                   [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="bi" [ngClass]="item.icon"></i>
+                    <span class="align-middle">{{ item.label }}</span>
                 </a>
             </li>
         </ul>
     </div>
+
+    <div class="logout-container">
+        <a class="sidebar-link logout-link" (click)="authService.logout()" style="cursor: pointer;">
+            <i class="bi bi-box-arrow-left"></i>
+            <span class="align-middle">Cerrar Sesión</span>
+        </a>
+    </div>
 </nav>
 
-<div class="sidebar-backdrop d-lg-none" *ngIf="layoutService.sidebarOpen()" (click)="layoutService.toggleSidebar()"
+<!-- Backdrop para versión móvil -->
+<div class="sidebar-backdrop d-lg-none" *ngIf="layoutService.sidebarOpen()" 
+    (click)="layoutService.toggleSidebar()"
     (keydown)="layoutService.toggleSidebar()" tabindex="0"
-    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;">
-</div>
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;">
+</div>

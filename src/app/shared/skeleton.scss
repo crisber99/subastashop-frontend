@@ -1,0 +1,18 @@
+.skeleton-loader {
+  display: block;
+  background: #f0f0f0;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: shine 1.5s linear infinite;
+}
+
+.skeleton-circle {
+  border-radius: 50% !important;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}

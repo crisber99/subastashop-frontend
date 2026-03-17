@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { LayoutService } from '../../services/layout';
+import { MenuService } from '../../services/menu';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,6 +15,7 @@ import { LayoutService } from '../../services/layout';
 export class Sidebar {
   authService = inject(AuthService);
   layoutService = inject(LayoutService);
+  menuService = inject(MenuService);
 
   // 1. ¿Es Súper Admin? (Ve TODO)
   get isSuperAdmin(): boolean {

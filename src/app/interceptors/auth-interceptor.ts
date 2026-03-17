@@ -8,6 +8,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   console.log('🛑 INTERCEPTOR EJECUTÁNDOSE. Token:', token ? 'SI TIENE' : 'NO TIENE', 'URL:', req.url);
   
+  // Si es una petición de login o registro, no enviamos el token (aunque exista uno viejo)
+  if (req.url.includes('/auth/')) {
+    return next(req);
+  }
+
   // Si tenemos token, clonamos la petición y lo agregamos
   if (token) {
     const authReq = req.clone({

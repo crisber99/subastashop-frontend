@@ -1,73 +1,85 @@
-<div class="d-flex w-100 overflow-hidden">
-    @if (layoutService.sidebarOpen()) {
-        <app-sidebar class="border-end"></app-sidebar>
-    }
-    <div class="d-flex flex-column w-100" style="height: 100vh; overflow-y: auto;">
-        <app-navbar></app-navbar>
-        <div
-            class="hero-section text-center text-white d-flex flex-column justify-content-center align-items-center mb-5">
-            <h1 class="display-3 fw-bold animate__animated animate__fadeInDown">Bienvenido a SubastaShop 🚀</h1>
-            <p class="lead fs-4 animate__animated animate__fadeInUp">La plataforma donde cada tienda es un mundo de
-                oportunidades.</p>
-            <p class="mb-4 text-white-50">Explora subastas, rifas y ventas directas de nuestros vendedores verificados.
-            </p>
+<div class="hero-section text-center text-white d-flex flex-column justify-content-center align-items-center mb-5">
+    <h1 class="display-3 fw-bold animate__animated animate__fadeInDown">Bienvenido a SubastaShop 🚀</h1>
+    <p class="lead fs-4 animate__animated animate__fadeInUp">La plataforma donde cada tienda es un mundo de oportunidades.</p>
+    <p class="mb-4 text-white-50">Explora subastas, rifas y ventas directas de nuestros vendedores verificados.</p>
 
-            <div class="search-container bg-white p-2 rounded-pill shadow-lg d-flex mt-3 animate__animated animate__fadeInUp"
-                style="max-width: 600px; width: 90%;">
-                <input type="text" class="form-control border-0 rounded-pill px-4 shadow-none"
-                    placeholder="Buscar una tienda (ej: MiniMundo)..." [(ngModel)]="busqueda" (keyup)="filtrar()">
-                <button class="btn btn-primary rounded-pill px-4 fw-bold">Buscar</button>
-            </div>
+    <div class="search-container bg-white p-2 rounded-pill shadow-lg d-flex mt-3 animate__animated animate__fadeInUp"
+        style="max-width: 600px; width: 90%;">
+        <input type="text" class="form-control border-0 rounded-pill px-4 shadow-none"
+            placeholder="Buscar una tienda (ej: MiniMundo)..." [(ngModel)]="busqueda" (keyup)="filtrar()">
+        <button class="btn btn-primary rounded-pill px-4 fw-bold">Buscar</button>
+    </div>
+
+    @if (!authService.isLoggedIn()) {
+        <div class="mt-4 animate__animated animate__fadeInUp animate__delay-1s">
+            <a routerLink="/login" class="btn btn-outline-light rounded-pill px-5 py-2 fw-bold shadow-sm" style="backdrop-filter: blur(5px);">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión o Registrarse
+            </a>
         </div>
+    }
+</div>
 
-        <div class="container pb-5">
+<div class="container pb-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h3 class="fw-bold text-dark">Tiendas Destacadas 🏪</h3>
+            <p class="text-muted">Elige una tienda para ver su catálogo exclusivo.</p>
+        </div>
+    </div>
 
-            <div class="row mb-4">
-                <div class="col-12 text-center">
-                    <h3 class="fw-bold text-dark">Tiendas Destacadas 🏪</h3>
-                    <p class="text-muted">Elige una tienda para ver su catálogo exclusivo.</p>
-                </div>
-            </div>
-
-            <div class="row g-4 justify-content-center">
-                @for (tienda of tiendasFiltradas; track tienda.id) {
+    <div class="row g-4 justify-content-center">
+        <!-- SKELETONS MIENTRAS CARGA 🏗️ -->
+        @if (loading) {
+            @for (i of [1,2,3,4]; track i) {
                 <div class="col-md-4 col-lg-3">
-                    <div class="card h-100 shadow-sm border-0 card-hover" [routerLink]="['/tienda', tienda.slug]"
-                        style="cursor: pointer; transition: transform 0.2s;">
-
+                    <div class="card h-100 shadow-sm border-0">
                         <div class="card-body text-center p-4">
-
                             <div class="mb-3 d-flex justify-content-center">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
-                                    [style.background-color]="tienda.colorPrimario || '#0d6efd'"
-                                    style="width: 80px; height: 80px; font-size: 2rem;">
-                                    {{ tienda.nombre.charAt(0) }}
-                                </div>
+                                <div class="skeleton-loader skeleton-circle" style="width: 80px; height: 80px;"></div>
                             </div>
-
-                            <h5 class="card-title fw-bold text-dark mb-2">{{ tienda.nombre }}</h5>
-
-                            <p class="card-text text-muted small mb-4">
-                                Encuentra las mejores rifas y subastas exclusivas aquí.
-                            </p>
-
-                            <button class="btn btn-outline-primary rounded-pill px-4">
-                                Visitar Tienda →
-                            </button>
+                            <div class="skeleton-loader mb-2" style="height: 25px; width: 80%; margin: 0 auto;"></div>
+                            <div class="skeleton-loader mb-4" style="height: 15px; width: 60%; margin: 0 auto;"></div>
+                            <div class="skeleton-loader rounded-pill" style="height: 38px; width: 100%;"></div>
                         </div>
                     </div>
                 </div>
-                }
-                @empty {
-                <div class="col-12 text-center py-5">
-                    <div class="text-muted">
-                        <i class="bi bi-shop fs-1"></i>
-                        <p class="mt-2">No encontramos tiendas con ese nombre.</p>
+            }
+        } 
+        @else {
+            @for (tienda of tiendasFiltradas; track tienda.id) {
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 shadow-sm border-0 card-hover" [routerLink]="['/tienda', tienda.slug]"
+                    style="cursor: pointer; transition: transform 0.2s;">
+
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3 d-flex justify-content-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
+                                [style.background-color]="tienda.colorPrimario || '#0d6efd'"
+                                style="width: 80px; height: 80px; font-size: 2rem;">
+                                {{ tienda.nombre.charAt(0) }}
+                            </div>
+                        </div>
+
+                        <h5 class="card-title fw-bold text-dark mb-2">{{ tienda.nombre }}</h5>
+                        <p class="card-text text-muted small mb-4">
+                            Encuentra las mejores rifas y subastas exclusivas aquí.
+                        </p>
+
+                        <button class="btn btn-outline-primary rounded-pill px-4">
+                            Visitar Tienda →
+                        </button>
                     </div>
                 </div>
-                }
             </div>
-        </div>
-        <app-footer></app-footer>
+            }
+            @empty {
+            <div class="col-12 text-center py-5">
+                <div class="text-muted">
+                    <i class="bi bi-shop fs-1"></i>
+                    <p class="mt-2">No encontramos tiendas con ese nombre.</p>
+                </div>
+            </div>
+            }
+        }
     </div>
 </div>

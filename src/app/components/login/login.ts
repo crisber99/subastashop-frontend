@@ -40,20 +40,6 @@ export class LoginComponent {
     this.authService.login(credenciales).subscribe({
       next: () => {
         Swal.close();
-        
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true
-        });
-        
-        Toast.fire({
-          icon: 'success',
-          title: '¡Bienvenido de nuevo!'
-        });
-
         this.router.navigate(['/']);
       },
       error: (err) => {
@@ -63,8 +49,9 @@ export class LoginComponent {
              this.mensajeError = 'Correo o contraseña incorrectos.';
              Swal.fire('Error', 'Credenciales incorrectas', 'error');
         } else {
-             this.mensajeError = 'Error de conexión con el servidor.';
-             Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+             // El backend ahora devuelve: {"error": "mensaje"}
+             this.mensajeError = err.error?.error || err.error?.message || err.message || 'Error de conexión con el servidor.';
+             Swal.fire('Error', this.mensajeError, 'error');
         }
       }
     });

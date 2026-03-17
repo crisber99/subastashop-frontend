@@ -1,123 +1,188 @@
-/* --- 1. VARIABLES --- */
-$sidebar-bg: #222e3c;
-$text-color: #e9ecef;
-$hover-bg: rgba(255, 255, 255, 0.08);
-$active-border: #3b7ddd;
-$danger-color: #ff6b6b;
+/* --- 1. VARIABLES (SISTEMA DE DISEÑO) --- */
+$sidebar-bg: rgba(15, 23, 42, 0.95);
+$sidebar-accent: #6366f1;
+$text-primary: #f8fafc;
+$text-secondary: #94a3b8;
+$glass-border: rgba(255, 255, 255, 0.1);
+$hover-color: rgba(99, 102, 241, 0.15);
 
-/* --- 2. CONFIGURACIÓN DEL COMPONENTE --- */
 :host {
   display: block;
   position: relative;
-  z-index: 100; /* Asegura que esté por encima del contenido en móvil */
+  z-index: 1000;
 }
 
-/* --- 3. CONTENEDOR PRINCIPAL DEL SIDEBAR --- */
+/* --- 3. CONTENEDOR PRINCIPAL --- */
 .sidebar {
-  min-width: 260px;
-  max-width: 260px;
+  width: 280px;
   background: $sidebar-bg;
-  color: $text-color;
-  
-  /* Altura y Scroll */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: $text-primary;
   min-height: 100vh;
-  height: 100%;       /* Ocupa todo el alto */
-  overflow-y: auto;   /* 👈 ESTO ARREGLA QUE SE CORTE: Agrega scroll si es necesario */
-  
-  /* Layout */
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-right: 1px solid $glass-border;
   display: flex;
   flex-direction: column;
-  transition: margin-left 0.35s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 10px 0 25px rgba(0, 0, 0, 0.2);
+  z-index: 1100;
+  
+  /* Desktop Mode - Part of the flow */
+  @media (min-width: 993px) {
+    position: sticky;
+    transform: none !important;
+    &.collapsed {
+        width: 0;
+        overflow: hidden;
+        border-right-width: 0;
+    }
+  }
+
+  /* Mobile Mode - Layered */
+  @media (max-width: 992px) {
+    transform: translateX(-100%);
+    &.toggled {
+        transform: translateX(0);
+    }
+  }
+}
+
+/* Estado Visible */
+.sidebar.toggled {
+    transform: translateX(0);
 }
 
 /* --- 4. MARCA / LOGO --- */
 .sidebar-brand {
-  font-weight: bold;
-  font-size: 1.5rem;
-  padding: 1.5rem;
-  display: block;
-  color: #fff;
-  text-decoration: none;
-  background-color: rgba(0,0,0,0.1);
-  text-align: center;
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid $glass-border;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+
+  a {
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.3s ease;
+    
+    &:hover {
+        transform: scale(1.02);
+    }
+  }
 }
 
-/* --- 5. CONTENIDO INTERNO --- */
+/* --- 5. CONTENIDO --- */
 .sidebar-content {
-  flex-grow: 1; /* Empuja el contenido para llenar espacio si sobra */
+  flex-grow: 1;
+  padding: 1.5rem 0.75rem;
+  overflow-y: auto;
+
+  /* Custom Scrollbar */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
 }
 
-/* --- 6. LISTA DE NAVEGACIÓN --- */
+/* --- 6. NAVEGACIÓN --- */
 .sidebar-nav {
   padding: 0;
-  list-style: none; /* 👈 IMPORTANTE: Quita los puntos */
-  margin-bottom: 0;
+  list-style: none;
+  margin: 0;
 }
 
 .sidebar-header {
-  color: #ced4da;
-  padding: 1.5rem 1.5rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
+  color: $text-secondary;
+  padding: 1.5rem 1rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* --- 7. ENLACES (ITEMS) --- */
+.sidebar-item {
+  margin-bottom: 0.25rem;
+}
+
+/* --- 7. ENLACES (ESTILO PREMIUM) --- */
 .sidebar-link {
   display: flex;
   align-items: center;
-  padding: 0.8rem 1.5rem;
-  color: rgba(233, 236, 239, 0.7);
+  padding: 0.75rem 1rem;
+  color: $text-secondary;
   text-decoration: none;
-  border-left: 3px solid transparent;
-  transition: background 0.2s, color 0.2s, border-left 0.2s;
-  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 
   i {
-    margin-right: 10px;
-    font-size: 1.1rem;
+    margin-right: 12px;
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
   }
 
-  /* Hover */
+  span {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  /* Efecto Hover */
   &:hover {
-    background: $hover-bg;
+    background: $hover-color;
     color: #fff;
-    border-left-color: $active-border;
+    transform: translateX(4px);
+
+    i {
+      color: $sidebar-accent;
+      transform: scale(1.1);
+    }
+  }
+
+  /* Estado Activo */
+  &.active {
+    background: $sidebar-accent;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+
+    i {
+      color: #fff;
+    }
   }
 }
 
-/* Item Activo (Ruta actual) */
-.sidebar-link.active {
-  color: #fff;
-  background: linear-gradient(90deg, rgba(59, 125, 221, 0.1), transparent);
-  border-left-color: $active-border;
+/* --- 8. LOGOUT BOTÓN --- */
+.logout-container {
+    padding: 1.5rem 0.75rem;
+    border-top: 1px solid $glass-border;
 }
 
-/* Botón Logout (Rojo) */
 .logout-link {
-  color: $danger-color !important;
-  
-  &:hover {
-    background: rgba(255, 107, 107, 0.1);
-    border-left-color: $danger-color;
-  }
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171 !important;
+    
+    &:hover {
+        background: #ef4444 !important;
+        color: #fff !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
 }
 
-/* --- 8. RESPONSIVIDAD (MÓVIL / TABLET) --- */
-/* Usamos 992px para cubrir tablets y celulares */
+/* --- 9. RESPONSIVIDAD --- */
 @media (max-width: 992px) {
-  .sidebar {
-    margin-left: -260px; /* Oculto por defecto */
-    position: fixed;     /* Flotante */
-    top: 0;
-    left: 0;
-    z-index: 1000;       /* Muy arriba */
-    height: 100vh;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5); /* Sombra para profundidad */
-  }
-
-  /* Clase que agrega Angular cuando abres el menú */
   .sidebar.toggled {
-    margin-left: 0 !important; /* Aparece */
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
   }
-}
+}

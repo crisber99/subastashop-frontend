@@ -69,6 +69,7 @@
                 <small>La rifa se cerrará automáticamente cuando se vendan todos los números.</small>
               </div>
             </div>
+            
             <div class="mb-3" *ngIf="producto.tipoVenta === 'SUBASTA'">
               <label class="form-label fw-bold text-danger">Fecha de Cierre</label>
               <input type="datetime-local" class="form-control" [(ngModel)]="producto.fechaFin" name="fechaFin" required>
@@ -76,8 +77,11 @@
             </div>
 
             <div class="mb-4">
-              <label class="form-label">Foto del Producto</label>
-              <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" required>
+              <label class="form-label">Fotos del Producto (Máx. {{ limiteImagenes }})</label>
+              <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" multiple required>
+              <div class="form-text" [ngClass]="{'text-danger': archivosSeleccionados.length > limiteImagenes}">
+                Has seleccionado {{ archivosSeleccionados.length }} de {{ limiteImagenes }} imágenes permitidas.
+              </div>
             </div>
 
             <div class="d-grid">

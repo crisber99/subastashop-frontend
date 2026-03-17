@@ -3,15 +3,13 @@ import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
-import { Navbar } from '../navbar/navbar';
-import { Footer } from '../footer/footer';
-import { Sidebar } from '../../components/sidebar/sidebar';
 import { LayoutService } from '../../services/layout';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterModule, Navbar, Footer, Sidebar],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss'
 })

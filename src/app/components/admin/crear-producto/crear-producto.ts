@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Vital para los inputs
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product';
-import Swal from 'sweetalert2'; // 👈 Importamos SweetAlert
+import { AuthService } from '../../../services/auth-service'; // 👈 Asegúrate de que esta ruta sea correcta
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-crear-producto',
@@ -12,15 +13,15 @@ import Swal from 'sweetalert2'; // 👈 Importamos SweetAlert
   templateUrl: './crear-producto.html',
   styleUrl: './crear-producto.scss',
 })
-export class CrearProducto {
+export class CrearProducto implements OnInit {
   productService = inject(ProductService);
+  authService = inject(AuthService); // 👈 Inyectamos Auth para verificar el rol
   router = inject(Router);
 
-  // Modelo del formulario
   producto = {
     nombre: '',
     descripcion: '',
-    tipoVenta: 'SUBASTA', // Valor por defecto
+    tipoVenta: 'SUBASTA',
     precioBase: 0,
     stock: 1,
     fechaFin: '',
@@ -29,26 +30,50 @@ export class CrearProducto {
     cantidadGanadores: 1
   };
 
-  archivoSeleccionado: File | null = null;
+  // 👇 Ahora es un arreglo para soportar múltiples fotos
+  archivosSeleccionados: File[] = [];
+  limiteImagenes: number = 8;
   mensajeError = '';
   cargando = false;
 
-  // Detectar cuando el usuario elige una imagen
+  ngOnInit() {
+    // Calculamos el límite según el rol
+    const user = this.authService.currentUser();
+    if (user?.role === 'ROLE_SUPER_ADMIN') {
+      this.limiteImagenes = 10;
+    } else {
+      this.limiteImagenes = 8;
+    }
+  }
+
   onFileSelected(event: any) {
-    this.archivoSeleccionado = event.target.files[0];
+    const files: FileList = event.target.files;
+    
+    // Validación de límite de fotos
+    if (files.length > this.limiteImagenes) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Límite excedido',
+        text: `Tu plan actual te permite subir un máximo de ${this.limiteImagenes} imágenes.`
+      });
+      event.target.value = ''; // Limpiamos el input
+      this.archivosSeleccionados = [];
+      return;
+    }
+
+    this.archivosSeleccionados = Array.from(files);
   }
 
   onSubmit() {
-    if (!this.archivoSeleccionado) {
+    if (this.archivosSeleccionados.length === 0) {
       Swal.fire({
         icon: 'warning',
-        title: 'Falta Imagen',
-        text: 'Debes seleccionar una imagen para el producto.'
+        title: 'Faltan Imágenes',
+        text: 'Debes seleccionar al menos una imagen para el producto.'
       });
       return;
     }
 
-    // Confirmación antes de enviar
     Swal.fire({
       title: '¿Publicar Producto?',
       text: `Estás creando una ${this.producto.tipoVenta === 'SUBASTA' ? 'Subasta' : 'Venta Directa/Rifa'} por $${this.producto.precioBase}`,
@@ -67,7 +92,6 @@ export class CrearProducto {
   procesarEnvio() {
     this.cargando = true;
     
-    // Mostrar loader mientras sube
     Swal.fire({
       title: 'Subiendo Producto...',
       html: 'Por favor espera un momento.',
@@ -79,10 +103,11 @@ export class CrearProducto {
 
     const formData = new FormData();
 
-    // Agregamos los campos tal cual los espera el Backend (@RequestParam)
-    if (this.archivoSeleccionado) {
-      formData.append('file', this.archivoSeleccionado);
-    }
+    // 👇 MAGIA: Adjuntamos todas las imágenes seleccionadas
+    this.archivosSeleccionados.forEach(archivo => {
+      formData.append('archivos', archivo); // Debe coincidir con @RequestParam("archivos")
+    });
+
     formData.append('nombre', this.producto.nombre);
     formData.append('descripcion', this.producto.descripcion);
     formData.append('tipoVenta', this.producto.tipoVenta);
@@ -102,7 +127,6 @@ export class CrearProducto {
     this.productService.crearProducto(formData).subscribe({
       next: (resp) => {
         this.cargando = false;
-        
         Swal.fire({
           icon: 'success',
           title: '¡Publicado!',
@@ -110,7 +134,7 @@ export class CrearProducto {
           timer: 2000,
           showConfirmButton: false
         }).then(() => {
-          this.router.navigate(['/admin']); // Volver al panel de admin
+          this.router.navigate(['/admin']);
         });
       },
       error: (err) => {

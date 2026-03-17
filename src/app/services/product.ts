@@ -24,55 +24,47 @@ export class ProductService {
     return this.http.get<any>(`${this.apiUrlProductos}/${id}`);
   }
 
-  updateProducto(id: number, producto: any, imagen?: File) {
+  updateProducto(id: number, producto: any, imagenes?: File[]) {
     const formData = new FormData();
     formData.append('nombre', producto.nombre);
     formData.append('descripcion', producto.descripcion);
     formData.append('precioBase', producto.precioBase);
-    formData.append('fechaFin', producto.fechaFin);
+    formData.append('fechaFin', producto.fechaFinSubasta || '');
 
-    if (imagen) {
-      formData.append('imagen', imagen);
+    if (imagenes && imagenes.length > 0) {
+      imagenes.forEach(file => {
+        formData.append('archivos', file);
+      });
     }
 
-    // Usamos PUT para actualizar
     return this.http.put(`${this.apiUrlProductos}/${id}`, formData);
   }
 
-  // Enviar una puja
   realizarPuja(productoId: number, monto: number): Observable<any> {
-    // Por ahora enviamos usuarioId: 1 fijo (simulado) hasta que tengamos Login real
     const body = {
       productoId: productoId,
-      // usuarioId: 1, 
       monto: monto
     };
-    // Nota: Cambiamos la URL base porque el endpoint de pujas es distinto
     return this.http.post(`${this.apiUrlSubastas}/pujar`, body);
   }
 
-  // Obtener historial de pujas del usuario logueado
   getMisPujas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrlUsuario}/mis-pujas`);
   }
 
-  // Obtener subastas ganadas
   getMisCompras(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrlUsuario}/mis-compras`);
   }
 
-  // Método para enviar el formulario con imagen
-  crearProducto(productoData: FormData): Observable<any> {
-    // Nota: NO seteamos Content-Type manualmente, Angular lo hace solo al ver FormData
-    return this.http.post(`${this.apiUrlProductos}`, productoData);
+  // 👇 CORREGIDO: Ahora recibe el FormData directamente listo para enviar
+  crearProducto(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrlProductos}`, formData);
   }
 
-  // Obtener detalle de una orden (para la pantalla de pago)
   getOrdenById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrlOrdenes}/${id}`);
   }
 
-  // Pagar la orden
   pagarOrden(id: number, datosPago: any) {
     return this.http.post(`${this.apiUrlOrdenes}/${id}/pagar`, datosPago);
   }

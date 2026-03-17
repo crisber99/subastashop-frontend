@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { TiendaService } from '../../services/tienda';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,6 +18,8 @@ import Swal from 'sweetalert2';
 export class AdminConfig implements OnInit {
 
   private tiendaService = inject(TiendaService);
+  public authService = inject(AuthService);
+  private http = inject(HttpClient);
 
   config = {
     rutEmpresa: '',
@@ -86,6 +91,26 @@ export class AdminConfig implements OnInit {
         this.loading = false;
         console.error(err);
         Swal.fire('Error', 'No se pudieron guardar los cambios.', 'error');
+      }
+    });
+  }
+
+  suscribirse() {
+    Swal.fire({
+      title: 'Redirigiendo a la pasarela de pago...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.http.post<any>(`${environment.apiUrl}/mercadopago/create-preference`, {}).subscribe({
+      next: (res) => {
+        if (res.id) {
+          window.location.href = res.id;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo iniciar el proceso de pago con Mercado Pago.', 'error');
       }
     });
   }

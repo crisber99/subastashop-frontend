@@ -110,4 +110,24 @@ export class AuthService {
     console.log('Super Usuario actual:', user);
     return user?.rol === 'ROLE_SUPER_ADMIN' || user?.role === 'ROLE_SUPER_ADMIN';
   }
+
+  // --- TRIAL Y SUSCRIPCIONES ---
+  getTrialDaysLeft(): number {
+    const user = this.currentUser();
+    if (!user || !user.fechaFinPrueba) return 0;
+    
+    const fin = new Date(user.fechaFinPrueba);
+    const hoy = new Date();
+    const dif = fin.getTime() - hoy.getTime();
+    const dias = Math.ceil(dif / (1000 * 3600 * 24));
+    return dias > 0 ? dias : 0;
+  }
+
+  isTrialActive(): boolean {
+    return this.getTrialDaysLeft() > 0;
+  }
+
+  hasActiveSubscription(): boolean {
+    return this.currentUser()?.suscripcionActiva || false;
+  }
 }

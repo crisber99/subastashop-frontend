@@ -1,0 +1,125 @@
+$navbar-bg: rgba(255, 255, 255, 0.85);
+$glass-border: rgba(255, 255, 255, 0.3);
+$accent-color: #6366f1;
+
+.navbar {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: $navbar-bg;
+  border-bottom: 1px solid $glass-border;
+  transition: all 0.3s ease;
+  height: 70px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #1e293b;
+}
+
+/* User Dropdown */
+.dropdown-toggle {
+    border: 1px solid transparent;
+    border-radius: 50px;
+    padding: 5px 15px 5px 5px !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+.avatar-initials {
+    background: linear-gradient(135deg, $accent-color 0%, #4f46e5 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    border: 1px solid $glass-border;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.75rem;
+    margin-top: 10px;
+    z-index: 2000;
+    min-width: 200px;
+    
+    &.show {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+}
+
+.dropdown-item {
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-weight: 500;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+
+    i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+        color: $accent-color;
+    }
+
+    &:hover {
+        background: $accent-color;
+        color: #fff;
+        
+        i { color: #fff; }
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Sidebar Toggle Button */
+.toggle-btn {
+    border-radius: 12px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: #1e293b;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: white;
+    margin-left: 1rem;
+
+    &:hover {
+        background: rgba(0,0,0,0.05);
+        color: $accent-color;
+        transform: scale(1.05);
+    }
+
+    i {
+        font-size: 1.5rem;
+    }
+}

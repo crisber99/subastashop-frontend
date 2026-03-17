@@ -1,91 +1,32 @@
-<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold" routerLink="/">SubastaShop 🚀</a>
+@if (isAuthPage()) {
+    <div class="auth-wrapper">
+        <router-outlet></router-outlet>
+    </div>
+} @else {
+    <div class="app-wrapper" [class.sidebar-collapsed]="!layoutService.sidebarOpen()">
+        
+        @if (authService.isLoggedIn()) {
+            <app-sidebar></app-sidebar>
+        }
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="main-content">
+            @if (authService.isLoggedIn()) {
+                <app-navbar></app-navbar>
+            }
+            
+            <div class="content-body">
+                <router-outlet></router-outlet>
+            </div>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center">
-
-                @if (authService.isLoggedIn()) {
-
-                @if (authService.isSuperAdmin()) {
-                <li class="nav-item dropdown ms-2">
-                    <a class="nav-link dropdown-toggle btn btn-warning text-dark fw-bold px-3 rounded shadow-sm"
-                        href="#" role="button" data-bs-toggle="dropdown"
-                        style="color: #000 !important; background-color: #ffc107 !important; border-color: #ffc107 !important;">
-                        👑 Super Admin
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" routerLink="/super-admin">Gestionar Tiendas</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item text-danger fw-bold" routerLink="/super-admin/usuarios">👥 Gestionar Usuarios</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item text-danger fw-bold" routerLink="/super-admin/reportes">🚨 Ver
-                                Denuncias</a></li>
-                                <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        
-                    </ul>
-                </li>
-                }
-
-                @if (authService.isAdmin()) {
-                <li class="nav-item ms-2">
-                    <a class="btn btn-sm btn-outline-light fw-bold" routerLink="/admin">
-                        📊 Mi Tienda
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-warning" routerLink="/admin/crear">Publicar Item ➕</a>
-                </li>
-                }
-
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/mi-cuenta" routerLinkActive="active">
-                        Mi Cuenta 📋
-                    </a>
-                </li>
-
-                <li class="nav-item ms-2">
-                    <span class="nav-link text-white border border-secondary rounded px-2">
-                        Hola, <strong>{{ authService.currentUser()?.nombre || 'Usuario' }}</strong>
-                    </span>
-                </li>
-
-                <li class="nav-item ms-2">
-                     <app-logout-button (logout)="authService.logout()"></app-logout-button>
-                </li>
-                }
-
-                @else {
-                <li class="nav-item">
-                    <a class="btn btn-primary btn-sm mt-1" routerLink="/login">Iniciar Sesión</a>
-                </li>
-                }
-
-            </ul>
+            <app-footer></app-footer>
         </div>
     </div>
-</nav>
-
-<div class="container">
-    <router-outlet></router-outlet>
-</div>
+}
 
 @if (loaderService.isLoading()) {
-<div class="loader-overlay">
-    <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
-        <span class="visually-hidden">Cargando...</span>
+    <div class="loader-overlay">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
     </div>
-</div>
-} -->
-
-<router-outlet></router-outlet>
+}

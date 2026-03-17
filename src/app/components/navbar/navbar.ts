@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; // Importante para routerLink
+import { RouterModule } from '@angular/router'; 
 import { AuthService } from '../../services/auth-service';
 import { LayoutService } from '../../services/layout';
 
@@ -12,25 +12,22 @@ import { LayoutService } from '../../services/layout';
   styleUrl: './navbar.scss',
 })
 export class Navbar {
-  authService = inject(AuthService); // Inyectamos el servicio
-  public layoutService = inject(LayoutService);  
+  authService = inject(AuthService);
+  layoutService = inject(LayoutService);
 
-  esAdmin(): boolean {
-    const rol = this.authService.currentUser()?.role;
-    // Verifica que 'ROLE_ADMIN' esté escrito igual que en tu base de datos (mayúsculas)
-    return rol === 'ROLE_ADMIN' || rol === 'ROLE_SUPER_ADMIN';
-  }
+  dropdownOpen = signal(false);
 
   toggleSidebar() {
     this.layoutService.toggleSidebar();
   }
 
-  logout() {
-    this.authService.logout();
+  toggleDropdown(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dropdownOpen.update(v => !v);
   }
 
-  // 3. ¿Es Comprador/Vendedor normal? (No es ninguno de los anteriores)
-  isComprador(): boolean {
-    return !this.esAdmin;
+  logout() {
+    this.authService.logout();
   }
 }

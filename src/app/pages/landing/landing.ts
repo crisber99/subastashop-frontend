@@ -3,30 +3,38 @@ import { Shop } from '../../services/shop';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Navbar } from '../../components/navbar/navbar';
-import { Footer } from '../../components/footer/footer';
-import { Sidebar } from '../../components/sidebar/sidebar';
 import { LayoutService } from '../../services/layout';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, Navbar, Footer, Sidebar],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
 })
 export class Landing implements OnInit {
   private shopService = inject(Shop);
   public layoutService = inject(LayoutService);
+  public authService = inject(AuthService);
 
   tiendas: any[] = [];
   tiendasFiltradas: any[] = [];
   busqueda: string = '';
+  loading: boolean = true;
 
   ngOnInit() {
-    this.shopService.getTiendas().subscribe(data => {
-      this.tiendas = data;
-      this.tiendasFiltradas = data;
+    this.loading = true;
+    this.shopService.getTiendas().subscribe({
+      next: (data) => {
+        this.tiendas = data;
+        this.tiendasFiltradas = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar tiendas:', err);
+        this.loading = false;
+      }
     });
   }
 
@@ -34,12 +42,5 @@ export class Landing implements OnInit {
     this.tiendasFiltradas = this.tiendas.filter(t => 
       t.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
     );
-  }
-  
-  // Generador de color aleatorio para el avatar si no tiene logo
-  getColor(nombre: string): string {
-    const colores = ['bg-primary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-dark'];
-    const index = nombre.length % colores.length;
-    return colores[index];
   }
 }

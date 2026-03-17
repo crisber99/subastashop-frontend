@@ -86,7 +86,41 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card bg-light border-0">
+            <div class="card border-0 bg-white mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title d-flex align-items-center">
+                        <i class="bi bi-clock-history me-2 text-primary"></i> Estado de la Suscripción
+                    </h5>
+                    
+                    @if (authService.hasActiveSubscription()) {
+                        <div class="alert alert-success d-flex align-items-center mt-3">
+                            <i class="bi bi-patch-check-fill fs-4 me-3"></i>
+                            <div>
+                                <div class="fw-bold">Suscripción Activa Premium</div>
+                                <div class="small">Tu tienda está operando con todas las funciones activadas.</div>
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="alert alert-info d-flex align-items-center mt-3">
+                            <i class="bi bi-hourglass-split fs-4 me-3"></i>
+                            <div>
+                                <div class="fw-bold">Periodo de Prueba (Trial)</div>
+                                <div class="small">Te quedan <strong>{{ authService.getTrialDaysLeft() }} días</strong> de prueba gratuita.</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 border rounded bg-light text-center mt-3">
+                            <h6>🚀 ¡Lleva tu tienda al siguiente nivel!</h6>
+                            <p class="text-muted small">Evita que tus productos se pausen automáticamente activando tu suscripción premium hoy mismo.</p>
+                            <button (click)="suscribirse()" class="btn btn-primary btn-lg px-3 shadow-sm">
+                                <i class="bi bi-credit-card me-2"></i> Suscribirse
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card bg-light border-0 shadow-sm">
                 <div class="card-body">
                     <h5>💡 ¿Por qué pedimos esto?</h5>
                     <p class="text-muted small">

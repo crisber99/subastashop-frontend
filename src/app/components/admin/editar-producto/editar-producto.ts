@@ -24,8 +24,8 @@ export class EditarProducto implements OnInit {
     fechaFin: ''
   };
 
-  archivoSeleccionado: File | null = null;
-  imagenPreview: string | null = null;
+  archivosSeleccionados: File[] = [];
+  imagenesPreview: string[] = [];
   cargando = false;
   idProducto: number = 0;
 
@@ -67,7 +67,7 @@ export class EditarProducto implements OnInit {
           this.producto.fechaFinSubasta = this.formatearFechaParaInput(this.producto.fechaFinSubasta);
         }
 
-        this.imagenPreview = data.urlImagen;
+        this.imagenesPreview = data.imagenes || [];
       },
       error: () => {
         Swal.fire('Error', 'No se pudo cargar el producto', 'error');
@@ -81,14 +81,19 @@ export class EditarProducto implements OnInit {
     return fechaIso.substring(0, 16); 
   }
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.archivoSeleccionado = file;
-      // Crear preview local
-      const reader = new FileReader();
-      reader.onload = () => this.imagenPreview = reader.result as string;
-      reader.readAsDataURL(file);
+  onFilesSelected(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      this.archivosSeleccionados = Array.from(files);
+      this.imagenesPreview = [];
+      
+      this.archivosSeleccionados.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagenesPreview.push(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      });
     }
   }
 
@@ -111,7 +116,7 @@ export class EditarProducto implements OnInit {
           didOpen: () => Swal.showLoading()
         });
 
-        this.productService.updateProducto(this.idProducto, this.producto, this.archivoSeleccionado || undefined)
+        this.productService.updateProducto(this.idProducto, this.producto, this.archivosSeleccionados)
           .subscribe({
             next: () => {
               this.cargando = false;

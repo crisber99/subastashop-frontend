@@ -6,6 +6,7 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { environment } from '../../../environments/environment';
 import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,6 +17,7 @@ import Swal from 'sweetalert2';
 })
 export class AdminDashboard implements OnInit {
   private http = inject(HttpClient);
+  public authService = inject(AuthService); // Hacerlo public para el HTML
   
   stats: any = {
     totalUsuarios: 0,

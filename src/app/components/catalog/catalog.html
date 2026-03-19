@@ -74,7 +74,7 @@
                         {{ producto.estado === 'VENDIDO' ? 'No disponible' : 'Ver Detalle' }}
                     </a>
 
-                    @if (authService.isAdmin()) {
+                    @if (authService.isAdmin() && canEdit(producto)) {
                     <div class="border-top pt-2 mt-auto">
                         @if (producto.estado !== 'FINALIZADA' && producto.estado !== 'VENDIDO') {
                         <a [routerLink]="['/admin/editar', producto.id]"

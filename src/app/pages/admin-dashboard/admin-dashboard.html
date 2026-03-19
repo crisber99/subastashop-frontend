@@ -6,12 +6,14 @@
     </a>
   </div>
 
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card text-white bg-primary mb-3 shadow-sm">
+  <!-- 📊 CARDS DE ESTADÍSTICAS -->
+  <div class="row g-3">
+    <!-- Usuarios -->
+    <div class="col-md-3" *ngIf="authService.isSuperAdmin()">
+      <div class="card stat-card bg-primary text-white h-100 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title">Usuarios</h5>
-          <p class="card-text display-6 fw-bold">{{ stats.totalUsuarios }}</p>
+          <h6 class="card-title opacity-75">Usuarios</h6>
+          <h2 class="display-6 fw-bold mb-0">{{ stats.totalUsuarios }}</h2>
         </div>
       </div>
     </div>

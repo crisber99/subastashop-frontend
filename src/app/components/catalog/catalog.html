@@ -7,10 +7,16 @@
             <p class="text-muted small mb-0" *ngIf="nombreTienda">Bienvenido a nuestra tienda oficial</p>
         </div>
 
-        <a routerLink="/" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-shop"></i> Cambiar de Tienda
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <button (click)="authService.themeService.toggleTheme()" class="btn btn-outline-secondary btn-sm rounded-pill">
+                <i class="bi" [ngClass]="authService.themeService.isDarkMode() ? 'bi-sun-fill' : 'bi-moon-fill'"></i>
+            </button>
+            <a routerLink="/" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-shop"></i> Cambiar de Tienda
+            </a>
+        </div>
     </div>
+
 
     <hr class="mb-4" [style.border-color]="tienda?.colorPrimario">
     

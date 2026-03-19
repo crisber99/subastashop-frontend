@@ -1,2 +1,69 @@
 /* You can add global styles to this file, and also import other style files */
 @import './app/shared/skeleton.scss';
+
+/* --- VARIABLES DE TEMA --- */
+:root {
+  --bg-color: #f8f9fa;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --border-color: #dee2e6;
+  --nav-bg: #ffffff;
+  --badge-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.dark-theme {
+  --bg-color: #0f172a;
+  --text-color: #f8fafc;
+  --card-bg: #1e293b;
+  --border-color: #334155;
+  --nav-bg: #1e293b;
+  --badge-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* --- OVERRIDES GLOBALES PARA TEMA --- */
+body {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+.card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.table {
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+  --bs-table-bg: var(--card-bg);
+  --bs-table-striped-bg: rgba(255,255,255, 0.05);
+}
+
+.modal-content {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.list-group-item {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.form-control, .form-select {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+  &:focus {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
+}
+
+.badge {
+    box-shadow: var(--badge-shadow);
+    letter-spacing: 0.5px;
+}

@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
-import { environment } from '../../../environments/environment';
 import { RouterModule } from '@angular/router';
-import Swal from 'sweetalert2';
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth-service';
+import { ThemeService } from '../../services/theme-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -18,6 +19,7 @@ import { AuthService } from '../../services/auth-service';
 export class AdminDashboard implements OnInit {
   private http = inject(HttpClient);
   public authService = inject(AuthService); // Hacerlo public para el HTML
+  public themeService = inject(ThemeService); 
   
   stats: any = {
     totalUsuarios: 0,

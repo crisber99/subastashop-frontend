@@ -42,4 +42,12 @@ export class SuperAdminService {
   eliminarUsuario(userId: number) {
     return this.http.delete(`${this.apiUrlSuperAdmin}/${userId}`);
   }
+
+  actualizarUsuario(userId: number, datos: any) {
+    return this.http.put(`${this.apiUrlSuperAdmin}/${userId}`, datos);
+  }
+
+  getStats() {
+    return this.http.get<any>(`${this.apiUrlSuperAdmin}/stats`);
+  }
 }

@@ -1,0 +1,62 @@
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stat-card {
+  transition: transform 0.2s;
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colores suaves para fondos de iconos */
+.bg-primary-soft { background-color: rgba(13, 110, 253, 0.1); }
+.bg-success-soft { background-color: rgba(25, 135, 84, 0.1); }
+.bg-warning-soft { background-color: rgba(255, 193, 7, 0.1); }
+.bg-danger-soft { background-color: rgba(220, 53, 69, 0.1); }
+
+.nav-pills .nav-link {
+  color: #6c757d;
+  font-weight: 600;
+  padding: 10px 25px;
+  
+  &.active {
+    background-color: #0d6efd;
+    color: white;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+  }
+}
+
+.table th {
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #6c757d;
+}
+
+.table td {
+  padding: 1rem 0.75rem;
+}
+
+/* Ajustes para Modo Oscuro si es necesario (vía estilos globales generalmente) */
+:host-context(.dark-theme) {
+  .bg-white { background-color: #2b2b2b !important; }
+  .text-dark { color: #f8f9fa !important; }
+  .bg-light { background-color: #383838 !important; }
+  .card { background-color: #2b2b2b; }
+}

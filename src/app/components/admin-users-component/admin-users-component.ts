@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SuperAdminService } from '../../services/super-admin';
 import Swal from 'sweetalert2'; // 👈 Importamos SweetAlert
 
 @Component({
   selector: 'app-admin-users-component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-users-component.html',
   styleUrl: './admin-users-component.scss',
 })
@@ -17,6 +18,8 @@ export class AdminUsersComponent implements OnInit {
 
   // Variables de estado
   usuarios: any[] = [];
+  usuariosFiltrados: any[] = [];
+  filtro: string = '';
   loading: boolean = true;
   error: string | null = null;
 
@@ -34,6 +37,7 @@ export class AdminUsersComponent implements OnInit {
     this.adminService.getUsuarios().subscribe({
       next: (data) => {
         this.usuarios = data;
+        this.usuariosFiltrados = data;
         this.loading = false;
       },
       error: (err) => {
@@ -153,13 +157,61 @@ export class AdminUsersComponent implements OnInit {
     });
   }
 
+  filtrar() {
+    const query = this.filtro.toLowerCase().trim();
+    if (!query) {
+      this.usuariosFiltrados = this.usuarios;
+      return;
+    }
+    this.usuariosFiltrados = this.usuarios.filter(u => 
+      (u.nombreCompleto && u.nombreCompleto.toLowerCase().includes(query)) ||
+      (u.email && u.email.toLowerCase().includes(query)) ||
+      (u.rol && u.rol.toLowerCase().includes(query))
+    );
+  }
+
   editarUsuario(user: any) {
-    // Alerta informativa de "En construcción"
     Swal.fire({
-      title: 'En Construcción 🚧',
-      text: `La funcionalidad para editar a ${user.nombreCompleto || 'este usuario'} estará disponible pronto.`,
-      icon: 'info',
-      confirmButtonText: 'Vale'
+      title: 'Editar Usuario',
+      html: `
+        <div class="text-start">
+          <label class="form-label mt-2">Nombre Completo</label>
+          <input id="swal-input1" class="form-control" value="${user.nombreCompleto || ''}">
+          <label class="form-label mt-2">Teléfono</label>
+          <input id="swal-input2" class="form-control" value="${user.telefono || ''}">
+          <label class="form-label mt-2">Dirección</label>
+          <input id="swal-input3" class="form-control" value="${user.direccion || ''}">
+          <label class="form-label mt-2">Email</label>
+          <input id="swal-input4" class="form-control" value="${user.email || ''}">
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar Cambios',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        return {
+          nombreCompleto: (document.getElementById('swal-input1') as HTMLInputElement).value,
+          telefono: (document.getElementById('swal-input2') as HTMLInputElement).value,
+          direccion: (document.getElementById('swal-input3') as HTMLInputElement).value,
+          email: (document.getElementById('swal-input4') as HTMLInputElement).value
+        }
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({ title: 'Procesando...', didOpen: () => Swal.showLoading() });
+        this.adminService.actualizarUsuario(user.id, result.value).subscribe({
+          next: () => {
+            // Actualización exitosa: refrescamos los datos del objeto local
+            Object.assign(user, result.value);
+            this.filtrar(); // Re-aplicar filtro si existe
+            Swal.fire('¡Actualizado!', 'Los datos del usuario han sido guardados.', 'success');
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Error', 'No se pudieron guardar los cambios.', 'error');
+          }
+        });
+      }
     });
   }
 

@@ -10,7 +10,7 @@ import { authGuard } from './guards/auth-guard';
 import { Register } from './components/register/register';
 import { EditarProducto } from './components/admin/editar-producto/editar-producto';
 import { Landing } from './pages/landing/landing';
-import { SuperAdminTiendas } from './pages/super-admin-tiendas/super-admin-tiendas';
+import { SuperAdminDashboard } from './pages/super-admin-dashboard/super-admin-dashboard';
 import { SuperAdminReportes } from './pages/super-admin-reportes/super-admin-reportes';
 import { AdminConfig } from './pages/admin-config/admin-config';
 import { AdminUsersComponent } from './components/admin-users-component/admin-users-component';
@@ -32,7 +32,7 @@ export const routes: Routes = [
     { path: 'admin/crear', component: CrearProducto, canActivate: [authGuard] },
     { path: 'admin/editar/:id', component: EditarProducto, canActivate: [authGuard] },
     { path: 'admin/configuracion', component: AdminConfig, canActivate: [authGuard] },
-    { path: 'super-admin', component: SuperAdminTiendas, canActivate: [authGuard] },
+    { path: 'super-admin', component: SuperAdminDashboard, canActivate: [authGuard] },
     { path: 'super-admin/reportes', component: SuperAdminReportes, canActivate: [authGuard] },
     { path: 'super-admin/usuarios', component: AdminUsersComponent, canActivate: [authGuard] },
 

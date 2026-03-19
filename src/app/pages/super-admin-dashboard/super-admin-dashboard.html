@@ -1,0 +1,196 @@
+<div class="container-fluid p-4 fade-in">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">Panel de Control: Super Admin 👑</h2>
+      <p class="text-muted">Visión global de la plataforma</p>
+    </div>
+    <button class="btn btn-outline-primary" (click)="cargarTodo()">
+      <i class="bi bi-arrow-clockwise"></i> Actualizar Todo
+    </button>
+  </div>
+
+  <!-- TABS SUPER ADMIN -->
+  <ul class="nav nav-pills mb-4 shadow-sm p-2 bg-white rounded-pill" style="width: fit-content;">
+    <li class="nav-item">
+      <button class="nav-link rounded-pill" [class.active]="activeTab === 'resumen'" (click)="activeTab = 'resumen'">
+        <i class="bi bi-graph-up me-2"></i>Resumen
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link rounded-pill" [class.active]="activeTab === 'tiendas'" (click)="activeTab = 'tiendas'">
+        <i class="bi bi-shop me-2"></i>Tiendas
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link rounded-pill" [class.active]="activeTab === 'productos'" (click)="activeTab = 'productos'">
+        <i class="bi bi-box-seam me-2"></i>Productos
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link rounded-pill" [class.active]="activeTab === 'reportes'" (click)="activeTab = 'reportes'">
+        <i class="bi bi-flag me-2"></i>Reportes
+        <span class="badge bg-danger rounded-pill ms-1" *ngIf="reportes.length > 0">{{ reportes.length }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link rounded-pill" (click)="activeTab = 'usuarios'" routerLink="/super-admin/usuarios">
+        <i class="bi bi-people me-2"></i>Usuarios
+      </button>
+    </li>
+  </ul>
+
+  <!-- CONTENIDO: RESUMEN -->
+  <div *ngIf="activeTab === 'resumen'" class="row">
+    <!-- Cards de Estadísticas -->
+    <div class="col-md-3 mb-4">
+      <div class="card stat-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Usuarios Totales</h6>
+              <h3 class="fw-bold">{{ stats?.totalUsuarios || 0 }}</h3>
+            </div>
+            <div class="stat-icon bg-primary-soft text-primary">
+              <i class="bi bi-people-fill fs-3"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card stat-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Tiendas Creadas</h6>
+              <h3 class="fw-bold">{{ stats?.totalTiendas || 0 }}</h3>
+            </div>
+            <div class="stat-icon bg-success-soft text-success">
+              <i class="bi bi-shop fs-3"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card stat-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Productos Globales</h6>
+              <h3 class="fw-bold">{{ stats?.totalProductos || 0 }}</h3>
+            </div>
+            <div class="stat-icon bg-warning-soft text-warning">
+              <i class="bi bi-box-seam-fill fs-3"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card stat-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Subastas Activas</h6>
+              <h3 class="fw-bold">{{ stats?.subastasActivas || 0 }}</h3>
+            </div>
+            <div class="stat-icon bg-danger-soft text-danger">
+              <i class="bi bi-lightning-fill fs-3"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico -->
+    <div class="col-md-12 mt-2">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="fw-bold mb-0">Rendimiento de la Plataforma</h5>
+        </div>
+        <div class="card-body">
+          <canvas #statsChart style="max-height: 400px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO: TIENDAS -->
+  <div *ngIf="activeTab === 'tiendas'" class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+          <h5 class="mb-0">🏢 Nueva Tienda</h5>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="crearTienda()">
+            <div class="mb-3">
+              <label class="form-label fw-bold small">Nombre de la Tienda</label>
+              <input type="text" class="form-control" [(ngModel)]="nuevaTienda.nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small">URL Amigable (Slug)</label>
+              <input type="text" class="form-control" [(ngModel)]="nuevaTienda.slug" name="slug" placeholder="importadora-example">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small">Email del Administrador</label>
+              <input type="email" class="form-control" [(ngModel)]="nuevaTienda.emailAdmin" name="email" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Asignar y Crear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+          <div class="p-3 border-bottom"><h5 class="fw-bold mb-0">Tiendas Existentes</h5></div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+                <tr><th>ID</th><th>Nombre</th><th>URL</th><th>Acciones</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of tiendas">
+                  <td>{{ t.id }}</td>
+                  <td class="fw-bold">{{ t.nombre }}</td>
+                  <td><a [routerLink]="['/tienda', t.slug]" target="_blank">/{{ t.slug }}</a></td>
+                  <td><button class="btn btn-sm btn-outline-secondary"><i class="bi bi-gear"></i></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO: REPORTES -->
+  <div *ngIf="activeTab === 'reportes'" class="card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr><th>ID</th><th>Motivo</th><th>Producto/Usuario</th><th>Fecha</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of reportes">
+            <td>{{ r.id }}</td>
+            <td class="fw-bold text-danger">{{ r.motivo }}</td>
+            <td>{{ r.producto?.nombre || r.usuarioReportado?.email }}</td>
+            <td>{{ r.fechaReporte | date:'short' }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-danger me-2" (click)="tomarAccionReporte(r.id, 'BLOQUEAR')">Bloquear</button>
+              <button class="btn btn-sm btn-outline-secondary" (click)="tomarAccionReporte(r.id, 'IGNORAR')">Ignorar</button>
+            </td>
+          </tr>
+          <tr *ngIf="reportes.length === 0">
+            <td colspan="5" class="text-center py-4 text-muted">No hay reportes pendientes. ✨</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

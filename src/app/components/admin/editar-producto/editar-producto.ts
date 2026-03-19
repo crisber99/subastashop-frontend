@@ -83,8 +83,26 @@ export class EditarProducto implements OnInit {
 
   onFilesSelected(event: any) {
     const files = event.target.files;
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
     if (files && files.length > 0) {
-      this.archivosSeleccionados = Array.from(files);
+      const filesArr = Array.from(files) as File[];
+
+      // Validación de tamaño
+      for (const file of filesArr) {
+        if (file.size > MAX_SIZE) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Archivo muy pesado',
+            text: `El archivo "${file.name}" supera el límite de 10MB.`
+          });
+          event.target.value = '';
+          this.archivosSeleccionados = [];
+          return;
+        }
+      }
+
+      this.archivosSeleccionados = filesArr;
       this.imagenesPreview = [];
       
       this.archivosSeleccionados.forEach(file => {

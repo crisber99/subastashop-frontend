@@ -57,7 +57,19 @@ export class AdminConfig implements OnInit {
 
   onFileSelected(event: any, tipo: 'anverso' | 'reverso') {
     const file = event.target.files[0];
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
     if (file) {
+      if (file.size > MAX_SIZE) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Archivo muy pesado',
+          text: `El documento "${file.name}" supera el límite de 10MB.`
+        });
+        event.target.value = '';
+        return;
+      }
+
       if (tipo === 'anverso') this.fileAnverso = file;
       else this.fileReverso = file;
     }

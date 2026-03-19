@@ -48,8 +48,23 @@ export class CrearProducto implements OnInit {
 
   onFileSelected(event: any) {
     const files: FileList = event.target.files;
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
+    // 1. Validación de tamaño individual
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].size > MAX_SIZE) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Archivo muy pesado',
+                text: `El archivo "${files[i].name}" supera el límite de 10MB. Por favor, redúcelo o elige otro.`
+            });
+            event.target.value = ''; // Limpiamos el input
+            this.archivosSeleccionados = [];
+            return;
+        }
+    }
     
-    // Validación de límite de fotos
+    // 2. Validación de límite de fotos
     if (files.length > this.limiteImagenes) {
       Swal.fire({
         icon: 'warning',

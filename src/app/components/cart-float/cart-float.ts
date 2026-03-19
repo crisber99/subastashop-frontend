@@ -66,10 +66,21 @@ export class CartFloat {
         this.loading = false;
         Swal.close(); // Cerramos loader
 
-        // Cerrar Modal Bootstrap
+        // Cerrar Modal Bootstrap y asegurar limpieza de backdrop
         const modalEl = document.getElementById('modalCarrito');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal?.hide();
+        if (modalEl) {
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          modal?.hide();
+
+          // Forzamos la eliminación de cualquier residuo gris
+          setTimeout(() => {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(b => b.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+          }, 300);
+        }
 
         // Limpiar Carrito
         this.cartService.limpiarCarrito();

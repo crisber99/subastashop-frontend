@@ -62,4 +62,17 @@ export class CatalogComponent implements OnInit {
       }
     });
   }
+
+  canEdit(producto: any): boolean {
+    if (this.authService.isSuperAdmin()) return true;
+    
+    const user = this.authService.currentUser();
+    if (!user) return false;
+
+    // Comparar tenantId o tiendaId
+    const userTiendaId = user.tiendaId || user.tienda?.id;
+    const prodTiendaId = producto.tiendaId || producto.tienda?.id;
+
+    return userTiendaId && prodTiendaId && userTiendaId === prodTiendaId;
+  }
 }

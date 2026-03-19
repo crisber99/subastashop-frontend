@@ -30,9 +30,9 @@ export class AdminDashboard implements OnInit {
   mostrarProductos = false;
 
   public pieChartData: ChartConfiguration<'pie'>['data'] = {
-    labels: [ 'Subastas Activas', 'Vendidos', 'Cancelados' ],
+    labels: [ 'Subastas Activas', 'Ventas Cerradas' ],
     datasets: [ {
-      data: [ 0, 0, 0 ] 
+      data: [ 0, 0 ] 
     } ]
   };
   public pieChartOptions: ChartOptions<'pie'> = {
@@ -111,7 +111,7 @@ export class AdminDashboard implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'ventas_tienda.csv';
+        a.download = 'ventas_tienda.xlsx';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

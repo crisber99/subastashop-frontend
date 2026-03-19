@@ -57,14 +57,23 @@ export class AdminConfig implements OnInit {
 
   onFileSelected(event: any, tipo: 'anverso' | 'reverso') {
     const file = event.target.files[0];
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_INDIVIDUAL = 10 * 1024 * 1024; // 10MB
+    const MAX_TOTAL = 10 * 1024 * 1024;
 
     if (file) {
-      if (file.size > MAX_SIZE) {
+      if (file.size > MAX_INDIVIDUAL) {
+        Swal.fire({ icon: 'error', title: 'Archivo muy pesado', text: `El documento "${file.name}" supera los 10MB.` });
+        event.target.value = '';
+        return;
+      }
+
+      // Validar total combinado si ya hay uno seleccionado
+      const existingSize = (tipo === 'anverso' ? this.fileReverso?.size : this.fileAnverso?.size) || 0;
+      if (file.size + existingSize > MAX_TOTAL) {
         Swal.fire({
-          icon: 'error',
-          title: 'Archivo muy pesado',
-          text: `El documento "${file.name}" supera el límite de 10MB.`
+            icon: 'error',
+            title: 'Límite total excedido',
+            text: 'La suma de ambos documentos supera el límite de 10MB permitido por el servidor.'
         });
         event.target.value = '';
         return;

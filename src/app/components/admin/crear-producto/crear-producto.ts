@@ -48,35 +48,53 @@ export class CrearProducto implements OnInit {
 
   onFileSelected(event: any) {
     const files: FileList = event.target.files;
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB individual
+    const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB total (según server.multipart.max-request-size)
+    
+    let currentTotal = 0;
+    const filesArr = Array.from(files);
 
-    // 1. Validación de tamaño individual
-    for (let i = 0; i < files.length; i++) {
-        if (files[i].size > MAX_SIZE) {
+    // 1. Validación de tamaño
+    for (const file of filesArr) {
+        if (file.size > MAX_SIZE) {
             Swal.fire({
                 icon: 'error',
                 title: 'Archivo muy pesado',
-                text: `El archivo "${files[i].name}" supera el límite de 10MB. Por favor, redúcelo o elige otro.`
+                text: `El archivo "${file.name}" supera el límite de 10MB.`
             });
-            event.target.value = ''; // Limpiamos el input
-            this.archivosSeleccionados = [];
+            this.resetInput(event);
             return;
         }
+        currentTotal += file.size;
+    }
+
+    if (currentTotal > MAX_TOTAL_SIZE) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Límite total excedido',
+        text: `El conjunto de archivos suma ${(currentTotal / (1024 * 1024)).toFixed(2)}MB, superando el límite total de 10MB permitido por el servidor.`
+      });
+      this.resetInput(event);
+      return;
     }
     
-    // 2. Validación de límite de fotos
+    // 2. Validación de cantidad de fotos
     if (files.length > this.limiteImagenes) {
       Swal.fire({
         icon: 'warning',
-        title: 'Límite excedido',
-        text: `Tu plan actual te permite subir un máximo de ${this.limiteImagenes} imágenes.`
+        title: 'Demasiadas imágenes',
+        text: `Tu plan solo permite subir un máximo de ${this.limiteImagenes} imágenes.`
       });
-      event.target.value = ''; // Limpiamos el input
-      this.archivosSeleccionados = [];
+      this.resetInput(event);
       return;
     }
 
-    this.archivosSeleccionados = Array.from(files);
+    this.archivosSeleccionados = filesArr;
+  }
+
+  private resetInput(event: any) {
+    event.target.value = ''; 
+    this.archivosSeleccionados = [];
   }
 
   onSubmit() {

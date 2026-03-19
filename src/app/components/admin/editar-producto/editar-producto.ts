@@ -87,8 +87,8 @@ export class EditarProducto implements OnInit {
 
     if (files && files.length > 0) {
       const filesArr = Array.from(files) as File[];
+      let totalSize = 0;
 
-      // Validación de tamaño
       for (const file of filesArr) {
         if (file.size > MAX_SIZE) {
           Swal.fire({
@@ -96,10 +96,20 @@ export class EditarProducto implements OnInit {
             title: 'Archivo muy pesado',
             text: `El archivo "${file.name}" supera el límite de 10MB.`
           });
-          event.target.value = '';
-          this.archivosSeleccionados = [];
+          this.resetSelection(event);
           return;
         }
+        totalSize += file.size;
+      }
+
+      if (totalSize > MAX_SIZE) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Total excedido',
+          text: `La suma de las imágenes (${(totalSize / (1024 * 1024)).toFixed(2)}MB) supera el límite de 10MB.`
+        });
+        this.resetSelection(event);
+        return;
       }
 
       this.archivosSeleccionados = filesArr;
@@ -113,6 +123,12 @@ export class EditarProducto implements OnInit {
         reader.readAsDataURL(file);
       });
     }
+  }
+
+  private resetSelection(event: any) {
+    event.target.value = '';
+    this.archivosSeleccionados = [];
+    // Nota: Mantener imagenesPreview para que no desaparezcan las viejas si hay error en la selección nueva
   }
 
   guardarCambios() {

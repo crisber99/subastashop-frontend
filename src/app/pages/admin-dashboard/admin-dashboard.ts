@@ -24,6 +24,9 @@ export class AdminDashboard implements OnInit {
     gananciasTotales: 0
   };
 
+  productos: any[] = [];
+  mostrarProductos = false;
+
   public pieChartData: ChartConfiguration<'pie'>['data'] = {
     labels: [ 'Subastas Activas', 'Vendidos', 'Cancelados' ],
     datasets: [ {
@@ -37,6 +40,7 @@ export class AdminDashboard implements OnInit {
 
   ngOnInit() {
     this.cargarDatos();
+    this.cargarProductos();
   }
 
   cargarDatos() {
@@ -50,6 +54,12 @@ export class AdminDashboard implements OnInit {
           backgroundColor: ['#36A2EB', '#4BC0C0']
         }]
       };
+    });
+  }
+
+  cargarProductos() {
+    this.http.get<any[]>(`${environment.apiUrl}/admin/productos`).subscribe(data => {
+      this.productos = data;
     });
   }
 

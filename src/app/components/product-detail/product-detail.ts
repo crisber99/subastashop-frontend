@@ -137,7 +137,7 @@ export class ProductDetail implements OnInit, OnDestroy {
         this.cargarProducto(this.producto.id); 
       },
       error: (err) => {
-        const msg = err.error || 'Error al realizar la puja';
+        const msg = err.error?.message || err.error || 'Error al realizar la puja';
         this.mensaje = msg;
         this.esError = true;
         Swal.fire('Error', msg, 'error');
@@ -198,7 +198,8 @@ export class ProductDetail implements OnInit, OnDestroy {
                     Swal.fire('¡Comprado!', `Ticket #${num} reservado exitosamente.`, 'success');
                     this.cargarVendidos();
                   } else {
-                    Swal.fire('Error', 'No se pudo comprar el ticket', 'error');
+                    const errorMsg = err.error?.message || 'No se pudo comprar el ticket';
+                    Swal.fire('Error', errorMsg, 'error');
                   }
                 }
             });

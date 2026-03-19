@@ -42,10 +42,7 @@ export class Register {
       },
       error: (err) => {
         this.cargando = false;
-        // El backend ahora devuelve: {"error": "mensaje"}
-        this.mensajeError = err.error?.error || err.error?.message || err.message || 'Error al registrarse.';
-        if (typeof err.error === 'string') this.mensajeError = err.error;
-        
+        this.mensajeError = err.error?.message || err.error?.error || err.message || 'Error al registrarse.';
         Swal.fire('Error', this.mensajeError, 'error');
       }
     });

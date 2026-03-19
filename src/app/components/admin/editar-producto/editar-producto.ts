@@ -132,10 +132,11 @@ export class EditarProducto implements OnInit {
             },
             error: (err) => {
               this.cargando = false;
+              const errorMsg = err.error?.message || 'Ocurrió un problema inesperado.';
               Swal.fire({
                 icon: 'error',
                 title: 'Error al actualizar',
-                text: err.error || 'Ocurrió un problema inesperado.'
+                text: errorMsg
               });
             }
           });

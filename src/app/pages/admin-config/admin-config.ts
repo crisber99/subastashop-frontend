@@ -90,7 +90,8 @@ export class AdminConfig implements OnInit {
       error: (err) => {
         this.loading = false;
         console.error(err);
-        Swal.fire('Error', 'No se pudieron guardar los cambios.', 'error');
+        const errorMsg = err.error?.message || 'No se pudieron guardar los cambios.';
+        Swal.fire('Error', errorMsg, 'error');
       }
     });
   }

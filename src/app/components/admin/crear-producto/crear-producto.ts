@@ -140,10 +140,18 @@ export class CrearProducto implements OnInit {
       error: (err) => {
         console.error(err);
         this.cargando = false;
+        
+        const errorMsg = err.error?.message || 'Ocurrió un problema al subir el producto. Revisa los datos e intenta nuevamente.';
+        
         Swal.fire({
           icon: 'error',
           title: 'Error al Publicar',
-          text: 'Ocurrió un problema al subir el producto. Revisa los datos e intenta nuevamente.'
+          text: errorMsg,
+          confirmButtonText: errorMsg.includes('Configuración de Tienda') ? 'Ir a Configuración' : 'Entendido'
+        }).then((res) => {
+          if (res.isConfirmed && errorMsg.includes('Configuración de Tienda')) {
+            this.router.navigate(['/admin/configuracion']);
+          }
         });
       }
     });

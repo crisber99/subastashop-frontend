@@ -45,12 +45,11 @@ export class LoginComponent {
       error: (err) => {
         this.cargando = false;
         Swal.close();
-        if (err.status === 401 || err.status === 403) {
+        if (err.status === 401) {
              this.mensajeError = 'Correo o contraseña incorrectos.';
              Swal.fire('Error', 'Credenciales incorrectas', 'error');
         } else {
-             // El backend ahora devuelve: {"error": "mensaje"}
-             this.mensajeError = err.error?.error || err.error?.message || err.message || 'Error de conexión con el servidor.';
+             this.mensajeError = err.error?.message || err.error?.error || err.message || 'Error de conexión con el servidor.';
              Swal.fire('Error', this.mensajeError, 'error');
         }
       }

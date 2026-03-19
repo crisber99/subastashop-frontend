@@ -115,6 +115,20 @@ export class CartFloat {
         } else {
           Swal.fire('Error', mensajeError, 'error');
         }
+
+        // --- LIMPIEZA DE SEGURIDAD (Para que no se quede pegado) ---
+        const modalEl = document.getElementById('modalCarrito');
+        if (modalEl) {
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          modal?.hide();
+
+          setTimeout(() => {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(b => b.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+          }, 500);
+        }
       }
     });
   }

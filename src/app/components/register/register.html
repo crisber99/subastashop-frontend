@@ -12,14 +12,22 @@
         <input type="text" [(ngModel)]="form.nombre" name="nombre" class="form-control" required>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Correo Electrónico</label>
-        <input type="email" [(ngModel)]="form.email" name="email" class="form-control" required>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Teléfono</label>
+          <input type="text" [(ngModel)]="form.telefono" name="telefono" class="form-control" placeholder="+56 9..." required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Dirección</label>
+          <input type="text" [(ngModel)]="form.direccion" name="direccion" class="form-control" placeholder="Calle, Ciudad" required>
+        </div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Contraseña</label>
-        <input type="password" [(ngModel)]="form.password" name="password" class="form-control" required minlength="6">
+        <input type="password" [(ngModel)]="form.password" name="password" class="form-control" 
+               required minlength="8" placeholder="Mínimo 8 caracteres, letras y números">
+        <div class="form-text small">Mínimo 8 caracteres, debe incluir letras y números.</div>
       </div>
 
       <button type="submit" class="btn btn-primary w-100" [disabled]="cargando">

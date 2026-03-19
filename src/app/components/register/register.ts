@@ -16,11 +16,19 @@ export class Register {
   authService = inject(AuthService);
   router = inject(Router);
 
-  form = { nombre: '', email: '', password: '' };
+  form = { nombre: '', email: '', password: '', telefono: '', direccion: '' };
   mensajeError = '';
   cargando = false;
 
   onSubmit() {
+    // VALIDACIÓN LOCAL 🔐
+    const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$/;
+    if (!passwordPattern.test(this.form.password)) {
+      this.mensajeError = 'La contraseña debe tener al menos 8 caracteres e incluir letras y números.';
+      Swal.fire('Atención', this.mensajeError, 'warning');
+      return;
+    }
+
     this.cargando = true;
     
     Swal.fire({

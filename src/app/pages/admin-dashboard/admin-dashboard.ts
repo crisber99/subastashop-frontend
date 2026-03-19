@@ -5,6 +5,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { environment } from '../../../environments/environment';
 import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -49,6 +50,62 @@ export class AdminDashboard implements OnInit {
           backgroundColor: ['#36A2EB', '#4BC0C0']
         }]
       };
+    });
+  }
+
+  detenerSubastas() {
+    Swal.fire({
+      title: '¿Detener todas las subastas?',
+      text: 'Esto cerrará las subastas activas de tu tienda.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, detener',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.http.post(`${environment.apiUrl}/admin/detener-subastas`, {}).subscribe({
+          next: () => {
+            Swal.fire('¡Éxito!', 'Las subastas han sido detenidas.', 'success');
+            this.cargarDatos();
+          },
+          error: (err) => Swal.fire('Error', 'No se pudieron detener las subastas.', 'error')
+        });
+      }
+    });
+  }
+
+  notificarGanadores() {
+    Swal.fire({
+      title: '¿Enviar notificaciones?',
+      text: 'Se enviará un correo a los ganadores de subastas y rifas finalizadas.',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, enviar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.http.post(`${environment.apiUrl}/admin/notificar-ganadores`, {}).subscribe({
+          next: () => Swal.fire('Enviado', 'Notificaciones enviadas correctamente.', 'success'),
+          error: (err) => Swal.fire('Error', 'No se pudieron enviar las notificaciones.', 'error')
+        });
+      }
+    });
+  }
+
+  exportarVentas() {
+    Swal.fire({ title: 'Generando archivo...', didOpen: () => Swal.showLoading() });
+    
+    this.http.get(`${environment.apiUrl}/admin/exportar-ventas`, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ventas_tienda.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        Swal.close();
+      },
+      error: (err) => Swal.fire('Error', 'No se pudo exportar el archivo.', 'error')
     });
   }
 }

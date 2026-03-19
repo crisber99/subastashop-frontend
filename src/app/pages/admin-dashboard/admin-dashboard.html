@@ -60,13 +60,13 @@
           <a routerLink="/admin/configuracion" class="btn btn-primary text-start shadow-sm">
             <i class="bi bi-gear-fill me-2"></i> ⚙️ Configurar Tienda y Pagos
           </a>
-          <button class="btn btn-outline-danger text-start">
+          <button (click)="detenerSubastas()" class="btn btn-outline-danger text-start">
             <i class="bi bi-stop-circle me-2"></i> Detener subastas activas
           </button>
-          <button class="btn btn-outline-primary text-start">
+          <button (click)="notificarGanadores()" class="btn btn-outline-primary text-start">
             <i class="bi bi-envelope me-2"></i> Enviar Email a Ganadores
           </button>
-          <button class="btn btn-outline-secondary text-start">
+          <button (click)="exportarVentas()" class="btn btn-outline-secondary text-start">
             <i class="bi bi-file-earmark-excel me-2"></i> Exportar Ventas (Excel)
           </button>
         </div>

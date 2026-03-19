@@ -3,10 +3,10 @@
         <div class="promo-text">
             <span class="badge bg-warning text-dark me-2">OFERTA LIMITADA ⏳</span>
             <span class="main-msg">
-                Únete hoy por solo <strong>$4.990/mes</strong> 
-                <span class="d-none d-md-inline">— Solo 100 cupos disponibles</span>
+                <strong>{{ mensaje() }}</strong> 
+                <span class="d-none d-md-inline" *ngIf="!authService.isLoggedIn()">— Solo 100 cupos disponibles</span>
             </span>
-            <small class="d-block d-md-inline ms-md-2 text-white-50">
+            <small class="d-block d-md-inline ms-md-2 opacity-75" *ngIf="!authService.hasActiveSubscription()">
                 (Luego $9.990/mes)
             </small>
         </div>

@@ -59,12 +59,6 @@ export class MenuService {
         roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
     },
     {
-        label: 'Mis Pujas',
-        icon: 'bi-hammer',
-        route: '/dashboard',
-        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
-    },
-    {
         label: 'Reportes y Denuncias',
         icon: 'bi-flag',
         route: '/super-admin/reportes',

@@ -8,11 +8,12 @@ import { Navbar } from './components/navbar/navbar';
 import { Sidebar } from './components/sidebar/sidebar';
 import { FooterComponent } from './components/footer/footer';
 import { CartFloat } from './components/cart-float/cart-float';
+import { PromotionBanner } from './components/promotion-banner/promotion-banner';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat],
+  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

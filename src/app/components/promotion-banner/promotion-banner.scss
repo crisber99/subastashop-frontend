@@ -1,0 +1,47 @@
+.promo-banner {
+    background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
+    color: white;
+    padding: 0.75rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.promo-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-msg {
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.pulse-effect {
+    animation: pulse 2s infinite;
+    border: none;
+    color: #ff416c !important;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+@media (max-width: 768px) {
+    .promo-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    .promo-actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

@@ -46,7 +46,9 @@ export class SuperAdminDashboard implements OnInit {
     });
 
     this.superAdminService.getTiendas().subscribe(data => this.tiendas = data);
-    this.productService.getProductos().subscribe(data => this.productos = data);
+    this.superAdminService.getGlobalProductos().subscribe(data => {
+        this.productos = data;
+    });
     this.superAdminService.getReportesPendientes().subscribe(data => this.reportes = data);
   }
 

@@ -32,7 +32,7 @@ export class MenuService {
       label: 'Panel Administración',
       icon: 'bi-speedometer2',
       route: '/admin',
-      roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+      roles: ['ROLE_ADMIN']
     },
     {
       label: 'Config. Transacciones',
@@ -47,8 +47,8 @@ export class MenuService {
       roles: ['ROLE_SUPER_ADMIN']
     },
     {
-        label: 'Gestión de Tiendas',
-        icon: 'bi-shop',
+        label: 'Dashboard Global',
+        icon: 'bi-grid-1x2-fill',
         route: '/super-admin',
         roles: ['ROLE_SUPER_ADMIN']
     },

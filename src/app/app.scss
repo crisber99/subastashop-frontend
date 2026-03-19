@@ -2,7 +2,8 @@
   display: flex;
   width: 100%;
   min-height: 100vh;
-  background-color: #f1f5f9;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
 }
 
 .main-content {

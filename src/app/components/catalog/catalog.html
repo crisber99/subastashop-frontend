@@ -25,13 +25,17 @@
         <div class="col-md-4 mb-4 animate__animated animate__fadeIn">
             <div class="card h-100 shadow-sm border-0 hover-effect">
 
-                <div class="position-relative">
-                    <img [src]="producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : 'assets/no-image.png'" class="card-img-top" alt="Producto"
-                        style="height: 220px; object-fit: cover;">
+                <div class="position-relative overflow-hidden">
+                    <img [src]="producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : 'assets/no-image.png'" 
+                         class="card-img-top" alt="Producto"
+                         [class.grayscale]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
+                         style="height: 220px; object-fit: cover;">
 
                     <div class="position-absolute top-0 end-0 m-2">
                         @if (producto.estado === 'VENDIDO') {
                             <span class="badge bg-secondary shadow">🚫 Vendido</span>
+                        } @else if (producto.estado === 'RESERVADO') {
+                            <span class="badge bg-warning text-dark shadow">⏳ Reservado</span>
                         } @else {
                             @if (producto.tipoVenta === 'SUBASTA') {
                             <span class="badge bg-danger shadow">🔥 Subasta</span>
@@ -71,13 +75,15 @@
                         {{ producto.descripcion }}
                     </p>
 
-                    <a [routerLink]="producto.estado === 'VENDIDO' ? null : ['/producto', producto.id]" 
-                       class="btn w-100 mb-2 rounded-pill fw-bold text-white"
-                       [class.btn-secondary]="producto.estado === 'VENDIDO'"
-                       [class.disabled]="producto.estado === 'VENDIDO'"
-                       [style.background-color]="producto.estado === 'VENDIDO' ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')"
-                       [style.border-color]="producto.estado === 'VENDIDO' ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')">
-                        {{ producto.estado === 'VENDIDO' ? 'No disponible' : 'Ver Detalle' }}
+                    <a [routerLink]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? null : ['/producto', producto.id]" 
+                       class="btn w-100 mb-2 rounded-pill fw-bold text-white transition-all"
+                       [class.btn-secondary]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
+                       [class.disabled]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
+                       [style.background-color]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')"
+                       [style.border-color]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')">
+                        @if (producto.estado === 'VENDIDO') { 🚫 Vendido }
+                        @else if (producto.estado === 'RESERVADO') { ⏳ En Carrito }
+                        @else { Ver Detalle }
                     </a>
 
                     @if (authService.isAdmin() && canEdit(producto)) {

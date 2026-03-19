@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import Swal from 'sweetalert2';
 
 export interface CartItem {
   producto: any;
@@ -21,9 +22,17 @@ export class CartService {
 
   agregarItem(producto: any, tipo: 'DIRECTA' | 'SUBASTA' | 'RIFA', cantidad: number = 1, extra: any = null) {
     const yaExiste = this.items().some(item => item.producto.id === producto.id);
-
+    
     if (yaExiste) {
-      alert('⚠️ Este producto es único y ya está en tu carrito.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Producto ya en el carrito',
+        text: 'Este producto es único y ya está en tu carrito.',
+        toast: true,
+        position: 'top-end',
+        timer: 3000,
+        showConfirmButton: false
+      });
       return;
     }
 
@@ -42,8 +51,16 @@ export class CartService {
     // Actualizamos la lista
     this.items.update(lista => [...lista, newItem]);
 
-    // Feedback visual (opcional)
-    alert('¡Producto agregado al carrito! 🛒');
+    // Feedback visual
+    Swal.fire({
+      icon: 'success',
+      title: '¡Agregado!',
+      text: 'Producto agregado al carrito 🛒',
+      toast: true,
+      position: 'top-end',
+      timer: 3000,
+      showConfirmButton: false
+    });
   }
 
   eliminarItem(index: number) {

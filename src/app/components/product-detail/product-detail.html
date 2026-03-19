@@ -2,11 +2,11 @@
     <div class="mb-4">
         @if (producto.tienda) {
         <a [routerLink]="['/tienda', producto.tienda.slug]" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> &larr; Volver a {{ producto.tienda.nombre }}
+            <i class="bi bi-arrow-left"></i> Volver a {{ producto.tienda.nombre }}
         </a>
         } @else {
         <a routerLink="/" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> &larr; Volver al catálogo
+            <i class="bi bi-arrow-left"></i> Volver al catálogo
         </a>
         }
     </div>

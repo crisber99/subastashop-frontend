@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router'; 
 import { AuthService } from '../../services/auth-service';
 import { LayoutService } from '../../services/layout';
+import { CartService } from '../../services/cart';
 
 @Component({
   selector: 'app-navbar',
@@ -14,6 +15,7 @@ import { LayoutService } from '../../services/layout';
 export class Navbar {
   authService = inject(AuthService);
   layoutService = inject(LayoutService);
+  cartService = inject(CartService);
 
   dropdownOpen = signal(false);
 

@@ -24,7 +24,7 @@
           @for (item of cartService.items(); track $index) {
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
-                <img [src]="item.producto.imagenUrl" width="50" class="rounded me-3">
+                <img [src]="item.producto.imagenUrl || (item.producto.imagenes && item.producto.imagenes[0])" width="50" class="rounded me-3">
                 <div>
                   <h6 class="my-0">{{ item.producto.nombre }}</h6>
                   <small class="text-muted">{{ item.tipo }} 

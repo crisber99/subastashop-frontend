@@ -6,6 +6,17 @@
 
     <div class="navbar-collapse collapse">
         <div class="ms-auto d-flex align-items-center">
+            
+            <!-- Botón Carrito en Navbar -->
+            <button class="btn btn-light position-relative me-4 shadow-sm" 
+                    data-bs-toggle="modal" data-bs-target="#modalCarrito">
+                <i class="bi bi-cart3 fs-5"></i>
+                <span *ngIf="cartService.cantidadItems() > 0"
+                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+                    {{ cartService.cantidadItems() }}
+                </span>
+            </button>
+
             <span class="text-muted small fw-bold">
                 {{ authService.currentUser()?.nombre }} 
             </span>

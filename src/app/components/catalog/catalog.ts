@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { LayoutService } from '../../services/layout';
+import { ThemeService } from '../../services/theme-service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -18,6 +19,7 @@ export class CatalogComponent implements OnInit {
   private route = inject(ActivatedRoute);
   public authService = inject(AuthService);
   public layoutService = inject(LayoutService);
+  public themeService = inject(ThemeService);
 
   tienda: any = null; 
   productos: any[] = [];

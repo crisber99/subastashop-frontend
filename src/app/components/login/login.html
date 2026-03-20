@@ -1,42 +1,97 @@
-<div class="container">
-  <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+<div class="login-page">
+  <div class="login-bg-overlay"></div>
+  
+  <div class="container-fluid h-100 p-0">
+    <div class="row g-0 h-100">
       
-      <div class="auth-card animate__animated animate__zoomIn">
-        <div class="auth-header">
-          <div class="brand-icon">🚀</div>
-          <h3>¡Bienvenido!</h3>
-          <p>Potenciando tus subastas favoritas.</p>
+      <!-- Lado Izquierdo: Branding & Welcome (Visible en Desktop) -->
+      <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-center p-5 bg-welcome">
+        <div class="welcome-content animate__animated animate__fadeInLeft">
+          <div class="logo-wrapper mb-4">
+            <span class="logo-icon">🚀</span>
+            <span class="logo-text">Subasta<span>Shop</span></span>
+          </div>
+          <h1 class="display-3 fw-bold mb-4">Las mejores subastas <br> <span class="text-gradient">a un clic.</span></h1>
+          <p class="lead mb-5 text-muted-custom">
+            Tu puerta de entrada a los productos más exclusivos, subastas emocionantes y ventas directas con la mayor seguridad.
+          </p>
+          
+          <div class="features-list">
+            <div class="feature-item">
+              <div class="f-icon">🔥</div>
+              <div>
+                <h5>Subastas en Tiempo Real</h5>
+                <p>Compite por lo que amas con total transparencia.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="f-icon">💳</div>
+              <div>
+                <h5>Pagos Seguros</h5>
+                <p>Integración con Mercado Pago y protección del comprador.</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="auth-body">
-          <div *ngIf="mensajeError" class="alert alert-danger border-0 shadow-sm animate__animated animate__shakeX">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ mensajeError }}
+      <!-- Lado Derecho: Formulario -->
+      <div class="col-lg-5 col-12 d-flex align-items-center justify-content-center p-4">
+        <div class="auth-card glass-panel animate__animated animate__fadeInRight">
+          
+          <div class="auth-header text-center mb-5">
+            <div class="d-lg-none mb-3">
+               <span class="fs-1">🚀</span>
+            </div>
+            <h2 class="fw-800">Iniciar Sesión</h2>
+            <p class="text-secondary">Ingresa tus credenciales para continuar</p>
+          </div>
+
+          <div *ngIf="mensajeError" class="alert-custom animate__animated animate__headShake mb-4">
+            <i class="bi bi-shield-lock-fill me-2"></i> {{ mensajeError }}
           </div>
 
           <form (ngSubmit)="onLogin()">
-            <div class="mb-4">
-              <label class="form-label">Correo Electrónico</label>
-              <input type="email" class="form-control" [(ngModel)]="email" name="email" 
-                     placeholder="ejemplo@correo.com" required>
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control" id="floatingEmail" [(ngModel)]="email" name="email" 
+                     placeholder="name@example.com" required>
+              <label for="floatingEmail">Correo Electrónico</label>
             </div>
 
-            <div class="mb-4">
-              <label class="form-label">Contraseña</label>
-              <input type="password" class="form-control" [(ngModel)]="password" name="password" 
-                     placeholder="••••••••" required>
+            <div class="form-floating mb-4">
+              <input type="password" class="form-control" id="floatingPassword" [(ngModel)]="password" name="password" 
+                     placeholder="Contraseña" required>
+              <label for="floatingPassword">Contraseña</label>
             </div>
 
-            <button type="submit" class="btn-auth" [disabled]="cargando">
-              <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
-              {{ cargando ? 'Iniciando...' : 'Iniciar Sesión' }}
+            <div class="d-flex justify-content-between align-items-center mb-4 px-1">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="rememberMe">
+                <label class="form-check-label small" for="rememberMe">Recordarme</label>
+              </div>
+              <a href="javascript:void(0)" class="forgot-link small">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <button type="submit" class="btn-auth-premium" [disabled]="cargando">
+              <div *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></div>
+              {{ cargando ? 'Verificando...' : 'Acceder ahora' }}
             </button>
           </form>
 
-          <div class="auth-footer">
-            ¿No tienes una cuenta? 
-            <a routerLink="/registro">Crea una ahora</a>
+          <div class="social-auth text-center mt-5">
+            <p class="small text-muted-custom mb-3">O continúa con</p>
+            <div class="d-flex justify-content-center gap-3">
+              <button class="btn-social"><i class="bi bi-google"></i></button>
+              <button class="btn-social"><i class="bi bi-apple"></i></button>
+              <button class="btn-social"><i class="bi bi-facebook"></i></button>
+            </div>
           </div>
+
+          <div class="auth-footer text-center mt-5">
+            <span class="text-muted-custom">¿No eres miembro aún?</span>
+            <a routerLink="/registro" class="btn-link ms-1">Regístrate gratis</a>
+          </div>
+
         </div>
       </div>
 

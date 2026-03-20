@@ -1,0 +1,18 @@
+@import '../login/login.scss'; // 👈 Reutilizamos todos los estilos premium
+
+:host {
+    display: block;
+    width: 100%;
+    height: 100vh;
+}
+
+// Sobreescribimos algunos ajustes específicos si es necesario
+.auth-card {
+    max-width: 550px; // Un poco más ancho para el registro
+}
+
+.auth-header {
+    margin-bottom: 2rem !important;
+}
+
+// El fondo ya viene definido en login.scss (.login-page)

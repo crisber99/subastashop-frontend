@@ -1,48 +1,104 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow p-4" style="width: 400px;">
-    <h3 class="text-center mb-3">Crear Cuenta 🚀</h3>
-
-    @if (mensajeError) {
-        <div class="alert alert-danger">{{ mensajeError }}</div>
-    }
-
-    <form (ngSubmit)="onSubmit()">
-      <div class="mb-3">
-        <label class="form-label">Nombre Completo</label>
-        <input type="text" [(ngModel)]="form.nombre" name="nombre" class="form-control" required>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Correo Electrónico</label>
-        <input type="email" [(ngModel)]="form.email" name="email" class="form-control" placeholder="ejemplo@correo.com" required>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Teléfono</label>
-          <input type="text" [(ngModel)]="form.telefono" name="telefono" class="form-control" placeholder="+56 9..." required>
+<div class="login-page"> <!-- Reutilizamos la clase para coherencia -->
+  <div class="login-bg-overlay"></div>
+  
+  <div class="container-fluid h-100 p-0">
+    <div class="row g-0 h-100">
+      
+      <!-- Lado Izquierdo: Bienvenida (Desktop) -->
+      <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center p-5 bg-welcome">
+        <div class="welcome-content animate__animated animate__fadeInLeft">
+          <div class="logo-wrapper mb-4">
+            <span class="logo-icon">🚀</span>
+            <span class="logo-text">Subasta<span>Shop</span></span>
+          </div>
+          <h1 class="display-4 fw-bold mb-4">Crea tu cuenta <br> <span class="text-gradient">y empieza a ganar.</span></h1>
+          <p class="lead mb-5 text-muted-custom">
+            Únete hoy mismo a la comunidad más grande de subastas premium. Compra, vende y disfruta con total seguridad.
+          </p>
+          
+          <div class="features-list">
+            <div class="feature-item">
+              <div class="f-icon">⭐</div>
+              <div>
+                <h5>Perfil Personalizado</h5>
+                <p>Gestiona tus compras y ventas desde un solo lugar.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="f-icon">🔔</div>
+              <div>
+                <h5>Notificaciones al Instante</h5>
+                <p>No te pierdas ninguna oferta o cierre de subasta.</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Dirección</label>
-          <input type="text" [(ngModel)]="form.direccion" name="direccion" class="form-control" placeholder="Calle, Ciudad" required>
+      </div>
+
+      <!-- Lado Derecho: Formulario de Registro -->
+      <div class="col-lg-6 col-12 d-flex align-items-center justify-content-center p-4">
+        <div class="auth-card glass-panel animate__animated animate__zoomIn">
+          
+          <div class="auth-header text-center mb-4">
+            <h2 class="fw-800">Crear Cuenta</h2>
+            <p class="text-secondary">Regístrate en segundos y descubre ofertas únicas</p>
+          </div>
+
+          <div *ngIf="mensajeError" class="alert-custom animate__animated animate__headShake mb-3">
+             {{ mensajeError }}
+          </div>
+
+          <form (ngSubmit)="onSubmit()">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="floatingNombre" [(ngModel)]="form.nombre" name="nombre" 
+                     placeholder="Juan Pérez" required>
+              <label for="floatingNombre">Nombre Completo</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control" id="floatingEmail" [(ngModel)]="form.email" name="email" 
+                     placeholder="correo@ejemplo.com" required>
+              <label for="floatingEmail">Correo Electrónico</label>
+            </div>
+
+            <div class="row g-2">
+              <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingTel" [(ngModel)]="form.telefono" name="telefono" 
+                         placeholder="+56 9..." required>
+                  <label for="floatingTel">Teléfono</label>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingDir" [(ngModel)]="form.direccion" name="direccion" 
+                         placeholder="Calle, Ciudad" required>
+                  <label for="floatingDir">Dirección</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" id="floatingPass" [(ngModel)]="form.password" name="password" 
+                     placeholder="Contraseña" required minlength="8">
+              <label for="floatingPass">Contraseña</label>
+              <div class="form-text small text-muted-custom opacity-75">Mínimo 8 caracteres, incluye letras y números.</div>
+            </div>
+
+            <button type="submit" class="btn-auth-premium mt-3" [disabled]="cargando">
+              <div *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></div>
+              {{ cargando ? 'Creando perfil...' : 'Registrarme' }}
+            </button>
+          </form>
+
+          <div class="auth-footer text-center mt-4">
+            <span class="text-muted-custom">¿Ya tienes una cuenta?</span>
+            <a routerLink="/login" class="btn-link ms-1">Inicia sesión</a>
+          </div>
+
         </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Contraseña</label>
-        <input type="password" [(ngModel)]="form.password" name="password" class="form-control" 
-               required minlength="8" placeholder="Mínimo 8 caracteres, letras y números">
-        <div class="form-text small">Mínimo 8 caracteres, debe incluir letras y números.</div>
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100" [disabled]="cargando">
-        <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
-        {{ cargando ? 'Registrando...' : 'Registrarme' }}
-      </button>
-    </form>
-
-    <div class="mt-3 text-center">
-      <small>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></small>
     </div>
   </div>
-</div>
+</div>

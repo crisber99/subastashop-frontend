@@ -130,4 +130,14 @@ export class AuthService {
   hasActiveSubscription(): boolean {
     return this.currentUser()?.suscripcionActiva || false;
   }
+
+  // --- RECUPERACIÓN DE CONTRASEÑA ---
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(datos: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, datos);
+  }
 }

@@ -24,13 +24,7 @@
                 <p>Compite por lo que amas con total transparencia.</p>
               </div>
             </div>
-            <div class="feature-item">
-              <div class="f-icon">💳</div>
-              <div>
-                <h5>Pagos Seguros</h5>
-                <p>Integración con Mercado Pago y protección del comprador.</p>
-              </div>
-            </div>
+            <!-- Eliminado ítem de Mercado Pago por petición del usuario -->
           </div>
         </div>
       </div>
@@ -69,7 +63,7 @@
                 <input class="form-check-input" type="checkbox" id="rememberMe">
                 <label class="form-check-label small" for="rememberMe">Recordarme</label>
               </div>
-              <a href="javascript:void(0)" class="forgot-link small">¿Olvidaste tu contraseña?</a>
+              <a (click)="onForgotPassword()" style="cursor: pointer;" class="forgot-link small">¿Olvidaste tu contraseña?</a>
             </div>
 
             <button type="submit" class="btn-auth-premium" [disabled]="cargando">
@@ -81,9 +75,9 @@
           <div class="social-auth text-center mt-5">
             <p class="small text-muted-custom mb-3">O continúa con</p>
             <div class="d-flex justify-content-center gap-3">
-              <button class="btn-social"><i class="bi bi-google"></i></button>
-              <button class="btn-social"><i class="bi bi-apple"></i></button>
-              <button class="btn-social"><i class="bi bi-facebook"></i></button>
+              <button class="btn-social" (click)="socialLogin('Google')"><i class="bi bi-google"></i></button>
+              <button class="btn-social" (click)="socialLogin('Apple')"><i class="bi bi-apple"></i></button>
+              <button class="btn-social" (click)="socialLogin('Facebook')"><i class="bi bi-facebook"></i></button>
             </div>
           </div>
 

@@ -174,15 +174,18 @@ export class AdminUsersComponent implements OnInit {
     Swal.fire({
       title: 'Editar Usuario',
       html: `
-        <div class="text-start">
-          <label class="form-label mt-2">Nombre Completo</label>
-          <input id="swal-input1" class="form-control" value="${user.nombreCompleto || ''}">
-          <label class="form-label mt-2">Teléfono</label>
-          <input id="swal-input2" class="form-control" value="${user.telefono || ''}">
-          <label class="form-label mt-2">Dirección</label>
-          <input id="swal-input3" class="form-control" value="${user.direccion || ''}">
-          <label class="form-label mt-2">Email</label>
-          <input id="swal-input4" class="form-control" value="${user.email || ''}">
+        <div class="swal-custom-container text-start">
+          <label class="form-label mb-1 fw-bold small">Nombre Completo</label>
+          <input id="swal-input1" class="form-control mb-3" value="${user.nombreCompleto || ''}" placeholder="Ej: Juan Pérez">
+          
+          <label class="form-label mb-1 fw-bold small">Teléfono</label>
+          <input id="swal-input2" class="form-control mb-3" value="${user.telefono || ''}" placeholder="+56 9 ...">
+          
+          <label class="form-label mb-1 fw-bold small">Dirección</label>
+          <input id="swal-input3" class="form-control mb-3" value="${user.direccion || ''}" placeholder="Calle 123...">
+          
+          <label class="form-label mb-1 fw-bold small">Email</label>
+          <input id="swal-input4" class="form-control mb-1" value="${user.email || ''}" placeholder="correo@ejemplo.com">
         </div>
       `,
       showCancelButton: true,

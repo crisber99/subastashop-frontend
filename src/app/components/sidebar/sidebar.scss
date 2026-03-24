@@ -1,37 +1,22 @@
-/* --- 1. VARIABLES (SISTEMA DE DISEÑO) --- */
-$sidebar-bg: rgba(15, 23, 42, 0.95);
-$sidebar-accent: #6366f1;
-$text-primary: #f8fafc;
-$text-secondary: #94a3b8;
-$glass-border: rgba(255, 255, 255, 0.1);
-$hover-color: rgba(99, 102, 241, 0.15);
-
-:host {
-  display: block;
-  position: relative;
-  z-index: 1000;
-}
-
-/* --- 3. CONTENEDOR PRINCIPAL --- */
 .sidebar {
   width: 280px;
-  background: $sidebar-bg;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: $text-primary;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-color);
   min-height: 100vh;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  border-right: 1px solid $glass-border;
+  border-right: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 10px 0 25px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--premium-shadow);
   z-index: 1100;
   
-  /* Desktop Mode - Part of the flow */
+  /* Desktop Mode */
   @media (min-width: 993px) {
     position: sticky;
     transform: none !important;
@@ -42,147 +27,120 @@ $hover-color: rgba(99, 102, 241, 0.15);
     }
   }
 
-  /* Mobile Mode - Layered */
+  /* Mobile Mode */
   @media (max-width: 992px) {
     transform: translateX(-100%);
+    background: var(--card-bg); /* More opaque on mobile */
     &.toggled {
         transform: translateX(0);
     }
   }
 }
 
-/* Estado Visible */
-.sidebar.toggled {
-    transform: translateX(0);
-}
-
-/* --- 4. MARCA / LOGO --- */
 .sidebar-brand {
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid $glass-border;
-  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+  border-bottom: 1px solid var(--glass-border);
 
   a {
-    font-size: 1.4rem;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-    background-clip: text;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: var(--primary-gradient);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     transition: transform 0.3s ease;
     
     &:hover {
-        transform: scale(1.02);
+        transform: scale(1.05);
     }
   }
 }
 
-/* --- 5. CONTENIDO --- */
 .sidebar-content {
   flex-grow: 1;
-  padding: 1.5rem 0.75rem;
+  padding: 1.5rem 1rem;
   overflow-y: auto;
 
-  /* Custom Scrollbar */
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
+  &::-webkit-scrollbar { width: 4px; }
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-color);
     border-radius: 10px;
   }
 }
 
-/* --- 6. NAVEGACIÓN --- */
-.sidebar-nav {
-  padding: 0;
-  list-style: none;
-  margin: 0;
-}
-
 .sidebar-header {
-  color: $text-secondary;
+  color: var(--text-muted);
   padding: 1.5rem 1rem 0.75rem;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .sidebar-item {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
-/* --- 7. ENLACES (ESTILO PREMIUM) --- */
 .sidebar-link {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
-  color: $text-secondary;
+  padding: 0.85rem 1.25rem;
+  color: var(--text-color);
   text-decoration: none;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  border-radius: var(--radius-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
 
   i {
-    margin-right: 12px;
-    font-size: 1.25rem;
+    margin-right: 14px;
+    font-size: 1.3rem;
+    color: var(--primary-color);
     transition: transform 0.3s ease;
   }
 
   span {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 500;
   }
 
-  /* Efecto Hover */
   &:hover {
-    background: $hover-color;
-    color: #fff;
-    transform: translateX(4px);
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    transform: translateX(5px);
+    box-shadow: var(--glass-shadow);
 
-    i {
-      color: $sidebar-accent;
-      transform: scale(1.1);
-    }
+    i { transform: scale(1.2); }
   }
 
-  /* Estado Activo */
   &.active {
-    background: $sidebar-accent;
+    background: var(--primary-gradient);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    border-color: transparent;
 
-    i {
-      color: #fff;
-    }
+    i { color: #fff; }
   }
 }
 
-/* --- 8. LOGOUT BOTÓN --- */
 .logout-container {
-    padding: 1.5rem 0.75rem;
-    border-top: 1px solid $glass-border;
+    padding: 1.5rem 1rem;
+    border-top: 1px solid var(--glass-border);
 }
 
 .logout-link {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171 !important;
+    background: rgba(239, 68, 68, 0.05);
+    color: #ef4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.1);
     
+    i { color: #ef4444 !important; }
+
     &:hover {
         background: #ef4444 !important;
         color: #fff !important;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
     }
-}
-
-/* --- 9. RESPONSIVIDAD --- */
-@media (max-width: 992px) {
-  .sidebar.toggled {
-    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
-  }
 }

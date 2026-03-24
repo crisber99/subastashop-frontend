@@ -1,69 +1,155 @@
-/* You can add global styles to this file, and also import other style files */
-@use './app/shared/skeleton.scss';
+/* --- PREMIUM DESIGN SYSTEM --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
-/* --- VARIABLES DE TEMA --- */
 :root {
-  --bg-color: #f8f9fa;
-  --text-color: #212529;
-  --card-bg: #ffffff;
-  --border-color: #dee2e6;
-  --nav-bg: #ffffff;
-  --badge-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  /* Colors */
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  
+  /* Backgrounds & Surfaces (Light) */
+  --bg-color: #f8fafc;
+  --bg-gradient: radial-gradient(circle at top right, #f1f5f9, #f8fafc);
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  
+  /* Text & Borders */
+  --text-color: #0f172a;
+  --text-muted: #64748b;
+  --border-color: rgba(226, 232, 240, 0.8);
+  
+  /* Shadows & Geometry */
+  --premium-shadow: 0 10px 40px -10px rgba(0,0,0,0.05);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  --radius-lg: 1.5rem; /* 24px */
+  --radius-md: 1rem;   /* 16px */
+  --radius-sm: 0.75rem; /* 12px */
 }
 
 body.dark-theme {
+  /* Backgrounds & Surfaces (Dark) */
   --bg-color: #0f172a;
+  --bg-gradient: radial-gradient(circle at top right, #1e293b, #0f172a);
+  --card-bg: rgba(30, 41, 59, 0.8);
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  
+  /* Text & Borders */
   --text-color: #f8fafc;
-  --card-bg: #1e293b;
-  --border-color: #334155;
-  --nav-bg: #1e293b;
-  --badge-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  --text-muted: #94a3b8;
+  --border-color: rgba(51, 65, 85, 0.5);
+  --premium-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
 }
 
-/* --- OVERRIDES GLOBALES PARA TEMA --- */
+/* --- OVERRIDES GLOBALES --- */
+* {
+    font-family: 'Outfit', sans-serif;
+}
+
 body {
-  background-color: var(--bg-color) !important;
+  background: var(--bg-gradient) fixed !important;
   color: var(--text-color) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.4s ease;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 .card {
-  background-color: var(--card-bg) !important;
-  color: var(--text-color) !important;
-  border-color: var(--border-color) !important;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--premium-shadow) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
 }
 
-.table {
-  color: var(--text-color) !important;
-  border-color: var(--border-color) !important;
-  --bs-table-bg: var(--card-bg);
-  --bs-table-striped-bg: rgba(255,255,255, 0.05);
+.card:hover {
+    transform: translateY(-5px);
 }
 
-.modal-content {
-  background-color: var(--card-bg) !important;
-  color: var(--text-color) !important;
+/* Buttons */
+.btn {
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-.list-group-item {
-  background-color: var(--card-bg) !important;
-  color: var(--text-color) !important;
-  border-color: var(--border-color) !important;
+.btn-primary {
+    background: var(--primary-gradient) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
 }
 
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Inputs */
 .form-control, .form-select {
-  background-color: var(--card-bg) !important;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
   color: var(--text-color) !important;
-  border-color: var(--border-color) !important;
+  padding: 0.75rem 1rem;
+  
   &:focus {
-    background-color: var(--card-bg) !important;
-    color: var(--text-color) !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+    border-color: var(--primary-color) !important;
   }
 }
 
 .badge {
-    box-shadow: var(--badge-shadow);
-    letter-spacing: 0.5px;
+    border-radius: 50rem;
+    padding: 0.5em 1em;
+    font-weight: 600;
 }
+
+/* Tables */
+.table {
+  color: var(--text-color) !important;
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  
+  thead th {
+      background: var(--glass-bg) !important;
+      color: var(--primary-color) !important;
+      border-bottom-width: 2px !important;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      padding: 1.25rem 1rem;
+  }
+  
+  tbody td {
+      padding: 1rem;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  tr:last-child td {
+      border-bottom: none !important;
+  }
+}
+
+/* Utility Classes */
+.premium-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--glass-border) 50%, transparent 100%);
+    width: 100%;
+}
+
+.ls-1 { letter-spacing: 1.2px; }
+.fw-800 { font-weight: 800; }
+.fw-700 { font-weight: 700; }
+.fw-600 { font-weight: 600; }
+.fw-500 { font-weight: 500; }

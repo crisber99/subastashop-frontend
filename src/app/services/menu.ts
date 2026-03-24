@@ -59,6 +59,12 @@ export class MenuService {
         roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR']
     },
     {
+        label: 'Ayuda / Soporte',
+        icon: 'bi-question-circle',
+        route: '/soporte',
+        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR', 'ROLE_SUPER_ADMIN']
+    },
+    {
         label: 'Reportes y Denuncias',
         icon: 'bi-flag',
         route: '/super-admin/reportes',

@@ -1,20 +1,58 @@
-/* Estilo para limitar la imagen de detalle */
-.detalle-imagen-limitada {
-    /* 1. Define una altura máxima razonable para pantallas grandes */
-    max-height: 500px;
+.detalle-image-container {
+    background: var(--glass-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    box-shadow: var(--glass-shadow);
+}
 
-    /* 2. El ancho se ajusta automáticamente, pero nunca supera el 100% del contenedor */
+.detalle-imagen-limitada {
+    max-height: 500px;
     width: auto;
     max-width: 100%;
-
-    /* 3. MAGIA: Asegura que se vea la imagen completa sin deformarse,
-       añadiendo "aire" a los lados si es necesario */
     object-fit: contain;
-
-    /* 4. Centra la imagen horizontalmente si es más angosta que el contenedor */
     display: block;
     margin: 0 auto;
+    border-radius: var(--radius-md);
+    transition: transform 0.5s ease;
+    
+    &:hover {
+        transform: scale(1.02);
+    }
+}
 
-    /* Opcional: un color de fondo suave para el espacio sobrante si la imagen es muy angosta */
-    background-color: #f8f9fa;
+.carousel-inner {
+    background: rgba(0,0,0,0.02);
+    border-radius: var(--radius-md);
+}
+
+.price-display {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
+.type-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+[data-bs-theme="dark"] {
+    .detalle-image-container {
+        background: rgba(30, 41, 59, 0.5);
+    }
+    .carousel-inner {
+        background: rgba(255,255,255,0.05);
+    }
 }

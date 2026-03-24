@@ -1,0 +1,76 @@
+<div class="support-container animate__animated animate__fadeIn">
+  <div class="row g-4">
+    <!-- Nueva Consulta -->
+    <div class="col-lg-4">
+      <div class="card premium-card">
+        <div class="card-body p-4">
+          <h4 class="fw-bold mb-4">Nueva Consulta</h4>
+          <p class="text-muted small mb-4">¿Tienes dudas con una subasta o un pago? Escríbenos y te responderemos a la brevedad.</p>
+          
+          <form (ngSubmit)="enviarTicket()">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="asunto" [(ngModel)]="nuevoTicket.asunto" name="asunto" placeholder="Asunto" required>
+              <label for="asunto">Asunto / Tema</label>
+            </div>
+            
+            <div class="form-floating mb-3">
+              <textarea class="form-control" id="mensaje" [(ngModel)]="nuevoTicket.mensaje" name="mensaje" placeholder="Describe tu consulta" style="height: 150px" required></textarea>
+              <label for="mensaje">Descripción de la consulta</label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary-premium w-100 py-3" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              {{ loading ? 'Enviando...' : 'Enviar Consulta' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Mis Consultas -->
+    <div class="col-lg-8">
+      <div class="tickets-header d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold m-0">Mis Consultas Previas</h4>
+        <button class="btn btn-outline-secondary btn-sm" (click)="cargarTickets()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Actualizar
+        </button>
+      </div>
+
+      <div *ngIf="tickets.length === 0" class="empty-state p-5 text-center card card-body">
+        <div class="icon-circle mb-3">
+          <i class="bi bi-chat-dots fs-1"></i>
+        </div>
+        <h5>No tienes consultas registradas</h5>
+        <p class="text-muted">Si tienes alguna duda, usa el formulario de la izquierda.</p>
+      </div>
+
+      <div class="ticket-list animate__animated animate__fadeInUp" *ngIf="tickets.length > 0">
+        <div class="card mb-3 ticket-item" *ngFor="let t of tickets">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="fw-bold m-0">{{ t.asunto }}</h5>
+              <span class="badge" [ngClass]="t.estado === 'ABIERTO' ? 'bg-primary text-white' : 'bg-success text-white'">
+                {{ t.estado }}
+              </span>
+            </div>
+            <p class="text-muted small mb-3">
+              <i class="bi bi-calendar3 me-1"></i> {{ t.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+            
+            <div class="user-message p-3 bg-light rounded-3 mb-3 border-start border-primary border-4">
+               <p class="m-0 text-dark">{{ t.mensaje }}</p>
+            </div>
+
+            <div *ngIf="t.respuestaAdmin" class="admin-reply p-3 bg-indigo-soft rounded-3 border-start border-success border-4">
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-success me-2">Respuesta Soporte</span>
+                <small class="text-muted">{{ t.fechaRespuesta | date:'dd/MM/yyyy HH:mm' }}</small>
+              </div>
+              <p class="m-0 fw-500">{{ t.respuestaAdmin }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

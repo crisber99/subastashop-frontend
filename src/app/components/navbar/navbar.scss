@@ -1,125 +1,119 @@
-$navbar-bg: rgba(255, 255, 255, 0.85);
-$glass-border: rgba(255, 255, 255, 0.3);
-$accent-color: #6366f1;
-
 .navbar {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: $navbar-bg;
-  border-bottom: 1px solid $glass-border;
-  transition: all 0.3s ease;
-  height: 70px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.4s ease;
+  height: 75px;
   position: sticky;
   top: 0;
   z-index: 1000;
   display: flex;
   align-items: center;
+  box-shadow: var(--glass-shadow);
 }
 
 .navbar-brand {
     font-weight: 800;
-    font-size: 1.25rem;
-    color: #1e293b;
+    font-size: 1.4rem;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+    
+    span {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
 /* User Dropdown */
 .dropdown-toggle {
-    border: 1px solid transparent;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
     border-radius: 50px;
-    padding: 5px 15px 5px 5px !important;
+    padding: 6px 16px 6px 6px !important;
     transition: all 0.3s ease;
     cursor: pointer;
+    color: var(--text-color);
 
     &:hover {
-        background: rgba(0, 0, 0, 0.05);
-        border-color: rgba(0, 0, 0, 0.1);
+        background: rgba(99, 102, 241, 0.05);
+        border-color: var(--primary-color);
     }
 }
 
 .avatar-initials {
-    background: linear-gradient(135deg, $accent-color 0%, #4f46e5 100%) !important;
+    background: var(--primary-gradient) !important;
     color: #fff !important;
     box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+    font-weight: 600;
 }
 
 .dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 100%;
-    border: 1px solid $glass-border;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--premium-shadow);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background: var(--card-bg);
     padding: 0.75rem;
-    margin-top: 10px;
-    z-index: 2000;
-    min-width: 200px;
-    
-    &.show {
-        display: block;
-        animation: slideDown 0.3s ease-out;
-    }
+    margin-top: 12px;
+    min-width: 220px;
+    border-top: 2px solid var(--primary-color);
 }
 
 .dropdown-item {
-    border-radius: 8px;
-    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1rem;
     font-weight: 500;
-    color: #475569;
+    color: var(--text-color);
     display: flex;
     align-items: center;
     transition: all 0.2s ease;
-    cursor: pointer;
-    text-decoration: none;
 
     i {
-        margin-right: 10px;
-        font-size: 1.1rem;
-        color: $accent-color;
+        margin-right: 12px;
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        transition: transform 0.2s;
     }
 
     &:hover {
-        background: $accent-color;
-        color: #fff;
+        background: var(--primary-gradient);
+        color: #fff !important;
+        transform: translateX(3px);
         
-        i { color: #fff; }
-    }
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+        i { 
+            color: #fff; 
+            transform: scale(1.1);
+        }
     }
 }
 
 /* Sidebar Toggle Button */
 .toggle-btn {
-    border-radius: 12px;
-    width: 45px;
-    height: 45px;
+    border-radius: 14px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    color: #1e293b;
-    border: 1px solid rgba(0,0,0,0.1);
-    background: white;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-color);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
     margin-left: 1rem;
+    box-shadow: var(--glass-shadow);
 
     &:hover {
-        background: rgba(0,0,0,0.05);
-        color: $accent-color;
-        transform: scale(1.05);
+        background: var(--primary-gradient);
+        color: white;
+        border-color: transparent;
+        transform: scale(1.08) rotate(5deg);
     }
 
     i {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
 }

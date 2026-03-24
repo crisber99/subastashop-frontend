@@ -24,6 +24,8 @@ export class Dashboard implements OnInit {
 
   pujas: any[] = [];
   ordenes: any[] = [];
+  ordenesPendientes: any[] = [];
+  ordenesPagadas: any[] = [];
   tabActual: string = 'carrito'; 
 
   stats = {
@@ -66,9 +68,17 @@ export class Dashboard implements OnInit {
 
     this.productService.getMisPujas().subscribe(data => this.pujas = data);
     this.ordenService.getMisOrdenes().subscribe({
-      next: (data) => this.ordenes = data,
+      next: (data) => {
+        this.ordenes = data;
+        this.filtrarOrdenes();
+      },
       error: (err) => console.error('Error cargando órdenes', err)
     });
+  }
+
+  filtrarOrdenes() {
+    this.ordenesPendientes = this.ordenes.filter(o => o.estado === 'PENDIENTE_PAGO');
+    this.ordenesPagadas = this.ordenes.filter(o => o.estado === 'PAGADO');
   }
 
   procesarCompraCarrito() {
@@ -165,6 +175,7 @@ export class Dashboard implements OnInit {
     this.ordenService.getMisOrdenes().subscribe({
         next: (data) => {
             this.ordenes = data;
+            this.filtrarOrdenes();
             this.loading = false;
         },
         error: (err) => {

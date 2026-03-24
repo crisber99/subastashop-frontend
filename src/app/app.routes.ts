@@ -14,6 +14,7 @@ import { SuperAdminDashboard } from './pages/super-admin-dashboard/super-admin-d
 import { SuperAdminReportes } from './pages/super-admin-reportes/super-admin-reportes';
 import { AdminConfig } from './pages/admin-config/admin-config';
 import { AdminUsersComponent } from './components/admin-users-component/admin-users-component';
+import { SupportComponent } from './components/support/support';
 
 export const routes: Routes = [
     // Rutes Públiques
@@ -35,6 +36,7 @@ export const routes: Routes = [
     { path: 'super-admin', component: SuperAdminDashboard, canActivate: [authGuard] },
     { path: 'super-admin/reportes', component: SuperAdminReportes, canActivate: [authGuard] },
     { path: 'super-admin/usuarios', component: AdminUsersComponent, canActivate: [authGuard] },
+    { path: 'soporte', component: SupportComponent, canActivate: [authGuard] },
 
     // Comodín
     { path: '**', redirectTo: '' }

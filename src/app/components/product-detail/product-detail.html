@@ -1,21 +1,22 @@
-<div class="container mt-5 mb-5" *ngIf="producto; else loadingTemplate">
+<div class="container mt-5 mb-5 animate__animated animate__fadeIn" *ngIf="producto; else loadingTemplate">
     <div class="mb-4">
         @if (producto.tienda) {
-        <a [routerLink]="['/tienda', producto.tienda.slug]" class="btn btn-outline-secondary">
+        <a [routerLink]="['/tienda', producto.tienda.slug]" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
             <i class="bi bi-arrow-left"></i> Volver a {{ producto.tienda.nombre }}
         </a>
         } @else {
-        <a routerLink="/" class="btn btn-outline-secondary">
+        <a routerLink="/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
             <i class="bi bi-arrow-left"></i> Volver al catálogo
         </a>
         }
     </div>
 
-    <div class="row">
-        <div class="col-lg-7 mb-4">
-            <div class="card border-0 shadow-sm p-3 bg-white h-100 d-flex align-items-center justify-content-center">
+    <div class="row g-4">
+        <!-- Columna Imagen -->
+        <div class="col-lg-7">
+            <div class="detalle-image-container">
                 <div *ngIf="producto.imagenes && producto.imagenes.length > 0; else noImage" id="carruselProducto"
-                    class="carousel slide w-100" data-bs-ride="carousel">
+                    class="carousel slide w-100 h-100" data-bs-ride="carousel">
 
                     <div class="carousel-indicators">
                         <button *ngFor="let img of producto.imagenes; let i = index" type="button"
@@ -24,162 +25,148 @@
                         </button>
                     </div>
 
-                    <div class="carousel-inner rounded shadow-sm bg-light">
-                        <div class="carousel-item" *ngFor="let img of producto.imagenes; let i = index"
+                    <div class="carousel-inner h-100">
+                        <div class="carousel-item h-100" *ngFor="let img of producto.imagenes; let i = index"
                             [class.active]="i === 0">
-                            <img [src]="img" class="d-block mx-auto img-fluid rounded" alt="{{ producto.nombre }}"
-                                style="max-height: 500px; object-fit: contain;">
+                            <img [src]="img" class="detalle-imagen-limitada shadow-sm" alt="{{ producto.nombre }}">
                         </div>
                     </div>
 
                     <button *ngIf="producto.imagenes.length > 1" class="carousel-control-prev" type="button"
                         data-bs-target="#carruselProducto" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon bg-dark rounded-circle p-2 shadow" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
                     </button>
                     <button *ngIf="producto.imagenes.length > 1" class="carousel-control-next" type="button"
                         data-bs-target="#carruselProducto" data-bs-slide="next">
                         <span class="carousel-control-next-icon bg-dark rounded-circle p-2 shadow" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
                     </button>
                 </div>
 
                 <ng-template #noImage>
-                    <img [src]="producto.imagenUrl || 'assets/no-image.png'" class="img-fluid rounded"
-                        alt="{{ producto.nombre }}" style="max-height: 500px; object-fit: contain;">
+                    <img [src]="producto.imagenUrl || 'assets/no-image.png'" class="detalle-imagen-limitada"
+                        alt="{{ producto.nombre }}">
                 </ng-template>
             </div>
         </div>
 
+        <!-- Columna Info -->
         <div class="col-lg-5">
-            <h1 class="fw-bold mb-2">{{ producto.nombre }}</h1>
-            <p class="text-muted mb-4">{{ producto.descripcion }}</p>
+            <div class="p-2">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-2">
+                      <li class="breadcrumb-item small text-muted">SubastaShop</li>
+                      <li class="breadcrumb-item small text-primary active" aria-current="page">{{ producto.tipoVenta }}</li>
+                    </ol>
+                </nav>
+                <h1 class="fw-bold mb-3 display-5">{{ producto.nombre }}</h1>
+                <p class="text-muted mb-4 lead">{{ producto.descripcion }}</p>
 
-            <hr class="mb-4">
+                <div class="premium-divider my-4"></div>
 
-            <div *ngIf="producto.tipoVenta === 'SUBASTA'" class="card border-primary mb-4 shadow-sm">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                    <span class="badge bg-danger animate__animated animate__pulse animate__infinite">🔥 En Subasta</span>
-                    <small>Cierra: {{ producto.fechaFinSubasta | date:'short' }}</small>
-                </div>
+                <!-- SECCIÓN SUBASTA -->
+                <div *ngIf="producto.tipoVenta === 'SUBASTA'" class="card border-0 mb-4 overflow-hidden">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3 border-0">
+                        <span class="badge bg-danger animate__animated animate__pulse animate__infinite px-3 py-2">🔥 EN SUBASTA</span>
+                        <small class="fw-500 opacity-75"><i class="bi bi-clock me-1"></i> Finaliza: {{ producto.fechaFinSubasta | date:'short' }}</small>
+                    </div>
 
-                <div class="card-body">
-                    <h3 class="fw-bold text-center mb-4">
-                        Precio Actual:
-                        <span id="precio-badge" class="badge bg-primary text-white transition-badge">
+                    <div class="card-body p-4 text-center">
+                        <p class="text-muted mb-1 text-uppercase small ls-1">Oferta Actual</p>
+                        <h2 class="display-4 fw-800 text-primary mb-4">
                             ${{ producto.precioActual | number }}
-                        </span>
-                    </h3>
+                        </h2>
 
-                    <div *ngIf="subastaFinalizada" class="alert alert-warning text-center fw-bold">
-                        🔒 Esta subasta ha finalizado
-                    </div>
+                        <div *ngIf="subastaFinalizada" class="alert alert-secondary text-center fw-bold rounded-4">
+                            <i class="bi bi-lock-fill"></i> Subasta Finalizada
+                        </div>
 
-                    <div *ngIf="authService.isLoggedIn(); else loginSubasta">
-                        <div class="mb-3">
-                            <label class="form-label">Tu oferta ($):</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" [(ngModel)]="montoOferta" [disabled]="subastaFinalizada">
-                                <button class="btn btn-primary fw-bold" (click)="pujar()" [disabled]="subastaFinalizada">
-                                    Confirmar Puja
-                                </button>
-                            </div>
-                            <div class="form-text text-muted text-center mt-2" *ngIf="!subastaFinalizada">
-                                Oferta mínima: ${{ (producto.precioActual || producto.precioBase) + 1000 | number }}
+                        <div *ngIf="authService.isLoggedIn(); else loginSubasta">
+                            <div class="mb-3 text-start" *ngIf="!subastaFinalizada">
+                                <label class="form-label fw-600 small ms-1">Tu próxima puja ($):</label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-transparent border-end-0">$</span>
+                                    <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta">
+                                    <button class="btn btn-primary px-4 fw-bold" (click)="pujar()">
+                                        Pujar
+                                    </button>
+                                </div>
+                                <div class="form-text text-muted text-center mt-3">
+                                    Mínimo sugerido: <span class="fw-bold">${{ (producto.precioActual || producto.precioBase) + 1000 | number }}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <ng-template #loginSubasta>
-                        <div class="alert alert-info text-center">
-                            Para realizar una puja debes <a routerLink="/login" class="alert-link">iniciar sesión</a>.
+                        <ng-template #loginSubasta>
+                            <div class="alert alert-info rounded-4 border-0 text-center">
+                                Para participar debes <a routerLink="/login" class="fw-bold text-primary text-decoration-none">iniciar sesión</a>.
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN RIFA -->
+                <div *ngIf="producto.tipoVenta === 'RIFA'" class="card border-0 mb-4 overflow-hidden">
+                    <div class="card-header bg-info text-white py-3 border-0 text-center">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-ticket-perforated me-2"></i> Rifa / Sorteo Activo</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <p class="text-muted mb-1 small">Valor del Ticket</p>
+                            <h2 class="fw-800 text-success">${{ producto.precioTicket | number }}</h2>
+                            <p class="badge bg-light text-dark mt-1">
+                                {{ producto.cantidadNumeros }} Números | {{ producto.cantidadGanadores }} Premios
+                            </p>
                         </div>
-                    </ng-template>
-                </div>
-            </div>
 
-            <div *ngIf="producto.tipoVenta === 'RIFA'" class="card border-info mb-4 shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">🎟️ Rifa / Sorteo</h5>
-                </div>
-                <div class="card-body">
-                    <h4 class="text-center mb-3">Valor Ticket: <span class="fw-bold text-success">${{ producto.precioTicket | number }}</span></h4>
-                    <p class="text-center text-muted small">
-                        Total Números: {{ producto.cantidadNumeros }} | Ganadores: {{ producto.cantidadGanadores }}
-                    </p>
-
-                    <h5 class="mt-4">Elige tu número:</h5>
-                    <div class="d-flex flex-wrap gap-2 justify-content-center mt-2"
-                        style="max-height: 250px; overflow-y: auto;">
-                        @for (num of numerosRifa; track num) {
-                        <button class="btn shadow-sm" [class.btn-outline-primary]="!isTicketVendido(num)"
-                            [class.btn-danger]="isTicketVendido(num)" [class.disabled]="isTicketVendido(num)"
-                            (click)="!isTicketVendido(num) && comprarNumero(num)"
-                            style="width: 45px; height: 45px; font-weight: bold;">
-                            @if (isTicketVendido(num)) { ❌ } @else { {{ num }} }
-                        </button>
-                        }
+                        <p class="fw-bold mb-2 small"><i class="bi bi-grid-3x3-gap me-1 text-primary"></i> Selecciona tu número:</p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center p-3 bg-light rounded-4"
+                            style="max-height: 250px; overflow-y: auto; border: 1px solid var(--glass-border);">
+                            @for (num of numerosRifa; track num) {
+                            <button class="btn ticket-btn transition-all" 
+                                [class.btn-outline-primary]="!isTicketVendido(num)"
+                                [class.btn-danger]="isTicketVendido(num)" 
+                                [class.disabled]="isTicketVendido(num)"
+                                (click)="!isTicketVendido(num) && comprarNumero(num)"
+                                style="width: 48px; height: 48px; font-weight: 700; border-radius: 12px;">
+                                @if (isTicketVendido(num)) { <i class="bi bi-x"></i> } @else { {{ num }} }
+                            </button>
+                            }
+                        </div>
                     </div>
+                </div>
 
-                    <div class="mt-4">
-                        <div *ngIf="authService.isAdmin() && ticketsVendidos.length === producto.cantidadNumeros && ganadores.length === 0"
-                            class="alert alert-warning text-center shadow-sm">
-                            <h5>¡Todos los números vendidos!</h5>
-                            <button (click)="lanzarSorteo()" class="btn btn-warning btn-lg fw-bold w-100 mt-2">
-                                🎲 LANZAR RIFA AHORA
+                <!-- SECCIÓN VENTA DIRECTA -->
+                @if (producto.tipoVenta === 'DIRECTA' || !producto.tipoVenta) {
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+                    <div class="card-body p-4 text-center">
+                        <p class="text-muted mb-1 small uppercase ls-1">Precio Final</p>
+                        <h1 class="display-3 fw-800 text-success mb-4">
+                            ${{ producto.precioBase | number }}
+                        </h1>
+
+                        <div class="d-grid gap-3"> 
+                            <button class="btn btn-primary btn-lg py-3 fw-bold shadow-lg"
+                                (click)="abrirModalPago()" [disabled]="cartService.estaEnCarrito(producto.id)">
+                                @if (cartService.estaEnCarrito(producto.id)) {
+                                    <i class="bi bi-cart-check me-2"></i> En el Carrito
+                                } @else {
+                                    ⚡ Comprar Ahora
+                                }
+                            </button>
+
+                            <button class="btn btn-outline-primary btn-lg py-3 fw-bold" (click)="agregarAlCarrito()"
+                                [disabled]="cartService.estaEnCarrito(producto.id)">
+                                <i class="bi bi-cart-plus me-2"></i> Agregar al Carrito
                             </button>
                         </div>
-
-                        <div *ngIf="ganadores.length > 0"
-                            class="card border-success shadow mt-3 animate__animated animate__fadeIn">
-                            <div class="card-header bg-success text-white text-center">
-                                <h6 class="mb-0">🏆 ¡Ganadores Oficiales! 🏆</h6>
-                            </div>
-                            <ul class="list-group list-group-flush small">
-                                @for (ganador of ganadores; track $index) {
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>
-                                        @if($index === 0) { 🥇 } @else if($index === 1) { 🥈 } @else { 🥉 }
-                                        {{ $index + 1 }}º Lugar
-                                    </span>
-                                    <span class="badge bg-primary rounded-pill">Ticket #{{ ganador.numeroTicket }}</span>
-                                </li>
-                                }
-                            </ul>
-                        </div>
                     </div>
                 </div>
-            </div>
+                }
 
-            @if (producto.tipoVenta === 'DIRECTA' || !producto.tipoVenta) {
-            <div class="card bg-light border-0 shadow-sm mb-4">
-                <div class="card-body">
-                    <h2 class="display-6 fw-bold text-success mb-3 text-center">
-                        ${{ producto.precioBase | number }}
-                    </h2>
-
-                    <div class="d-grid gap-3"> 
-                        <button class="btn btn-primary btn-lg fw-bold shadow-sm"
-                            (click)="abrirModalPago()" [disabled]="cartService.estaEnCarrito(producto.id)">
-                            @if (cartService.estaEnCarrito(producto.id)) {
-                                <i class="bi bi-cart-check"></i> Ya está en tu carrito
-                            } @else {
-                                ⚡ Comprar Ahora
-                            }
-                        </button>
-
-                        <button class="btn btn-outline-primary btn-lg fw-bold" (click)="agregarAlCarrito()"
-                            [disabled]="cartService.estaEnCarrito(producto.id)">
-                            <i class="bi bi-cart-plus"></i> Agregar al Carrito
-                        </button>
-                    </div>
+                <div *ngIf="mensaje" class="alert mt-3 animate__animated animate__shakeX rounded-4 border-0 shadow-sm"
+                     [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
+                    <i class="bi" [ngClass]="esError ? 'bi-exclamation-octagon' : 'bi-check-circle'"></i> {{ mensaje }}
                 </div>
-            </div>
-            }
-
-            <div *ngIf="mensaje" class="alert mt-3" [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
-                {{ mensaje }}
             </div>
         </div>
     </div>

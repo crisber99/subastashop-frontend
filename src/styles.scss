@@ -27,6 +27,10 @@
   --radius-sm: 0.75rem; /* 12px */
 }
 
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
 body.dark-theme {
   /* Backgrounds & Surfaces (Dark) */
   --bg-color: #0f172a;
@@ -37,7 +41,7 @@ body.dark-theme {
   
   /* Text & Borders */
   --text-color: #f8fafc;
-  --text-muted: #94a3b8;
+  --text-muted: #cbd5e1;
   --border-color: rgba(51, 65, 85, 0.5);
   --premium-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
 }

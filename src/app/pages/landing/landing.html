@@ -3,8 +3,8 @@
     <p class="lead fs-4 animate__animated animate__fadeInUp">La plataforma donde cada tienda es un mundo de oportunidades.</p>
     <p class="mb-4 text-white-50">Explora subastas, rifas y ventas directas de nuestros vendedores verificados.</p>
 
-    <div class="search-container bg-white p-2 rounded-pill shadow-lg d-flex mt-3 animate__animated animate__fadeInUp"
-        style="max-width: 600px; width: 90%;">
+    <div class="search-container p-2 rounded-pill shadow-lg d-flex mt-3 animate__animated animate__fadeInUp"
+        style="max-width: 600px; width: 90%; background: var(--card-bg); border: 1px solid var(--glass-border);">
         <input type="text" class="form-control border-0 rounded-pill px-4 shadow-none"
             placeholder="Buscar una tienda (ej: MiniMundo)..." [(ngModel)]="busqueda" (keyup)="filtrar()">
         <button class="btn btn-primary rounded-pill px-4 fw-bold">Buscar</button>
@@ -22,7 +22,7 @@
 <div class="container pb-5">
     <div class="row mb-4">
         <div class="col-12 text-center">
-            <h3 class="fw-bold text-dark">Tiendas Destacadas 🏪</h3>
+            <h3 class="fw-bold">Tiendas Destacadas 🏪</h3>
             <p class="text-muted">Elige una tienda para ver su catálogo exclusivo.</p>
         </div>
     </div>
@@ -60,7 +60,7 @@
                             </div>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-2">{{ tienda.nombre }}</h5>
+                        <h5 class="card-title fw-bold mb-2">{{ tienda.nombre }}</h5>
                         <p class="card-text text-muted small mb-4">
                             Encuentra las mejores rifas y subastas exclusivas aquí.
                         </p>

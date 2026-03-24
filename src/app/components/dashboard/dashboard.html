@@ -9,9 +9,8 @@
         </span>
     </div>
 
-    @if (authService.isAdmin()) {
-    <div class="row mb-5 animate__animated animate__fadeIn">
-        <div class="col-md-3">
+    <div class="row mb-5 animate__animated animate__fadeIn" *ngIf="authService.isAdmin()">
+        <div class="col-md-4" *ngIf="authService.isSuperAdmin()">
             <div class="card bg-primary text-white shadow-sm border-0">
                 <div class="card-body">
                     <h3>{{ stats.usuarios }}</h3>
@@ -19,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card bg-success text-white shadow-sm border-0">
                 <div class="card-body">
                     <h3>${{ stats.ingresos | number }}</h3>
@@ -27,15 +26,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-dark shadow-sm border-0">
-                <div class="card-body">
-                    <h3>{{ stats.subastasActivas }}</h3>
-                    <p class="mb-0"><i class="bi bi-fire"></i> Subastas Activas</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card bg-info text-white shadow-sm border-0">
                 <div class="card-body">
                     <h3>{{ stats.ventas }}</h3>
@@ -44,7 +35,6 @@
             </div>
         </div>
     </div>
-    }
 
     <ul class="nav nav-pills mb-4 gap-2">
         <li class="nav-item">
@@ -158,7 +148,7 @@
                         </div>
                         <div class="card-body">
                             <p class="text-muted small mb-2">Fecha: {{ orden.fechaCreacion | date:'medium' }}</p>
-                            <h4 class="card-title fw-bold text-dark mb-3">Total: ${{ orden.total | number }}</h4>
+                            <h4 class="card-title fw-bold mb-3">Total: ${{ orden.total | number }}</h4>
                             <div class="alert alert-warning small py-2 mb-3">
                                 <i class="bi bi-info-circle"></i> Tienes productos reservados. Paga pronto para no perderlos.
                             </div>

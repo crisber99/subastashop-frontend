@@ -5,6 +5,9 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LayoutService } from '../../services/layout';
 import { AuthService } from '../../services/auth-service';
+import { CategoriaService } from '../../services/categoria';
+import { Categoria } from '../../models/categoria';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -17,9 +20,12 @@ export class Landing implements OnInit {
   private shopService = inject(Shop);
   public layoutService = inject(LayoutService);
   public authService = inject(AuthService);
+  private categoriaService = inject(CategoriaService);
+  private router = inject(Router);
 
   tiendas: any[] = [];
   tiendasFiltradas: any[] = [];
+  categorias: Categoria[] = [];
   busqueda: string = '';
   loading: boolean = true;
 
@@ -36,6 +42,19 @@ export class Landing implements OnInit {
         this.loading = false;
       }
     });
+    this.cargarCategorias();
+  }
+
+  cargarCategorias() {
+    this.categoriaService.getCategorias().subscribe(data => this.categorias = data);
+  }
+
+  seleccionarCategoria(catId: number | null) {
+    if (catId === null) {
+        this.router.navigate(['/catalogo-global']);
+    } else {
+        this.router.navigate(['/catalogo-global'], { queryParams: { categoria: catId } });
+    }
   }
 
   filtrar() {

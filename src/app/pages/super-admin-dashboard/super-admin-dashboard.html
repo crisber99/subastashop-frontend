@@ -11,7 +11,7 @@
   </div>
 
   <!-- TABS SUPER ADMIN -->
-  <ul class="nav nav-pills mb-4 shadow-sm p-2 bg-white rounded-pill" style="width: fit-content;">
+  <ul class="nav nav-pills mb-4 shadow-sm p-2 rounded-pill" style="width: fit-content; background: var(--card-bg); border: 1px solid var(--glass-border);">
     <li class="nav-item">
       <button class="nav-link rounded-pill" [class.active]="activeTab === 'resumen'" (click)="activeTab = 'resumen'">
         <i class="bi bi-graph-up me-2"></i>Resumen
@@ -107,7 +107,7 @@
     <!-- Gráfico -->
     <div class="col-md-12 mt-2">
       <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-0 py-3">
+        <div class="card-header border-0 py-3" style="background: var(--glass-bg);">
           <h5 class="fw-bold mb-0">Rendimiento de la Plataforma</h5>
         </div>
         <div class="card-body">
@@ -149,7 +149,7 @@
           <div class="p-3 border-bottom"><h5 class="fw-bold mb-0">Tiendas Existentes</h5></div>
           <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-              <thead class="bg-light">
+              <thead>
                 <tr><th>ID</th><th>Nombre</th><th>URL</th><th>Acciones</th></tr>
               </thead>
               <tbody>
@@ -167,11 +167,67 @@
     </div>
   </div>
 
+  <!-- CONTENIDO: PRODUCTOS -->
+  <div *ngIf="activeTab === 'productos'" class="row">
+    <div class="col-12">
+      <div class="row g-4 d-flex">
+        @for (producto of productos; track producto.id) {
+          <div class="col-md-3 mb-4 animate__animated animate__fadeIn">
+            <div class="card h-100 shadow-sm border-0 hover-effect glass-card overflow-hidden">
+              <div class="position-relative">
+                <img [src]="producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : 'assets/no-image.png'" 
+                     class="card-img-top" alt="Producto"
+                     style="height: 180px; object-fit: cover;">
+                <div class="position-absolute top-0 end-0 m-2">
+                  <span class="badge bg-dark-soft backdrop-blur shadow-sm">ID: {{ producto.id }}</span>
+                </div>
+              </div>
+              <div class="card-body d-flex flex-column p-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 100%;">{{ producto.nombre }}</h6>
+                  <span class="badge" [ngClass]="{
+                    'bg-success-soft text-success': producto.estado === 'ACTIVO' || producto.estado === 'EN_SUBASTA',
+                    'bg-danger-soft text-danger': producto.estado === 'VENDIDO',
+                    'bg-warning-soft text-warning': producto.estado === 'FINALIZADA' || producto.estado === 'RESERVADO'
+                  }">{{ producto.estado }}</span>
+                </div>
+                
+                <p class="text-muted small mb-3">
+                  <i class="bi bi-shop me-1 text-primary"></i> {{ producto.tienda?.nombre || 'Tienda Desconocida' }}
+                </p>
+
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-0">
+                        <span class="text-muted small">Precio:</span>
+                        <span class="fw-bold text-primary">${{ (producto.precioActual || producto.precioBase) | number }}</span>
+                    </div>
+                </div>
+              </div>
+              <div class="card-footer bg-transparent border-0 p-3 pt-0">
+                 <a [routerLink]="['/producto', producto.id]" class="btn btn-primary-soft btn-sm w-100 rounded-pill">
+                    <i class="bi bi-eye me-1"></i> Ver Detalles
+                 </a>
+              </div>
+            </div>
+          </div>
+        }
+        @empty {
+          <div class="col-12 text-center py-5">
+            <div class="text-muted">
+              <i class="bi bi-box-seam fs-1 d-block mb-3"></i>
+              <p>No se encontraron productos registrados en la plataforma.</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
   <!-- CONTENIDO: REPORTES -->
   <div *ngIf="activeTab === 'reportes'" class="card shadow-sm border-0">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
-        <thead class="bg-light">
+        <thead>
           <tr><th>ID</th><th>Motivo</th><th>Producto/Usuario</th><th>Fecha</th><th>Acciones</th></tr>
         </thead>
         <tbody>

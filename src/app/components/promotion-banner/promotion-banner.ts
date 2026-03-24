@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ThemeService } from '../../services/theme-service';
+import { MercadoPagoService } from '../../services/mercadopago';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,6 +16,7 @@ import Swal from 'sweetalert2';
 export class PromotionBanner {
   authService = inject(AuthService);
   themeService = inject(ThemeService);
+  mpService = inject(MercadoPagoService);
   router = inject(Router);
 
   mostrarBanner = true;
@@ -48,16 +50,34 @@ export class PromotionBanner {
   action() {
     const user = this.authService.currentUser();
     if (this.authService.isLoggedIn()) {
-        const role = user.rol || user.role;
-        const hasTienda = !!user.tienda;
+        const isPro = this.authService.hasActiveSubscription();
         
-        if (role === 'ROLE_COMPRADOR') {
-            this.router.navigate(['/mi-cuenta']); // O una página de "Crear Tienda"
-        } else if (hasTienda) {
-            this.router.navigate(['/admin/configuracion']); // Donde iría el pago
-        } else {
-            this.router.navigate(['/dashboard']);
+        if (isPro) {
+            Swal.fire('¡Ya eres Pro!', 'Ya tienes una suscripción activa. ¡Gracias por apoyarnos!', 'info');
+            return;
         }
+
+        // Si no es pro, iniciamos el flujo de pago directo
+        Swal.fire({
+            title: 'Iniciando Pago...',
+            text: 'Te redirigiremos a Mercado Pago para asegurar tu cupo de $4.990.',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        this.mpService.createSubscriptionPreference().subscribe({
+            next: (res) => {
+                if (res.id) {
+                    window.location.href = res.id; // Redirección a Mercado Pago
+                } else {
+                    Swal.fire('Error', 'No se pudo generar la sesión de pago', 'error');
+                }
+            },
+            error: (err) => {
+                console.error(err);
+                Swal.fire('Error', 'Hubo un problema al conectar con la pasarela de pagos', 'error');
+            }
+        });
     } else {
       Swal.fire({
         title: '¡Asegura tu cupo de $4.990! 🚀',

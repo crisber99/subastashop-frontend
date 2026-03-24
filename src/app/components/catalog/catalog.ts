@@ -5,6 +5,8 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { LayoutService } from '../../services/layout';
 import { ThemeService } from '../../services/theme-service';
+import { CategoriaService } from '../../services/categoria';
+import { Categoria } from '../../models/categoria';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -18,11 +20,15 @@ export class CatalogComponent implements OnInit {
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
   public authService = inject(AuthService);
-  public layoutService = inject(LayoutService);
   public themeService = inject(ThemeService);
+  private categoriaService = inject(CategoriaService);
 
   tienda: any = null; 
   productos: any[] = [];
+  productosFiltrados: any[] = [];
+  categorias: Categoria[] = [];
+  categoriaSeleccionada: number | null = null;
+  busqueda: string = '';
   nombreTienda: string = '';
 
   ngOnInit() {
@@ -36,12 +42,31 @@ export class CatalogComponent implements OnInit {
         this.cargarTodos();
       }
     });
+
+    // Escuchar parámetros de consulta para filtrado inicial (ej desde el landing)
+    this.route.queryParamMap.subscribe(params => {
+        const catId = params.get('categoria');
+        if (catId) {
+            this.categoriaSeleccionada = parseInt(catId);
+            this.filtrar();
+        }
+    });
+
+    this.cargarCategorias();
+  }
+
+  cargarCategorias() {
+    this.categoriaService.getCategorias().subscribe({
+      next: (data) => this.categorias = data,
+      error: (err) => console.error('Error al cargar categorías', err)
+    });
   }
 
   cargarTodos() {
     this.productService.getProductos().subscribe(data => {
       this.productos = data;
-      this.tienda = null; 
+      this.productosFiltrados = data;
+      this.filtrar(); // Aplicar filtro por si venía en queryParams
     });
   }
 
@@ -53,7 +78,9 @@ export class CatalogComponent implements OnInit {
 
         this.productService.getProductosPorTienda(slug).subscribe({
             next: (prods: any[]) => {
-                this.productos = prods; 
+                this.productos = prods;
+                this.productosFiltrados = prods;
+                this.filtrar(); // Aplicar filtro por si venía en queryParams
             },
             error: (err) => console.error("Error cargando productos:", err)
         });
@@ -65,13 +92,25 @@ export class CatalogComponent implements OnInit {
     });
   }
 
+  filtrar() {
+    this.productosFiltrados = this.productos.filter(p => {
+      const coincideNombre = p.nombre.toLowerCase().includes(this.busqueda.toLowerCase());
+      const coincideCategoria = this.categoriaSeleccionada === null || p.categoriaId === this.categoriaSeleccionada;
+      return coincideNombre && coincideCategoria;
+    });
+  }
+
+  seleccionarCategoria(id: number | null) {
+    this.categoriaSeleccionada = id;
+    this.filtrar();
+  }
+
   canEdit(producto: any): boolean {
     if (this.authService.isSuperAdmin()) return true;
     
     const user = this.authService.currentUser();
     if (!user) return false;
 
-    // Comparar tenantId o tiendaId
     const userTiendaId = user.tiendaId || user.tienda?.id;
     const prodTiendaId = producto.tiendaId || producto.tienda?.id;
 

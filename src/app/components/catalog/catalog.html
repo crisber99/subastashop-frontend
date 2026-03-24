@@ -20,8 +20,36 @@
 
     <hr class="mb-4" [style.border-color]="tienda?.colorPrimario">
     
+    <!-- BUSCADOR Y FILTROS 🔍🏷️ -->
+    <div class="row mb-4 animate__animated animate__fadeIn">
+        <div class="col-md-6 mb-3">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden border">
+                <span class="input-group-text bg-transparent border-0 ps-3">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-0 shadow-none ps-0" 
+                       placeholder="¿Qué estás buscando en esta tienda?..." 
+                       [(ngModel)]="busqueda" (keyup)="filtrar()">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
+                <span class="text-muted small me-1 d-none d-lg-block">Categorías:</span>
+                <button class="btn btn-sm rounded-pill px-3 shadow-none border transition-all" 
+                        [ngClass]="categoriaSeleccionada === null ? 'btn-primary' : 'btn-outline-secondary bg-light-hover'"
+                        (click)="seleccionarCategoria(null)">Todas</button>
+                <button *ngFor="let cat of categorias" 
+                        class="btn btn-sm rounded-pill px-3 shadow-none border transition-all"
+                        [ngClass]="categoriaSeleccionada === cat.id ? 'btn-primary' : 'btn-outline-secondary bg-light-hover'"
+                        (click)="seleccionarCategoria(cat.id)">
+                    <i [class]="cat.icono + ' me-1'"></i> {{ cat.nombre }}
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <div class="row">
-        @for (producto of productos; track producto.id) {
+        @for (producto of productosFiltrados; track producto.id) {
         <div class="col-md-4 mb-4 animate__animated animate__fadeIn">
             <div class="card h-100 shadow-sm border-0 hover-effect">
 
@@ -49,7 +77,12 @@
                 </div>
 
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-truncate">{{ producto.nombre }}</h5>
+                    <h5 class="card-title fw-bold text-truncate mb-1">{{ producto.nombre }}</h5>
+                    <div class="mb-2" *ngIf="producto.categoriaNombre">
+                        <span class="badge bg-light text-dark border fw-normal py-1 px-2" style="font-size: 0.7rem;">
+                            <i class="bi bi-tag-fill me-1 opacity-50"></i> {{ producto.categoriaNombre }}
+                        </span>
+                    </div>
 
                     <div class="mb-3">
                         @if (producto.tipoVenta === 'SUBASTA') {

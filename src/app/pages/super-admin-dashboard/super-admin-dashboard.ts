@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SuperAdminService } from '../../services/super-admin';
 import { ProductService } from '../../services/product';
+import { CategoriaService } from '../../services/categoria';
+import { Categoria } from '../../models/categoria';
 import Swal from 'sweetalert2';
 import Chart from 'chart.js/auto';
 
@@ -17,13 +19,20 @@ import Chart from 'chart.js/auto';
 export class SuperAdminDashboard implements OnInit {
   private superAdminService = inject(SuperAdminService);
   private productService = inject(ProductService);
+  private categoriaService = inject(CategoriaService);
 
   stats: any = null;
   tiendas: any[] = [];
   productos: any[] = [];
+  categorias: Categoria[] = [];
   reportes: any[] = [];
   loading = true;
   activeTab = 'resumen';
+
+  // Filtros
+  filtroNombre = '';
+  filtroTienda = '';
+  filtroCategoria = '';
 
   @ViewChild('statsChart') statsChartCanvas!: ElementRef;
   chart: any;
@@ -49,7 +58,17 @@ export class SuperAdminDashboard implements OnInit {
     this.superAdminService.getGlobalProductos().subscribe(data => {
         this.productos = data;
     });
+    this.categoriaService.getCategorias().subscribe(data => this.categorias = data);
     this.superAdminService.getReportesPendientes().subscribe(data => this.reportes = data);
+  }
+
+  get productosFiltrados() {
+    return this.productos.filter(p => {
+      const matchNombre = p.nombre.toLowerCase().includes(this.filtroNombre.toLowerCase());
+      const matchTienda = this.filtroTienda === '' || p.nombreTienda === this.filtroTienda;
+      const matchCategoria = this.filtroCategoria === '' || p.categoriaNombre === this.filtroCategoria;
+      return matchNombre && matchTienda && matchCategoria;
+    });
   }
 
   initChart() {

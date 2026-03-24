@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product';
-import { AuthService } from '../../../services/auth-service'; // 👈 Asegúrate de que esta ruta sea correcta
+import { AuthService } from '../../../services/auth-service';
+import { CategoriaService } from '../../../services/categoria';
+import { Categoria } from '../../../models/categoria';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,7 +17,8 @@ import Swal from 'sweetalert2';
 })
 export class CrearProducto implements OnInit {
   productService = inject(ProductService);
-  authService = inject(AuthService); // 👈 Inyectamos Auth para verificar el rol
+  authService = inject(AuthService);
+  categoriaService = inject(CategoriaService);
   router = inject(Router);
 
   producto = {
@@ -27,8 +30,11 @@ export class CrearProducto implements OnInit {
     fechaFin: '',
     precioTicket: 0,
     cantidadNumeros: 100,
-    cantidadGanadores: 1
+    cantidadGanadores: 1,
+    categoriaId: null as number | null
   };
+
+  categorias: Categoria[] = [];
 
   // 👇 Ahora es un arreglo para soportar múltiples fotos
   archivosSeleccionados: File[] = [];
@@ -44,6 +50,15 @@ export class CrearProducto implements OnInit {
     } else {
       this.limiteImagenes = 8;
     }
+
+    this.cargarCategorias();
+  }
+
+  cargarCategorias() {
+    this.categoriaService.getCategorias().subscribe({
+      next: (data) => this.categorias = data,
+      error: (err) => console.error('Error al cargar categorías', err)
+    });
   }
 
   onFileSelected(event: any) {
@@ -146,6 +161,10 @@ export class CrearProducto implements OnInit {
     formData.append('tipoVenta', this.producto.tipoVenta);
     formData.append('precioBase', this.producto.precioBase.toString());
     formData.append('stock', this.producto.stock.toString());
+
+    if (this.producto.categoriaId) {
+      formData.append('categoriaId', this.producto.categoriaId.toString());
+    }
 
     if (this.producto.tipoVenta === 'SUBASTA' && this.producto.fechaFin) {
       formData.append('fechaFin', this.producto.fechaFin);

@@ -48,11 +48,52 @@
     z-index: 10;
 }
 
+.premium-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+}
+
+.calificaciones-list {
+    .glass-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(8px);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glass-shadow);
+        }
+    }
+}
+
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.star-rating-input {
+    .btn-outline-warning {
+        border-color: #ffc107;
+        color: #ffc107;
+        
+        &:hover, &.active, &.btn-check:checked + label {
+            background-color: #ffc107;
+            color: #000;
+        }
+    }
+}
+
 [data-bs-theme="dark"] {
     .detalle-image-container {
         background: rgba(30, 41, 59, 0.5);
     }
     .carousel-inner {
         background: rgba(255,255,255,0.05);
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
     }
 }

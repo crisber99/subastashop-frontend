@@ -19,6 +19,16 @@
             </div>
 
             <div class="mb-3">
+              <label class="form-label">Categoría</label>
+              <select class="form-select" [(ngModel)]="producto.categoriaId" name="categoriaId" required>
+                <option [ngValue]="null" disabled>Selecciona una categoría</option>
+                <option *ngFor="let cat of categorias" [ngValue]="cat.id">
+                  {{ cat.nombre }}
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
               <label class="form-label">Descripción</label>
               <textarea class="form-control" [(ngModel)]="producto.descripcion" name="descripcion" rows="3" required></textarea>
             </div>
@@ -39,7 +49,7 @@
               </div>
             </div>
 
-            <div class="card p-3 mb-4 bg-light border-info" *ngIf="producto.tipoVenta === 'RIFA'">
+            <div class="card p-3 mb-4 border-info" style="background: var(--glass-bg);" *ngIf="producto.tipoVenta === 'RIFA'">
               <div class="d-flex align-items-center mb-3">
                 <span class="fs-4 me-2">🎟️</span>
                 <h5 class="text-primary m-0">Configuración de la Rifa</h5>

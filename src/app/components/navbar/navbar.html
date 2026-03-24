@@ -23,9 +23,16 @@
                 </span>
             </button>
 
-            <span class="text-muted small fw-bold">
+            <span class="text-muted small fw-bold me-3">
                 {{ authService.currentUser()?.nombre || authService.currentUser()?.email }} 
             </span>
+
+            <!-- Botón Cerrar Sesión -->
+            <button class="btn btn-outline-danger btn-sm rounded-pill shadow-sm d-flex align-items-center" 
+                    (click)="authService.logout()" title="Cerrar Sesión">
+                <i class="bi bi-power me-1"></i>
+                <span class="d-none d-md-inline">Salir</span>
+            </button>
         </div>
     </div>
 </nav>

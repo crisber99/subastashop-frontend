@@ -8,6 +8,7 @@ import { Websocket } from '../../services/websocket';
 import { SuperAdminService } from '../../services/super-admin';
 import { CartService } from '../../services/cart';
 import { LayoutService } from '../../services/layout';
+import { CalificacionService } from '../../services/calificacion';
 import Swal from 'sweetalert2';
 
 declare var bootstrap: any;
@@ -28,6 +29,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   
   websocketService = inject(Websocket);
   authService = inject(AuthService);
+  calificacionService = inject(CalificacionService);
 
   producto: any = null;
   montoOferta: number = 0;
@@ -47,6 +49,12 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   // Estado visual
   subastaFinalizada: boolean = false;
+
+  // Calificaciones
+  calificaciones: any[] = [];
+  nuevaPuntuacion: number = 5;
+  nuevoComentario: string = '';
+  promedioCalificacion: number = 0;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -119,6 +127,8 @@ export class ProductDetail implements OnInit, OnDestroy {
             this.montoOferta = (data.precioActual || data.precioBase) + 1000;
           }
         }
+        
+        this.cargarCalificaciones(id);
       },
       error: (err) => console.error('Error cargando producto:', err)
     });
@@ -245,6 +255,51 @@ export class ProductDetail implements OnInit, OnDestroy {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
     }
+  }
+
+  // --- CALIFICACIONES ---
+  cargarCalificaciones(productoId: number) {
+    this.calificacionService.getCalificacionesByProducto(productoId).subscribe({
+      next: (data) => {
+        this.calificaciones = data;
+        if (data.length > 0) {
+          const suma = data.reduce((acc, curr) => acc + curr.puntuacion, 0);
+          this.promedioCalificacion = suma / data.length;
+        }
+      }
+    });
+  }
+
+  enviarCalificacion() {
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Atención', 'Debes iniciar sesión para calificar.', 'warning');
+      return;
+    }
+
+    if (this.nuevaPuntuacion < 1 || this.nuevaPuntuacion > 5) return;
+
+    Swal.fire({ title: 'Enviando...', didOpen: () => Swal.showLoading() });
+
+    this.calificacionService.crearCalificacion({
+      productoId: this.producto.id,
+      puntuacion: this.nuevaPuntuacion,
+      comentario: this.nuevoComentario
+    }).subscribe({
+      next: () => {
+        Swal.fire('¡Gracias!', 'Tu calificación ha sido guardada.', 'success');
+        this.nuevoComentario = '';
+        this.cargarCalificaciones(this.producto.id);
+      },
+      error: () => Swal.fire('Error', 'No se pudo enviar la calificación.', 'error')
+    });
+  }
+
+  getStarArray(rating: number): number[] {
+    return Array(Math.floor(rating)).fill(0);
+  }
+
+  getEmptyStarArray(rating: number): number[] {
+    return Array(5 - Math.floor(rating)).fill(0);
   }
 
   ngOnDestroy() {

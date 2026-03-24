@@ -30,6 +30,9 @@ export class ProductService {
     formData.append('descripcion', producto.descripcion);
     formData.append('precioBase', producto.precioBase);
     formData.append('fechaFin', producto.fechaFinSubasta || '');
+    if (producto.categoriaId) {
+      formData.append('categoriaId', producto.categoriaId.toString());
+    }
 
     if (imagenes && imagenes.length > 0) {
       imagenes.forEach(file => {

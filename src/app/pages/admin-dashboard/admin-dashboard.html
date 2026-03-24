@@ -2,10 +2,6 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div class="d-flex align-items-center gap-3">
         <h1>📊 Panel de Control de Tienda</h1>
-        <button (click)="themeService.toggleTheme()" class="btn btn-outline-secondary btn-sm rounded-pill shadow-sm">
-            <i class="bi" [ngClass]="themeService.isDarkMode() ? 'bi-sun-fill' : 'bi-moon-fill'"></i>
-            {{ themeService.isDarkMode() ? 'Modo Claro' : 'Modo Oscuro' }}
-        </button>
     </div>
     <a routerLink="/admin/crear" class="btn btn-success">
         <i class="bi bi-plus-circle"></i> Nuevo Producto
@@ -14,15 +10,6 @@
 
   <!-- 📊 CARDS DE ESTADÍSTICAS -->
   <div class="row g-3">
-    <!-- Usuarios -->
-    <div class="col-md-3" *ngIf="authService.isSuperAdmin()">
-      <div class="card stat-card bg-primary text-white h-100 shadow-sm">
-        <div class="card-body">
-          <h6 class="card-title opacity-75">Usuarios</h6>
-          <h2 class="display-6 fw-bold mb-0">{{ stats.totalUsuarios }}</h2>
-        </div>
-      </div>
-    </div>
     <div class="col-md-3">
       <div class="card text-white bg-success mb-3 shadow-sm">
         <div class="card-body">

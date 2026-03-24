@@ -62,7 +62,7 @@
 
 .sidebar-content {
   flex-grow: 1;
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 0.75rem;
   overflow-y: auto;
 
   &::-webkit-scrollbar { width: 4px; }
@@ -72,9 +72,15 @@
   }
 }
 
+.sidebar-nav {
+  padding: 0;
+  margin: 0;
+  list-style: none !important;
+}
+
 .sidebar-header {
   color: var(--text-muted);
-  padding: 1.5rem 1rem 0.75rem;
+  padding: 1.5rem 1.25rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;

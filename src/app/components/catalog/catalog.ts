@@ -30,9 +30,11 @@ export class CatalogComponent implements OnInit {
   categoriaSeleccionada: number | null = null;
   busqueda: string = '';
   nombreTienda: string = '';
+  isLoading: boolean = true; // Empieza cargando
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
+      this.isLoading = true; // Reiniciar carga al cambiar ruta
       const slug = params.get('slug');
       if (slug) {
         this.cargarPorTienda(slug);
@@ -68,6 +70,7 @@ export class CatalogComponent implements OnInit {
       this.productos = prods;
       this.productosFiltrados = prods;
       this.filtrar(); // Aplicar filtro por si venía en queryParams
+      this.isLoading = false; // Fin de carga
     });
   }
 
@@ -83,13 +86,18 @@ export class CatalogComponent implements OnInit {
                 this.productos = prods;
                 this.productosFiltrados = prods;
                 this.filtrar(); // Aplicar filtro por si venía en queryParams
+                this.isLoading = false; // Fin de carga
             },
-            error: (err) => console.error("Error cargando productos:", err)
+            error: (err) => {
+                console.error("Error cargando productos:", err);
+                this.isLoading = false;
+            }
         });
       },
       error: (err) => {
         console.error('Error cargando tienda:', err);
         this.nombreTienda = 'Tienda no encontrada';
+        this.isLoading = false;
       }
     });
   }

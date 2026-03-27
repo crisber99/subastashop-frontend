@@ -247,3 +247,24 @@ body.dark-theme {
     border-radius: var(--radius-sm) !important;
     padding: 0.6rem 2rem !important;
 }
+
+/* --- SKELETON LOADERS --- */
+.skeleton {
+    background: #e2e8f0;
+    background: linear-gradient(110deg, #e2e8f0 8%, #f1f5f9 18%, #e2e8f0 33%);
+    border-radius: 5px;
+    background-size: 200% 100%;
+    animation: 2s shimmer linear infinite;
+}
+
+body.dark-theme .skeleton {
+    background: #1e293b;
+    background: linear-gradient(110deg, rgba(30,41,59,0.5) 8%, rgba(51,65,85,0.6) 18%, rgba(30,41,59,0.5) 33%);
+    background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+    to {
+        background-position-x: -200%;
+    }
+}

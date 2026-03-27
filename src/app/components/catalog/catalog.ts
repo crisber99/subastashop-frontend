@@ -63,9 +63,10 @@ export class CatalogComponent implements OnInit {
   }
 
   cargarTodos() {
-    this.productService.getProductos().subscribe(data => {
-      this.productos = data;
-      this.productosFiltrados = data;
+    this.productService.getProductos().subscribe((data: any) => {
+      const prods = data.content ? data.content : data;
+      this.productos = prods;
+      this.productosFiltrados = prods;
       this.filtrar(); // Aplicar filtro por si venía en queryParams
     });
   }
@@ -77,7 +78,8 @@ export class CatalogComponent implements OnInit {
         this.nombreTienda = data.nombre;
 
         this.productService.getProductosPorTienda(slug).subscribe({
-            next: (prods: any[]) => {
+            next: (response: any) => {
+                const prods = response.content ? response.content : response;
                 this.productos = prods;
                 this.productosFiltrados = prods;
                 this.filtrar(); // Aplicar filtro por si venía en queryParams

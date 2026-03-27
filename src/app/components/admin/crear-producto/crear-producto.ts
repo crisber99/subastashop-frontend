@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product';
 import { AuthService } from '../../../services/auth-service';
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-crear-producto',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './crear-producto.html',
   styleUrl: './crear-producto.scss',
 })
@@ -20,30 +20,38 @@ export class CrearProducto implements OnInit {
   authService = inject(AuthService);
   categoriaService = inject(CategoriaService);
   router = inject(Router);
+  fb = inject(FormBuilder);
 
-  producto = {
-    nombre: '',
-    descripcion: '',
-    tipoVenta: 'SUBASTA',
-    precioBase: 0,
-    stock: 1,
-    fechaFin: '',
-    precioTicket: 0,
-    cantidadNumeros: 100,
-    cantidadGanadores: 1,
-    categoriaId: null as number | null
-  };
-
+  productoForm!: FormGroup;
   categorias: Categoria[] = [];
 
-  // 👇 Ahora es un arreglo para soportar múltiples fotos
   archivosSeleccionados: File[] = [];
   limiteImagenes: number = 8;
   mensajeError = '';
   cargando = false;
 
   ngOnInit() {
-    // Calculamos el límite según el rol
+    this.productoForm = this.fb.group({
+      nombre: ['', [Validators.required]],
+      categoriaId: [null, [Validators.required]],
+      descripcion: ['', [Validators.required]],
+      tipoVenta: ['SUBASTA', [Validators.required]],
+      precioBase: [0],
+      stock: [1, [Validators.required, Validators.min(1)]],
+      fechaFin: [''],
+      precioTicket: [0],
+      cantidadNumeros: [100],
+      cantidadGanadores: [1]
+    });
+
+    // Validaciones dinámicas según tipo
+    this.productoForm.get('tipoVenta')?.valueChanges.subscribe(tipo => {
+      this.actualizarValidaciones(tipo);
+    });
+
+    // Validar de inicio
+    this.actualizarValidaciones(this.productoForm.get('tipoVenta')?.value);
+
     const user = this.authService.currentUser();
     if (user?.role === 'ROLE_SUPER_ADMIN') {
       this.limiteImagenes = 10;
@@ -52,6 +60,33 @@ export class CrearProducto implements OnInit {
     }
 
     this.cargarCategorias();
+  }
+
+  actualizarValidaciones(tipoVenta: string) {
+    const precioBase = this.productoForm.get('precioBase');
+    const fechaFin = this.productoForm.get('fechaFin');
+    const precioTicket = this.productoForm.get('precioTicket');
+    const cantidadNumeros = this.productoForm.get('cantidadNumeros');
+
+    precioBase?.clearValidators();
+    fechaFin?.clearValidators();
+    precioTicket?.clearValidators();
+    cantidadNumeros?.clearValidators();
+
+    if (tipoVenta === 'SUBASTA') {
+      precioBase?.setValidators([Validators.required, Validators.min(1)]);
+      fechaFin?.setValidators([Validators.required]);
+    } else if (tipoVenta === 'DIRECTA') {
+      precioBase?.setValidators([Validators.required, Validators.min(1)]);
+    } else if (tipoVenta === 'RIFA') {
+      precioTicket?.setValidators([Validators.required, Validators.min(1)]);
+      cantidadNumeros?.setValidators([Validators.required, Validators.min(1)]);
+    }
+
+    precioBase?.updateValueAndValidity();
+    fechaFin?.updateValueAndValidity();
+    precioTicket?.updateValueAndValidity();
+    cantidadNumeros?.updateValueAndValidity();
   }
 
   cargarCategorias() {
@@ -63,13 +98,12 @@ export class CrearProducto implements OnInit {
 
   onFileSelected(event: any) {
     const files: FileList = event.target.files;
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB individual
-    const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB total (según server.multipart.max-request-size)
+    const MAX_SIZE = 10 * 1024 * 1024;
+    const MAX_TOTAL_SIZE = 10 * 1024 * 1024;
     
     let currentTotal = 0;
     const filesArr = Array.from(files);
 
-    // 1. Validación de tamaño
     for (const file of filesArr) {
         if (file.size > MAX_SIZE) {
             Swal.fire({
@@ -87,18 +121,17 @@ export class CrearProducto implements OnInit {
       Swal.fire({
         icon: 'error',
         title: 'Límite total excedido',
-        text: `El conjunto de archivos suma ${(currentTotal / (1024 * 1024)).toFixed(2)}MB, superando el límite total de 10MB permitido por el servidor.`
+        text: `El conjunto de archivos suma ${(currentTotal / (1024 * 1024)).toFixed(2)}MB, superando el límite.`
       });
       this.resetInput(event);
       return;
     }
     
-    // 2. Validación de cantidad de fotos
     if (files.length > this.limiteImagenes) {
       Swal.fire({
         icon: 'warning',
         title: 'Demasiadas imágenes',
-        text: `Tu plan solo permite subir un máximo de ${this.limiteImagenes} imágenes.`
+        text: `Solo permite máximo ${this.limiteImagenes} imágenes.`
       });
       this.resetInput(event);
       return;
@@ -113,18 +146,26 @@ export class CrearProducto implements OnInit {
   }
 
   onSubmit() {
+    if (this.productoForm.invalid) {
+      this.productoForm.markAllAsTouched();
+      return;
+    }
+
     if (this.archivosSeleccionados.length === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'Faltan Imágenes',
-        text: 'Debes seleccionar al menos una imagen para el producto.'
+        text: 'Debes seleccionar al menos una imagen.'
       });
       return;
     }
 
+    const value = this.productoForm.value;
+    const esSubasta = value.tipoVenta === 'SUBASTA';
+
     Swal.fire({
       title: '¿Publicar Producto?',
-      text: `Estás creando una ${this.producto.tipoVenta === 'SUBASTA' ? 'Subasta' : 'Venta Directa/Rifa'} por $${this.producto.precioBase}`,
+      text: `Estás creando una ${esSubasta ? 'Subasta' : 'Venta'} por $${value.precioBase || value.precioTicket}`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí, Publicar',
@@ -142,68 +183,60 @@ export class CrearProducto implements OnInit {
     
     Swal.fire({
       title: 'Subiendo Producto...',
-      html: 'Por favor espera un momento.',
+      html: 'Por favor espera.',
       allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
+      didOpen: () => Swal.showLoading()
     });
 
     const formData = new FormData();
+    const value = this.productoForm.value;
 
-    // 👇 MAGIA: Adjuntamos todas las imágenes seleccionadas
     this.archivosSeleccionados.forEach(archivo => {
-      formData.append('archivos', archivo); // Debe coincidir con @RequestParam("archivos")
+      formData.append('archivos', archivo);
     });
 
-    formData.append('nombre', this.producto.nombre);
-    formData.append('descripcion', this.producto.descripcion);
-    formData.append('tipoVenta', this.producto.tipoVenta);
-    formData.append('precioBase', this.producto.precioBase.toString());
-    formData.append('stock', this.producto.stock.toString());
+    formData.append('nombre', value.nombre);
+    formData.append('descripcion', value.descripcion);
+    formData.append('tipoVenta', value.tipoVenta);
+    formData.append('stock', value.stock.toString());
 
-    if (this.producto.categoriaId) {
-      formData.append('categoriaId', this.producto.categoriaId.toString());
+    if (value.tipoVenta !== 'RIFA') {
+      formData.append('precioBase', value.precioBase.toString());
     }
 
-    if (this.producto.tipoVenta === 'SUBASTA' && this.producto.fechaFin) {
-      formData.append('fechaFin', this.producto.fechaFin);
+    if (value.categoriaId) {
+      formData.append('categoriaId', value.categoriaId.toString());
     }
 
-    if (this.producto.tipoVenta === 'RIFA') {
-      formData.append('precioTicket', this.producto.precioTicket.toString());
-      formData.append('cantidadNumeros', this.producto.cantidadNumeros.toString());
-      formData.append('cantidadGanadores', this.producto.cantidadGanadores.toString());
+    if (value.tipoVenta === 'SUBASTA' && value.fechaFin) {
+      formData.append('fechaFin', value.fechaFin);
+    }
+
+    if (value.tipoVenta === 'RIFA') {
+      formData.append('precioTicket', value.precioTicket.toString());
+      formData.append('cantidadNumeros', value.cantidadNumeros.toString());
+      formData.append('cantidadGanadores', value.cantidadGanadores.toString());
     }
 
     this.productService.crearProducto(formData).subscribe({
-      next: (resp) => {
+      next: () => {
         this.cargando = false;
         Swal.fire({
           icon: 'success',
           title: '¡Publicado!',
-          text: 'Tu producto ya está disponible en la tienda.',
+          text: 'Producto disponible.',
           timer: 2000,
           showConfirmButton: false
-        }).then(() => {
-          this.router.navigate(['/admin']);
-        });
+        }).then(() => this.router.navigate(['/admin']));
       },
       error: (err) => {
         console.error(err);
         this.cargando = false;
-        
-        const errorMsg = err.error?.message || 'Ocurrió un problema al subir el producto. Revisa los datos e intenta nuevamente.';
-        
+        const msg = err.error?.message || 'Ocurrió un problema.';
         Swal.fire({
           icon: 'error',
-          title: 'Error al Publicar',
-          text: errorMsg,
-          confirmButtonText: errorMsg.includes('Configuración de Tienda') ? 'Ir a Configuración' : 'Entendido'
-        }).then((res) => {
-          if (res.isConfirmed && errorMsg.includes('Configuración de Tienda')) {
-            this.router.navigate(['/admin/configuracion']);
-          }
+          title: 'Error',
+          text: msg
         });
       }
     });

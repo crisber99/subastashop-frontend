@@ -76,7 +76,7 @@ export class MenuService {
     const user = this.authService.currentUser();
     if (!user) return [];
 
-    const userRole = user.rol || user.role || 'ROLE_USER';
+    const userRole = user.role || 'ROLE_USER';
 
     return this.ALL_ITEMS.filter(item => item.roles.includes(userRole));
   });

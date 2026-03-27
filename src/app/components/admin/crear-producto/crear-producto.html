@@ -7,84 +7,107 @@
         </div>
         <div class="card-body">
 
-          <div *ngIf="mensajeError" class="alert alert-danger">
-            {{ mensajeError }}
-          </div>
+          @if (mensajeError) {
+            <div class="alert alert-danger">
+              {{ mensajeError }}
+            </div>
+          }
 
-          <form (ngSubmit)="onSubmit()">
+          <form [formGroup]="productoForm" (ngSubmit)="onSubmit()">
             
             <div class="mb-3">
               <label class="form-label">Nombre del Producto</label>
-              <input type="text" class="form-control" [(ngModel)]="producto.nombre" name="nombre" required placeholder="Ej: Nintendo 64">
+              <input type="text" class="form-control" formControlName="nombre" placeholder="Ej: Nintendo 64">
+              @if (productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched) {
+                <small class="text-danger">El nombre es requerido.</small>
+              }
             </div>
 
             <div class="mb-3">
               <label class="form-label">Categoría</label>
-              <select class="form-select" [(ngModel)]="producto.categoriaId" name="categoriaId" required>
+              <select class="form-select" formControlName="categoriaId">
                 <option [ngValue]="null" disabled>Selecciona una categoría</option>
-                <option *ngFor="let cat of categorias" [ngValue]="cat.id">
-                  {{ cat.nombre }}
-                </option>
+                @for (cat of categorias; track cat.id) {
+                  <option [ngValue]="cat.id">{{ cat.nombre }}</option>
+                }
               </select>
+              @if (productoForm.get('categoriaId')?.invalid && productoForm.get('categoriaId')?.touched) {
+                <small class="text-danger">La categoría es requerida.</small>
+              }
             </div>
 
             <div class="mb-3">
               <label class="form-label">Descripción</label>
-              <textarea class="form-control" [(ngModel)]="producto.descripcion" name="descripcion" rows="3" required></textarea>
+              <textarea class="form-control" formControlName="descripcion" rows="3"></textarea>
+              @if (productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched) {
+                <small class="text-danger">La descripción es requerida.</small>
+              }
             </div>
 
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label">Tipo de Venta</label>
-                <select class="form-select" [(ngModel)]="producto.tipoVenta" name="tipoVenta">
+                <select class="form-select" formControlName="tipoVenta">
                   <option value="SUBASTA">Subasta 🔥</option>
                   <option value="DIRECTA">Venta Directa 🛒</option>
                   <option value="RIFA">Rifa / Sorteo 🎟️</option>
                 </select>
               </div>
 
-              <div class="col-md-6 mb-3" *ngIf="producto.tipoVenta !== 'RIFA'">
-                <label class="form-label">Precio Base / Venta ($)</label>
-                <input type="number" class="form-control" [(ngModel)]="producto.precioBase" name="precioBase" [required]="producto.tipoVenta !== 'RIFA'">
-              </div>
+              @if (productoForm.get('tipoVenta')?.value !== 'RIFA') {
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Precio Base / Venta ($)</label>
+                  <input type="number" class="form-control" formControlName="precioBase">
+                  @if (productoForm.get('precioBase')?.invalid && (productoForm.get('precioBase')?.touched || productoForm.get('precioBase')?.dirty)) {
+                    <small class="text-danger">El precio es requerido y debe ser mayor a 0.</small>
+                  }
+                </div>
+              }
             </div>
 
-            <div class="card p-3 mb-4 border-info" style="background: var(--glass-bg);" *ngIf="producto.tipoVenta === 'RIFA'">
-              <div class="d-flex align-items-center mb-3">
-                <span class="fs-4 me-2">🎟️</span>
-                <h5 class="text-primary m-0">Configuración de la Rifa</h5>
-              </div>
-
-              <div class="row g-2">
-                <div class="col-md-4">
-                  <label class="form-label fw-bold small">Precio Ticket ($)</label>
-                  <input type="number" class="form-control" [(ngModel)]="producto.precioTicket" name="precioTicket" placeholder="Ej: 1000">
+            @if (productoForm.get('tipoVenta')?.value === 'RIFA') {
+              <div class="card p-3 mb-4 border-info" style="background: var(--glass-bg);">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="fs-4 me-2">🎟️</span>
+                  <h5 class="text-primary m-0">Configuración de la Rifa</h5>
                 </div>
 
-                <div class="col-md-4">
-                  <label class="form-label fw-bold small">Total Números</label>
-                  <input type="number" class="form-control" [(ngModel)]="producto.cantidadNumeros" name="cantidadNumeros" placeholder="Ej: 100">
-                </div>
+                <div class="row g-2">
+                  <div class="col-md-4">
+                    <label class="form-label fw-bold small">Precio Ticket ($)</label>
+                    <input type="number" class="form-control" formControlName="precioTicket" placeholder="Ej: 1000">
+                  </div>
 
-                <div class="col-md-4">
-                  <label class="form-label fw-bold small">Ganadores</label>
-                  <select class="form-select" [(ngModel)]="producto.cantidadGanadores" name="cantidadGanadores">
-                    <option [ngValue]="1">1 Ganador</option>
-                    <option [ngValue]="2">2 Ganadores</option>
-                    <option [ngValue]="3">3 Ganadores</option>
-                  </select>
+                  <div class="col-md-4">
+                    <label class="form-label fw-bold small">Total Números</label>
+                    <input type="number" class="form-control" formControlName="cantidadNumeros" placeholder="Ej: 100">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label fw-bold small">Ganadores</label>
+                    <select class="form-select" formControlName="cantidadGanadores">
+                      <option [ngValue]="1">1 Ganador</option>
+                      <option [ngValue]="2">2 Ganadores</option>
+                      <option [ngValue]="3">3 Ganadores</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-text mt-2 text-muted">
+                  <small>La rifa se cerrará automáticamente cuando se vendan todos los números.</small>
                 </div>
               </div>
-              <div class="form-text mt-2 text-muted">
-                <small>La rifa se cerrará automáticamente cuando se vendan todos los números.</small>
-              </div>
-            </div>
+            }
             
-            <div class="mb-3" *ngIf="producto.tipoVenta === 'SUBASTA'">
-              <label class="form-label fw-bold text-danger">Fecha de Cierre</label>
-              <input type="datetime-local" class="form-control" [(ngModel)]="producto.fechaFin" name="fechaFin" required>
-              <div class="form-text">¿Cuándo termina la subasta?</div>
-            </div>
+            @if (productoForm.get('tipoVenta')?.value === 'SUBASTA') {
+              <div class="mb-3">
+                <label class="form-label fw-bold text-danger">Fecha de Cierre</label>
+                <input type="datetime-local" class="form-control" formControlName="fechaFin">
+                @if (productoForm.get('fechaFin')?.invalid && productoForm.get('fechaFin')?.touched) {
+                  <small class="text-danger">La fecha de cierre es obligatoria para subastas.</small>
+                }
+                <div class="form-text">¿Cuándo termina la subasta?</div>
+              </div>
+            }
 
             <div class="mb-4">
               <label class="form-label">Fotos del Producto (Máx. {{ limiteImagenes }})</label>
@@ -95,9 +118,13 @@
             </div>
 
             <div class="d-grid">
-              <button type="submit" class="btn btn-primary btn-lg" [disabled]="cargando">
-                <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
-                {{ cargando ? 'Publicando...' : 'Publicar Producto 🚀' }}
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="cargando || productoForm.invalid">
+                @if (cargando) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Publicando...
+                } @else {
+                  Publicar Producto 🚀
+                }
               </button>
             </div>
 

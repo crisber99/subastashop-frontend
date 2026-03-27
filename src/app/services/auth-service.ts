@@ -5,6 +5,15 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { CartService } from './cart';
 
+export interface AuthUser {
+  nombre?: string;
+  email?: string;
+  role?: string;
+  rol?: string;
+  fechaFinPrueba?: string;
+  suscripcionActiva?: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +29,7 @@ export class AuthService {
 
   // --- SEÑALES (SIGNALS) ---
   // Esto permite que el HTML se actualice solo cuando cambian los datos
-  currentUser = signal<any>(null);
+  currentUser = signal<AuthUser | null>(null);
   isLoggedIn = signal<boolean>(false);
 
   constructor() {
@@ -71,8 +80,13 @@ export class AuthService {
     // Guardar Token
     localStorage.setItem(this.tokenKey, token);
 
+    // Normalizar variable de rol que viene del Backend
+    if (usuario && usuario.rol && !usuario.role) {
+      usuario.role = usuario.rol;
+    }
+
     // Guardar Usuario (si viene nulo, guardamos un objeto vacío para que no rompa)
-    const usuarioAGuardar = usuario || { nombre: 'Usuario', role: 'USER' };
+    const usuarioAGuardar = usuario || { nombre: 'Usuario', role: 'ROLE_USER' };
     localStorage.setItem(this.userKey, JSON.stringify(usuarioAGuardar));
 
     // Actualizar Señales
@@ -108,7 +122,7 @@ export class AuthService {
     const user = this.currentUser();
     // Ajusta según cómo guardes el rol en tu token/usuario
     console.log('Super Usuario actual:', user);
-    return user?.rol === 'ROLE_SUPER_ADMIN' || user?.role === 'ROLE_SUPER_ADMIN';
+    return user?.role === 'ROLE_SUPER_ADMIN';
   }
 
   // --- TRIAL Y SUSCRIPCIONES ---

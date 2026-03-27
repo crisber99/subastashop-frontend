@@ -27,9 +27,11 @@ export class LoginComponent implements OnInit {
     this.socialAuthService.authState.subscribe((user) => {
       if (user) {
         Swal.fire({ title: 'Autorizando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-        const token = user.provider === 'GOOGLE' ? user.idToken : user.authToken;
+        const rawToken = user.provider === 'GOOGLE' ? user.idToken : user.authToken;
+        const validToken = rawToken || '';
+        const validProvider = user.provider || '';
         
-        this.authService.socialLogin({ provider: user.provider, token: token }).subscribe({
+        this.authService.socialLogin({ provider: validProvider, token: validToken }).subscribe({
           next: () => {
             Swal.close();
             this.router.navigate(['/']);

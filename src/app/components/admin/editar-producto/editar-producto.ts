@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../services/product';
-import Swal from 'sweetalert2'; // 👈 Importamos SweetAlert
+import { ImageCompressorService } from '../../../services/image-compressor';
+import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-editar-producto',
@@ -16,6 +17,7 @@ export class EditarProducto implements OnInit {
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private imageCompressor = inject(ImageCompressorService);
 
   producto: any = {
     nombre: '',
@@ -91,14 +93,11 @@ export class EditarProducto implements OnInit {
       Swal.fire({ title: 'Optimizando imágenes...', text: 'Procesando para mayor velocidad', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
       try {
-        const { ImageCompressorService } = await import('../../../services/image-compressor');
-        const compressor = new ImageCompressorService();
-
         const compressedFiles: File[] = [];
         let totalSize = 0;
 
         for (const file of filesArr) {
-          const compressedFile = await compressor.compressImage(file);
+          const compressedFile = await this.imageCompressor.compressImage(file);
           compressedFiles.push(compressedFile);
           totalSize += compressedFile.size;
         }

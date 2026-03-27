@@ -6,6 +6,7 @@ import { ProductService } from '../../../services/product';
 import { AuthService } from '../../../services/auth-service';
 import { CategoriaService } from '../../../services/categoria';
 import { Categoria } from '../../../models/categoria';
+import { ImageCompressorService } from '../../../services/image-compressor';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -96,7 +97,7 @@ export class CrearProducto implements OnInit {
     });
   }
 
-  imageCompressor = inject(import('../../../services/image-compressor').then(m => m.ImageCompressorService)); // Or just standard import
+  imageCompressor = inject(ImageCompressorService);
 
   async onFileSelected(event: any) {
     const files: FileList = event.target.files;
@@ -117,15 +118,11 @@ export class CrearProducto implements OnInit {
     Swal.fire({ title: 'Comprimiendo imágenes...', text: 'Optimizando para web', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
     try {
-      // Inyectar servicio localmente si no usamos top-level import por brevedad
-      const { ImageCompressorService } = await import('../../../services/image-compressor');
-      const compressor = new ImageCompressorService();
-      
       const compressedFiles: File[] = [];
       let currentTotal = 0;
 
       for (const file of filesArr) {
-          const compressedFile = await compressor.compressImage(file);
+          const compressedFile = await this.imageCompressor.compressImage(file);
           compressedFiles.push(compressedFile);
           currentTotal += compressedFile.size;
       }

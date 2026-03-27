@@ -12,6 +12,8 @@ export interface AuthUser {
   rol?: string;
   fechaFinPrueba?: string;
   suscripcionActiva?: boolean;
+  tiendaId?: number | string;
+  tienda?: any;
 }
 
 @Injectable({
@@ -115,14 +117,14 @@ export class AuthService {
   isAdmin(): boolean {
     const user = this.currentUser();
     console.log('Usuario actual:', user);
-    return user && (user.role === 'ROLE_ADMIN');
+    return !!(user && user.role === 'ROLE_ADMIN');
   }
 
   isSuperAdmin(): boolean {
     const user = this.currentUser();
     // Ajusta según cómo guardes el rol en tu token/usuario
     console.log('Super Usuario actual:', user);
-    return user?.role === 'ROLE_SUPER_ADMIN';
+    return !!(user && user.role === 'ROLE_SUPER_ADMIN');
   }
 
   // --- TRIAL Y SUSCRIPCIONES ---

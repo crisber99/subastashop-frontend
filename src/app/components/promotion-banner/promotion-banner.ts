@@ -24,11 +24,11 @@ export class PromotionBanner {
   // Lógica de mensaje dinámico
   mensaje = computed(() => {
     const user = this.authService.currentUser();
-    if (!this.authService.isLoggedIn()) {
+    if (!user || !this.authService.isLoggedIn()) {
       return '¡Únete hoy por solo $4.990/mes! (Solo 100 cupos disponibles)';
     }
 
-    const role = user.rol || user.role;
+    const role = user.role;
     const hasTienda = !!user.tienda;
     const isPro = this.authService.hasActiveSubscription();
 

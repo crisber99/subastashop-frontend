@@ -96,48 +96,58 @@ export class CrearProducto implements OnInit {
     });
   }
 
-  onFileSelected(event: any) {
+  imageCompressor = inject(import('../../../services/image-compressor').then(m => m.ImageCompressorService)); // Or just standard import
+
+  async onFileSelected(event: any) {
     const files: FileList = event.target.files;
-    const MAX_SIZE = 10 * 1024 * 1024;
     const MAX_TOTAL_SIZE = 10 * 1024 * 1024;
     
-    let currentTotal = 0;
     const filesArr = Array.from(files);
 
-    for (const file of filesArr) {
-        if (file.size > MAX_SIZE) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Archivo muy pesado',
-                text: `El archivo "${file.name}" supera el límite de 10MB.`
-            });
-            this.resetInput(event);
-            return;
-        }
-        currentTotal += file.size;
-    }
-
-    if (currentTotal > MAX_TOTAL_SIZE) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Límite total excedido',
-        text: `El conjunto de archivos suma ${(currentTotal / (1024 * 1024)).toFixed(2)}MB, superando el límite.`
-      });
-      this.resetInput(event);
-      return;
-    }
-    
-    if (files.length > this.limiteImagenes) {
+    if (filesArr.length > this.limiteImagenes) {
       Swal.fire({
         icon: 'warning',
         title: 'Demasiadas imágenes',
-        text: `Solo permite máximo ${this.limiteImagenes} imágenes.`
+        text: `Solo se permite un máximo de ${this.limiteImagenes} imágenes.`
       });
       this.resetInput(event);
       return;
     }
 
-    this.archivosSeleccionados = filesArr;
+    Swal.fire({ title: 'Comprimiendo imágenes...', text: 'Optimizando para web', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+    try {
+      // Inyectar servicio localmente si no usamos top-level import por brevedad
+      const { ImageCompressorService } = await import('../../../services/image-compressor');
+      const compressor = new ImageCompressorService();
+      
+      const compressedFiles: File[] = [];
+      let currentTotal = 0;
+
+      for (const file of filesArr) {
+          const compressedFile = await compressor.compressImage(file);
+          compressedFiles.push(compressedFile);
+          currentTotal += compressedFile.size;
+      }
+
+      if (currentTotal > MAX_TOTAL_SIZE) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Límite total excedido',
+          text: `Aún tras la compresión máxima, las imágenes suman ${(currentTotal / (1024 * 1024)).toFixed(2)}MB, superando los 10MB permitidos.`
+        });
+        this.resetInput(event);
+        return;
+      }
+
+      this.archivosSeleccionados = compressedFiles;
+      Swal.close(); // Cerramos el loading modal
+
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Error', 'Hubo un problema al intentar procesar y comprimir las imágenes.', 'error');
+      this.resetInput(event);
+    }
   }
 
   private resetInput(event: any) {

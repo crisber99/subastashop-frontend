@@ -295,7 +295,10 @@ export class ProductDetail implements OnInit, OnDestroy {
         this.nuevoComentario = '';
         this.cargarCalificaciones(this.producto.id);
       },
-      error: () => Swal.fire('Error', 'No se pudo enviar la calificación.', 'error')
+      error: (err) => {
+        const msg = err.error?.message || err.error || 'No se pudo enviar la calificación.';
+        Swal.fire('Error', msg, 'error');
+      }
     });
   }
 

@@ -81,47 +81,55 @@ export class EditarProducto implements OnInit {
     return fechaIso.substring(0, 16); 
   }
 
-  onFilesSelected(event: any) {
+  async onFilesSelected(event: any) {
     const files = event.target.files;
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB
 
     if (files && files.length > 0) {
       const filesArr = Array.from(files) as File[];
-      let totalSize = 0;
+      
+      Swal.fire({ title: 'Optimizando imágenes...', text: 'Procesando para mayor velocidad', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-      for (const file of filesArr) {
-        if (file.size > MAX_SIZE) {
+      try {
+        const { ImageCompressorService } = await import('../../../services/image-compressor');
+        const compressor = new ImageCompressorService();
+
+        const compressedFiles: File[] = [];
+        let totalSize = 0;
+
+        for (const file of filesArr) {
+          const compressedFile = await compressor.compressImage(file);
+          compressedFiles.push(compressedFile);
+          totalSize += compressedFile.size;
+        }
+
+        if (totalSize > MAX_TOTAL_SIZE) {
           Swal.fire({
             icon: 'error',
-            title: 'Archivo muy pesado',
-            text: `El archivo "${file.name}" supera el límite de 10MB.`
+            title: 'Límite excedido',
+            text: `Aún tras la compresión, el tamaño total supera los 10MB.`
           });
           this.resetSelection(event);
           return;
         }
-        totalSize += file.size;
-      }
 
-      if (totalSize > MAX_SIZE) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Total excedido',
-          text: `La suma de las imágenes (${(totalSize / (1024 * 1024)).toFixed(2)}MB) supera el límite de 10MB.`
+        this.archivosSeleccionados = compressedFiles;
+        this.imagenesPreview = [];
+        
+        this.archivosSeleccionados.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.imagenesPreview.push(reader.result as string);
+          };
+          reader.readAsDataURL(file);
         });
-        this.resetSelection(event);
-        return;
-      }
 
-      this.archivosSeleccionados = filesArr;
-      this.imagenesPreview = [];
-      
-      this.archivosSeleccionados.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.imagenesPreview.push(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      });
+        Swal.close();
+      } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'No se pudieron optimizar las imágenes', 'error');
+        this.resetSelection(event);
+      }
     }
   }
 

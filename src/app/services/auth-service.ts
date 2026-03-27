@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 import { CartService } from './cart';
 
 export interface AuthUser {
+  id?: number;
   nombre?: string;
   email?: string;
   role?: string;

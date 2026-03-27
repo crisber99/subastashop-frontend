@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth-service';
 import { LayoutService } from './services/layout';
@@ -9,6 +9,8 @@ import { Sidebar } from './components/sidebar/sidebar';
 import { FooterComponent } from './components/footer/footer';
 import { CartFloat } from './components/cart-float/cart-float';
 import { PromotionBanner } from './components/promotion-banner/promotion-banner';
+import { Websocket } from './services/websocket';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +24,38 @@ export class App {
   layoutService = inject(LayoutService);
   router = inject(Router);
   loaderService = inject(Loader);
+  websocketService = inject(Websocket);
+
+  constructor() {
+    // Suscribirse a las actualizaciones globales (ej. cuando eres superado en una puja)
+    this.websocketService.getGlobalUpdates().subscribe((mensaje: any) => {
+      if (mensaje && mensaje.tipo === 'OUTBID') {
+        Swal.fire({
+          icon: 'warning',
+          title: '¡Te han superado!',
+          text: `Alguien hizo una oferta mayor por "${mensaje.productoNombre}". El nuevo precio es $${mensaje.nuevoPrecio}.`,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: true,
+          confirmButtonText: 'Ver Producto'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.router.navigate(['/producto', mensaje.productoId]);
+          }
+        });
+      }
+    });
+
+    // Efecto reactivo: conecta/desconecta al usuario del Socket global cuando cambia el estado de Auth
+    effect(() => {
+      const usuario = this.authService.currentUser();
+      if (usuario && usuario.id) {
+        this.websocketService.conectar(() => {
+          this.websocketService.suscribirseGlobal(usuario.id!);
+        });
+      }
+    });
+  }
 
   isAuthPage(): boolean {
     const url = this.router.url;

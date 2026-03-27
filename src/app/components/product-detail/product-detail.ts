@@ -49,6 +49,7 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   // Estado visual
   subastaFinalizada: boolean = false;
+  isLive: boolean = false;
 
   // Calificaciones
   calificaciones: any[] = [];
@@ -61,6 +62,10 @@ export class ProductDetail implements OnInit, OnDestroy {
     if (id) {
       this.cargarProducto(Number(id));
     }
+
+    this.websocketService.getConnectionStatus().subscribe(estado => {
+      this.isLive = estado;
+    });
 
     this.websocketService.obtenerActualizaciones().subscribe((mensaje: any) => {
       if (this.producto && this.producto.id === mensaje.productoId) {

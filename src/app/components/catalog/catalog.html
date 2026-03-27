@@ -79,7 +79,7 @@
                          [class.grayscale]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
                          style="height: 220px; object-fit: cover;">
 
-                    <div class="position-absolute top-0 end-0 m-2">
+                    <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-2 align-items-end z-3">
                         @if (producto.estado === 'VENDIDO') {
                             <span class="badge bg-secondary shadow">🚫 Vendido</span>
                         } @else if (producto.estado === 'RESERVADO') {
@@ -92,6 +92,16 @@
                             } @else {
                             <span class="badge bg-success shadow">💰 Venta</span>
                             }
+                        }
+
+                        @if (authService.isLoggedIn()) {
+                        <button class="btn btn-light rounded-circle shadow-sm p-0 d-flex align-items-center justify-content-center"
+                                style="width: 35px; height: 35px; border: 1px solid var(--border-color); backdrop-filter: blur(5px); background: rgba(255,255,255,0.7);"
+                                (click)="toggleFavorito(producto.id, $event)">
+                            <i class="fs-6" 
+                               [ngClass]="favoritoService.isFavorito(producto.id) ? 'bi bi-heart-fill text-danger' : 'bi bi-heart text-muted'">
+                            </i>
+                        </button>
                         }
                     </div>
                 </div>

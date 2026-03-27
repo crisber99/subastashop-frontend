@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 
@@ -9,6 +9,7 @@ import { tenantInterceptor } from './interceptors/tenant-interceptor';
 import { authInterceptor } from './interceptors/auth-interceptor';
 import { loaderInterceptor } from './interceptors/loader-interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,6 +17,9 @@ export const appConfig: ApplicationConfig = {
     { provide: APP_BASE_HREF, useValue: '/' },
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor, tenantInterceptor, loaderInterceptor])),
-    provideCharts(withDefaultRegisterables())
+    provideCharts(withDefaultRegisterables()), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
   ]
 };

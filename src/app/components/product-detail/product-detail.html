@@ -14,7 +14,19 @@
     <div class="row g-4">
         <!-- Columna Imagen -->
         <div class="col-lg-7">
-            <div class="detalle-image-container">
+            <div class="detalle-image-container position-relative">
+                
+                <!-- BOTÓN CORAZÓN -->
+                @if (authService.isLoggedIn()) {
+                <button class="btn btn-light rounded-circle shadow-lg p-0 d-flex align-items-center justify-content-center position-absolute top-0 end-0 m-3 z-3"
+                        style="width: 50px; height: 50px; border: 1px solid var(--border-color); backdrop-filter: blur(5px); background: rgba(255,255,255,0.7);"
+                        (click)="toggleFavorito(producto.id, $event)">
+                    <i class="fs-4" 
+                       [ngClass]="favoritoService.isFavorito(producto.id) ? 'bi bi-heart-fill text-danger animate__animated animate__heartBeat' : 'bi bi-heart text-muted'">
+                    </i>
+                </button>
+                }
+
                 <div *ngIf="producto.imagenes && producto.imagenes.length > 0; else noImage" id="carruselProducto"
                     class="carousel slide w-100 h-100" data-bs-ride="carousel">
 

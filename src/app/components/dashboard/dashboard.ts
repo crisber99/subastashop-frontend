@@ -5,7 +5,8 @@ import { Router, RouterModule } from '@angular/router';
 import { OrdenService } from '../../services/orden';
 import { CartService } from '../../services/cart';   
 import { AuthService } from '../../services/auth-service';
-import Swal from 'sweetalert2'; // 👈 Importar
+import { PushNotificationService } from '../../services/push-notification.service';
+import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-dashboard',
@@ -20,6 +21,7 @@ export class Dashboard implements OnInit {
   private ordenService = inject(OrdenService);
   public cartService = inject(CartService); 
   public authService = inject(AuthService);
+  public pushService = inject(PushNotificationService);
   private router = inject(Router);
 
   pujas: any[] = [];

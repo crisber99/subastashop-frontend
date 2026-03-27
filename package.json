@@ -16,6 +16,7 @@
     "@angular/forms": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
     "@angular/router": "^19.0.0",
+    "@angular/service-worker": "^19.0.0",
     "@stomp/stompjs": "^7.2.1",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.13.1",

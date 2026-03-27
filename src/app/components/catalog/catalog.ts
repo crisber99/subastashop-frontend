@@ -6,8 +6,10 @@ import { AuthService } from '../../services/auth-service';
 import { LayoutService } from '../../services/layout';
 import { ThemeService } from '../../services/theme-service';
 import { CategoriaService } from '../../services/categoria';
+import { FavoritoService } from '../../services/favorito.service';
 import { Categoria } from '../../models/categoria';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-catalog',
@@ -22,6 +24,7 @@ export class CatalogComponent implements OnInit {
   public authService = inject(AuthService);
   public themeService = inject(ThemeService);
   private categoriaService = inject(CategoriaService);
+  public favoritoService = inject(FavoritoService);
 
   tienda: any = null; 
   productos: any[] = [];
@@ -33,6 +36,10 @@ export class CatalogComponent implements OnInit {
   isLoading: boolean = true; // Empieza cargando
 
   ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      this.favoritoService.cargarIdsFavoritos();
+    }
+
     this.route.paramMap.subscribe(params => {
       this.isLoading = true; // Reiniciar carga al cambiar ruta
       const slug = params.get('slug');
@@ -55,6 +62,16 @@ export class CatalogComponent implements OnInit {
     });
 
     this.cargarCategorias();
+  }
+
+  toggleFavorito(productoId: number, event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Inicia Sesión', 'Debes iniciar sesión para agregar a favoritos', 'info');
+      return;
+    }
+    this.favoritoService.toggleFavorito(productoId).subscribe();
   }
 
   cargarCategorias() {

@@ -10,6 +10,7 @@ import { SuperAdminService } from '../../services/super-admin';
 import { CartService } from '../../services/cart';
 import { LayoutService } from '../../services/layout';
 import { CalificacionService } from '../../services/calificacion';
+import { FavoritoService } from '../../services/favorito.service';
 import Swal from 'sweetalert2';
 
 declare var bootstrap: any;
@@ -31,6 +32,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   websocketService = inject(Websocket);
   authService = inject(AuthService);
   calificacionService = inject(CalificacionService);
+  public favoritoService = inject(FavoritoService);
   
   titleService = inject(Title);
   metaService = inject(Meta);
@@ -62,6 +64,10 @@ export class ProductDetail implements OnInit, OnDestroy {
   promedioCalificacion: number = 0;
 
   ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.favoritoService.cargarIdsFavoritos();
+    }
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.cargarProducto(Number(id));
@@ -152,6 +158,16 @@ export class ProductDetail implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Error cargando producto:', err)
     });
+  }
+
+  toggleFavorito(productoId: number, event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Inicia Sesión', 'Debes iniciar sesión para agregar a favoritos', 'info');
+      return;
+    }
+    this.favoritoService.toggleFavorito(productoId).subscribe();
   }
 
   pujar() {

@@ -1,0 +1,63 @@
+<div class="container py-5 mt-5">
+  <div class="row mb-5 animate__animated animate__fadeInDown">
+    <div class="col-12 text-center">
+      <h1 class="display-4 fw-800 mb-3">
+        Tus Favoritos <span class="text-danger">❤️</span>
+      </h1>
+      <p class="lead text-muted-custom">
+        Los productos y subastas que sigues de cerca, todo en un solo lugar.
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="text-center py-5 my-5">
+    <div class="spinner-border text-danger" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!cargando && productos.length === 0" class="text-center py-5 my-5 glass-panel">
+    <div class="fs-1 mb-3">👻</div>
+    <h3 class="fw-bold">Aún no tienes favoritos</h3>
+    <p class="text-muted-custom">Explora el catálogo y pulsa el corazón en los productos que te enamoren.</p>
+    <a routerLink="/" class="btn btn-primary mt-3 px-4 py-2 fw-bold">Ir al Catálogo</a>
+  </div>
+
+  <div class="row g-4" *ngIf="!cargando && productos.length > 0">
+    <div class="col-12 col-md-6 col-lg-4 animate__animated animate__fadeInUp" *ngFor="let p of productos">
+      <div class="card h-100 position-relative">
+        
+        <!-- Etiqueta de Tipo Venta -->
+        <span class="badge position-absolute top-0 start-0 m-3 z-3"
+              [ngClass]="{'bg-success': p.tipoVenta === 'DIRECTA', 'bg-warning text-dark': p.tipoVenta === 'SUBASTA', 'bg-info text-dark': p.tipoVenta === 'RIFA'}">
+          {{ p.tipoVenta }}
+        </span>
+
+        <!-- Botón Eliminar Favorito Flotante -->
+        <button class="btn btn-light position-absolute top-0 end-0 m-3 z-3 rounded-circle shadow-sm"
+                style="width: 40px; height: 40px; border: 1px solid var(--border-color);" 
+                (click)="quitarFavorito(p.id)">
+          <i class="fs-5 text-danger bi bi-heart-fill"></i>
+        </button>
+
+        <!-- Imagen -->
+        <div class="ratio ratio-4x3 overflow-hidden">
+          <img [src]="p.imagenes && p.imagenes.length > 0 ? p.imagenes[0] : p.imagenUrl" 
+               class="card-img-top object-fit-cover" alt="Producto">
+        </div>
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-bold text-truncate">{{ p.nombre }}</h5>
+          
+          <h4 class="fw-800 text-primary mb-3 mt-2">
+            ${{ (p.tipoVenta === 'SUBASTA' ? p.precioActual : (p.tipoVenta === 'RIFA' ? p.precioTicket : p.precioBase)) | number }}
+          </h4>
+          
+          <div class="mt-auto d-grid">
+            <a [routerLink]="['/producto', p.id]" class="btn btn-outline-primary fw-bold">Ver Detalle</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

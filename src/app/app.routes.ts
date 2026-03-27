@@ -15,6 +15,7 @@ import { SuperAdminReportes } from './pages/super-admin-reportes/super-admin-rep
 import { AdminConfig } from './pages/admin-config/admin-config';
 import { AdminUsersComponent } from './components/admin-users-component/admin-users-component';
 import { SupportComponent } from './components/support/support';
+import { MisFavoritosComponent } from './pages/mis-favoritos/mis-favoritos.component';
 
 export const routes: Routes = [
     // Rutes Públiques
@@ -27,6 +28,7 @@ export const routes: Routes = [
 
     // Rutes Privades (Protegides per el AuthGuard)
     { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+    { path: 'mis-favoritos', component: MisFavoritosComponent, canActivate: [authGuard] },
     { path: 'mi-cuenta', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'checkout/:id', component: Checkout, canActivate: [authGuard] },
     { path: 'admin', component: AdminDashboard, canActivate: [authGuard] },

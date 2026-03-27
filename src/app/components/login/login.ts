@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import { SocialAuthService, GoogleLoginProvider, FacebookLoginProvider } from '@abacritt/angularx-social-login';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -12,14 +13,34 @@ import Swal from 'sweetalert2';
   templateUrl: './login.html', 
   styleUrl: './login.scss', 
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
+  socialAuthService = inject(SocialAuthService);
 
   email = '';
   password = '';
   mensajeError = '';
   cargando = false; 
+
+  ngOnInit() {
+    this.socialAuthService.authState.subscribe((user) => {
+      if (user) {
+        Swal.fire({ title: 'Autorizando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        const token = user.provider === 'GOOGLE' ? user.idToken : user.authToken;
+        
+        this.authService.socialLogin({ provider: user.provider, token: token }).subscribe({
+          next: () => {
+            Swal.close();
+            this.router.navigate(['/']);
+          },
+          error: (err) => {
+             Swal.fire('Error', err.error?.message || 'Error al logear con ' + user.provider, 'error');
+          }
+        });
+      }
+    });
+  }
 
   onLogin() {
     this.mensajeError = '';
@@ -118,13 +139,20 @@ export class LoginComponent {
     }
   }
 
-  // --- LOGIN SOCIAL (MOCK) ---
+  // --- LOGIN SOCIAL ---
   socialLogin(provider: string) {
-    Swal.fire({
-      title: `Iniciar sesión con ${provider}`,
-      text: 'Esta funcionalidad se encuentra en desarrollo y estará disponible pronto.',
-      icon: 'info',
-      confirmButtonColor: '#6366f1'
-    });
+    if (provider === 'Google') {
+       this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).catch(err => {
+          console.warn(err);
+          Swal.fire('Las credenciales locales faltan', 'Aún no has configurado tu ClientID de Google. Revisa las instrucciones compartidas.', 'info');
+       });
+    } else if (provider === 'Facebook') {
+       this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).catch(err => {
+          console.warn(err);
+          Swal.fire('Las credenciales locales faltan', 'Aún no has configurado tu AppID de Facebook. Revisa las instrucciones compartidas.', 'info');
+       });
+    } else {
+       Swal.fire('Apple Connect', 'La integración con Apple requiere añadir el certificado .p8 manual en el backend.', 'info');
+    }
   }
 }

@@ -62,6 +62,17 @@ export class AuthService {
     );
   }
 
+  // --- LOGIN SOCIAL ---
+  socialLogin(datos: { provider: string, token: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/social-login`, datos).pipe(
+      tap((response: any) => {
+        if (response.token) {
+          this.guardarSesion(response.token, response.usuario);
+        }
+      })
+    );
+  }
+
   // --- CERRAR SESIÓN ---
   logout() {
     // 1. Borrar de disco

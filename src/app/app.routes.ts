@@ -16,6 +16,8 @@ import { AdminConfig } from './pages/admin-config/admin-config';
 import { AdminUsersComponent } from './components/admin-users-component/admin-users-component';
 import { SupportComponent } from './components/support/support';
 import { MisFavoritosComponent } from './pages/mis-favoritos/mis-favoritos.component';
+import { PrivacidadComponent } from './pages/privacidad/privacidad.component';
+import { TerminosComponent } from './pages/terminos/terminos.component';
 
 export const routes: Routes = [
     // Rutes Públiques
@@ -25,6 +27,8 @@ export const routes: Routes = [
     { path: 'tienda/:slug', component: CatalogComponent },
     { path: 'catalogo-global', component: CatalogComponent },
     { path: 'producto/:id', component: ProductDetail },
+    { path: 'privacidad', component: PrivacidadComponent },
+    { path: 'terminos', component: TerminosComponent },
 
     // Rutes Privades (Protegides per el AuthGuard)
     { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },

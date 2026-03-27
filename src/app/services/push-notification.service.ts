@@ -11,7 +11,7 @@ export class PushNotificationService {
   private swPush = inject(SwPush);
   
   // VAPID Public Key matched with the backend WebPushService
-  private readonly VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuB-3qND7BroqhVWeJ2Q-nU8bI';
+  private readonly VAPID_PUBLIC_KEY = 'BCLHRuRpwpS3uapi0tPnXbuElZhKNm4HqSGuceJoSsW9kpPHDBsWQY8e0d7bIuABlo9otkYVM_wA0C05vX7oMbU';
 
   suscribirAMensajes() {
     if (!this.swPush.isEnabled) {

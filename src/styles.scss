@@ -139,6 +139,22 @@ body {
 }
 
 /* FIX para superposición de Form-Floating */
+.form-floating {
+  & > .form-control:focus ~ label,
+  & > .form-control:not(:placeholder-shown) ~ label,
+  & > .form-select ~ label {
+    transform: scale(0.85) translateY(-1rem) translateX(0.15rem) !important;
+    color: var(--primary-color) !important;
+    opacity: 1 !important;
+  }
+
+  label {
+    padding: 1rem 0.75rem !important;
+    transition: all 0.2s ease-in-out;
+    pointer-events: none;
+  }
+}
+
 .form-floating > .form-control {
   padding-top: 1.625rem !important;
   padding-bottom: 0.625rem !important;

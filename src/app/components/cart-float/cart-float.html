@@ -13,16 +13,18 @@
 
 <div class="modal fade" id="modalCarrito" tabindex="-1">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">🛒 Tu Carrito</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-content glass-panel" style="padding: 0;">
+      <div class="modal-header border-bottom border-secondary">
+        <h5 class="modal-title fw-bold" style="color: var(--text-color);">🛒 Tu Carrito</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" 
+          [ngStyle]="{'filter': 'invert(var(--is-dark, 1))'}"></button>
       </div>
       <div class="modal-body">
         
         <ul class="list-group mb-3">
           @for (item of cartService.items(); track $index) {
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item d-flex justify-content-between align-items-center" 
+                style="background: transparent; color: var(--text-color); border-color: var(--border-color);">
               <div class="d-flex align-items-center">
                 <img [src]="item.producto.imagenUrl || (item.producto.imagenes && item.producto.imagenes[0])" width="50" class="rounded me-3">
                 <div>
@@ -42,17 +44,17 @@
           }
         </ul>
         
-        <h4 class="text-end fw-bold">Total: ${{ cartService.total() | number }}</h4>
+        <h4 class="text-end fw-bold" style="color: var(--text-color);">Total: ${{ cartService.total() | number }}</h4>
 
-        <div class="alert alert-warning small">
+        <div class="alert small" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308;">
             <i class="bi bi-clock-history"></i> Al confirmar, los productos quedarán <strong>RESERVADOS</strong> 
             hasta que subas el comprobante de pago.
         </div>
 
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Seguir mirando</button>
-        <button class="btn btn-success" (click)="confirmarReserva()">
+        <button class="btn btn-success" (click)="confirmarReserva()" style="background: var(--primary-gradient);">
             ✅ Confirmar y Pagar
         </button>
       </div>

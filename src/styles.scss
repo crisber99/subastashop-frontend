@@ -138,6 +138,12 @@ body {
   }
 }
 
+/* FIX para superposición de Form-Floating */
+.form-floating > .form-control {
+  padding-top: 1.625rem !important;
+  padding-bottom: 0.625rem !important;
+}
+
 /* Chrome/Safari Autofill Styles */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 

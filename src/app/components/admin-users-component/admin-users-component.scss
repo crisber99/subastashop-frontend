@@ -22,4 +22,12 @@
 
 .table-hover tbody tr:hover {
     background-color: #f8f9fa;
+    color: #212529; /* Forzar legibilidad en modo claro */
+}
+
+/* Soporte seguro para modo oscuro en Angular */
+:host-context(.dark-theme) .table-hover tbody tr:hover,
+:host-context([data-bs-theme="dark"]) .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f8f9fa; /* Texto blanco en hover oscuro */
 }

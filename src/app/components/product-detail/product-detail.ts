@@ -1,8 +1,9 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
+import { ProductService } from '../../services/product';
 import { AuthService } from '../../services/auth-service';
 import { Websocket } from '../../services/websocket';
 import { SuperAdminService } from '../../services/super-admin';
@@ -30,6 +31,9 @@ export class ProductDetail implements OnInit, OnDestroy {
   websocketService = inject(Websocket);
   authService = inject(AuthService);
   calificacionService = inject(CalificacionService);
+  
+  titleService = inject(Title);
+  metaService = inject(Meta);
 
   producto: any = null;
   montoOferta: number = 0;
@@ -108,6 +112,17 @@ export class ProductDetail implements OnInit, OnDestroy {
       next: (data) => {
         this.producto = data; 
         if (data.tienda) this.tienda = data.tienda; 
+
+        // --- SEO & OpenGraph Dinámico ---
+        this.titleService.setTitle(`${this.producto.nombre} - SubastaShop`);
+        this.metaService.updateTag({ property: 'og:title', content: `${this.producto.nombre} - SubastaShop` });
+        this.metaService.updateTag({ property: 'og:description', content: this.producto.descripcion.substring(0, 160) });
+        this.metaService.updateTag({ property: 'og:url', content: window.location.href });
+        this.metaService.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+        if (this.producto.imagenes && this.producto.imagenes.length > 0) {
+          this.metaService.updateTag({ property: 'og:image', content: this.producto.imagenes[0] });
+        }
+        // --------------------------------
 
         if (this.producto.tipoVenta === 'RIFA') {
           this.generarNumeros(this.producto.cantidadNumeros);

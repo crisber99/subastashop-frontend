@@ -1,9 +1,9 @@
 <div class="login-page">
   <div class="login-bg-overlay"></div>
-  
+
   <div class="container-fluid h-100 p-0">
     <div class="row g-0 h-100">
-      
+
       <!-- Lado Izquierdo: Branding & Welcome (Visible en Desktop) -->
       <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-center p-5 bg-welcome">
         <div class="welcome-content animate__animated animate__fadeInLeft">
@@ -11,11 +11,13 @@
             <span class="logo-icon">🚀</span>
             <span class="logo-text">Subasta<span>Shop</span></span>
           </div>
-          <h1 class="display-3 fw-bold mb-4">Las mejores subastas <br> <span class="text-gradient">a un clic.</span></h1>
+          <h1 class="display-3 fw-bold mb-4">Las mejores subastas <br> <span class="text-gradient">a un clic.</span>
+          </h1>
           <p class="lead mb-5 text-muted-custom">
-            Tu puerta de entrada a los productos más exclusivos, subastas emocionantes y ventas directas con la mayor seguridad.
+            Tu puerta de entrada a los productos más exclusivos, subastas emocionantes y ventas directas con la mayor
+            seguridad.
           </p>
-          
+
           <div class="features-list">
             <div class="feature-item">
               <div class="f-icon">🔥</div>
@@ -32,10 +34,10 @@
       <!-- Lado Derecho: Formulario -->
       <div class="col-lg-5 col-12 d-flex align-items-center justify-content-center p-4">
         <div class="auth-card glass-panel animate__animated animate__fadeInRight">
-          
+
           <div class="auth-header text-center mb-5">
             <div class="d-lg-none mb-3">
-               <span class="fs-1">🚀</span>
+              <span class="fs-1">🚀</span>
             </div>
             <h2 class="fw-800">Iniciar Sesión</h2>
             <p class="text-secondary">Ingresa tus credenciales para continuar</p>
@@ -46,15 +48,15 @@
           </div>
 
           <form (ngSubmit)="onLogin()">
-            <div class="form-floating mb-3">
-              <input type="email" class="form-control" id="floatingEmail" [(ngModel)]="email" name="email" 
-                     placeholder="name@example.com" required>
+            <div class="form-floating mb-3 custom-floating">
+              <input type="email" class="form-control" id="floatingEmail" [(ngModel)]="email" name="email"
+                placeholder="nombre@ejemplo.com" required>
               <label for="floatingEmail">Correo Electrónico</label>
             </div>
 
-            <div class="form-floating mb-4">
-              <input type="password" class="form-control" id="floatingPassword" [(ngModel)]="password" name="password" 
-                     placeholder="Contraseña" required>
+            <div class="form-floating mb-4 custom-floating">
+              <input type="password" class="form-control" id="floatingPassword" [(ngModel)]="password" name="password"
+                placeholder="Contraseña" required>
               <label for="floatingPassword">Contraseña</label>
             </div>
 
@@ -63,7 +65,8 @@
                 <input class="form-check-input" type="checkbox" id="rememberMe">
                 <label class="form-check-label small" for="rememberMe">Recordarme</label>
               </div>
-              <a (click)="onForgotPassword()" style="cursor: pointer;" class="forgot-link small">¿Olvidaste tu contraseña?</a>
+              <a (click)="onForgotPassword()" style="cursor: pointer;" class="forgot-link small">¿Olvidaste tu
+                contraseña?</a>
             </div>
 
             <button type="submit" class="btn-auth-premium" [disabled]="cargando">

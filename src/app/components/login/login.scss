@@ -92,40 +92,65 @@
     font-weight: 500;
 }
 
-// FORMS
+// FORMS (AQUÍ ESTÁ LA CORRECCIÓN)
 .form-floating {
+    position: relative;
     margin-bottom: 1.25rem;
-
-    label {
-        color: var(--text-muted);
-    }
 
     .form-control {
         background: var(--glass-bg) !important;
         border: 1px solid var(--border-color) !important;
         border-radius: var(--radius-md) !important;
         color: var(--text-color) !important;
-        height: calc(3.5rem + 2px);
-        line-height: 1.25;
-        padding-top: 1.625rem;
-        padding-bottom: 0.625rem;
+
+        /* Altura y padding estrictos para dar espacio arriba y abajo */
+        height: 58px !important;
+        padding: 1.625rem 0.75rem 0.625rem 0.75rem !important;
+
+        /* Ocultar el placeholder por defecto */
+        &::placeholder {
+            color: transparent !important;
+            transition: color 0.2s ease;
+        }
+
+        /* Mostrar el placeholder solo cuando haces clic (focus) */
+        &:focus::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
 
         &:focus {
             border-color: var(--primary-color) !important;
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
-
-            &~label {
-                color: var(--primary-color) !important;
-                opacity: 0.8;
-            }
-        }
-
-        &:not(:placeholder-shown)~label {
-            transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem);
         }
     }
 
-    input:-webkit-autofill {
+    /* Estilo de la etiqueta inicial */
+    label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        padding: 1rem 0.75rem;
+        pointer-events: none;
+        color: var(--text-muted) !important;
+        transform-origin: 0 0;
+        transition: opacity .1s ease-in-out, transform .1s ease-in-out;
+        z-index: 2;
+    }
+
+    /* Mover la etiqueta hacia arriba cuando hay foco o cuando hay texto escrito */
+    .form-control:focus~label,
+    .form-control:not(:placeholder-shown)~label {
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        color: var(--text-color) !important;
+        opacity: 0.8;
+    }
+
+    /* Fix para el fondo blanco del autocompletado en Chrome */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
         -webkit-text-fill-color: var(--text-color) !important;
         -webkit-box-shadow: 0 0 0px 1000px var(--card-bg) inset !important;
         transition: background-color 5000s ease-in-out 0s;

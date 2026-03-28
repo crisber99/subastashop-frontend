@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
     { provide: APP_BASE_HREF, useValue: '/' },
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor, tenantInterceptor, loaderInterceptor])),
-    provideCharts(withDefaultRegisterables()), 
+    provideCharts(withDefaultRegisterables()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('PON_TU_GOOGLE_CLIENT_ID_AQUI.apps.googleusercontent.com')
+            provider: new GoogleLoginProvider('224562249308-1ajh4ulhth30ahnlqlp8eb92d1gfor1a.apps.googleusercontent.com')
           },
           {
             id: FacebookLoginProvider.PROVIDER_ID,

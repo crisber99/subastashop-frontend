@@ -88,7 +88,7 @@ export class ProductDetail implements OnInit, OnDestroy {
     });
 
     this.websocketService.obtenerActualizaciones().subscribe((mensaje: any) => {
-      if (this.producto && this.producto.id === mensaje.productoId) {
+      if (this.producto && Number(this.producto.id) == Number(mensaje.productoId)) {
         
         // --- LOGICA DE SORTEO EN TIEMPO REAL (RIFA) ---
         if (mensaje.status === 'PREPARANDO') {
@@ -204,7 +204,11 @@ export class ProductDetail implements OnInit, OnDestroy {
           this.generarNumeros(this.producto.cantidadNumeros);
           this.cargarVendidos();
           if (this.authService.isAdmin()) this.cargarTablaAdmin();
-          if (this.producto.estado === 'FINALIZADA' || this.producto.estado === 'VENDIDO') this.cargarGanadoresHistorial();
+          
+          // Mostrar ganadores siempre si la rifa ya terminó
+          if (this.producto.estado === 'FINALIZADA' || this.producto.estado === 'VENDIDO') {
+            this.cargarGanadoresHistorial();
+          }
         }
 
         this.websocketService.conectar(() => {

@@ -159,6 +159,28 @@
                                 <i class="bi bi-gear-fill me-2"></i> Girar Tómbola y Sortear
                             </button>
                         </div>
+
+                        <!-- 🏆 GANADORES OFICIALES (Visible para todos al finalizar) -->
+                        <div *ngIf="producto.estado === 'FINALIZADA' && ganadores && ganadores.length > 0" 
+                             class="mt-4 border-top pt-4 animate__animated animate__fadeIn">
+                            <h5 class="fw-bold text-center mb-3">🏆 Ganadores Oficiales</h5>
+                            <div class="list-group list-group-flush rounded-4 overflow-hidden border">
+                                @for (g of ganadores; track g.id) {
+                                <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge rounded-pill bg-warning text-dark me-3 fw-bold" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                            {{ g.puesto || '1' }}
+                                        </span>
+                                        <div>
+                                            <p class="mb-0 fw-bold">Ticket #{{ g.numeroTicket }}</p>
+                                            <p class="mb-0 small text-muted">{{ g.comprador }}</p>
+                                        </div>
+                                    </div>
+                                    <i class="bi bi-patch-check-fill text-primary fs-5"></i>
+                                </div>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
 

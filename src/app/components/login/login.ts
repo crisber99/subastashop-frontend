@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
-import { SocialAuthService, GoogleLoginProvider, FacebookLoginProvider } from '@abacritt/angularx-social-login';
+import { SocialAuthService, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -148,13 +148,6 @@ export class LoginComponent implements OnInit {
           console.warn(err);
           Swal.fire('Las credenciales locales faltan', 'Aún no has configurado tu ClientID de Google. Revisa las instrucciones compartidas.', 'info');
        });
-    } else if (provider === 'Facebook') {
-       this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).catch(err => {
-          console.warn(err);
-          Swal.fire('Las credenciales locales faltan', 'Aún no has configurado tu AppID de Facebook. Revisa las instrucciones compartidas.', 'info');
-       });
-    } else {
-       Swal.fire('Apple Connect', 'La integración con Apple requiere añadir el certificado .p8 manual en el backend.', 'info');
     }
   }
 }

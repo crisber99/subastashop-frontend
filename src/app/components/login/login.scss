@@ -16,30 +16,27 @@
     align-items: center;
     justify-content: center;
 
-    /* Sutil decoración de fondo */
-    &::before,
-    &::after {
+    &::before {
         content: '';
         position: absolute;
-        width: 300px;
-        height: 300px;
-        border-radius: 50%;
-        filter: blur(80px);
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: url('/assets/img/hero-banner.png') center/cover no-repeat;
+        opacity: 0.1;
         z-index: 0;
-        opacity: 0.4;
     }
+}
 
-    &::before {
-        background: var(--primary-color);
-        top: -50px;
-        right: -50px;
-    }
+.bg-welcome {
+    background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('/assets/img/hero-banner.png') center/cover no-repeat !important;
+    color: white;
+    border-right: 1px solid var(--glass-border);
+}
 
-    &::after {
-        background: #a855f7;
-        bottom: -50px;
-        left: -50px;
-    }
+.logo-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
 }
 
 .container-fluid {

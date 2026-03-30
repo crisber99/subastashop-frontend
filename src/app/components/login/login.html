@@ -8,7 +8,7 @@
       <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-center p-5 bg-welcome">
         <div class="welcome-content animate__animated animate__fadeInLeft">
           <div class="logo-wrapper mb-4">
-            <span class="logo-icon">🚀</span>
+            <img src="assets/img/logo.png" alt="SubastaShop Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162456.png'">
             <span class="logo-text">Subasta<span>Shop</span></span>
           </div>
           <h1 class="display-3 fw-bold mb-4">Las mejores subastas <br> <span class="text-gradient">a un clic.</span>
@@ -37,7 +37,7 @@
 
           <div class="auth-header text-center mb-5">
             <div class="d-lg-none mb-3">
-              <span class="fs-1">🚀</span>
+              <img src="assets/img/logo.png" alt="Logo" style="width: 60px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162456.png'">
             </div>
             <h2 class="fw-800">Iniciar Sesión</h2>
             <p class="text-secondary">Ingresa tus credenciales para continuar</p>
@@ -78,9 +78,9 @@
           <div class="social-auth text-center mt-5">
             <p class="small text-muted-custom mb-3">O continúa con</p>
             <div class="d-flex justify-content-center gap-3">
-              <button class="btn-social" (click)="socialLogin('Google')"><i class="bi bi-google"></i></button>
-              <button class="btn-social" (click)="socialLogin('Apple')"><i class="bi bi-apple"></i></button>
-              <button class="btn-social" (click)="socialLogin('Facebook')"><i class="bi bi-facebook"></i></button>
+              <button class="btn-social w-100" (click)="socialLogin('Google')">
+                <i class="bi bi-google me-2"></i> Continuar con Google
+              </button>
             </div>
           </div>
 

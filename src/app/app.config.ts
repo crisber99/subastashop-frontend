@@ -10,7 +10,7 @@ import { authInterceptor } from './interceptors/auth-interceptor';
 import { loaderInterceptor } from './interceptors/loader-interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideServiceWorker } from '@angular/service-worker';
-import { SOCIAL_AUTH_CONFIG, SocialAuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from '@abacritt/angularx-social-login';
+import { SOCIAL_AUTH_CONFIG, SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,10 +31,6 @@ export const appConfig: ApplicationConfig = {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider('224562249308-1ajh4ulhth30ahnlqlp8eb92d1gfor1a.apps.googleusercontent.com')
-          },
-          {
-            id: FacebookLoginProvider.PROVIDER_ID,
-            provider: new FacebookLoginProvider('PON_TU_FACEBOOK_APP_ID_AQUI')
           }
         ],
         onError: (err) => {

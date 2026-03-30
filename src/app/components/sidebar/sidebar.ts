@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { LayoutService } from '../../services/layout';
 import { MenuService } from '../../services/menu';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,10 +13,20 @@ import { MenuService } from '../../services/menu';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
-export class Sidebar {
+export class Sidebar implements OnInit {
   authService = inject(AuthService);
   layoutService = inject(LayoutService);
   menuService = inject(MenuService);
+  router = inject(Router);
+
+  ngOnInit() {
+    // Cerrar sidebar automáticamente en cada navegación
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.layoutService.sidebarOpen.set(false);
+    });
+  }
 
   // 1. ¿Es Súper Admin? (Ve TODO)
   get isSuperAdmin(): boolean {

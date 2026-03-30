@@ -151,6 +151,14 @@
                             </button>
                             }
                         </div>
+
+                        <!-- 🛠️ BOTÓN ADMIN: LANZAR SORTEO -->
+                        <div *ngIf="authService.isAdmin() && producto.estado !== 'FINALIZADA'" class="mt-4 border-top pt-4">
+                            <p class="text-muted small mb-2 text-center text-uppercase ls-1">Panel de Administrador</p>
+                            <button class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-sm py-3" (click)="lanzarSorteo()">
+                                <i class="bi bi-gear-fill me-2"></i> Girar Tómbola y Sortear
+                            </button>
+                        </div>
                     </div>
                 </div>
 

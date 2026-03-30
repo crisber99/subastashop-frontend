@@ -47,8 +47,21 @@ export class Websocket {
     this.stompClient.activate();
   }
 
+  suscribirseRifa(productoId: number) {
+    if (this.stompClient && this.stompClient.connected) {
+      console.log(`📡 Suscribiéndose al canal de sorteo: /topic/rifa/${productoId}`);
+      
+      return this.stompClient.subscribe(`/topic/rifa/${productoId}`, (mensaje) => {
+        console.log('📩 ¡Mensaje de sorteo recibido!', mensaje.body);
+        this.precioUpdates.next(JSON.parse(mensaje.body));
+      });
+    } else {
+      console.warn('⚠️ Intentando suscribir a rifa sin conexión activa');
+      return null;
+    }
+  }
+
   suscribirseProducto(productoId: number) {
-    // Doble chequeo de seguridad
     if (this.stompClient && this.stompClient.connected) {
       console.log(`📡 Suscribiéndose al canal: /topic/producto/${productoId}`);
       

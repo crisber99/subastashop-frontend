@@ -270,6 +270,52 @@
     </div>
 </div>
 
+<!-- 🎡 SHOW DEL SORTEO EN TIEMPO REAL 🎡 -->
+<div class="rifa-show-overlay animate__animated animate__fadeIn" *ngIf="showSorteo">
+    <div class="show-container text-center text-white">
+        
+        <!-- 1. CUENTA REGRESIVA ⏳ -->
+        <div class="countdown-section animate__animated animate__zoomIn" *ngIf="cuentaRegresiva > 0">
+            <h1 class="display-1 fw-900 glow-text">{{ cuentaRegresiva }}</h1>
+            <p class="lead text-uppercase fw-bold ls-2">¡El sorteo está por comenzar!</p>
+            <div class="spinner-grow text-primary mt-4" role="status" style="width: 3rem; height: 3rem;"></div>
+        </div>
+
+        <!-- 2. RULETA 🎰 -->
+        <div class="roulette-section animate__animated animate__fadeInUp" *ngIf="cuentaRegresiva <= 0 && ruletaActiva">
+            <p class="text-white-50 text-uppercase mb-2 small ls-2">Buscando ticket ganador...</p>
+            <div class="roulette-box shadow-lg mb-4">
+                <span class="display-2 fw-900">{{ numeroRuleta }}</span>
+            </div>
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- 3. GANADORES REVELADOS 🏆 -->
+        <div class="winners-reveal-section mt-4" *ngIf="cuentaRegresiva <= 0">
+            <div class="d-flex flex-wrap justify-content-center gap-4">
+                @for (g of ganadoresRevelados; track g.puesto) {
+                <div class="winner-card animate__animated animate__backInDown shadow-lg">
+                    <div class="winner-puesto bg-warning text-dark">#{{ g.puesto }}</div>
+                    <div class="winner-number display-4 fw-bold">Ticket #{{ g.numeroTicket }}</div>
+                    <div class="winner-email opacity-75 small">{{ g.comprador }}</div>
+                </div>
+                }
+            </div>
+
+            <!-- BOTÓN FINAL -->
+            <div class="mt-5 animate__animated animate__fadeInUp animate__delay-1s" *ngIf="!ruletaActiva && ganadoresRevelados.length > 0">
+                <h2 class="fw-bold mb-4">✨ ¡FELICIDADES A LOS GANADORES! ✨</h2>
+                <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg" (click)="cerrarShow()">
+                    Ver Resultados Oficiales
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <ng-template #loadingTemplate>
     <div class="d-flex flex-column justify-content-center align-items-center vh-50 mt-5">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>

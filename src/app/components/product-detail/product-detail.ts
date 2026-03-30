@@ -14,6 +14,7 @@ import { FavoritoService } from '../../services/favorito.service';
 import Swal from 'sweetalert2';
 
 declare var bootstrap: any;
+import confetti from 'canvas-confetti';
 
 @Component({
   selector: 'app-product-detail',
@@ -48,6 +49,15 @@ export class ProductDetail implements OnInit, OnDestroy {
   ticketsDetalle: any[] = [];
   ganadores: any[] = [];
   
+  // Variables del Show de Sorteo ✨
+  showSorteo: boolean = false;
+  cuentaRegresiva: number = 5;
+  ruletaActiva: boolean = false;
+  numeroRuleta: number = 0;
+  ganadoresRevelados: any[] = [];
+  private audioDrum: HTMLAudioElement = new Audio('assets/sounds/drumroll.mp3');
+  private audioWin: HTMLAudioElement = new Audio('assets/sounds/win.mp3');
+  
   // Variables de Tienda
   productos: any[] = [];
   nombreTienda: string = '';
@@ -79,6 +89,14 @@ export class ProductDetail implements OnInit, OnDestroy {
 
     this.websocketService.obtenerActualizaciones().subscribe((mensaje: any) => {
       if (this.producto && this.producto.id === mensaje.productoId) {
+        
+        // --- LOGICA DE SORTEO EN TIEMPO REAL (RIFA) ---
+        if (mensaje.status === 'PREPARANDO') {
+          this.iniciarSorteoShow();
+        } else if (mensaje.status === 'FINALIZADO') {
+          this.procesarGanadoresSecuencial(mensaje.ganadores);
+        }
+
         if (mensaje.tipo === 'TICKET_VENDIDO') {
           const num = mensaje.numero;
           if (!this.ticketsVendidos.includes(num)) {
@@ -88,14 +106,8 @@ export class ProductDetail implements OnInit, OnDestroy {
             this.cargarTablaAdmin();
           }
         } else if (mensaje.tipo === 'SORTEO_FINALIZADO') {
+          // Si llega este mensaje genérico pero no el status (retrocompatibilidad)
           this.ganadores = mensaje.ganadores;
-          Swal.fire({
-            title: '¡Sorteo Finalizado! 🎉',
-            text: 'Los ganadores han sido seleccionados. Revisa la lista oficial.',
-            icon: 'info',
-            timer: 5000,
-            timerProgressBar: true
-          });
           this.cargarProducto(this.producto.id);
         } else if (mensaje.monto) {
           this.producto.precioActual = mensaje.monto;
@@ -111,6 +123,64 @@ export class ProductDetail implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  iniciarSorteoShow() {
+    this.showSorteo = true;
+    this.cuentaRegresiva = 5;
+    this.audioDrum.play().catch(e => console.log('Audio blocked', e));
+    
+    const interval = setInterval(() => {
+      this.cuentaRegresiva--;
+      if (this.cuentaRegresiva <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+  }
+
+  async procesarGanadoresSecuencial(ganadores: any[]) {
+    this.audioDrum.pause();
+    this.audioDrum.currentTime = 0;
+    this.ganadoresRevelados = [];
+    
+    for (const g of ganadores) {
+      await this.animarRuleta(g);
+      this.ganadoresRevelados.push(g);
+      this.audioWin.play().catch(e => console.log('Audio blocked', e));
+    }
+
+    // Final épico con confeti 🎉
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#0d6efd', '#6f42c1', '#f59e0b']
+    });
+
+    this.ganadores = ganadores;
+    this.ruletaActiva = false;
+  }
+
+  animarRuleta(ganador: any): Promise<void> {
+    this.ruletaActiva = true;
+    return new Promise(resolve => {
+      let duration = 3000;
+      let start = Date.now();
+      
+      const timer = setInterval(() => {
+        this.numeroRuleta = Math.floor(Math.random() * (this.producto.cantidadNumeros || 100)) + 1;
+        if (Date.now() - start >= duration) {
+          clearInterval(timer);
+          this.numeroRuleta = ganador.numeroTicket;
+          setTimeout(() => resolve(), 1000);
+        }
+      }, 50);
+    });
+  }
+
+  cerrarShow() {
+    this.showSorteo = false;
+    this.cargarProducto(this.producto.id);
   }
 
   cargarProducto(id: number) {
@@ -139,6 +209,9 @@ export class ProductDetail implements OnInit, OnDestroy {
 
         this.websocketService.conectar(() => {
           this.websocketService.suscribirseProducto(this.producto.id);
+          if (this.producto.tipoVenta === 'RIFA') {
+            this.websocketService.suscribirseRifa(this.producto.id);
+          }
         });
 
         if (data.tipoVenta === 'SUBASTA' && data.fechaFinSubasta) {

@@ -97,3 +97,97 @@
         background: rgba(255, 255, 255, 0.03);
     }
 }
+
+// 🎡 ESTILOS SHOW SORTEO 🎡
+.rifa-show-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.85); // Slate 900 con transparencia
+    backdrop-filter: blur(25px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    .show-container {
+        width: 100%;
+        max-width: 900px;
+        padding: 2rem;
+    }
+}
+
+.glow-text {
+    text-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+    background: linear-gradient(135deg, #fff 0%, #818cf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.roulette-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 3px solid #818cf8;
+    border-radius: 30px;
+    padding: 3rem;
+    display: inline-block;
+    min-width: 250px;
+    box-shadow: 0 0 50px rgba(129, 140, 248, 0.4);
+    animation: pulse-border 1.5s infinite;
+}
+
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 20px rgba(129, 140, 248, 0.4); }
+    50% { box-shadow: 0 0 60px rgba(129, 140, 248, 0.7); }
+    100% { box-shadow: 0 0 20px rgba(129, 140, 248, 0.4); }
+}
+
+.winner-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 1.5rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    
+    .winner-puesto {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 4px 12px;
+        font-size: 0.8rem;
+        font-weight: 900;
+        border-bottom-right-radius: 10px;
+    }
+}
+
+.typing-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+
+    span {
+        width: 10px;
+        height: 10px;
+        background: #fff;
+        border-radius: 50%;
+        animation: bounce 1.5s infinite;
+        opacity: 0.7;
+
+        &:nth-child(2) { animation-delay: 0.2s; }
+        &:nth-child(3) { animation-delay: 0.4s; }
+    }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.ls-2 { letter-spacing: 0.2rem; }
+.fw-900 { font-weight: 900; }

@@ -1,0 +1,143 @@
+﻿[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mmain-S2GACT3U.js[39m     [2m | [22m[2mmain[22m         [2m | [22m[36m936.20 kB[39m[2m | [22m              [36m235.59 kB[39m
+[32mstyles-6GXXMJ2W.css[39m  [2m | [22m[2mstyles[22m       [2m | [22m[36m325.49 kB[39m[2m | [22m               [36m34.37 kB[39m
+[32mscripts-SQ7W6IC7.js[39m  [2m | [22m[2mscripts[22m      [2m | [22m [36m80.42 kB[39m[2m | [22m               [36m21.62 kB[39m
+[32mpolyfills-S7EIKARU.js[39m[2m | [22m[2mpolyfills[22m    [2m | [22m [36m34.62 kB[39m[2m | [22m               [36m11.37 kB[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m[2m | [22m  [1m1.38 MB[22m[2m | [22m              [1m302.95 kB[22m
+
+Application bundle generation failed. [6.443 seconds]
+
+node.exe : [1m[33m[33mÔû▓ 
+[43;33m[[43;30mWARNING[43;33
+m][0m [1msrc/app/components/
+register/register.scss 
+exceeded maximum budget. 
+Budget 2.00 kB was not met by 
+2.10 kB with a total of 4.10 
+kB.[0m
+En C:\Program 
+Files\nodejs\npx.ps1: 29 
+Carácter: 3
++   & $NODE_EXE $NPX_CLI_JS 
+$args
++   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+    NotSpecified: ([1m[33m  
+  [33mÔ...of 4.10 kB.[0m:   
+ String) [], RemoteExcepti    
+on
+    + FullyQualifiedErrorId : 
+    NativeCommandError
+ 
+
+
+[33mÔû▓ [43;33m[[43;30mWARN
+ING[43;33m][0m [1msrc/app/c
+omponents/sidebar/sidebar.scss
+ exceeded maximum budget. 
+Budget 2.00 kB was not met by 
+503 bytes with a total of 
+2.50 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARN
+ING[43;33m][0m [1msrc/app/c
+omponents/navbar/navbar.scss 
+exceeded maximum budget. 
+Budget 2.00 kB was not met by 
+83 bytes with a total of 2.08 
+kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARN
+ING[43;33m][0m [1msrc/app/c
+omponents/login/login.scss 
+exceeded maximum budget. 
+Budget 2.00 kB was not met by 
+2.04 kB with a total of 4.04 
+kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARN
+ING[43;33m][0m [1mModule 
+'sweetalert2' used by 
+'src/app/app.ts' is not 
+ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information see: [
+4mhttps://angular.dev/tools/cl
+i/build#configuring-commonjs-d
+ependencies[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARN
+ING[43;33m][0m [1mModule 
+'@stomp/stompjs' used by 'src/
+app/services/websocket.ts' is 
+not ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information see: [
+4mhttps://angular.dev/tools/cl
+i/build#configuring-commonjs-d
+ependencies[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARN
+ING[43;33m][0m [1mModule 
+'sockjs-client' used by 'src/a
+pp/services/websocket.ts' is 
+not ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information see: [
+4mhttps://angular.dev/tools/cl
+i/build#configuring-commonjs-d
+ependencies[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARN
+ING[43;33m][0m [1m4 rules 
+skipped due to selector 
+errors:
+  .form-floating>~label -> 
+Did not expect successive 
+traversals.
+  .btn-group>+.btn -> Did not 
+expect successive traversals.
+  .btn-group>+.btn -> Did not 
+expect successive traversals.
+  .btn-group-vertical>+.btn 
+-> Did not expect successive 
+traversals.[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;
+97mERROR[41;31m][0m [1msrc/
+app/components/register/regist
+er.scss exceeded maximum 
+budget. Budget 4.00 kB was 
+not met by 104 bytes with a 
+total of 4.10 kB.[0m
+
+
+[31mX [41;31m[[41;97mERROR
+[41;31m][0m [1msrc/app/compo
+nents/login/login.scss 
+exceeded maximum budget. 
+Budget 4.00 kB was not met by 
+35 bytes with a total of 4.04 
+kB.[0m
+
+[39m[22m

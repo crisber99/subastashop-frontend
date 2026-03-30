@@ -10,19 +10,19 @@
     padding-top: 80px;
     background: var(--bg-gradient) fixed;
     position: relative;
-    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+}
 
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: url('/assets/img/hero-banner.png') center/cover no-repeat;
-        opacity: 0.05; /* Más sutil en el fondo global */
-        z-index: 0;
-    }
+.login-hero-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .bg-welcome {
@@ -31,25 +31,23 @@
     color: white;
     border-right: 1px solid var(--glass-border);
     overflow: hidden;
+}
 
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: -50px;
-        right: -30px;
-        width: 120%;
-        height: 60%;
-        background: url('/assets/img/hero-banner.png') bottom right/contain no-repeat;
-        opacity: 0.4;
-        z-index: 1;
-        transform: rotate(-2deg);
-        pointer-events: none;
-    }
+.welcome-decor-img {
+    position: absolute;
+    bottom: -40px;
+    right: -20px;
+    width: 110%;
+    height: auto;
+    opacity: 0.3;
+    z-index: 1;
+    transform: rotate(-3deg);
+    pointer-events: none;
 }
 
 .welcome-content {
     position: relative;
-    z-index: 2; /* Encima del banner */
+    z-index: 2; 
 }
 
 .logo-img {

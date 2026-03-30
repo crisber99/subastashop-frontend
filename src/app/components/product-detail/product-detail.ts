@@ -416,15 +416,15 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   // --- VALIDACIÓN DE DUEÑO ---
   esDuenoProducto(): boolean {
-    if (!this.producto || !this.producto.tienda) return false;
+    if (!this.producto) return false;
     const user = this.authService.currentUser();
     if (!user) return false;
     
     // Si es super admin, puede ver todo
     if (user.role === 'ROLE_SUPER_ADMIN') return true;
 
-    // Si es el dueño de la tienda (propietario)
-    return user.id === this.producto.tienda.usuarioId;
+    // Si es el dueño de la tienda (comparando con el ID del DTO)
+    return user.id === this.producto.tiendaUsuarioId;
   }
 
   ngOnDestroy() {

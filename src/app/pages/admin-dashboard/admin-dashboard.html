@@ -77,40 +77,48 @@
   <!-- 📦 SECCIÓN DE PRODUCTOS -->
   <div class="row mt-4" *ngIf="mostrarProductos">
     <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Lista de Productos</h5>
-          <button class="btn btn-sm btn-outline-light" (click)="cargarProductos()">Actualizar</button>
+      <div class="card shadow-sm" style="background: var(--card-bg); border-color: var(--glass-border);">
+        <div class="card-header d-flex justify-content-between align-items-center"
+             style="background: var(--glass-bg); border-color: var(--glass-border);">
+          <h5 class="mb-0" style="color: var(--text-color);">Lista de Productos</h5>
+          <button class="btn btn-sm btn-outline-primary" (click)="cargarProductos()">Actualizar</button>
         </div>
         <div class="card-body p-0">
           <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Producto</th>
-                  <th>Precio</th>
-                  <th>Estado</th>
-                  <th>Tenant</th>
+            <table class="table mb-0" style="color: var(--text-color);">
+              <thead style="background: var(--glass-bg); border-color: var(--glass-border);">
+                <tr style="border-color: var(--glass-border);">
+                  <th style="color: var(--primary-color); border-color: var(--glass-border); background: transparent;">ID</th>
+                  <th style="color: var(--primary-color); border-color: var(--glass-border); background: transparent;">PRODUCTO</th>
+                  <th style="color: var(--primary-color); border-color: var(--glass-border); background: transparent;">PRECIO</th>
+                  <th style="color: var(--primary-color); border-color: var(--glass-border); background: transparent;">ESTADO</th>
+                  <th style="color: var(--primary-color); border-color: var(--glass-border); background: transparent;">TENANT</th>
+                  <th style="color: var(--primary-color); border-color: var(--glass-border); background: transparent;">ACCIONES</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let p of productos">
-                  <td>{{ p.id }}</td>
-                  <td><strong>{{ p.nombre }}</strong></td>
-                  <td>${{ p.precio }}</td>
+                <tr *ngFor="let p of productos" style="border-color: var(--glass-border);">
+                  <td style="color: var(--text-secondary, #888);">{{ p.id }}</td>
+                  <td><strong style="color: var(--text-color);">{{ p.nombre }}</strong></td>
+                  <td style="color: var(--text-color);">${{ p.precioBase || p.precio }}</td>
                   <td>
-                    <span class="badge" [ngClass]="{
+                    <span class="badge rounded-pill" [ngClass]="{
                       'bg-success': p.estado === 'DISPONIBLE',
                       'bg-warning text-dark': p.estado === 'RESERVADO',
                       'bg-danger': p.estado === 'VENDIDO',
-                      'bg-info text-dark': p.estado === 'SUBASTA' || p.estado === 'RIFA'
-                    }">{{ p.estado }}</span>
+                      'bg-primary': p.estado === 'EN_SUBASTA',
+                      'bg-purple text-white': p.estado === 'FINALIZADA'
+                    }" style="font-size: 11px;">{{ p.estado }}</span>
                   </td>
-                  <td><small class="text-muted">{{ p.tenantId }}</small></td>
+                  <td><small style="color: var(--text-secondary, #888);">{{ p.tenantId || p.tienda?.slug }}</small></td>
+                  <td>
+                    <a [routerLink]="['/producto', p.id]" class="btn btn-xs btn-outline-primary btn-sm rounded-pill px-2 py-0" style="font-size: 11px;">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
                 </tr>
                 <tr *ngIf="productos.length === 0">
-                  <td colspan="5" class="text-center py-4 text-muted">No se encontraron productos.</td>
+                  <td colspan="6" class="text-center py-4" style="color: var(--text-secondary, #888);">No se encontraron productos.</td>
                 </tr>
               </tbody>
             </table>

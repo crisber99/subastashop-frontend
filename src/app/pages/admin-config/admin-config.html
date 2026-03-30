@@ -86,7 +86,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 bg-white mb-4 shadow-sm">
+            <div class="card border-0 mb-4 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title d-flex align-items-center">
                         <i class="bi bi-clock-history me-2 text-primary"></i> Estado de la Suscripción
@@ -109,9 +109,9 @@
                             </div>
                         </div>
 
-                        <div class="p-4 border rounded bg-light text-center mt-3">
+                        <div class="p-4 border rounded text-center mt-3" style="background: var(--glass-bg);">
                             <h6>🚀 ¡Lleva tu tienda al siguiente nivel!</h6>
-                            <p class="text-muted small">Evita que tus productos se pausen automáticamente activando tu suscripción premium hoy mismo.</p>
+                            <p class="small" style="color: var(--text-secondary, #888);">Evita que tus productos se pausen automáticamente activando tu suscripción premium hoy mismo.</p>
                             <button (click)="suscribirse()" class="btn btn-primary btn-lg px-3 shadow-sm">
                                 <i class="bi bi-credit-card me-2"></i> Suscribirse
                             </button>
@@ -120,15 +120,14 @@
                 </div>
             </div>
 
-            <div class="card bg-light border-0 shadow-sm">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h5>💡 ¿Por qué pedimos esto?</h5>
-                    <p class="text-muted small">
+                    <p class="small" style="color: var(--text-secondary, #888);">
                         Para mantener la seguridad de SubastaShop, necesitamos verificar que eres una persona real.
                     </p>
-                    <ul class="small ps-3 text-muted">
-                        <li>El <strong>RUT</strong> y las <strong>Fotos</strong> son solo para uso interno de
-                            validación.</li>
+                    <ul class="small ps-3" style="color: var(--text-secondary, #888);">
+                        <li>El <strong>RUT</strong> y las <strong>Fotos</strong> son solo para uso interno de validación.</li>
                         <li>Los <strong>Datos Bancarios</strong> son públicos para tus compradores ganadores.</li>
                     </ul>
                 </div>

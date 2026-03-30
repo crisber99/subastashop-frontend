@@ -1,0 +1,58 @@
+/* === Admin Config: Dark Mode Aware Styles === */
+
+.card {
+  background: var(--card-bg) !important;
+  border-color: var(--glass-border) !important;
+  color: var(--text-color);
+}
+
+.card-header {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-border) !important;
+  color: var(--text-color);
+}
+
+.card.bg-white,
+.card.bg-light {
+  background: var(--card-bg) !important;
+}
+
+.card-body h5,
+.card-body h6,
+.card-body p:not(.text-muted),
+.card-body label,
+.card-body span:not(.badge),
+.form-label {
+  color: var(--text-color) !important;
+}
+
+.form-control,
+.form-control:focus {
+  background: var(--glass-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--glass-border) !important;
+}
+
+.form-control::placeholder {
+  color: var(--text-secondary, #888) !important;
+}
+
+.form-text {
+  color: var(--text-secondary, #888) !important;
+}
+
+/* Border section headings */
+h5.border-bottom,
+.border-bottom {
+  border-color: var(--glass-border) !important;
+}
+
+/* Container heading */
+h2 {
+  color: var(--text-color);
+}
+
+/* Dividers */
+hr {
+  border-color: var(--glass-border);
+}

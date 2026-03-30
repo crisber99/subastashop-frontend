@@ -1,8 +1,8 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="blue_grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
     </linearGradient>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="15" result="blur" />
@@ -12,18 +12,22 @@
   <!-- Background Circle -->
   <circle cx="256" cy="256" r="240" fill="url(#blue_grad)" />
   
-  <!-- Shopping Cart Icon -->
-  <path d="M160 360 C160 382.091 177.909 400 200 400 C222.091 400 240 382.091 240 360 C240 337.909 222.091 320 200 320 C177.909 320 160 337.909 160 360 Z" fill="white" opacity="0.9" />
-  <path d="M320 360 C320 382.091 337.909 400 360 400 C382.091 400 400 382.091 400 360 C400 337.909 382.091 320 360 320 C337.909 320 320 337.909 320 360 Z" fill="white" opacity="0.9" />
-  <path d="M120 120 L160 120 L200 300 L400 300 L440 160 L180 160" stroke="white" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Improved Cart Icon -->
+  <path d="M140 160 H180 L220 340 H400 L440 200 H200" stroke="white" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <circle cx="230" cy="380" r="25" fill="white" />
+  <circle cx="360" cy="380" r="25" fill="white" />
   
-  <!-- Auction Gavel (Simplified) -->
-  <g transform="translate(256, 180) rotate(-45)">
-    <rect x="-40" y="-20" width="80" height="40" rx="10" fill="white" />
-    <rect x="-5" y="20" width="10" height="100" rx="5" fill="white" />
-    <!-- Spark detail -->
-    <circle cx="50" cy="-30" r="10" fill="#f97316" filter="url(#glow)">
-       <animate attributeName="r" values="8;12;8" dur="1.5s" repeatCount="indefinite" />
-    </circle>
+  <!-- Fire Detail on Cart -->
+  <path d="M440 180 C440 180 460 140 460 110 C460 80 430 90 430 110 C430 130 450 150 440 180" fill="#f97316" />
+  <path d="M445 175 C445 175 455 145 455 125 C455 105 440 110 440 125 C440 140 450 150 445 175" fill="#fde047" />
+
+  <!-- Auction Gavel (User Style) -->
+  <g transform="translate(230, 200) rotate(-35)">
+    <!-- Hammer Head -->
+    <rect x="-60" y="-30" width="120" height="60" rx="15" fill="white" stroke="#1e40af" stroke-width="5" />
+    <rect x="-60" y="-10" width="10" height="20" fill="#e2e8f0" />
+    <rect x="50" y="-10" width="10" height="20" fill="#e2e8f0" />
+    <!-- Hammer Handle -->
+    <rect x="-10" y="30" width="20" height="150" rx="10" fill="white" stroke="#1e40af" stroke-width="5" />
   </g>
 </svg>

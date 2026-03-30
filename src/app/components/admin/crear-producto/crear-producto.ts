@@ -207,7 +207,9 @@ export class CrearProducto implements OnInit {
     formData.append('tipoVenta', value.tipoVenta);
     formData.append('stock', value.stock.toString());
 
-    if (value.tipoVenta !== 'RIFA') {
+    if (value.tipoVenta === 'RIFA') {
+      formData.append('precioBase', '0');
+    } else {
       formData.append('precioBase', value.precioBase.toString());
     }
 

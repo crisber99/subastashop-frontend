@@ -96,6 +96,10 @@ export class ProductService {
     return this.http.get<any[]>(`${this.apiUrlRifas}/${id}/ganadores`);
   }
 
+  getMisTickets(productoId: number) {
+    return this.http.get<any[]>(`${this.apiUrlRifas}/${productoId}/mis-tickets`);
+  }
+
   getProductosPorTienda(slug: string) {
     return this.http.get<any[]>(`${this.apiUrlPublic}/productos/tienda/${slug}`);
   }

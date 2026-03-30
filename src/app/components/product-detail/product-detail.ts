@@ -48,6 +48,8 @@ export class ProductDetail implements OnInit, OnDestroy {
   ticketsVendidos: number[] = [];
   ticketsDetalle: any[] = [];
   ganadores: any[] = [];
+  misTickets: any[] = [];
+  comprobante: any = null;
   
   // Variables del Show de Sorteo ✨
   showSorteo: boolean = false;
@@ -207,6 +209,7 @@ export class ProductDetail implements OnInit, OnDestroy {
           this.generarNumeros(this.producto.cantidadNumeros);
           this.cargarVendidos();
           if (this.authService.isAdmin()) this.cargarTablaAdmin();
+          if (this.authService.isLoggedIn()) this.cargarMisTickets();
           
           // Mostrar ganadores siempre si la rifa ya terminó
           if (this.producto.estado === 'FINALIZADA' || this.producto.estado === 'VENDIDO') {
@@ -298,6 +301,13 @@ export class ProductDetail implements OnInit, OnDestroy {
     this.numerosRifa = Array.from({ length: cantidad }, (_, i) => i + 1);
   }
 
+  cargarMisTickets() {
+    this.productService.getMisTickets(this.producto.id).subscribe({
+      next: (data) => this.misTickets = data || [],
+      error: () => this.misTickets = []
+    });
+  }
+
   cargarVendidos() {
     this.productService.getTicketsVendidos(this.producto.id).subscribe(data => {
       this.ticketsVendidos = data;
@@ -309,28 +319,150 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   comprarNumero(num: number) {
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Inicia Sesión', 'Debes iniciar sesión para comprar un ticket.', 'info');
+      return;
+    }
     Swal.fire({
-        title: `¿Comprar el #${num}?`, text: `El precio es $${this.producto.precioTicket}`,
-        icon: 'question', showCancelButton: true, confirmButtonText: 'Sí, comprar', cancelButtonText: 'Cancelar'
+        title: `¿Comprar el #${num}?`,
+        html: `<p>El precio es <b>$${this.producto.precioTicket?.toLocaleString()}</b></p><p class="text-muted small">Recibirás un comprobante por email.</p>`,
+        icon: 'question', showCancelButton: true, confirmButtonText: 'Sí, comprar 🎟️', cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
+            Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             this.productService.comprarTicket(this.producto.id, num).subscribe({
-                next: () => {
-                  Swal.fire('¡Comprado!', `Ticket #${num} reservado exitosamente.`, 'success');
+                next: (resp: any) => {
+                  Swal.close();
+                  this.comprobante = resp;
                   this.cargarVendidos();
+                  this.cargarMisTickets();
+                  // Mostrar modal de comprobante
+                  const modalEl = document.getElementById('modalComprobante');
+                  if (modalEl) {
+                    const modal = new (window as any).bootstrap.Modal(modalEl);
+                    modal.show();
+                  }
                 },
                 error: (err) => {
-                  if (err.status === 200) {
-                    Swal.fire('¡Comprado!', `Ticket #${num} reservado exitosamente.`, 'success');
-                    this.cargarVendidos();
-                  } else {
-                    const errorMsg = err.error?.message || 'No se pudo comprar el ticket';
-                    Swal.fire('Error', errorMsg, 'error');
-                  }
+                  Swal.close();
+                  const errorMsg = err.error?.message || err.error || 'No se pudo comprar el ticket';
+                  Swal.fire('Error', errorMsg, 'error');
                 }
             });
         }
     });
+  }
+
+  // --- SELECCIÓN MÚLTIPLE DE TICKETS ---
+  ticketsSeleccionados: number[] = [];
+
+  isTicketSeleccionado(num: number): boolean {
+    return this.ticketsSeleccionados.includes(num);
+  }
+
+  toggleSeleccion(num: number) {
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Inicia Sesión', 'Debes iniciar sesión para comprar tickets.', 'info');
+      return;
+    }
+    if (this.isTicketSeleccionado(num)) {
+      this.ticketsSeleccionados = this.ticketsSeleccionados.filter(n => n !== num);
+    } else {
+      this.ticketsSeleccionados.push(num);
+    }
+  }
+
+  limpiarSeleccion() {
+    this.ticketsSeleccionados = [];
+  }
+
+  async comprarSeleccionados() {
+    if (this.ticketsSeleccionados.length === 0) return;
+
+    const total = this.ticketsSeleccionados.length * (this.producto.precioTicket || 0);
+    const confirmacion = await Swal.fire({
+      title: `¿Comprar ${this.ticketsSeleccionados.length} ticket(s)?`,
+      html: `<p>Tickets: <b>${this.ticketsSeleccionados.map(n => '#' + n).join(', ')}</b></p>
+             <p>Total: <b class="text-warning">$${total.toLocaleString()}</b></p>
+             <p class="text-muted small">Recibirás un comprobante por email.</p>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '🎟️ Confirmar Compra',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirmacion.isConfirmed) return;
+
+    Swal.fire({ title: 'Procesando...', html: 'Reservando tus tickets...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+    // Comprar cada ticket secuencialmente (correcto para evitar conflictos de concurrencia)
+    const ticketsAComprar = [...this.ticketsSeleccionados];
+    let primerComprobante: any = null;
+    let ticketsComprados: number[] = [];
+    let huboError = false;
+
+    for (const num of ticketsAComprar) {
+      try {
+        const resp: any = await this.productService.comprarTicket(this.producto.id, num).toPromise();
+        if (!primerComprobante) primerComprobante = resp;
+        ticketsComprados.push(num);
+      } catch (err: any) {
+        const msg = err.error?.message || err.error || `El ticket #${num} ya fue tomado`;
+        console.warn('No se pudo comprar ticket:', num, msg);
+        huboError = true;
+      }
+    }
+
+    Swal.close();
+    this.cargarVendidos();
+    this.cargarMisTickets();
+    this.limpiarSeleccion();
+
+    if (ticketsComprados.length > 0 && primerComprobante) {
+      this.comprobante = { ...primerComprobante, tickets: ticketsComprados };
+      const modalEl = document.getElementById('modalComprobante');
+      if (modalEl) new (window as any).bootstrap.Modal(modalEl).show();
+      if (huboError) {
+        Swal.fire({ icon: 'warning', title: 'Algunos tickets no pudieron comprarse', text: `Se compraron ${ticketsComprados.length} de ${ticketsAComprar.length} tickets. Los no disponibles fueron omitidos.`, timer: 4000, showConfirmButton: false });
+      }
+    } else {
+      Swal.fire('Error', 'No se pudo comprar ningún ticket. Es posible que ya estén tomados.', 'error');
+    }
+  }
+
+  imprimirComprobante() {
+    this.imprimirTicket(this.comprobante);
+  }
+
+  imprimirTicket(t: any) {
+    const tickets = t.tickets || [t.numeroTicket];
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(`<!DOCTYPE html><html lang="es"><head>
+      <meta charset="UTF-8"><title>Comprobante SubastaShop</title>
+      <style>
+        body { font-family: Arial, sans-serif; background: #0f0f1a; color: #fff; margin: 0; padding: 30px; }
+        .card { background: #1a1a2e; border-radius: 20px; padding: 30px; max-width: 560px; margin: auto; }
+        .header { background: linear-gradient(135deg, #6f42c1, #0d6efd); border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 24px; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 900; }
+        .ticket-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; }
+        .ticket-item { background: linear-gradient(135deg, #6f42c1, #0d6efd); border-radius: 10px; padding: 12px 20px; text-align: center; }
+        .ticket-item .num { font-size: 2rem; font-weight: 900; }
+        .code { background: #0a0a14; border: 1px dashed rgba(255,193,7,0.4); border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 20px; }
+        .code p { color: #ffc107; font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 3px; margin: 0; }
+        .label { color: #a0a0c0; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+        @media print { body { background: white; color: #000; } .header { color: white; } }
+      </style></head><body>
+      <div class="card">
+        <div class="header"><h1>🎟️ SUBASTA<span style="color:#ffc107">SHOP</span></h1><p style="margin:4px 0 0;opacity:.8;font-size:13px">COMPROBANTE OFICIAL</p></div>
+        <div class="ticket-grid">${tickets.map((n: number) => `<div class="ticket-item"><div class="label">TICKET</div><div class="num">#${n}</div></div>`).join('')}</div>
+        <div style="margin-bottom:16px"><span class="label">Rifa</span><p style="margin:4px 0 0;font-size:16px;font-weight:700">${t.nombreRifa || this.producto?.nombre}</p></div>
+        <div style="margin-bottom:16px"><span class="label">Comprador</span><p style="margin:4px 0 0">${t.comprador}</p></div>
+        <div class="code"><p class="label" style="margin-bottom:6px">Código de Verificación</p><p>${t.codigoVerificacion}</p></div>
+        <p style="font-size:12px;color:#606080;text-align:center">Comprobante generado por SubastaShop. No requiere firma.</p>
+      </div>
+      <script>window.print(); window.onafterprint = () => window.close();<\/script></body></html>`);
+    w.document.close();
   }
 
   lanzarSorteo() {

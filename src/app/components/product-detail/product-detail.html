@@ -137,17 +137,24 @@
                             </p>
                         </div>
 
-                        <p class="fw-bold mb-2 small"><i class="bi bi-grid-3x3-gap me-1 text-primary"></i> Selecciona tu número:</p>
+                        <p class="fw-bold mb-2 small"><i class="bi bi-grid-3x3-gap me-1 text-primary"></i> Selecciona tus números:</p>
+                        <p class="text-muted" style="font-size: 11px;">
+                            <i class="bi bi-info-circle me-1"></i> Pulsa para seleccionar, pulsa de nuevo para deseleccionar. Usa el carrito flotante para comprar.
+                        </p>
                         <div class="d-flex flex-wrap gap-2 justify-content-center p-3 bg-light rounded-4"
                             style="max-height: 250px; overflow-y: auto; border: 1px solid var(--glass-border);">
                             @for (num of numerosRifa; track num) {
                             <button class="btn ticket-btn transition-all" 
-                                [class.btn-outline-primary]="!isTicketVendido(num)"
-                                [class.btn-danger]="isTicketVendido(num)" 
+                                [class.btn-danger]="isTicketVendido(num)"
+                                [class.btn-success]="isTicketSeleccionado(num) && !isTicketVendido(num)"
+                                [class.btn-outline-primary]="!isTicketVendido(num) && !isTicketSeleccionado(num)"
                                 [class.disabled]="isTicketVendido(num)"
-                                (click)="!isTicketVendido(num) && comprarNumero(num)"
+                                (click)="!isTicketVendido(num) && toggleSeleccion(num)"
+                                [title]="isTicketVendido(num) ? 'Vendido' : isTicketSeleccionado(num) ? 'Click para deseleccionar' : 'Click para seleccionar'"
                                 style="width: 48px; height: 48px; font-weight: 700; border-radius: 12px;">
-                                @if (isTicketVendido(num)) { <i class="bi bi-x"></i> } @else { {{ num }} }
+                                @if (isTicketVendido(num)) { <i class="bi bi-x"></i> }
+                                @else if (isTicketSeleccionado(num)) { <i class="bi bi-check-lg"></i> }
+                                @else { {{ num }} }
                             </button>
                             }
                         </div>
@@ -177,6 +184,36 @@
                                         </div>
                                     </div>
                                     <i class="bi bi-patch-check-fill text-primary fs-5"></i>
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- 🎟️ MIS TICKETS (Solo si está logueado y tiene tickets) -->
+                        <div *ngIf="authService.isLoggedIn() && misTickets && misTickets.length > 0"
+                             class="mt-4 border-top pt-4 animate__animated animate__fadeIn">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0">🎟️ Mis Tickets</h5>
+                                <span class="badge bg-primary rounded-pill">{{ misTickets.length }}</span>
+                            </div>
+                            <div class="d-flex flex-column gap-2">
+                                @for (t of misTickets; track t.id) {
+                                <div class="ticket-mini-card p-3 rounded-4 d-flex justify-content-between align-items-center"
+                                     style="background: linear-gradient(135deg, #0d1117, #1a1a2e); border: 1px solid rgba(109,66,193,0.3);">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="ticket-num-badge text-white fw-bold" 
+                                             style="background: linear-gradient(135deg, #6f42c1, #0d6efd); border-radius: 10px; padding: 8px 14px; font-size: 1.2rem; font-weight: 900;">
+                                            #{{ t.numeroTicket }}
+                                        </div>
+                                        <div>
+                                            <p class="mb-0 small text-white-50 text-uppercase" style="font-size: 10px; letter-spacing: 1px;">Código</p>
+                                            <p class="mb-0 fw-bold text-warning" style="font-size: 12px; font-family: monospace; letter-spacing: 1px;">{{ t.codigoVerificacion }}</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-light rounded-pill px-3" 
+                                            (click)="imprimirTicket(t)" title="Imprimir comprobante">
+                                        <i class="bi bi-printer me-1"></i> Imprimir
+                                    </button>
                                 </div>
                                 }
                             </div>
@@ -346,9 +383,100 @@
     </div>
 </div>
 
+
 <ng-template #loadingTemplate>
     <div class="d-flex flex-column justify-content-center align-items-center vh-50 mt-5">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
         <h4 class="mt-3 text-muted">Cargando producto...</h4>
     </div>
 </ng-template>
+
+<!-- 🎟️ MODAL COMPROBANTE -->
+<div class="modal fade" id="modalComprobante" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg overflow-hidden" style="background: #1a1a2e; border-radius: 20px;">
+            <div class="modal-header border-0 text-white py-4" style="background: linear-gradient(135deg, #6f42c1, #0d6efd);">
+                <div>
+                    <h5 class="modal-title fw-bold mb-0">🎟️ Comprobante de Compra</h5>
+                    <p class="mb-0 small opacity-75" *ngIf="comprobante">{{ comprobante.nombreRifa }}</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" *ngIf="comprobante">
+                <!-- Tickets comprados -->
+                <div class="d-flex flex-wrap gap-3 justify-content-center mb-4">
+                    @for (num of (comprobante.tickets || [comprobante.numeroTicket]); track num) {
+                    <div class="text-center px-4 py-3 rounded-3" 
+                         style="background: linear-gradient(135deg, #6f42c1, #0d6efd); min-width: 90px;">
+                        <p class="mb-0 small text-white opacity-75" style="font-size:10px; letter-spacing: 2px;">TICKET</p>
+                        <h2 class="text-white fw-900 mb-0">#{{ num }}</h2>
+                    </div>
+                    }
+                </div>
+
+                <!-- Info -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.05);">
+                            <p class="mb-1 text-white-50 small">👤 Comprador</p>
+                            <p class="mb-0 text-white fw-bold">{{ comprobante.comprador }}</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.05);">
+                            <p class="mb-1 text-white-50 small">💰 Total Pagado</p>
+                            <p class="mb-0 text-warning fw-bold fs-5">
+                                ${{ ((comprobante.tickets?.length || 1) * comprobante.precioTicket) | number }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Código de verificación -->
+                <div class="p-3 rounded-3 text-center mb-4" 
+                     style="background: rgba(255,193,7,0.1); border: 1px dashed rgba(255,193,7,0.4);">
+                    <p class="mb-1 text-white-50 small text-uppercase" style="letter-spacing: 2px;">Código de Verificación</p>
+                    <p class="mb-0 text-warning fw-bold" style="font-family: monospace; font-size: 1.1rem; letter-spacing: 3px;">
+                        {{ comprobante.codigoVerificacion }}
+                    </p>
+                </div>
+
+                <!-- Info de pago -->
+                <div class="p-3 rounded-3" style="background: rgba(13,110,253,0.1); border-left: 3px solid #0d6efd;">
+                    <p class="mb-0 text-white-50 small">
+                        📌 <strong class="text-white">Instrucciones de Pago:</strong> Para confirmar tu participación, deberás realizar el pago según las instrucciones del organizador. Guarda este código — será solicitado ante cualquier consulta. También te enviamos el comprobante a tu email.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-transparent pb-4">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" (click)="imprimirComprobante()">
+                    <i class="bi bi-printer me-2"></i> Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🛒 CARRITO FLOTANTE DE TICKETS -->
+<div *ngIf="ticketsSeleccionados.length > 0" 
+     class="ticket-cart-float animate__animated animate__slideInUp"
+     style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; width: min(90vw, 480px);">
+    <div class="d-flex align-items-center justify-content-between gap-3 p-3 px-4 rounded-pill shadow-lg text-white"
+         style="background: linear-gradient(135deg, #6f42c1, #0d6efd); backdrop-filter: blur(10px);">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <i class="bi bi-cart3 fs-5"></i>
+            <span class="fw-bold">{{ ticketsSeleccionados.length }} ticket{{ ticketsSeleccionados.length > 1 ? 's' : '' }}</span>
+            <span class="opacity-75">·</span>
+            <span class="text-warning fw-bold">${{ (ticketsSeleccionados.length * (producto?.precioTicket || 0)) | number }}</span>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light text-dark rounded-pill px-3 fw-bold" (click)="limpiarSeleccion()">
+                <i class="bi bi-x"></i>
+            </button>
+            <button class="btn btn-sm btn-warning rounded-pill px-3 fw-bold" (click)="comprarSeleccionados()">
+                Comprar <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+</div>

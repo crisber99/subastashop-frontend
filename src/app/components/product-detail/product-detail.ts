@@ -143,9 +143,12 @@ export class ProductDetail implements OnInit, OnDestroy {
     this.audioDrum.currentTime = 0;
     this.ganadoresRevelados = [];
     
-    for (const g of ganadores) {
+    // Invertimos el orden para mostrar del último al primero (3ero -> 2do -> 1ero)
+    const ganadoresInvertidos = [...ganadores].sort((a, b) => b.puesto - a.puesto);
+
+    for (const g of ganadoresInvertidos) {
       await this.animarRuleta(g);
-      this.ganadoresRevelados.push(g);
+      this.ganadoresRevelados.unshift(g); // Lo agregamos al inicio para que el 1ero quede arriba al final
       this.audioWin.play().catch(e => console.log('Audio blocked', e));
     }
 

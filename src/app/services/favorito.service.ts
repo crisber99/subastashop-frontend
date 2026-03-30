@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 })
 export class FavoritoService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/api/favoritos`;
+  private apiUrl = `${environment.apiUrl}/favoritos`;
 
   // Mantenemos un estado global de los IDs favoritos para actualizar los corazones en tiempo real
   private favoritosIdsSubject = new BehaviorSubject<number[]>([]);

@@ -407,11 +407,24 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   getStarArray(rating: number): number[] {
-    return Array(Math.floor(rating)).fill(0);
+    return Array(Math.floor(rating || 0)).fill(0);
   }
 
   getEmptyStarArray(rating: number): number[] {
-    return Array(5 - Math.floor(rating)).fill(0);
+    return Array(5 - Math.floor(rating || 0)).fill(0);
+  }
+
+  // --- VALIDACIÓN DE DUEÑO ---
+  esDuenoProducto(): boolean {
+    if (!this.producto || !this.producto.tienda) return false;
+    const user = this.authService.currentUser();
+    if (!user) return false;
+    
+    // Si es super admin, puede ver todo
+    if (user.role === 'ROLE_SUPER_ADMIN') return true;
+
+    // Si es el dueño de la tienda (propietario)
+    return user.id === this.producto.tienda.usuarioId;
   }
 
   ngOnDestroy() {

@@ -4,12 +4,61 @@
 
 .premium-card {
     background: var(--card-bg) !important;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border) !important;
     border-radius: var(--radius-lg) !important;
-    box-shadow: var(--premium-shadow);
-    padding: 2rem;
+    padding: 2.5rem !important;
+    box-shadow: var(--premium-shadow) !important;
+}
+
+// FIX para superposición de Form-Floating (Portado del Login)
+.form-floating {
+    position: relative;
+    margin-bottom: 1.25rem;
+
+    .form-control {
+        background: var(--glass-bg) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: var(--radius-md) !important;
+        color: var(--text-color) !important;
+        height: 58px !important;
+        padding: 1.625rem 0.75rem 0.625rem 0.75rem !important;
+
+        &::placeholder {
+            color: transparent !important;
+        }
+
+        &:focus::placeholder {
+            color: rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        &:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+        }
+    }
+
+    label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        padding: 1rem 0.75rem !important;
+        pointer-events: none;
+        color: var(--text-muted) !important;
+        transform-origin: 0 0;
+        transition: opacity .1s ease-in-out, transform .1s ease-in-out;
+        z-index: 2;
+        background: transparent !important;
+    }
+
+    .form-control:focus~label,
+    .form-control:not(:placeholder-shown)~label {
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem) !important;
+        color: var(--primary-color) !important;
+        opacity: 1 !important;
+    }
 }
 
 .ticket-item {
@@ -29,18 +78,17 @@
 }
 
 .icon-circle {
-    width: 100px;
-    height: 100px;
-    background: var(--bg-color);
+    width: 60px;
+    height: 60px;
+    background: rgba(99, 102, 241, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
     color: var(--primary-color);
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
     
-    i { font-size: 2.5rem; }
+    i { font-size: 1.5rem; }
 }
 
 .user-message {
@@ -59,8 +107,8 @@
 }
 
 [data-bs-theme="dark"] {
-    .bg-indigo-soft {
-        background-color: rgba(99, 102, 241, 0.1);
+    .form-control:focus::placeholder {
+        color: rgba(255, 255, 255, 0.3) !important;
     }
     .admin-reply {
         background: rgba(99, 102, 241, 0.15) !important;

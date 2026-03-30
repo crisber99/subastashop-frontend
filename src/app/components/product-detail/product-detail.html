@@ -2,11 +2,11 @@
     <div class="mb-4">
         @if (producto.tienda) {
         <a [routerLink]="['/tienda', producto.tienda.slug]" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-            <i class="bi bi-arrow-left"></i> Volver a {{ producto.tienda.nombre }}
+            <i class="bi bi-arrow-left me-1"></i> Volver a la Tienda
         </a>
         } @else {
         <a routerLink="/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-            <i class="bi bi-arrow-left"></i> Volver al catálogo
+            <i class="bi bi-arrow-left me-1"></i> Volver al catálogo
         </a>
         }
     </div>
@@ -153,7 +153,7 @@
                         </div>
 
                         <!-- 🛠️ BOTÓN ADMIN: LANZAR SORTEO -->
-                        <div *ngIf="authService.isAdmin() && producto.estado !== 'FINALIZADA'" class="mt-4 border-top pt-4">
+                        <div *ngIf="esDuenoProducto() && producto.estado !== 'FINALIZADA'" class="mt-4 border-top pt-4">
                             <p class="text-muted small mb-2 text-center text-uppercase ls-1">Panel de Administrador</p>
                             <button class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-sm py-3" (click)="lanzarSorteo()">
                                 <i class="bi bi-gear-fill me-2"></i> Girar Tómbola y Sortear

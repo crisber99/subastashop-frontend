@@ -5,29 +5,29 @@
         <div class="col-lg-4">
             
             <!-- VISTA USUARIO: Formulario nueva consulta -->
-            <div class="card shadow-lg border-0 overflow-hidden" *ngIf="!authService.isSuperAdmin()">
-                <div class="card-body p-4 p-md-5">
+            <div class="card premium-card animate__animated animate__fadeInLeft" *ngIf="!authService.isSuperAdmin()">
+                <div class="card-body p-0">
                     <div class="d-flex align-items-center mb-4">
-                        <div class="icon-sm bg-primary-soft text-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(99, 102, 241, 0.1);">
-                            <i class="bi bi-plus-circle fs-4"></i>
+                        <div class="icon-circle me-3">
+                            <i class="bi bi-chat-heart"></i>
                         </div>
                         <h4 class="fw-bold mb-0">Nueva Consulta</h4>
                     </div>
                     
-                    <p class="text-muted small mb-4">¿Tienes dudas con una subasta o un pago? Escríbenos y te responderemos a la brevedad.</p>
+                    <p class="text-muted small mb-4">¿Tienes dudas con una subasta o un paso? Escríbenos y te responderemos a la brevedad.</p>
                     
                     <form (ngSubmit)="enviarTicket()" #ticketForm="ngForm">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control border-0 bg-light" id="asunto" [(ngModel)]="nuevoTicket.asunto" name="asunto" placeholder="Asunto" required>
-                            <label for="asunto" class="text-muted small">Asunto / Tema</label>
+                            <input type="text" class="form-control" id="asunto" [(ngModel)]="nuevoTicket.asunto" name="asunto" placeholder=" " required>
+                            <label for="asunto">Asunto / Tema</label>
                         </div>
                         
                         <div class="form-floating mb-4">
-                            <textarea class="form-control border-0 bg-light" id="mensaje" [(ngModel)]="nuevoTicket.mensaje" name="mensaje" placeholder="Describe tu consulta" style="height: 140px" required></textarea>
-                            <label for="mensaje" class="text-muted small">Descripción de la consulta</label>
+                            <textarea class="form-control" id="mensaje" [(ngModel)]="nuevoTicket.mensaje" name="mensaje" placeholder=" " style="height: 140px" required></textarea>
+                            <label for="mensaje">Descripción de la consulta</label>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm" [disabled]="loading || !ticketForm.form.valid">
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm" [disabled]="loading || !ticketForm.form.valid">
                             <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
                             {{ loading ? 'Enviando...' : 'Enviar Consulta ✨' }}
                         </button>

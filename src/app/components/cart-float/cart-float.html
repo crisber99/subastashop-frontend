@@ -13,8 +13,8 @@
 
 <div class="modal fade" id="modalCarrito" tabindex="-1">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content glass-panel" style="padding: 0;">
-      <div class="modal-header border-bottom border-secondary">
+    <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); overflow: hidden;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
         <h5 class="modal-title fw-bold" style="color: var(--text-color);">🛒 Tu Carrito</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" 
           [ngStyle]="{'filter': 'invert(var(--is-dark, 1))'}"></button>
@@ -46,8 +46,8 @@
         
         <h4 class="text-end fw-bold" style="color: var(--text-color);">Total: ${{ cartService.total() | number }}</h4>
 
-        <div class="alert small" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308;">
-            <i class="bi bi-clock-history"></i> Al confirmar, los productos quedarán <strong>RESERVADOS</strong> 
+        <div class="alert small shadow-sm" style="background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">
+            <i class="bi bi-clock-history me-2"></i> Al confirmar, los productos quedarán <strong>RESERVADOS</strong> 
             hasta que subas el comprobante de pago.
         </div>
 

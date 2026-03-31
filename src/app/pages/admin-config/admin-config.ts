@@ -134,4 +134,27 @@ export class AdminConfig implements OnInit {
       }
     });
   }
+
+  simularExitoPago() {
+    const user = this.authService.currentUser();
+    if (!user) return;
+
+    Swal.fire({
+      title: 'Simulando pago...',
+      text: 'Activando tu suscripción Premium...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.http.post<any>(`${environment.apiUrl}/mercadopago/test/simulate-success/${user.id}`, {}).subscribe({
+      next: (res) => {
+        Swal.fire('¡Éxito!', 'Tu suscripción ha sido activada (Simulación).', 'success')
+          .then(() => window.location.reload()); // Recargar para ver los cambios
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo completar la simulación.', 'error');
+      }
+    });
+  }
 }

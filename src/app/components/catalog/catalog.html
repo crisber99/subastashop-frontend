@@ -1,10 +1,20 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-0" [style.color]="tienda?.colorPrimario || '#0d6efd'">
-                🏪 {{ nombreTienda || 'Catálogo General' }}
-            </h2>
-            <p class="text-muted small mb-0" *ngIf="nombreTienda">Bienvenido a nuestra tienda oficial</p>
+        <div class="d-flex align-items-center gap-3">
+            @if (tienda?.logoUrl) {
+                <div class="rounded-circle shadow-sm border overflow-hidden p-1 bg-white"
+                     style="width: 60px; height: 60px;">
+                    <img [src]="tienda.logoUrl" class="w-100 h-100 rounded-circle" style="object-fit: cover;">
+                </div>
+            } @else {
+                <span class="fs-2 mb-0">🏪</span>
+            }
+            <div>
+                <h2 class="fw-bold mb-0" [style.color]="tienda?.colorPrimario || '#0d6efd'">
+                    {{ nombreTienda || 'Catálogo General' }}
+                </h2>
+                <p class="text-muted small mb-0" *ngIf="nombreTienda">Bienvenido a nuestra tienda oficial</p>
+            </div>
         </div>
 
         <div class="d-flex align-items-center gap-2">

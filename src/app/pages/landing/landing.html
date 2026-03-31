@@ -74,11 +74,18 @@
 
                     <div class="card-body text-center p-4">
                         <div class="mb-3 d-flex justify-content-center">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
-                                [style.background-color]="tienda.colorPrimario || '#0d6efd'"
-                                style="width: 80px; height: 80px; font-size: 2rem;">
-                                {{ tienda.nombre.charAt(0) }}
-                            </div>
+                            @if (tienda.logoUrl) {
+                                <div class="rounded-circle shadow-sm border overflow-hidden p-1 bg-white"
+                                     style="width: 80px; height: 80px;">
+                                    <img [src]="tienda.logoUrl" class="w-100 h-100 rounded-circle" style="object-fit: cover;">
+                                </div>
+                            } @else {
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
+                                    [style.background-color]="tienda.colorPrimario || '#0d6efd'"
+                                    style="width: 80px; height: 80px; font-size: 2rem;">
+                                    {{ tienda.nombre.charAt(0) }}
+                                </div>
+                            }
                         </div>
 
                         <h5 class="card-title fw-bold mb-2">{{ tienda.nombre }}</h5>

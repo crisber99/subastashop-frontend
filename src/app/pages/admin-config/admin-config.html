@@ -146,51 +146,64 @@
                 <div class="card-body">
                     <h6 class="fw-bold mb-3"><i class="bi bi-shield-check text-success me-2"></i>Operación Segura</h6>
                     <p class="small" style="color: var(--text-secondary, #888);">
-                        SubastaShop facilita la plataforma, pero las transacciones de compra de productos son directas entre tú y el comprador.
+                        SubastaShop facilita la plataforma, pero las transacciones de compra de productos son directas
+                        entre tú y el comprador.
                     </p>
                     <ul class="small ps-3 mb-0" style="color: var(--text-secondary, #888);">
                         <li>El pago de la <strong>Suscripción</strong> es el único que realizas a SubastaShop.</li>
                         <li>Tus <strong>ganancias</strong> por ventas son 100% tuyas, sin comisiones externas.</li>
                     </ul>
                 </div>
-              <div class="modal fade" id="modalTerminos" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header" style="background: var(--primary-gradient); color: white; border: none;">
-                    <h5 class="modal-title fw-bold">📜 Términos y Responsabilidad del Vendedor</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="terms-content">
-                        <section class="mb-4">
-                            <h6 class="fw-bold text-primary mb-2">1. Veracidad y Compromiso Legal</h6>
-                            <p class="small opacity-75">El Vendedor declara bajo juramento que el RUT, nombre y datos bancarios ingresados son verídicos. Cualquier falsificación de identidad resultará en la clausura inmediata de la cuenta.</p>
-                        </section>
+            </div>
 
-                        <section class="mb-4">
-                            <h6 class="fw-bold text-primary mb-2">2. Transacciones Directas</h6>
-                            <p class="small opacity-75">SubastaShop es un facilitador tecnológico. No participamos en la recaudación de los pagos de subastas o rifas. El Vendedor es el único responsable de cobrar y entregar el producto al comprador ganador.</p>
-                        </section>
+        </div>
+    </div>
+</div>
 
-                        <section class="mb-4">
-                            <h6 class="fw-bold text-primary mb-2">3. Política de Productos y Ética</h6>
-                            <p class="small opacity-75">Queda prohibida la venta de artículos ilícitos, falsificados o que vulneren derechos de terceros. El Vendedor se compromete a mantener estándares éticos de comercio.</p>
-                        </section>
+<!-- Modal de Términos (Fuera de los contenedores para evitar errores de renderizado) -->
+<div class="modal fade" id="modalTerminos" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary-gradient); color: white; border: none;">
+                <h5 class="modal-title fw-bold">📜 Términos y Responsabilidad del Vendedor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="terms-content">
+                    <section class="mb-4">
+                        <h6 class="fw-bold text-primary mb-2">1. Veracidad y Compromiso Legal</h6>
+                        <p class="small opacity-75">El Vendedor declara bajo juramento que el RUT, nombre y datos
+                            bancarios ingresados son verídicos. Cualquier falsificación de identidad resultará en la
+                            clausura inmediata de la cuenta.</p>
+                    </section>
 
-                        <section class="mb-4">
-                            <h6 class="fw-bold text-primary mb-2">4. Exención de Responsabilidad</h6>
-                            <p class="small opacity-75">SubastaShop no garantiza la solvencia de los compradores ni la calidad de los productos. Al utilizar el servicio, el Vendedor libera a la plataforma de cualquier reclamo derivado de sus operaciones comerciales.</p>
-                        </section>
-                    </div>
-                </div>
-                <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
-                    <button type="button" class="btn btn-primary w-100 fw-bold" data-bs-dismiss="modal"
-                        (click)="aceptaTerminos = true" style="background: var(--primary-gradient); border: none;">
-                        He leído y Acepto las Condiciones
-                    </button>
+                    <section class="mb-4">
+                        <h6 class="fw-bold text-primary mb-2">2. Transacciones Directas</h6>
+                        <p class="small opacity-75">SubastaShop es un facilitador tecnológico. No participamos en la
+                            recaudación de los pagos de subastas o rifas. El Vendedor es el único responsable de cobrar
+                            y entregar el producto al comprador ganador.</p>
+                    </section>
+
+                    <section class="mb-4">
+                        <h6 class="fw-bold text-primary mb-2">3. Política de Productos y Ética</h6>
+                        <p class="small opacity-75">Queda prohibida la venta de artículos ilícitos, falsificados o que
+                            vulneren derechos de terceros. El Vendedor se compromete a mantener estándares éticos de
+                            comercio.</p>
+                    </section>
+
+                    <section class="mb-4">
+                        <h6 class="fw-bold text-primary mb-2">4. Exención de Responsabilidad</h6>
+                        <p class="small opacity-75">SubastaShop no garantiza la solvencia de los compradores ni la
+                            calidad de los productos. Al utilizar el servicio, el Vendedor libera a la plataforma de
+                            cualquier reclamo derivado de sus operaciones comerciales.</p>
+                    </section>
                 </div>
             </div>
-        </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+                <button type="button" class="btn btn-primary w-100 fw-bold" data-bs-dismiss="modal"
+                    (click)="aceptaTerminos = true" style="background: var(--primary-gradient); border: none;">
+                    He leído y Acepto las Condiciones
+                </button>
             </div>
         </div>
     </div>

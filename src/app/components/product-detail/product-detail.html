@@ -254,7 +254,8 @@
                     <i class="bi" [ngClass]="esError ? 'bi-exclamation-octagon' : 'bi-check-circle'"></i> {{ mensaje }}
                 </div>
 
-                <!-- SECCIÓN CALIFICACIONES Y RESEÑAS -->
+                <!-- SECCIÓN CALIFICACIONES - DESACTIVADA TEMPORALMENTE -->
+                @if (false) {
                 <div class="mt-5 pt-4 border-top">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold mb-0">Opiniones de Compradores</h4>
@@ -268,13 +269,11 @@
                         </div>
                     </div>
 
-                    <!-- Lista de Reseñas -->
                     <div class="calificaciones-list mb-5">
                         <div *ngIf="calificaciones.length === 0" class="text-center py-5 bg-light rounded-4">
                             <i class="bi bi-chat-dots fs-1 text-muted opacity-50"></i>
                             <p class="text-muted mt-2">Aún no hay opiniones. ¡Sé el primero en calificar!</p>
                         </div>
-
                         <div class="card border-0 shadow-sm rounded-4 mb-3 p-3 glass-card" *ngFor="let c of calificaciones">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="d-flex align-items-center">
@@ -294,7 +293,6 @@
                         </div>
                     </div>
 
-                    <!-- Formulario de Calificación -->
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-5" *ngIf="authService.isLoggedIn()">
                         <h5 class="fw-bold mb-3">Deja tu opinión</h5>
                         <div class="mb-3">
@@ -303,16 +301,12 @@
                                 <div class="btn-group w-100" role="group">
                                     <input type="radio" class="btn-check" name="btnstar" id="st5" [(ngModel)]="nuevaPuntuacion" [value]="5">
                                     <label class="btn btn-outline-warning" for="st5"><i class="bi bi-star-fill me-1"></i>5</label>
-                                    
                                     <input type="radio" class="btn-check" name="btnstar" id="st4" [(ngModel)]="nuevaPuntuacion" [value]="4">
                                     <label class="btn btn-outline-warning" for="st4"><i class="bi bi-star-fill me-1"></i>4</label>
-                                    
                                     <input type="radio" class="btn-check" name="btnstar" id="st3" [(ngModel)]="nuevaPuntuacion" [value]="3">
                                     <label class="btn btn-outline-warning" for="st3"><i class="bi bi-star-fill me-1"></i>3</label>
-                                    
                                     <input type="radio" class="btn-check" name="btnstar" id="st2" [(ngModel)]="nuevaPuntuacion" [value]="2">
                                     <label class="btn btn-outline-warning" for="st2"><i class="bi bi-star-fill me-1"></i>2</label>
-                                    
                                     <input type="radio" class="btn-check" name="btnstar" id="st1" [(ngModel)]="nuevaPuntuacion" [value]="1">
                                     <label class="btn btn-outline-warning" for="st1"><i class="bi bi-star-fill me-1"></i>1</label>
                                 </div>
@@ -332,6 +326,7 @@
                         <a routerLink="/login" class="btn btn-outline-primary rounded-pill px-4">Inicia sesión aquí</a>
                     </div>
                 </div>
+                } <!-- Fin: @if(false) calificaciones -->
             </div>
         </div>
     </div>
@@ -391,10 +386,9 @@
     </div>
 </ng-template>
 
-<!-- 🎟️ MODAL COMPROBANTE -->
-<div class="modal fade" id="modalComprobante" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modalComprobante" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg overflow-hidden" style="background: #1a1a2e; border-radius: 20px;">
+        <div class="modal-content border-0 shadow-lg overflow-hidden" style="background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border);">
             <div class="modal-header border-0 text-white py-4" style="background: linear-gradient(135deg, #6f42c1, #0d6efd);">
                 <div>
                     <h5 class="modal-title fw-bold mb-0">🎟️ Comprobante de Compra</h5>
@@ -417,14 +411,14 @@
                 <!-- Info -->
                 <div class="row g-3 mb-4">
                     <div class="col-6">
-                        <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.05);">
-                            <p class="mb-1 text-white-50 small">👤 Comprador</p>
-                            <p class="mb-0 text-white fw-bold">{{ comprobante.comprador }}</p>
+                        <div class="p-3 rounded-3" style="background: rgba(109,66,193,0.1); border: 1px solid rgba(109,66,193,0.2);">
+                            <p class="mb-1 text-muted small">👤 Comprador</p>
+                            <p class="mb-0 fw-bold" style="color: var(--text-color);">{{ comprobante.comprador }}</p>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.05);">
-                            <p class="mb-1 text-white-50 small">💰 Total Pagado</p>
+                        <div class="p-3 rounded-3" style="background: rgba(109,66,193,0.1); border: 1px solid rgba(109,66,193,0.2);">
+                            <p class="mb-1 text-muted small">💰 Total a Pagar</p>
                             <p class="mb-0 text-warning fw-bold fs-5">
                                 ${{ ((comprobante.tickets?.length || 1) * comprobante.precioTicket) | number }}
                             </p>
@@ -434,21 +428,21 @@
 
                 <!-- Código de verificación -->
                 <div class="p-3 rounded-3 text-center mb-4" 
-                     style="background: rgba(255,193,7,0.1); border: 1px dashed rgba(255,193,7,0.4);">
-                    <p class="mb-1 text-white-50 small text-uppercase" style="letter-spacing: 2px;">Código de Verificación</p>
+                     style="background: rgba(255,193,7,0.08); border: 1px dashed rgba(255,193,7,0.4);">
+                    <p class="mb-1 text-muted small text-uppercase" style="letter-spacing: 2px;">Código de Verificación</p>
                     <p class="mb-0 text-warning fw-bold" style="font-family: monospace; font-size: 1.1rem; letter-spacing: 3px;">
                         {{ comprobante.codigoVerificacion }}
                     </p>
                 </div>
 
                 <!-- Info de pago -->
-                <div class="p-3 rounded-3" style="background: rgba(13,110,253,0.1); border-left: 3px solid #0d6efd;">
-                    <p class="mb-0 text-white-50 small">
-                        📌 <strong class="text-white">Instrucciones de Pago:</strong> Para confirmar tu participación, deberás realizar el pago según las instrucciones del organizador. Guarda este código — será solicitado ante cualquier consulta. También te enviamos el comprobante a tu email.
+                <div class="p-3 rounded-3" style="background: rgba(13,110,253,0.08); border-left: 3px solid #0d6efd;">
+                    <p class="mb-0 small" style="color: var(--text-color);">
+                        📌 <strong>Instrucciones de Pago:</strong> Para confirmar tu participación, deberás contactar al organizador de la tienda y realizar la transferencia según sus instrucciones. Guarda este código de verificación — será solicitado ante cualquier consulta. También te enviamos el comprobante a tu email.
                     </p>
                 </div>
             </div>
-            <div class="modal-footer border-0 bg-transparent pb-4">
+            <div class="modal-footer border-top pb-4" style="border-color: var(--glass-border) !important;">
                 <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" (click)="imprimirComprobante()">
                     <i class="bi bi-printer me-2"></i> Imprimir

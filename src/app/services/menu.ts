@@ -20,7 +20,7 @@ export class MenuService {
       label: 'Inicio',
       icon: 'bi-house-door',
       route: '/',
-      roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+      roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_COMPRADOR']
     },
     {
       label: 'Mi Perfil',
@@ -56,6 +56,12 @@ export class MenuService {
         label: 'Mis Compras',
         icon: 'bi-bag-check',
         route: '/dashboard',
+        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR']
+    },
+    {
+        label: 'Lista de Deseos',
+        icon: 'bi-heart',
+        route: '/mis-favoritos',
         roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR']
     },
     {

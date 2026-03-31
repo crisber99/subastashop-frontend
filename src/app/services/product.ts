@@ -24,6 +24,10 @@ export class ProductService {
     return this.http.get<any>(`${this.apiUrlProductos}/${id}`);
   }
 
+  getProductoBySlug(slug: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrlProductos}/p/${slug}`);
+  }
+
   updateProducto(id: number, producto: any, imagenes?: File[]) {
     const formData = new FormData();
     formData.append('nombre', producto.nombre);
@@ -74,6 +78,10 @@ export class ProductService {
 
   comprarTicket(productoId: number, numero: number) {
     return this.http.post(`${this.apiUrlRifas}/${productoId}/comprar/${numero}`, {});
+  }
+
+  comprarTicketsMultiple(productoId: number, numeros: number[]) {
+    return this.http.post(`${this.apiUrlRifas}/${productoId}/comprar-multiple`, numeros);
   }
 
   getTicketsVendidos(productoId: number) {

@@ -62,7 +62,7 @@ export class MenuService {
         label: 'Lista de Deseos',
         icon: 'bi-heart',
         route: '/mis-favoritos',
-        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR']
+        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR', 'ROLE_SUPER_ADMIN']
     },
     {
         label: 'Ayuda / Soporte',

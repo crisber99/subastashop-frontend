@@ -468,8 +468,10 @@
             <button class="btn btn-sm btn-light text-dark rounded-pill px-3 fw-bold" (click)="limpiarSeleccion()">
                 <i class="bi bi-x"></i>
             </button>
-            <button class="btn btn-sm btn-warning rounded-pill px-3 fw-bold" (click)="comprarSeleccionados()">
-                Comprar <i class="bi bi-arrow-right ms-1"></i>
+            <button class="btn btn-sm btn-warning rounded-pill px-3 fw-bold" 
+                    (click)="comprarSeleccionados()" [disabled]="procesandoCompra">
+                <span *ngIf="procesandoCompra" class="spinner-border spinner-border-sm me-1"></span>
+                {{ procesandoCompra ? 'Procesando...' : 'Comprar' }} <i *ngIf="!procesandoCompra" class="bi bi-arrow-right ms-1"></i>
             </button>
         </div>
     </div>

@@ -209,7 +209,7 @@
                         @for (puja of pujas; track puja.id) {
                         <tr>
                             <td>
-                                <a [routerLink]="['/producto', puja.producto.id]" class="fw-bold text-decoration-none">
+                                <a [routerLink]="['/producto', puja.producto.slug || puja.producto.id]" class="fw-bold text-decoration-none">
                                     {{ puja.producto.nombre }}
                                 </a>
                             </td>

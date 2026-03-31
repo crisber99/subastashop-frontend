@@ -113,7 +113,7 @@
                   </td>
                   <td><small style="color: var(--text-secondary, #888);">{{ p.tenantId || p.tienda?.slug }}</small></td>
                   <td>
-                    <a [routerLink]="['/producto', p.id]" class="btn btn-xs btn-outline-primary btn-sm rounded-pill px-2 py-0" style="font-size: 11px;">
+                    <a [routerLink]="['/producto', p.slug || p.id]" class="btn btn-xs btn-outline-primary btn-sm rounded-pill px-2 py-0" style="font-size: 11px;">
                       <i class="bi bi-eye"></i>
                     </a>
                   </td>

@@ -54,7 +54,7 @@
           </h4>
           
           <div class="mt-auto d-grid">
-            <a [routerLink]="['/producto', p.id]" class="btn btn-outline-primary fw-bold">Ver Detalle</a>
+            <a [routerLink]="['/producto', p.slug || p.id]" class="btn btn-outline-primary fw-bold">Ver Detalle</a>
           </div>
         </div>
       </div>

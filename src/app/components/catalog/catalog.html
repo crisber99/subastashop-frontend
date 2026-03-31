@@ -148,7 +148,7 @@
                         {{ producto.descripcion }}
                     </p>
 
-                    <a [routerLink]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? null : ['/producto', producto.id]" 
+                    <a [routerLink]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? null : ['/producto', producto.slug || producto.id]" 
                        class="btn w-100 mb-2 rounded-pill fw-bold text-white transition-all"
                        [class.btn-secondary]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
                        [class.disabled]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"

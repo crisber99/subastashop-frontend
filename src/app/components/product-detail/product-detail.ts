@@ -68,6 +68,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   // Estado visual
   subastaFinalizada: boolean = false;
   isLive: boolean = false;
+  procesandoCompra: boolean = false;
 
   // Calificaciones
   calificaciones: any[] = [];
@@ -80,9 +81,9 @@ export class ProductDetail implements OnInit, OnDestroy {
       this.favoritoService.cargarIdsFavoritos();
     }
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.cargarProducto(Number(id));
+    const slug = this.route.snapshot.paramMap.get('slug');
+    if (slug) {
+      this.cargarProducto(slug);
     }
 
     this.websocketService.getConnectionStatus().subscribe(estado => {
@@ -110,7 +111,7 @@ export class ProductDetail implements OnInit, OnDestroy {
         } else if (mensaje.tipo === 'SORTEO_FINALIZADO') {
           // Si llega este mensaje genérico pero no el status (retrocompatibilidad)
           this.ganadores = mensaje.ganadores;
-          this.cargarProducto(this.producto.id);
+          this.cargarProducto(this.producto.slug || this.producto.id);
         } else if (mensaje.monto) {
           this.producto.precioActual = mensaje.monto;
           const badge = document.getElementById('precio-badge');
@@ -185,11 +186,15 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   cerrarShow() {
     this.showSorteo = false;
-    this.cargarProducto(this.producto.id);
+    this.cargarProducto(this.producto.slug || this.producto.id);
   }
 
-  cargarProducto(id: number) {
-    this.productService.getProductoById(id).subscribe({
+  cargarProducto(idOrSlug: any) {
+    const obs = (typeof idOrSlug === 'string') 
+      ? this.productService.getProductoBySlug(idOrSlug)
+      : this.productService.getProductoById(idOrSlug);
+
+    obs.subscribe({
       next: (data) => {
         this.producto = data; 
         if (data.tienda) this.tienda = data.tienda; 
@@ -237,7 +242,7 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
         }
         
-        this.cargarCalificaciones(id);
+        this.cargarCalificaciones(data.id);
       },
       error: (err) => console.error('Error cargando producto:', err)
     });
@@ -263,7 +268,7 @@ export class ProductDetail implements OnInit, OnDestroy {
         });
         this.mensaje = '¡Oferta realizada con éxito!';
         this.esError = false;
-        this.cargarProducto(this.producto.id); 
+        this.cargarProducto(this.producto.slug || this.producto.id); 
       },
       error: (err) => {
         const msg = err.error?.message || err.error || 'Error al realizar la puja';
@@ -394,40 +399,37 @@ export class ProductDetail implements OnInit, OnDestroy {
     if (!confirmacion.isConfirmed) return;
 
     Swal.fire({ title: 'Procesando...', html: 'Reservando tus tickets...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    this.procesandoCompra = true;
 
-    // Comprar cada ticket secuencialmente (correcto para evitar conflictos de concurrencia)
-    const ticketsAComprar = [...this.ticketsSeleccionados];
-    let primerComprobante: any = null;
-    let ticketsComprados: number[] = [];
-    let huboError = false;
+    this.productService.comprarTicketsMultiple(this.producto.id, this.ticketsSeleccionados).subscribe({
+      next: (resp: any) => {
+        this.procesandoCompra = false;
+        Swal.close();
+        this.comprobante = { ...resp, tickets: this.ticketsSeleccionados };
+        this.cargarVendidos();
+        this.cargarMisTickets();
+        this.limpiarSeleccion();
+        
+        const modalEl = document.getElementById('modalComprobante');
+        if (modalEl) new (window as any).bootstrap.Modal(modalEl).show();
 
-    for (const num of ticketsAComprar) {
-      try {
-        const resp: any = await this.productService.comprarTicket(this.producto.id, num).toPromise();
-        if (!primerComprobante) primerComprobante = resp;
-        ticketsComprados.push(num);
-      } catch (err: any) {
-        const msg = err.error?.message || err.error || `El ticket #${num} ya fue tomado`;
-        console.warn('No se pudo comprar ticket:', num, msg);
-        huboError = true;
+        if (resp.omitidos && resp.omitidos.length > 0) {
+          Swal.fire({ 
+            icon: 'warning', 
+            title: 'Algunos tickets no estaban disponibles', 
+            text: `Se compraron ${resp.comprados.length}. Los números ${resp.omitidos.join(', ')} ya estaban ocupados.`,
+            timer: 4000, 
+            showConfirmButton: false 
+          });
+        }
+      },
+      error: (err) => {
+        this.procesandoCompra = false;
+        Swal.close();
+        const msg = err.error?.message || err.error || 'Error al procesar la compra';
+        Swal.fire('Error', msg, 'error');
       }
-    }
-
-    Swal.close();
-    this.cargarVendidos();
-    this.cargarMisTickets();
-    this.limpiarSeleccion();
-
-    if (ticketsComprados.length > 0 && primerComprobante) {
-      this.comprobante = { ...primerComprobante, tickets: ticketsComprados };
-      const modalEl = document.getElementById('modalComprobante');
-      if (modalEl) new (window as any).bootstrap.Modal(modalEl).show();
-      if (huboError) {
-        Swal.fire({ icon: 'warning', title: 'Algunos tickets no pudieron comprarse', text: `Se compraron ${ticketsComprados.length} de ${ticketsAComprar.length} tickets. Los no disponibles fueron omitidos.`, timer: 4000, showConfirmButton: false });
-      }
-    } else {
-      Swal.fire('Error', 'No se pudo comprar ningún ticket. Es posible que ya estén tomados.', 'error');
-    }
+    });
   }
 
   imprimirComprobante() {
@@ -476,7 +478,7 @@ export class ProductDetail implements OnInit, OnDestroy {
                 next: (listaGanadores: any) => {
                   this.ganadores = listaGanadores;
                   Swal.fire({ title: '🏆 ¡GANADORES!', icon: 'success' });
-                  this.cargarProducto(this.producto.id);
+                  this.cargarProducto(this.producto.slug || this.producto.id);
                 },
                 error: (err) => Swal.fire('Error', 'Error al lanzar rifa', 'error')
             });

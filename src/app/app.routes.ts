@@ -26,7 +26,7 @@ export const routes: Routes = [
     { path: 'registro', component: Register },
     { path: 'tienda/:slug', component: CatalogComponent },
     { path: 'catalogo-global', component: CatalogComponent },
-    { path: 'producto/:id', component: ProductDetail },
+    { path: 'producto/:slug', component: ProductDetail },
     { path: 'privacidad', component: PrivacidadComponent },
     { path: 'terminos', component: TerminosComponent },
 

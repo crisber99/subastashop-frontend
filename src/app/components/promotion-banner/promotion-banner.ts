@@ -57,28 +57,14 @@ export class PromotionBanner {
             return;
         }
 
-        // Si no es pro, iniciamos el flujo de pago directo
-        Swal.fire({
-            title: 'Iniciando Pago...',
-            text: 'Te redirigiremos a Mercado Pago para asegurar tu cupo de $4.990.',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        });
-
-        this.mpService.createSubscriptionPreference().subscribe({
-            next: (res) => {
-                if (res.id) {
-                    window.location.href = res.id; // Redirección a Mercado Pago
-                } else {
-                    Swal.fire('Error', 'No se pudo generar la sesión de pago', 'error');
-                }
-            },
-            error: (err) => {
-                console.error(err);
-                Swal.fire('Error', 'Hubo un problema al conectar con la pasarela de pagos', 'error');
+        // Si no es pro, iniciamos el flujo de selección de planes
+        this.mpService.showPricingModal().then(months => {
+            if (months) {
+                this.procesarPago(months);
             }
         });
     } else {
+// ... rest of the code (I'll use a better chunk)
       Swal.fire({
         title: '¡Asegura tu cupo de $4.990! 🚀',
         text: 'Esta oferta es exclusiva para los primeros 100 inscritos. ¿Ya tienes una cuenta o eres nuevo?',
@@ -97,6 +83,26 @@ export class PromotionBanner {
         }
       });
     }
+  }
+
+  procesarPago(months: number) {
+    Swal.fire({
+      title: 'Redirigiendo a Mercado Pago...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.mpService.createSubscriptionPreference(months).subscribe({
+      next: (res) => {
+        if (res.id) {
+          window.location.href = res.id;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo generar la sesión de pago', 'error');
+      }
+    });
   }
 
   cerrar() {

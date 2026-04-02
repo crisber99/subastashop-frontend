@@ -57,16 +57,8 @@ export class PromotionBanner {
           return;
       }
 
-      // Si no es pro, iniciamos el flujo de selección de planes
-      this.mpService.showPricingModal().then(result => {
-          if (result) {
-              if (result.recurring) {
-                  this.procesarSuscripcion();
-              } else {
-                  this.procesarPago(result.months);
-              }
-          }
-      });
+      // Si no es pro, lo llevamos a la página de configuración donde está el nuevo formulario seguro
+      this.router.navigate(['/admin/configuracion']);
     } else {
       // Si no está logueado, invitamos a registrarse
       Swal.fire({

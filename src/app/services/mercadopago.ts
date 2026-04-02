@@ -133,4 +133,72 @@ export class MercadoPagoService {
       return null;
     });
   }
+
+  /**
+   * Abre un popup de SweetAlert2 que contiene el Card Brick de Mercado Pago.
+   * Esto permite pagar sin salir de la página actual.
+   */
+  showCardPaymentModal(amount: number, userEmail: string, publicKey: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      Swal.fire({
+        title: '💳 Datos de tu Tarjeta',
+        html: `
+          <div id="cardPaymentBrick_container_modal" style="min-height: 400px;"></div>
+          <p class="small text-muted mt-2">Tus datos están protegidos por Mercado Pago</p>
+        `,
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        width: '550px',
+        didOpen: async () => {
+          try {
+            const mp = new (window as any).MercadoPago(publicKey, { locale: 'es-CL' });
+            const bricksBuilder = mp.bricks();
+
+            await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container_modal', {
+              initialization: {
+                amount: amount,
+                payer: { email: userEmail },
+              },
+              customization: {
+                visual: { style: { theme: 'default' } },
+                paymentMethods: { maxInstallments: 1 }
+              },
+              callbacks: {
+                onReady: () => console.log('Modal Brick Ready'),
+                onSubmit: (formData: any) => {
+                  // Enviamos el token al servidor
+                  return this.http.post(`${environment.apiUrl}/mercadopago/subscribe-with-token`, { token: formData.token })
+                    .toPromise()
+                    .then((res: any) => {
+                      if (res.status === 'authorized' || res.status === 'active') {
+                        Swal.fire('¡Éxito!', 'Tu suscripción PRO ha sido activada.', 'success').then(() => {
+                          window.location.reload();
+                        });
+                        resolve(res);
+                      } else {
+                        Swal.fire('Atención', 'El pago requiere validación adicional.', 'info');
+                        resolve(res);
+                      }
+                    })
+                    .catch((err) => {
+                      console.error('Error en suscripción modal', err);
+                      Swal.fire('Error', err.error?.message || 'No se pudo procesar el pago.', 'error');
+                      reject(err);
+                    });
+                },
+                onError: (error: any) => {
+                  console.error('Modal Brick Error:', error);
+                  reject(error);
+                },
+              },
+            });
+          } catch (e) {
+            console.error('Error inicializando Brick en Modal', e);
+            reject(e);
+          }
+        }
+      });
+    });
+  }
 }

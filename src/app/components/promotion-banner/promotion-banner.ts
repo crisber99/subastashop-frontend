@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ThemeService } from '../../services/theme-service';
 import { MercadoPagoService } from '../../services/mercadopago';
+import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -52,8 +53,13 @@ export class PromotionBanner {
       this.mpService.showPricingModal().then(result => {
         if (result) {
           if (result.recurring) {
-            // Si elige SUSCRIPCIÓN, vamos al config con la acción para abrir el formulario directo
-            this.router.navigate(['/admin/configuracion'], { queryParams: { action: 'subscribe' } });
+            // En lugar de redirigir, abrimos el modal de pago aquí mismo
+            const email = this.authService.currentUser()?.email || '';
+            this.mpService.showCardPaymentModal(9990, email, environment.mercadopagoPublicKey)
+              .then(() => {
+                // El modal interno ya maneja el éxito y el reload
+              })
+              .catch(err => console.error('Error en pago desde banner', err));
           } else {
             // Si es PAGO MANUAL (1, 3, 6 o 12 meses), flujo normal
             Swal.fire({

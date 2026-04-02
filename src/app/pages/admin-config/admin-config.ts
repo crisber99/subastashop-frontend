@@ -39,10 +39,92 @@ export class AdminConfig implements OnInit {
   mensaje = '';
 
   aceptaTerminos: boolean = false;
+  showCardForm: boolean = false;
+  cardPaymentBrickController: any = null;
 
   ngOnInit() {
     this.cargarDatosActuales();
     this.verificarEstadoPago();
+  }
+
+  async inicializarCardBrick() {
+    this.showCardForm = true;
+    
+    // Pequeño delay para asegurar que el contenedor #cardPaymentBrick_container ya existe en el DOM
+    setTimeout(async () => {
+      const mp = new (window as any).MercadoPago(environment.mercadopagoPublicKey, {
+        locale: 'es-CL'
+      });
+      const bricksBuilder = mp.bricks();
+
+      const settings = {
+        initialization: {
+          amount: 9990, // Valor base, MP lo usa para validaciones de tarjeta
+          payer: {
+            email: this.authService.currentUser()?.email || '',
+          },
+        },
+        customization: {
+          visual: {
+            style: {
+              theme: 'default', // 'default' | 'dark' | 'bootstrap' | 'flat'
+            },
+          },
+          paymentMethods: {
+            maxInstallments: 1, // Para suscripciones suele ser 1 pago recurrente
+          }
+        },
+        callbacks: {
+          onReady: () => {
+            console.log('Brick is ready');
+          },
+          onSubmit: (formData: any) => {
+            return this.procesarSuscripcionConToken(formData.token);
+          },
+          onError: (error: any) => {
+            console.error('Brick Error:', error);
+            Swal.fire('Error', 'Hubo un problema al cargar el formulario de pago.', 'error');
+          },
+        },
+      };
+
+      this.cardPaymentBrickController = await bricksBuilder.create(
+        'cardPayment',
+        'cardPaymentBrick_container',
+        settings
+      );
+    }, 200);
+  }
+
+  procesarSuscripcionConToken(token: string) {
+    return new Promise((resolve, reject) => {
+      Swal.fire({
+        title: 'Procesando suscripción...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      this.http.post(`${environment.apiUrl}/mercadopago/subscribe-with-token`, { token }).subscribe({
+        next: (res: any) => {
+          if (res.status === 'authorized' || res.status === 'active') {
+            Swal.fire('¡Éxito!', 'Tu suscripción PRO ha sido activada correctamente.', 'success').then(() => {
+              this.authService.refreshSession().subscribe(() => {
+                window.location.reload();
+              });
+            });
+            resolve(res);
+          } else {
+            Swal.fire('Atención', 'El pago está en proceso o requiere validación adicional.', 'info');
+            resolve(res);
+          }
+        },
+        error: (err) => {
+          console.error('Error suscribiendo con token', err);
+          Swal.fire('Error', err.error?.message || 'No se pudo procesar el pago.', 'error');
+          reject(err);
+        }
+      });
+    });
   }
 
   verificarEstadoPago() {

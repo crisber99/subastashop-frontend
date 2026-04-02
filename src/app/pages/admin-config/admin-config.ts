@@ -45,6 +45,13 @@ export class AdminConfig implements OnInit {
   ngOnInit() {
     this.cargarDatosActuales();
     this.verificarEstadoPago();
+
+    // Si venimos del banner con la intención de suscribirnos, abrimos el formulario de tarjeta
+    this.route.queryParams.subscribe(params => {
+      if (params['action'] === 'subscribe') {
+        this.inicializarCardBrick();
+      }
+    });
   }
 
   async inicializarCardBrick() {

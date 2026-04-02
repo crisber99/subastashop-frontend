@@ -49,16 +49,25 @@ export class PromotionBanner {
 
   action() {
     if (this.authService.isLoggedIn()) {
-      const user = this.authService.currentUser();
-      const isPro = this.authService.hasActiveSubscription();
-      
-      if (isPro) {
-          Swal.fire('¡Ya eres Pro!', 'Ya tienes una suscripción activa. ¡Gracias por apoyarnos!', 'info');
-          return;
-      }
-
-      // Si no es pro, lo llevamos a la página de configuración donde está el nuevo formulario seguro
-      this.router.navigate(['/admin/configuracion']);
+      this.mpService.showPricingModal().then(result => {
+        if (result) {
+          if (result.recurring) {
+            // Si elige SUSCRIPCIÓN, vamos al config con la acción para abrir el formulario directo
+            this.router.navigate(['/admin/configuracion'], { queryParams: { action: 'subscribe' } });
+          } else {
+            // Si es PAGO MANUAL (1, 3, 6 o 12 meses), flujo normal
+            Swal.fire({
+              title: 'Cargando pago...',
+              allowOutsideClick: false,
+              didOpen: () => Swal.showLoading()
+            });
+            this.mpService.createSubscriptionPreference(result.months).subscribe({
+              next: res => window.location.href = res.id,
+              error: () => Swal.fire('Error', 'No se pudo iniciar el pago.', 'error')
+            });
+          }
+        }
+      });
     } else {
       // Si no está logueado, invitamos a registrarse
       Swal.fire({

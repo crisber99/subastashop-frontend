@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { TiendaService } from '../../services/tienda';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -20,6 +20,7 @@ export class AdminConfig implements OnInit {
   private tiendaService = inject(TiendaService);
   public authService = inject(AuthService);
   private http = inject(HttpClient);
+  private route = inject(ActivatedRoute);
 
   config = {
     nombre: '',
@@ -39,6 +40,19 @@ export class AdminConfig implements OnInit {
 
   ngOnInit() {
     this.cargarDatosActuales();
+    this.verificarEstadoPago();
+  }
+
+  verificarEstadoPago() {
+    const status = this.route.snapshot.queryParamMap.get('status');
+    if (status === 'success') {
+      console.log('💰 Pago detectado con éxito. Refrescando permisos...');
+      this.authService.refreshSession().subscribe({
+        next: () => {
+          Swal.fire('¡Bienvenido al nivel PRO!', 'Tu suscripción se activó correctamente. Ya puedes configurar tu tienda.', 'success');
+        }
+      });
+    }
   }
 
   cargarDatosActuales() {

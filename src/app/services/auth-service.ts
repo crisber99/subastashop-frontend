@@ -168,4 +168,20 @@ export class AuthService {
   resetPassword(datos: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/reset-password`, datos);
   }
+
+  // --- REFRESCAR SESIÓN ---
+  refreshSession(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/me`).pipe(
+      tap(usuario => {
+        if (usuario) {
+          // Mantener el token actual pero actualizar los datos del usuario
+          const token = this.getToken();
+          if (token) {
+            this.guardarSesion(token, usuario);
+            console.log('🔄 Sesión refrescada correctamente con nuevos permisos.');
+          }
+        }
+      })
+    );
+  }
 }

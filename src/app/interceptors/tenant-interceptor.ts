@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 
 export const tenantInterceptor: HttpInterceptorFn = (req, next) => {
   // Lógica para detectar el tenant
-  let tenantId = 'tienda-prueba'; // Valor que coincide con la data existente en el backend
+  let tenantId = 'tienda'; // Valor que coincide con la data existente en el backend
 
   // Ejemplo de lógica real futura:
   // const host = window.location.host; // ej: juguetes.midominio.com

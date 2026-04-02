@@ -15,7 +15,11 @@ export class MercadoPagoService {
     return this.http.post<{id: string}>(`${this.apiUrl}/create-preference`, { months });
   }
 
-  showPricingModal(): Promise<number | null> {
+  createSubscription(): Observable<{id: string}> {
+    return this.http.post<{id: string}>(`${this.apiUrl}/create-subscription`, {});
+  }
+
+  showPricingModal(): Promise<{months: number, recurring: boolean} | null> {
     return Swal.fire({
       title: '🚀 Selecciona tu Plan Pro',
       html: `
@@ -27,7 +31,7 @@ export class MercadoPagoService {
                 <h5 class="mb-1">1 Mes</h5>
                 <div class="h4 mb-1">$9.990</div>
                 <div class="badge bg-success-subtle text-success border border-success-subtle mb-2">Oferta: $4.990*</div>
-                <div class="small text-muted">Pago único mensual</div>
+                <div class="small text-muted">Ideal para empezar</div>
               </div>
             </div>
             <div class="col-md-6 col-12">
@@ -35,7 +39,7 @@ export class MercadoPagoService {
                 <h5 class="mb-1">3 Meses</h5>
                 <div class="h4 mb-2">$26.970</div>
                 <div class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2">Ahorra 10%</div>
-                <div class="small text-muted">Pago único trimestral</div>
+                <div class="small text-muted">Pago trimestral</div>
               </div>
             </div>
             <div class="col-md-6 col-12">
@@ -43,7 +47,7 @@ export class MercadoPagoService {
                 <h5 class="mb-1">6 Meses</h5>
                 <div class="h4 mb-2">$50.940</div>
                 <div class="badge bg-info-subtle text-info border border-info-subtle mb-2">Ahorra 15%</div>
-                <div class="small text-muted">Pago único semestral</div>
+                <div class="small text-muted">Pago semestral</div>
               </div>
             </div>
             <div class="col-md-6 col-12">
@@ -55,11 +59,25 @@ export class MercadoPagoService {
               </div>
             </div>
           </div>
+
+          <!-- Toggle de Renovación Automática -->
+          <div class="mt-4 p-3 bg-light rounded border" id="recurring-toggle-container">
+            <div class="form-check form-switch d-flex align-items-center justify-content-between">
+              <div>
+                <label class="form-check-label fw-bold mb-0" for="recurringSwitch">Renovación Automática 🔄</label>
+                <div class="small text-muted">Evita que tu tienda se desactive. Cobro mensual automático.</div>
+              </div>
+              <input class="form-check-input ms-3" type="checkbox" role="switch" id="recurringSwitch" style="width: 3em; height: 1.5em; cursor: pointer;">
+            </div>
+          </div>
+
           <p class="mt-4 small text-muted text-center">*Oferta de $4.990 vigente por lanzamiento o hasta agotar cupos.</p>
         </div>
         <style>
           .plan-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #6366f1 !important; }
           .plan-card.selected { border-color: #6366f1 !important; background-color: #f5f3ff; border-width: 2px !important; }
+          #recurring-toggle-container { transition: all 0.3s ease; }
+          #recurring-toggle-container.disabled { opacity: 0.5; pointer-events: none; background: #eee !important; }
         </style>
       `,
       showCancelButton: true,
@@ -69,8 +87,11 @@ export class MercadoPagoService {
       width: '700px',
       didOpen: () => {
         const cards = document.querySelectorAll('.plan-card');
+        const recurringSwitch = document.getElementById('recurringSwitch') as HTMLInputElement;
+        const toggleContainer = document.getElementById('recurring-toggle-container');
+        
         let selectedMonths = 1;
-        cards[0].classList.add('selected'); // Default
+        cards[0].classList.add('selected'); // Default 1 month
 
         cards.forEach(card => {
           card.addEventListener('click', () => {
@@ -78,12 +99,29 @@ export class MercadoPagoService {
             card.classList.add('selected');
             selectedMonths = parseInt(card.id.split('-')[1]);
             (Swal as any).selectedMonths = selectedMonths;
+
+            // La renovación automática solo aplica al plan de 1 mes en este diseño
+            if (selectedMonths !== 1) {
+              if (recurringSwitch) recurringSwitch.checked = false;
+              toggleContainer?.classList.add('disabled');
+            } else {
+              toggleContainer?.classList.remove('disabled');
+            }
           });
         });
+
         (Swal as any).selectedMonths = 1;
+        (Swal as any).recurring = false;
+
+        recurringSwitch?.addEventListener('change', () => {
+            (Swal as any).recurring = recurringSwitch.checked;
+        });
       },
       preConfirm: () => {
-        return (Swal as any).selectedMonths || 1;
+        return {
+          months: (Swal as any).selectedMonths || 1,
+          recurring: (Swal as any).recurring || false
+        };
       }
     }).then((result: any) => {
       if (result.isConfirmed) {

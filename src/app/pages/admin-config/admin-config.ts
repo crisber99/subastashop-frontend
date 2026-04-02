@@ -132,9 +132,33 @@ export class AdminConfig implements OnInit {
   }
 
   suscribirse() {
-    this.mpService.showPricingModal().then(months => {
-      if (months) {
-        this.procesarPago(months);
+    this.mpService.showPricingModal().then(result => {
+      if (result) {
+        if (result.recurring) {
+          this.procesarSuscripcion();
+        } else {
+          this.procesarPago(result.months);
+        }
+      }
+    });
+  }
+
+  procesarSuscripcion() {
+    Swal.fire({
+      title: 'Iniciando Suscripción Automática...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.mpService.createSubscription().subscribe({
+      next: (res) => {
+        if (res.id) {
+          window.location.href = res.id;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
       }
     });
   }

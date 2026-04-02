@@ -48,23 +48,27 @@ export class PromotionBanner {
   });
 
   action() {
-    const user = this.authService.currentUser();
     if (this.authService.isLoggedIn()) {
-        const isPro = this.authService.hasActiveSubscription();
-        
-        if (isPro) {
-            Swal.fire('¡Ya eres Pro!', 'Ya tienes una suscripción activa. ¡Gracias por apoyarnos!', 'info');
-            return;
-        }
+      const user = this.authService.currentUser();
+      const isPro = this.authService.hasActiveSubscription();
+      
+      if (isPro) {
+          Swal.fire('¡Ya eres Pro!', 'Ya tienes una suscripción activa. ¡Gracias por apoyarnos!', 'info');
+          return;
+      }
 
-        // Si no es pro, iniciamos el flujo de selección de planes
-        this.mpService.showPricingModal().then(months => {
-            if (months) {
-                this.procesarPago(months);
-            }
-        });
+      // Si no es pro, iniciamos el flujo de selección de planes
+      this.mpService.showPricingModal().then(result => {
+          if (result) {
+              if (result.recurring) {
+                  this.procesarSuscripcion();
+              } else {
+                  this.procesarPago(result.months);
+              }
+          }
+      });
     } else {
-// ... rest of the code (I'll use a better chunk)
+      // Si no está logueado, invitamos a registrarse
       Swal.fire({
         title: '¡Asegura tu cupo de $4.990! 🚀',
         text: 'Esta oferta es exclusiva para los primeros 100 inscritos. ¿Ya tienes una cuenta o eres nuevo?',
@@ -83,6 +87,26 @@ export class PromotionBanner {
         }
       });
     }
+  }
+
+  procesarSuscripcion() {
+      Swal.fire({
+          title: 'Iniciando Suscripción Automática...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+      });
+
+      this.mpService.createSubscription().subscribe({
+          next: (res) => {
+              if (res.id) {
+                  window.location.href = res.id;
+              }
+          },
+          error: (err) => {
+              console.error(err);
+              Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
+          }
+      });
   }
 
   procesarPago(months: number) {

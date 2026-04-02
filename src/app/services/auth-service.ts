@@ -13,6 +13,7 @@ export interface AuthUser {
   rol?: string;
   fechaFinPrueba?: string;
   suscripcionActiva?: boolean;
+  pagoAutomatico?: boolean;
   tiendaId?: number | string;
   tienda?: any;
 }

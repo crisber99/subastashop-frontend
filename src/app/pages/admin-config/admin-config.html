@@ -125,10 +125,19 @@
                             <!-- Contenedor del Card Brick de Mercado Pago -->
                             <div id="cardPaymentBrick_container" class="mt-3"></div>
 
-                            @if (!showCardForm) {
+                            @if (!showCardForm && !authService.currentUser()?.pagoAutomatico) {
                                 <button (click)="inicializarCardBrick()" class="btn btn-primary btn-lg px-3 shadow-sm mt-3">
                                     <i class="bi bi-credit-card me-2"></i> Activar Suscripción Premium
                                 </button>
+                            }
+
+                            @if (authService.currentUser()?.pagoAutomatico) {
+                                <div class="mt-3 p-3 border border-success rounded bg-success-subtle text-success">
+                                    <p class="mb-2 small"><strong>Suscripción Activa 🔄</strong></p>
+                                    <button (click)="cancelarSuscripcion()" class="btn btn-outline-danger btn-sm">
+                                        Anular Suscripción
+                                    </button>
+                                </div>
                             }
                         </div>
                     }

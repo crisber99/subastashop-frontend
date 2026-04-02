@@ -54,6 +54,41 @@ export class AdminConfig implements OnInit {
     });
   }
 
+  cancelarSuscripcion() {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Tu suscripción PRO se cancelará y no se realizarán más cobros automáticos.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, anular suscripción',
+      cancelButtonText: 'Mantener suscripción'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Cancelando...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
+
+        this.http.post(`${environment.apiUrl}/mercadopago/cancel-subscription`, {}).subscribe({
+          next: () => {
+            Swal.fire('Cancelada', 'Tu suscripción ha sido anulada con éxito.', 'success').then(() => {
+              this.authService.refreshSession().subscribe(() => {
+                window.location.reload();
+              });
+            });
+          },
+          error: (err) => {
+            console.error('Error al cancelar', err);
+            Swal.fire('Error', 'No se pudo cancelar la suscripción. Inténtalo más tarde.', 'error');
+          }
+        });
+      }
+    });
+  }
+
   async inicializarCardBrick() {
     this.showCardForm = true;
     

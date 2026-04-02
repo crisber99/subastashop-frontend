@@ -61,23 +61,26 @@ export class MercadoPagoService {
           </div>
 
           <!-- Toggle de Renovación Automática -->
-          <div class="mt-4 p-3 bg-light rounded border" id="recurring-toggle-container">
+          <div class="mt-4 p-3 rounded border" id="recurring-toggle-container" style="background-color: rgba(99, 102, 241, 0.05);">
             <div class="form-check form-switch d-flex align-items-center justify-content-between">
               <div>
-                <label class="form-check-label fw-bold mb-0" for="recurringSwitch">Renovación Automática 🔄</label>
-                <div class="small text-muted">Evita que tu tienda se desactive. Cobro mensual automático.</div>
+                <label class="form-check-label fw-bold mb-0" for="recurringSwitch" style="color: inherit;">Renovación Automática 🔄</label>
+                <div class="small" style="opacity: 0.8;">Evita que tu tienda se desactive. Cobro mensual automático.</div>
               </div>
               <input class="form-check-input ms-3" type="checkbox" role="switch" id="recurringSwitch" style="width: 3em; height: 1.5em; cursor: pointer;">
             </div>
           </div>
 
-          <p class="mt-4 small text-muted text-center">*Oferta de $4.990 vigente por lanzamiento o hasta agotar cupos.</p>
+          <p class="mt-4 small text-center" style="opacity: 0.6;">*Oferta de $4.990 vigente por lanzamiento o hasta agotar cupos.</p>
         </div>
         <style>
+          .plan-card { color: inherit; background: transparent; }
           .plan-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #6366f1 !important; }
-          .plan-card.selected { border-color: #6366f1 !important; background-color: #f5f3ff; border-width: 2px !important; }
+          .plan-card.selected { border-color: #6366f1 !important; background-color: rgba(99, 102, 241, 0.1) !important; border-width: 2px !important; }
+          .plan-card .h4 { font-weight: bold; }
           #recurring-toggle-container { transition: all 0.3s ease; }
-          #recurring-toggle-container.disabled { opacity: 0.5; pointer-events: none; background: #eee !important; }
+          #recurring-toggle-container.disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+          .swal2-html-container { color: inherit !important; }
         </style>
       `,
       showCancelButton: true,

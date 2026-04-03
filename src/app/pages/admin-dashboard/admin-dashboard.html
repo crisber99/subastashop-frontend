@@ -55,6 +55,11 @@
           <a routerLink="/admin/configuracion" class="btn btn-primary text-start shadow-sm">
             <i class="bi bi-gear-fill me-2"></i> ⚙️ Configurar Tienda y Pagos
           </a>
+          <li class="nav-item">
+            <button class="nav-link rounded-pill" [class.active]="activeTab === 'config'" (click)="activeTab = 'config'">
+                <i class="bi bi-gear me-2"></i>Configuración de tienda
+            </button>
+        </li>
           <button (click)="detenerSubastas()" class="btn btn-outline-danger text-start">
             <i class="bi bi-stop-circle me-2"></i> Detener subastas activas
           </button>

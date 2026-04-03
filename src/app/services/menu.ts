@@ -35,7 +35,7 @@ export class MenuService {
       roles: ['ROLE_ADMIN']
     },
     {
-      label: 'Config. Transacciones',
+      label: 'Config. de Tienda',
       icon: 'bi-gear',
       route: '/admin/configuracion',
       roles: ['ROLE_ADMIN']
@@ -47,34 +47,34 @@ export class MenuService {
       roles: ['ROLE_SUPER_ADMIN']
     },
     {
-        label: 'Dashboard Global',
-        icon: 'bi-grid-1x2-fill',
-        route: '/super-admin',
-        roles: ['ROLE_SUPER_ADMIN']
+      label: 'Dashboard Global',
+      icon: 'bi-grid-1x2-fill',
+      route: '/super-admin',
+      roles: ['ROLE_SUPER_ADMIN']
     },
     {
-        label: 'Mis Compras',
-        icon: 'bi-bag-check',
-        route: '/dashboard',
-        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR']
+      label: 'Mis Compras',
+      icon: 'bi-bag-check',
+      route: '/dashboard',
+      roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR']
     },
     {
-        label: 'Lista de Deseos',
-        icon: 'bi-heart',
-        route: '/mis-favoritos',
-        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR', 'ROLE_SUPER_ADMIN']
+      label: 'Lista de Deseos',
+      icon: 'bi-heart',
+      route: '/mis-favoritos',
+      roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR', 'ROLE_SUPER_ADMIN']
     },
     {
-        label: 'Ayuda / Soporte',
-        icon: 'bi-question-circle',
-        route: '/soporte',
-        roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR', 'ROLE_SUPER_ADMIN']
+      label: 'Ayuda / Soporte',
+      icon: 'bi-question-circle',
+      route: '/soporte',
+      roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_COMPRADOR', 'ROLE_SUPER_ADMIN']
     },
     {
-        label: 'Reportes y Denuncias',
-        icon: 'bi-flag',
-        route: '/super-admin/reportes',
-        roles: ['ROLE_SUPER_ADMIN']
+      label: 'Reportes y Denuncias',
+      icon: 'bi-flag',
+      route: '/super-admin/reportes',
+      roles: ['ROLE_SUPER_ADMIN']
     }
   ];
 

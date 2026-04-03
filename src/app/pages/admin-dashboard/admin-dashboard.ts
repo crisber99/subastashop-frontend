@@ -78,9 +78,10 @@ export class AdminDashboard implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.http.post(`${environment.apiUrl}/admin/detener-subastas`, {}).subscribe({
-          next: () => {
-            Swal.fire('¡Éxito!', 'Las subastas han sido detenidas.', 'success');
+          next: (res: any) => {
+            Swal.fire('¡Éxito!', res.message || 'Las subastas han sido detenidas.', 'success');
             this.cargarDatos();
+            this.cargarProductos(); // Refrescar lista para ver los estados 'FINALIZADA'
           },
           error: (err) => Swal.fire('Error', 'No se pudieron detener las subastas.', 'error')
         });
@@ -146,9 +147,9 @@ export class AdminDashboard implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.http.delete(`${environment.apiUrl}/admin/productos/${p.id}`).subscribe({
-          next: () => {
-            Swal.fire('¡Eliminado!', 'El producto ha sido eliminado.', 'success');
-            this.cargarProductos();
+          next: (res: any) => {
+            Swal.fire('¡Eliminado!', res.message || 'El producto ha sido eliminado.', 'success');
+            this.cargarProductos(); // <--- CRÍTICO: Refrescar la lista inmediatamente
           },
           error: (err) => Swal.fire('Error', 'No se pudo eliminar el producto.', 'error')
         });

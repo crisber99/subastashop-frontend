@@ -50,18 +50,49 @@ export class PromotionBanner {
 
   action() {
     if (this.authService.isLoggedIn()) {
+      const isPro = this.authService.hasActiveSubscription();
+      
+      if (isPro) {
+        // Opción para usuarios PRO (incluyendo Compradores)
+        Swal.fire({
+          title: 'Gestionar Suscripción PRO ⭐',
+          text: '¿Deseas anular tu suscripción actual? No se realizarán más cobros automáticos tras la cancelación.',
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, anular suscripción',
+          cancelButtonText: 'Mantener PRO',
+          confirmButtonColor: '#d33'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: 'Procesando cancelación...',
+              allowOutsideClick: false,
+              didOpen: () => Swal.showLoading()
+            });
+
+            this.mpService.cancelSubscription().subscribe({
+              next: () => {
+                Swal.fire('Cancelada', 'Tu suscripción ha sido anulada con éxito.', 'success').then(() => {
+                  this.authService.refreshSession().subscribe(() => window.location.reload());
+                });
+              },
+              error: (err: any) => {
+                console.error('Error al cancelar', err);
+                Swal.fire('Error', 'No se pudo cancelar la suscripción en este momento.', 'error');
+              }
+            });
+          }
+        });
+        return;
+      }
+
       this.mpService.showPricingModal().then(result => {
         if (result) {
           if (result.recurring) {
-            // En lugar de redirigir, abrimos el modal de pago aquí mismo
             const email = this.authService.currentUser()?.email || '';
             this.mpService.showCardPaymentModal(9990, email, environment.mercadopagoPublicKey)
-              .then(() => {
-                // El modal interno ya maneja el éxito y el reload
-              })
               .catch(err => console.error('Error en pago desde banner', err));
           } else {
-            // Si es PAGO MANUAL (1, 3, 6 o 12 meses), flujo normal
             Swal.fire({
               title: 'Cargando pago...',
               allowOutsideClick: false,

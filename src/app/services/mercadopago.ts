@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AuthService } from './auth-service';
 import Swal from 'sweetalert2';
 
 @Injectable({
@@ -9,6 +10,7 @@ import Swal from 'sweetalert2';
 })
 export class MercadoPagoService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private apiUrl = `${environment.apiUrl}/mercadopago`;
 
   createSubscriptionPreference(months: number = 1): Observable<{id: string}> {
@@ -135,6 +137,13 @@ export class MercadoPagoService {
   }
 
   /**
+   * Envía la solicitud de cancelación de suscripción al backend.
+   */
+  cancelSubscription(): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/mercadopago/cancel-subscription`, {});
+  }
+
+  /**
    * Abre un popup de SweetAlert2 que contiene el Card Brick de Mercado Pago.
    * Esto permite pagar sin salir de la página actual.
    */
@@ -184,15 +193,30 @@ export class MercadoPagoService {
                   return this.http.post(`${environment.apiUrl}/mercadopago/subscribe-with-token`, { token: formData.token })
                     .toPromise()
                     .then((res: any) => {
-                      if (res.status === 'authorized' || res.status === 'active') {
+                      const status = res.status;
+                      const detail = res.status_detail;
+
+                      if (status === 'authorized' || status === 'active') {
                         Swal.fire('¡Éxito!', 'Tu suscripción PRO ha sido activada.', 'success').then(() => {
-                          window.location.reload();
+                          this.authService.refreshSession().subscribe(() => {
+                            // En lugar de reload total, solo avisamos y si es necesario recargamos
+                            window.location.reload(); 
+                          });
                         });
                         resolve(res);
-                      } else {
-                        // Si el estado es "en proceso" o similar, no cerramos todo
-                        Swal.fire('Atención', 'El pago está en validación. No cierres esta ventana.', 'info');
+                      } else if (status === 'in_process' || status === 'pending') {
+                        Swal.fire('Pago en Proceso', 'Mercado Pago está validando tu pago. Te avisaremos por email en unos minutos.', 'info');
                         resolve(res);
+                      } else {
+                        // Manejo de rechazos específicos
+                        let msg = 'El pago no pudo ser procesado.';
+                        if (detail === 'cc_rejected_bad_filled_card_number') msg = 'Número de tarjeta incorrecto.';
+                        if (detail === 'cc_rejected_bad_filled_date') msg = 'Fecha de vencimiento incorrecta.';
+                        if (detail === 'cc_rejected_bad_filled_security_code') msg = 'Código de seguridad incorrecto.';
+                        if (detail === 'cc_rejected_insufficient_amount') msg = 'Fondos insuficientes.';
+                        
+                        Swal.fire('Pago Rechazado', msg, 'warning');
+                        // No hacemos resolve ni reject para que el Brick permita reintentar si es posible
                       }
                     })
                     .catch((err) => {

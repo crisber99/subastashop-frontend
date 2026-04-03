@@ -72,7 +72,7 @@ export class AdminConfig implements OnInit {
           didOpen: () => Swal.showLoading()
         });
 
-        this.http.post(`${environment.apiUrl}/mercadopago/cancel-subscription`, {}).subscribe({
+        this.mpService.cancelSubscription().subscribe({
           next: () => {
             Swal.fire('Cancelada', 'Tu suscripción ha sido anulada con éxito.', 'success').then(() => {
               this.authService.refreshSession().subscribe(() => {
@@ -80,7 +80,7 @@ export class AdminConfig implements OnInit {
               });
             });
           },
-          error: (err) => {
+          error: (err: any) => {
             console.error('Error al cancelar', err);
             Swal.fire('Error', 'No se pudo cancelar la suscripción. Inténtalo más tarde.', 'error');
           }

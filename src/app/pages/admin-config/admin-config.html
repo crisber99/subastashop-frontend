@@ -131,11 +131,12 @@
                                 </button>
                             }
 
-                            @if (authService.currentUser()?.pagoAutomatico) {
-                                <div class="mt-3 p-3 border border-success rounded bg-success-subtle text-success">
-                                    <p class="mb-2 small"><strong>Suscripción Activa 🔄</strong></p>
-                                    <button (click)="cancelarSuscripcion()" class="btn btn-outline-danger btn-sm">
-                                        Anular Suscripción
+                            @if (authService.currentUser()?.suscripcionActiva) {
+                                <div class="mt-3 p-3 border border-danger rounded bg-danger-subtle text-danger shadow-sm">
+                                    <p class="mb-2 small"><strong>Suscripción PRO Activa ⭐</strong></p>
+                                    <p class="small mb-2 fw-light">Al anular, perderás los privilegios de administración pero conservarás tu tienda y productos.</p>
+                                    <button (click)="cancelarSuscripcion()" class="btn btn-danger btn-sm w-100">
+                                        Anular Suscripción y bajar a Comprador
                                     </button>
                                 </div>
                             }

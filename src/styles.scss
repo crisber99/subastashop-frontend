@@ -285,6 +285,24 @@ body.dark-theme {
     }
 }
 
+/* --- PAYMENT CONTRAST FIX --- */
+.payment-info-box {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 1rem !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+}
+
+.payment-info-box .fw-bold {
+    color: #818cf8 !important; /* Indigo-400 for labels */
+}
+
+.payment-info-box p, .payment-info-box span {
+    color: #ffffff !important;
+}
+
 .swal2-confirm {
     background: var(--primary-gradient) !important;
     border-radius: var(--radius-sm) !important;

@@ -55,12 +55,13 @@ export class AdminDashboard implements OnInit {
   cargarDatos() {
     this.http.get<any>(`${environment.apiUrl}/admin/stats`).subscribe(data => {
       this.stats = data;
+      console.log("Stats cargadas:", data); // Para verificar que llegue pagosPendientesCount
       
       this.pieChartData = {
         labels: ['Subastas', 'Venta Directa', 'Rifas'],
         datasets: [{
           data: [data.totalSubastas || 0, data.totalVentaDirecta || 0, data.totalRifas || 0],
-          backgroundColor: ['#36A2EB', '#4BC0C0', '#FFCD56']
+          backgroundColor: ['#6366f1', '#10b981', '#06b6d4']
         }]
       };
     });

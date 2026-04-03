@@ -64,15 +64,29 @@ export class AdminConfig implements OnInit {
 
     this.http.post(`${environment.apiUrl}/mercadopago/sync-status`, {}).subscribe({
       next: (res: any) => {
-        this.authService.refreshSession().subscribe(() => {
-          Swal.fire('Sincronizado', 'Se ha actualizado el estado de tu cuenta.', 'success').then(() => {
-            window.location.reload();
-          });
+        // Intentamos refrescar la sesión
+        this.authService.refreshSession().subscribe({
+          next: () => {
+            Swal.fire('Sincronizado', 'Se ha actualizado el estado de tu cuenta.', 'success').then(() => {
+              window.location.reload();
+            });
+          },
+          error: (authErr: any) => {
+            console.error('Error al refrescar sesión tras sync', authErr);
+            Swal.fire('Atención', 'Sincronizado con éxito, pero tu sesión ha expirado. Por favor, vuelve a ingresar.', 'warning').then(() => {
+              this.authService.logout();
+              window.location.href = '/login';
+            });
+          }
         });
       },
       error: (err: any) => {
         console.error('Error sincronizando', err);
-        Swal.fire('Error', 'No se pudo sincronizar el estado. Inténtalo más tarde.', 'error');
+        const errorMsg = err.status === 401 ? 'Tu sesión ha expirado.' : 'No se pudo sincronizar el estado. Inténtalo más tarde.';
+        Swal.fire('Error', errorMsg, 'error');
+        if (err.status === 401) {
+          this.authService.logout();
+        }
       }
     });
   }

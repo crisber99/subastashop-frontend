@@ -54,6 +54,29 @@ export class AdminConfig implements OnInit {
     });
   }
 
+  sincronizarEstado() {
+    Swal.fire({
+      title: 'Sincronizando...',
+      text: 'Consultando el estado de tu pago en Mercado Pago',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.http.post(`${environment.apiUrl}/mercadopago/sync-status`, {}).subscribe({
+      next: (res: any) => {
+        this.authService.refreshSession().subscribe(() => {
+          Swal.fire('Sincronizado', 'Se ha actualizado el estado de tu cuenta.', 'success').then(() => {
+            window.location.reload();
+          });
+        });
+      },
+      error: (err: any) => {
+        console.error('Error sincronizando', err);
+        Swal.fire('Error', 'No se pudo sincronizar el estado. Inténtalo más tarde.', 'error');
+      }
+    });
+  }
+
   cancelarSuscripcion() {
     Swal.fire({
       title: '¿Estás seguro?',

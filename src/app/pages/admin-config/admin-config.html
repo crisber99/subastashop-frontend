@@ -102,20 +102,34 @@
                     </h5>
                     
                     @if (authService.hasActiveSubscription()) {
-                        <div class="alert alert-success d-flex align-items-center mt-3">
+                        <div class="alert alert-success d-flex align-items-center mt-3 shadow-sm">
                             <i class="bi bi-patch-check-fill fs-4 me-3"></i>
-                            <div>
+                            <div class="flex-grow-1">
                                 <div class="fw-bold">Suscripción Activa Premium</div>
                                 <div class="small">Tu tienda está operando con todas las funciones activadas.</div>
                             </div>
+                            <button (click)="sincronizarEstado()" class="btn btn-link text-success p-0 ms-2" title="Sincronizar con Mercado Pago">
+                                <i class="bi bi-arrow-clockwise fs-5"></i>
+                            </button>
+                        </div>
+
+                        <div class="mt-3 p-3 border border-danger rounded bg-danger-subtle text-danger shadow-sm text-center">
+                            <p class="mb-2 small"><strong>Gestión de Suscripción PRO ⭐</strong></p>
+                            <p class="small mb-2 fw-light">Al anular, bajarás a Comprador inmediatamente pero conservarás tu tienda y productos.</p>
+                            <button (click)="cancelarSuscripcion()" class="btn btn-danger btn-sm w-100">
+                                <i class="bi bi-x-circle me-1"></i> Anular y bajar a Comprador
+                            </button>
                         </div>
                     } @else {
-                        <div class="alert alert-info d-flex align-items-center mt-3">
+                        <div class="alert alert-info d-flex align-items-center mt-3 shadow-sm">
                             <i class="bi bi-hourglass-split fs-4 me-3"></i>
-                            <div>
+                            <div class="flex-grow-1">
                                 <div class="fw-bold">Periodo de Prueba (Trial)</div>
                                 <div class="small">Te quedan <strong>{{ authService.getTrialDaysLeft() }} días</strong> de prueba gratuita.</div>
                             </div>
+                            <button (click)="sincronizarEstado()" class="btn btn-link text-info p-0 ms-2" title="Verificar pagos pendientes">
+                                <i class="bi bi-arrow-clockwise fs-5"></i>
+                            </button>
                         </div>
 
                         <div class="p-4 border rounded text-center mt-3" style="background: var(--glass-bg);">
@@ -125,20 +139,10 @@
                             <!-- Contenedor del Card Brick de Mercado Pago -->
                             <div id="cardPaymentBrick_container" class="mt-3"></div>
 
-                            @if (!showCardForm && !authService.currentUser()?.pagoAutomatico) {
+                            @if (!showCardForm) {
                                 <button (click)="inicializarCardBrick()" class="btn btn-primary btn-lg px-3 shadow-sm mt-3">
                                     <i class="bi bi-credit-card me-2"></i> Activar Suscripción Premium
                                 </button>
-                            }
-
-                            @if (authService.currentUser()?.suscripcionActiva) {
-                                <div class="mt-3 p-3 border border-danger rounded bg-danger-subtle text-danger shadow-sm">
-                                    <p class="mb-2 small"><strong>Suscripción PRO Activa ⭐</strong></p>
-                                    <p class="small mb-2 fw-light">Al anular, perderás los privilegios de administración pero conservarás tu tienda y productos.</p>
-                                    <button (click)="cancelarSuscripcion()" class="btn btn-danger btn-sm w-100">
-                                        Anular Suscripción y bajar a Comprador
-                                    </button>
-                                </div>
                             }
                         </div>
                     }
@@ -166,7 +170,7 @@
                         entre tú y el comprador.
                     </p>
                     <ul class="small ps-3 mb-0" style="color: var(--text-secondary, #888);">
-                        <li>El pago de la <strong>Suscripción</strong> es el único que realizas a SubastaShop.</li>
+                        <li>El pago de tu <strong>Plan PRO</strong> es el único compromiso mensual con SubastaShop.</li>
                         <li>Tus <strong>ganancias</strong> por ventas son 100% tuyas, sin comisiones externas.</li>
                     </ul>
                 </div>

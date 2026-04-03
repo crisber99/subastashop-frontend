@@ -89,22 +89,6 @@ export class AdminDashboard implements OnInit {
     });
   }
 
-  notificarGanadores() {
-    Swal.fire({
-      title: '¿Enviar notificaciones?',
-      text: 'Se enviará un correo a los ganadores de subastas y rifas finalizadas.',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, enviar',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.http.post(`${environment.apiUrl}/admin/notificar-ganadores`, {}).subscribe({
-          next: () => Swal.fire('Enviado', 'Notificaciones enviadas correctamente.', 'success'),
-          error: (err) => Swal.fire('Error', 'No se pudieron enviar las notificaciones.', 'error')
-        });
-      }
-    });
-  }
 
   exportarVentas() {
     Swal.fire({ title: 'Generando archivo...', didOpen: () => Swal.showLoading() });

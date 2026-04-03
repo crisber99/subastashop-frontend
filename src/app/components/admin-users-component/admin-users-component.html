@@ -44,6 +44,7 @@
                     <tr>
                         <th class="ps-4">Usuario</th>
                         <th>Rol Actual</th>
+                        <th class="text-center">Estado PRO</th>
                         <th class="text-center">Cambiar Rol</th>
                         <th class="text-end pe-4">Acciones</th>
                     </tr>
@@ -71,6 +72,12 @@
                         </td>
 
                         <td class="text-center">
+                            <span *ngIf="user.suscripcionActiva" class="badge bg-success-soft text-success border border-success" 
+                                  style="font-size: 10px;">PRO ACTIVO ✨</span>
+                            <span *ngIf="!user.suscripcionActiva" class="text-muted small">Estandar</span>
+                        </td>
+
+                        <td class="text-center">
                             <div class="btn-group shadow-sm" role="group" *ngIf="user.rol !== 'ROLE_SUPER_ADMIN'">
                                 <button type="button" class="btn btn-sm btn-outline-secondary"
                                     [class.active]="user.rol === 'ROLE_COMPRADOR'"
@@ -94,7 +101,13 @@
                         </td>
 
                         <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
+                                <button
+                                    class="btn btn-outline-success btn-sm rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                    *ngIf="!user.suscripcionActiva && user.rol !== 'ROLE_SUPER_ADMIN'"
+                                    style="width: 35px; height: 35px;" title="Regalar Suscripción PRO"
+                                    (click)="regalarSuscripcion(user)">
+                                    <i class="bi bi-gift-fill"></i>
+                                </button>
 
                                 <button
                                     class="btn btn-outline-primary btn-sm rounded-circle shadow-sm d-flex align-items-center justify-content-center"

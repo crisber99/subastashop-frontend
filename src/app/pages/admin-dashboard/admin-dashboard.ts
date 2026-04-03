@@ -22,9 +22,12 @@ export class AdminDashboard implements OnInit {
   public themeService = inject(ThemeService); 
   
   stats: any = {
-    totalUsuarios: 0,
+    totalSubastas: 0,
     subastasActivas: 0,
-    ventasCerradas: 0,
+    totalVentaDirecta: 0,
+    ventaDirectaDisponibles: 0,
+    totalRifas: 0,
+    rifasDisponibles: 0,
     gananciasTotales: 0
   };
 
@@ -32,9 +35,9 @@ export class AdminDashboard implements OnInit {
   mostrarProductos = false;
 
   public pieChartData: ChartConfiguration<'pie'>['data'] = {
-    labels: [ 'Subastas Activas', 'Ventas Cerradas' ],
+    labels: [ 'Subastas', 'Venta Directa', 'Rifas' ],
     datasets: [ {
-      data: [ 0, 0 ] 
+      data: [ 0, 0, 0 ] 
     } ]
   };
   public pieChartOptions: ChartOptions<'pie'> = {
@@ -52,10 +55,10 @@ export class AdminDashboard implements OnInit {
       this.stats = data;
       
       this.pieChartData = {
-        labels: ['Subastas Activas', 'Ventas Cerradas'],
+        labels: ['Subastas', 'Venta Directa', 'Rifas'],
         datasets: [{
-          data: [data.subastasActivas, data.ventasCerradas],
-          backgroundColor: ['#36A2EB', '#4BC0C0']
+          data: [data.totalSubastas || 0, data.totalVentaDirecta || 0, data.totalRifas || 0],
+          backgroundColor: ['#36A2EB', '#4BC0C0', '#FFCD56']
         }]
       };
     });

@@ -10,27 +10,48 @@
 
   <!-- 📊 CARDS DE ESTADÍSTICAS -->
   <div class="row g-3">
+    <!-- Subastas -->
     <div class="col-md-3">
-      <div class="card text-white bg-success mb-3 shadow-sm">
+      <div class="card text-white bg-primary mb-3 shadow-sm border-0">
         <div class="card-body">
-          <h5 class="card-title">Ventas</h5>
-          <p class="card-text display-6 fw-bold">{{ stats.ventasCerradas }}</p>
+          <h5 class="card-title small text-uppercase opacity-75">Subastas</h5>
+          <div class="d-flex justify-content-between align-items-end">
+            <p class="card-text display-6 fw-bold mb-0">{{ stats.subastasActivas || 0 }}</p>
+            <span class="small opacity-75">/ {{ stats.totalSubastas || 0 }} total</span>
+          </div>
         </div>
       </div>
     </div>
+    <!-- Venta Directa -->
     <div class="col-md-3">
-      <div class="card text-white bg-warning mb-3 shadow-sm">
+      <div class="card text-white bg-success mb-3 shadow-sm border-0">
         <div class="card-body">
-          <h5 class="card-title text-dark">En Subasta</h5>
-          <p class="card-text display-6 fw-bold text-dark">{{ stats.subastasActivas }}</p>
+          <h5 class="card-title small text-uppercase opacity-75">Venta Directa</h5>
+          <div class="d-flex justify-content-between align-items-end">
+            <p class="card-text display-6 fw-bold mb-0">{{ stats.ventaDirectaDisponibles || 0 }}</p>
+            <span class="small opacity-75">/ {{ stats.totalVentaDirecta || 0 }} total</span>
+          </div>
         </div>
       </div>
     </div>
+    <!-- Rifas -->
     <div class="col-md-3">
-      <div class="card text-white bg-dark mb-3 shadow-sm">
+      <div class="card text-white bg-info mb-3 shadow-sm border-0">
         <div class="card-body">
-          <h5 class="card-title">Ingresos ($)</h5>
-          <p class="card-text display-6 fw-bold">${{ stats.gananciasTotales | number }}</p>
+          <h5 class="card-title small text-uppercase opacity-75">Rifas</h5>
+          <div class="d-flex justify-content-between align-items-end">
+            <p class="card-text display-6 fw-bold mb-0">{{ stats.rifasDisponibles || 0 }}</p>
+            <span class="small opacity-75">/ {{ stats.totalRifas || 0 }} total</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Ingresos -->
+    <div class="col-md-3">
+      <div class="card text-white bg-dark mb-3 shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title small text-uppercase opacity-75">Ingresos ($)</h5>
+          <p class="card-text display-6 fw-bold mb-0">${{ stats.gananciasTotales || 0 | number }}</p>
         </div>
       </div>
     </div>

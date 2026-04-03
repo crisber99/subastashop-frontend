@@ -59,4 +59,13 @@ export class SuperAdminService {
   regalarSuscripcion(userId: number) {
     return this.http.post(`${this.apiUrlSuperAdmin}/${userId}/regalar-suscripcion`, {});
   }
+
+  eliminarTienda(tiendaId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrlSuperAdmin}/tiendas/${tiendaId}`);
+  }
+
+  eliminarProductoGlobal(productoId: number): Observable<any> {
+    // Apunta al endpoint de admin pero con el token de Super Admin funciona igual
+    return this.http.delete(`${environment.apiUrl}/admin/productos/${productoId}`);
+  }
 }

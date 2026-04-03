@@ -157,7 +157,10 @@
                   <td>{{ t.id }}</td>
                   <td class="fw-bold">{{ t.nombre }}</td>
                   <td><a [routerLink]="['/tienda', t.slug]" target="_blank">/{{ t.slug }}</a></td>
-                  <td><button class="btn btn-sm btn-outline-secondary"><i class="bi bi-gear"></i></button></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-secondary me-2" title="Configuración"><i class="bi bi-gear"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="eliminarTienda(t)" title="Eliminar Tienda"><i class="bi bi-trash"></i></button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -167,7 +170,7 @@
     </div>
   </div>
 
-  <!-- CONTENIDO: PRODUCTOS -->
+  <!-- CONTENIDO: PRODUCTOS GLOBALES -->
   <div *ngIf="activeTab === 'productos'" class="row">
     <div class="col-12">
       <div class="row g-4 d-flex">
@@ -186,14 +189,14 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 100%;">{{ producto.nombre }}</h6>
                   <span class="badge" [ngClass]="{
-                    'bg-success-soft text-success': producto.estado === 'ACTIVO' || producto.estado === 'EN_SUBASTA',
+                    'bg-success-soft text-success': producto.estado === 'ACTIVO' || producto.estado === 'EN_SUBASTA' || producto.estado === 'DISPONIBLE',
                     'bg-danger-soft text-danger': producto.estado === 'VENDIDO',
                     'bg-warning-soft text-warning': producto.estado === 'FINALIZADA' || producto.estado === 'RESERVADO'
                   }">{{ producto.estado }}</span>
                 </div>
                 
-                <p class="text-muted small mb-3">
-                  <i class="bi bi-shop me-1 text-primary"></i> {{ producto.tienda?.nombre || 'Tienda Desconocida' }}
+                <p class="text-muted small mb-2">
+                  <i class="bi bi-shop me-1 text-primary"></i> {{ producto.tienda?.nombre || 'General' }}
                 </p>
 
                 <div class="mt-auto">
@@ -203,10 +206,13 @@
                     </div>
                 </div>
               </div>
-              <div class="card-footer bg-transparent border-0 p-3 pt-0">
-                 <a [routerLink]="['/producto', producto.id]" class="btn btn-primary-soft btn-sm w-100 rounded-pill">
-                    <i class="bi bi-eye me-1"></i> Ver Detalles
+              <div class="card-footer bg-transparent border-0 p-3 pt-0 d-flex gap-1">
+                 <a [routerLink]="['/producto', producto.slug || producto.id]" class="btn btn-primary-soft btn-sm flex-grow-1 rounded-pill">
+                    <i class="bi bi-eye me-1"></i> Ver
                  </a>
+                 <button (click)="eliminarProducto(producto)" class="btn btn-outline-danger btn-sm rounded-pill px-3" title="Eliminar Producto">
+                    <i class="bi bi-trash"></i>
+                 </button>
               </div>
             </div>
           </div>

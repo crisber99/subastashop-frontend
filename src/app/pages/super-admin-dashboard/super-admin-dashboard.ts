@@ -146,4 +146,48 @@ export class SuperAdminDashboard implements OnInit {
         }
     });
   }
+
+  eliminarTienda(tienda: any) {
+    Swal.fire({
+      title: '¿Eliminar Tienda?',
+      text: `¿Estás seguro de que deseas eliminar la tienda "${tienda.nombre}"? Se perderán todos sus datos vinculados.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.superAdminService.eliminarTienda(tienda.id).subscribe({
+          next: () => {
+            Swal.fire('¡Eliminada!', 'La tienda ha sido eliminada.', 'success');
+            this.cargarTodo();
+          },
+          error: (err) => Swal.fire('Error', 'No se pudo eliminar la tienda.', 'error')
+        });
+      }
+    });
+  }
+
+  eliminarProducto(p: any) {
+    Swal.fire({
+      title: '¿Eliminar Producto?',
+      text: `Como Super Admin, vas a eliminar "${p.nombre}". ¿Confirmar?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.superAdminService.eliminarProductoGlobal(p.id).subscribe({
+            next: () => {
+                Swal.fire('¡Eliminado!', 'Producto eliminado globalmente.', 'success');
+                this.cargarTodo();
+            },
+            error: () => Swal.fire('Error', 'No se pudo eliminar.', 'error')
+        });
+      }
+    });
+  }
 }

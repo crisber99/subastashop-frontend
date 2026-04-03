@@ -110,16 +110,49 @@ export class AdminDashboard implements OnInit {
     
     this.http.get(`${environment.apiUrl}/admin/exportar-ventas`, { responseType: 'blob' }).subscribe({
       next: (blob) => {
+        const user = this.authService.currentUser();
+        const nombreTienda = user?.tienda?.nombre || 'Global';
+        const safeNombre = nombreTienda.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+        const now = new Date();
+        const timestamp = now.getFullYear() + 
+                         ('0' + (now.getMonth() + 1)).slice(-2) + 
+                         ('0' + now.getDate()).slice(-2) + '_' + 
+                         ('0' + now.getHours()).slice(-2) + 
+                         ('0' + now.getMinutes()).slice(-2) + 
+                         ('0' + now.getSeconds()).slice(-2);
+        
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'ventas_tienda.xlsx';
+        a.download = `tienda_${safeNombre}_${timestamp}.xlsx`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         Swal.close();
       },
       error: (err) => Swal.fire('Error', 'No se pudo exportar el archivo.', 'error')
+    });
+  }
+
+  eliminarProducto(p: any) {
+    Swal.fire({
+      title: '¿Eliminar producto?',
+      text: `¿Estás seguro de que deseas eliminar "${p.nombre}"? Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.http.delete(`${environment.apiUrl}/admin/productos/${p.id}`).subscribe({
+          next: () => {
+            Swal.fire('¡Eliminado!', 'El producto ha sido eliminado.', 'success');
+            this.cargarProductos();
+          },
+          error: (err) => Swal.fire('Error', 'No se pudo eliminar el producto.', 'error')
+        });
+      }
     });
   }
 }

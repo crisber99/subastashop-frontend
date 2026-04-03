@@ -58,9 +58,6 @@
           <button (click)="detenerSubastas()" class="btn btn-outline-danger text-start">
             <i class="bi bi-stop-circle me-2"></i> Detener subastas activas
           </button>
-          <button (click)="notificarGanadores()" class="btn btn-outline-primary text-start">
-            <i class="bi bi-envelope me-2"></i> Enviar Email a Ganadores
-          </button>
           <button (click)="exportarVentas()" class="btn btn-outline-secondary text-start">
             <i class="bi bi-file-earmark-excel me-2"></i> Exportar Ventas (Excel)
           </button>
@@ -113,9 +110,12 @@
                   </td>
                   <td><small style="color: var(--text-secondary, #888);">{{ p.tenantId || p.tienda?.slug }}</small></td>
                   <td>
-                    <a [routerLink]="['/producto', p.slug || p.id]" class="btn btn-xs btn-outline-primary btn-sm rounded-pill px-2 py-0" style="font-size: 11px;">
+                    <a [routerLink]="['/producto', p.slug || p.id]" class="btn btn-xs btn-outline-primary btn-sm rounded-pill px-2 py-0" style="font-size: 11px;" title="Ver Producto">
                       <i class="bi bi-eye"></i>
                     </a>
+                    <button (click)="eliminarProducto(p)" class="btn btn-xs btn-outline-danger btn-sm rounded-pill px-2 py-0 ms-1" style="font-size: 11px;" title="Eliminar Producto">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </td>
                 </tr>
                 <tr *ngIf="productos.length === 0">

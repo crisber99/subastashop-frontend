@@ -218,6 +218,35 @@ export class AdminUsersComponent implements OnInit {
     });
   }
 
+  regalarSuscripcion(user: any) {
+    Swal.fire({
+      title: '🎁 ¿Regalar Suscripción PRO?',
+      text: `Estás a punto de activar la suscripción PRO para ${user.nombreCompleto || user.email} de forma gratuita.`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, ¡regalar PRO!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({ title: 'Activando...', didOpen: () => Swal.showLoading() });
+        
+        this.adminService.regalarSuscripcion(user.id).subscribe({
+          next: () => {
+            user.rol = 'ROLE_ADMIN';
+            user.suscripcionActiva = true;
+            Swal.fire('¡Regalo Enviado!', 'El usuario ahora es PRO y Administrador.', 'success');
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Error', 'No se pudo activar la suscripción.', 'error');
+          }
+        });
+      }
+    });
+  }
+
   /**
    * Helper para obtener el color del badge según el rol
    */

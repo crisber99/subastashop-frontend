@@ -55,4 +55,8 @@ export class SuperAdminService {
   getGlobalProductos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrlSuperAdmin}/global-productos`);
   }
+
+  regalarSuscripcion(userId: number) {
+    return this.http.post(`${this.apiUrlSuperAdmin}/${userId}/regalar-suscripcion`, {});
+  }
 }

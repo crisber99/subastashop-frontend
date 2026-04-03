@@ -7,12 +7,13 @@ import { RouterModule } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth-service';
 import { ThemeService } from '../../services/theme-service';
+import { AdminValidarPagos } from '../../components/admin-validar-pagos/admin-validar-pagos';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective, RouterModule],
+  imports: [CommonModule, BaseChartDirective, RouterModule, AdminValidarPagos],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.scss',
 })
@@ -33,6 +34,7 @@ export class AdminDashboard implements OnInit {
 
   productos: any[] = [];
   mostrarProductos = false;
+  activeTab: string = 'resumen'; 
 
   public pieChartData: ChartConfiguration<'pie'>['data'] = {
     labels: [ 'Subastas', 'Venta Directa', 'Rifas' ],

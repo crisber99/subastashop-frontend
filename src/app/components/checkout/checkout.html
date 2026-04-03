@@ -7,22 +7,22 @@
                     <h5 class="mb-0"><i class="bi bi-bank"></i> Datos para Transferir</h5>
                 </div>
                 <div class="card-body p-4">
-                    <p class="text-muted">Por favor, realiza la transferencia exacta a la cuenta del vendedor:</p>
-
-                    <div class="bg-light p-3 rounded border mb-4">
+                    <p class="mb-3" style="color: var(--text-color); opacity: 0.8;">Por favor, realiza la transferencia exacta a la cuenta del vendedor:</p>
+                    
+                    <div class="rounded border p-3 mb-4" style="background: var(--glass-bg); border-color: var(--glass-border) !important;">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="fw-bold">Nombre Tienda:</span>
-                            <span>{{ orden.tienda.nombre }}</span>
+                            <span class="fw-bold" style="color: var(--primary-color);">Nombre Tienda:</span>
+                            <span style="color: var(--text-color);">{{ orden.tienda.nombre }}</span>
                         </div>
 
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="fw-bold">RUT / ID:</span>
-                            <span>{{ orden.tienda.rutEmpresa || 'No informado' }}</span>
+                            <span class="fw-bold" style="color: var(--primary-color);">RUT / ID:</span>
+                            <span style="color: var(--text-color);">{{ orden.tienda.rutEmpresa || 'No informado' }}</span>
                         </div>
 
                         <div class="mt-3">
-                            <span class="fw-bold d-block mb-1">Datos Bancarios:</span>
-                            <p class="mb-0 text-break" style="white-space: pre-line;">
+                            <span class="fw-bold d-block mb-1" style="color: var(--primary-color);">Datos Bancarios:</span>
+                            <p class="mb-0 text-break" style="white-space: pre-line; color: var(--text-color);">
                                 {{ orden.tienda.datosBancarios || 'Contactar al vendedor para datos de pago' }}
                             </p>
                         </div>

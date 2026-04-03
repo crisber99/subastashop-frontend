@@ -73,17 +73,23 @@ export class Checkout implements OnInit {
     
     console.log("Enviando archivo:", this.archivoComprobante.name);
 
-    setTimeout(() => {
-      this.loading = false;
-      Swal.fire({
-        icon: 'success',
-        title: '¡Comprobante Enviado!',
-        text: 'El vendedor verificará tu pago pronto.',
-        timer: 3000,
-        showConfirmButton: false
-      }).then(() => {
-        this.router.navigate(['/dashboard']);
-      });
-    }, 1500);
+    this.OrdenService.informarPago(this.orden.id, this.archivoComprobante).subscribe({
+      next: () => {
+        this.loading = false;
+        Swal.fire({
+          icon: 'success',
+          title: '¡Comprobante Enviado!',
+          text: 'El vendedor verificará tu pago pronto.',
+          timer: 3000,
+          showConfirmButton: false
+        }).then(() => {
+          this.router.navigate(['/dashboard']);
+        });
+      },
+      error: (err) => {
+        this.loading = false;
+        Swal.fire('Error', 'No se pudo subir el comprobante. Intenta nuevamente.', 'error');
+      }
+    });
   }
 }

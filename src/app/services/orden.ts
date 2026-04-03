@@ -38,4 +38,23 @@ export class OrdenService {
   getOrdenById(id: number) {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
+
+  informarPago(id: number, archivo: File) {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post(`${this.apiUrl}/${id}/informar-pago`, formData);
+  }
+
+  // --- ADMIN ---
+  getPendientesValidacion() {
+    return this.http.get<any[]>(`${environment.apiUrl}/admin/ordenes/pendientes-validacion`);
+  }
+
+  aprobarPago(id: number) {
+    return this.http.post(`${environment.apiUrl}/admin/ordenes/${id}/aprobar`, {});
+  }
+
+  rechazarPago(id: number) {
+    return this.http.post(`${environment.apiUrl}/admin/ordenes/${id}/rechazar`, {});
+  }
 }

@@ -83,8 +83,12 @@
             <i class="bi bi-file-earmark-excel me-2"></i> Exportar Ventas (Excel)
           </button>
           
+          <button (click)="activeTab = 'pagos'; mostrarProductos = false" class="btn btn-warning text-dark text-start shadow-sm">
+            <i class="bi bi-bank2 me-2"></i> Validar Pagos Pendientes
+          </button>
+
           <hr>
-          <button (click)="mostrarProductos = !mostrarProductos" class="btn btn-dark text-start w-100">
+          <button (click)="mostrarProductos = !mostrarProductos; activeTab = 'resumen'" class="btn btn-dark text-start w-100">
             <i class="bi bi-box-seam me-2"></i> {{ mostrarProductos ? 'Ocultar Mis Productos' : '📦 Ver Mis Productos' }}
           </button>
         </div>
@@ -92,8 +96,20 @@
     </div>
   </div>
 
+  <!-- 🏦 SECCIÓN DE VALIDACIÓN DE PAGOS -->
+  <div class="row mt-4" *ngIf="activeTab === 'pagos'">
+    <div class="col-12">
+        <app-admin-validar-pagos></app-admin-validar-pagos>
+        <div class="mt-3 text-end">
+            <button class="btn btn-outline-secondary" (click)="activeTab = 'resumen'">
+                <i class="bi bi-x-circle me-1"></i> Cerrar Validación
+            </button>
+        </div>
+    </div>
+  </div>
+
   <!-- 📦 SECCIÓN DE PRODUCTOS -->
-  <div class="row mt-4" *ngIf="mostrarProductos">
+  <div class="row mt-4" *ngIf="mostrarProductos && activeTab === 'resumen'">
     <div class="col-12">
       <div class="card shadow-sm" style="background: var(--card-bg); border-color: var(--glass-border);">
         <div class="card-header d-flex justify-content-between align-items-center"

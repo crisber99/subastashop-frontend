@@ -37,7 +37,7 @@
                     </span>
                 </button>
             </li>
-            <li class="nav-item" *ngIf="authService.hasRole('ROLE_SUPER_ADMIN')">
+            <li class="nav-item" *ngIf="authService.isSuperAdmin()">
                 <button class="nav-link rounded-pill d-flex align-items-center justify-content-center gap-2" 
                         [class.active]="activeTab === 'config'" (click)="activeTab = 'config'">
                     <i class="bi bi-gear"></i> Configuración

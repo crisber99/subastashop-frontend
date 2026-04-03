@@ -143,7 +143,11 @@ export class MercadoPagoService {
       Swal.fire({
         title: '💳 Datos de tu Tarjeta',
         html: `
-          <div id="cardPaymentBrick_container_modal" style="min-height: 400px;"></div>
+          <div id="loading-brick" class="text-center p-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Cargando formulario seguro...</p>
+          </div>
+          <div id="cardPaymentBrick_container_modal" style="display: none;"></div>
           <p class="small text-muted mt-2">Tus datos están protegidos por Mercado Pago</p>
         `,
         showConfirmButton: false,
@@ -161,13 +165,22 @@ export class MercadoPagoService {
                 payer: { email: userEmail },
               },
               customization: {
-                visual: { style: { theme: 'default' } },
+                visual: { 
+                  style: { theme: 'default' },
+                  preserveStyle: true 
+                },
                 paymentMethods: { maxInstallments: 1 }
               },
               callbacks: {
-                onReady: () => console.log('Modal Brick Ready'),
+                onReady: () => {
+                  console.log('Modal Brick Ready');
+                  const loadingEl = document.getElementById('loading-brick');
+                  const containerEl = document.getElementById('cardPaymentBrick_container_modal');
+                  if (loadingEl) loadingEl.style.display = 'none';
+                  if (containerEl) containerEl.style.display = 'block';
+                },
                 onSubmit: (formData: any) => {
-                  // Enviamos el token al servidor
+                  // NO cerramos el modal aquí, el spinner de Swal se encarga
                   return this.http.post(`${environment.apiUrl}/mercadopago/subscribe-with-token`, { token: formData.token })
                     .toPromise()
                     .then((res: any) => {
@@ -177,18 +190,21 @@ export class MercadoPagoService {
                         });
                         resolve(res);
                       } else {
-                        Swal.fire('Atención', 'El pago requiere validación adicional.', 'info');
+                        // Si el estado es "en proceso" o similar, no cerramos todo
+                        Swal.fire('Atención', 'El pago está en validación. No cierres esta ventana.', 'info');
                         resolve(res);
                       }
                     })
                     .catch((err) => {
                       console.error('Error en suscripción modal', err);
-                      Swal.fire('Error', err.error?.message || 'No se pudo procesar el pago.', 'error');
-                      reject(err);
+                      // MOSTRAMOS ERROR PERO PERMITIMOS VOLVER A INTENTAR (no resolvemos el promise del brick con error crítico)
+                      Swal.fire('Error de Pago', err.error?.message || 'La tarjeta fue rechazada o los datos son incorrectos.', 'error');
+                      // No hacemos reject aquí para que el Brick no se bloquee totalmente si es posible reintentar
                     });
                 },
                 onError: (error: any) => {
                   console.error('Modal Brick Error:', error);
+                  Swal.fire('Error Crítico', 'Hubo un problema con el módulo de pagos. Reintenta.', 'error');
                   reject(error);
                 },
               },

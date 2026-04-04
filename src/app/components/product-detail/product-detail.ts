@@ -599,12 +599,15 @@ export class ProductDetail implements OnInit, OnDestroy {
         if(res.isConfirmed) {
             Swal.fire({ title: 'Sorteando...', didOpen: () => Swal.showLoading() });
             this.productService.lanzarRifa(this.producto.id).subscribe({
-                next: (listaGanadores: any) => {
-                  this.ganadores = listaGanadores;
-                  Swal.fire({ title: '🏆 ¡GANADORES!', icon: 'success' });
-                  this.cargarProducto(this.producto.slug || this.producto.id);
+                next: (res: any) => {
+                  Swal.close();
+                  // No mostramos ganadores aquí. El WebSocket (status: 'PREPARANDO')
+                  // se encargará de iniciar el show y la cuenta regresiva.
                 },
-                error: (err) => Swal.fire('Error', 'Error al lanzar rifa', 'error')
+                error: (err) => {
+                  Swal.close();
+                  Swal.fire('Error', 'Error al lanzar rifa', 'error');
+                }
             });
         }
     });

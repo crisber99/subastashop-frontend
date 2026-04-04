@@ -232,7 +232,7 @@
 
                         <div class="d-grid gap-3"> 
                             <button class="btn btn-primary btn-lg py-3 fw-bold shadow-lg"
-                                (click)="abrirModalPago()" [disabled]="cartService.estaEnCarrito(producto.id)">
+                                (click)="comprarAhora()" [disabled]="cartService.estaEnCarrito(producto.id)">
                                 @if (cartService.estaEnCarrito(producto.id)) {
                                     <i class="bi bi-cart-check me-2"></i> En el Carrito
                                 } @else {

@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
@@ -14,13 +14,19 @@ import Swal from 'sweetalert2';
   templateUrl: './promotion-banner.html',
   styleUrl: './promotion-banner.scss'
 })
-export class PromotionBanner {
+export class PromotionBanner implements OnInit {
   authService = inject(AuthService);
   themeService = inject(ThemeService);
   mpService = inject(MercadoPagoService);
   router = inject(Router);
 
   mostrarBanner = true;
+
+  ngOnInit() {
+    if (this.authService.hasActiveSubscription()) {
+      this.mostrarBanner = false;
+    }
+  }
 
   // Lógica de mensaje dinámico
   mensaje = computed(() => {

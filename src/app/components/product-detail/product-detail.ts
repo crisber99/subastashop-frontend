@@ -11,6 +11,8 @@ import { CartService } from '../../services/cart';
 import { LayoutService } from '../../services/layout';
 import { CalificacionService } from '../../services/calificacion';
 import { FavoritoService } from '../../services/favorito.service';
+import { OrdenService } from '../../services/orden';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 declare var bootstrap: any;
@@ -29,6 +31,8 @@ export class ProductDetail implements OnInit, OnDestroy {
   private superAdminService = inject(SuperAdminService);
   public layoutService = inject(LayoutService);
   cartService = inject(CartService);
+  ordenService = inject(OrdenService);
+  router = inject(Router);
   
   websocketService = inject(Websocket);
   authService = inject(AuthService);
@@ -284,6 +288,90 @@ export class ProductDetail implements OnInit, OnDestroy {
     Swal.fire({
         icon: 'success', title: 'Agregado', text: 'Producto añadido al carrito',
         toast: true, position: 'bottom-end', timer: 2000, showConfirmButton: false
+    });
+  }
+
+  comprarAhora() {
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire({
+        title: 'Inicia Sesión',
+        text: 'Debes estar registrado para realizar una compra.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Ir a Login',
+        cancelButtonText: 'Cancelar'
+      }).then(r => { if(r.isConfirmed) this.router.navigate(['/login']); });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Procesando compra...',
+      text: 'Estamos generando tu orden de pedido',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    // Creamos el objeto de orden (basado en la estructura del backend)
+    const orderRequest = {
+      detalles: [{
+        productoId: this.producto.id,
+        cantidad: 1,
+        precioUnitario: this.producto.precioBase,
+        tipoVenta: 'DIRECTA'
+      }]
+    };
+
+    this.ordenService.crearOrden(orderRequest).subscribe({
+      next: (orden: any) => {
+        Swal.close();
+        
+        // Parsear cuentas bancarias
+        let cuentasHtml = '';
+        try {
+          const datos = this.producto.tienda?.datosBancarios;
+          if (datos && datos.startsWith('[')) {
+            const cuentas = JSON.parse(datos);
+            cuentasHtml = cuentas.map((c: any) => `
+              <div style="text-align: left; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #6366f1;">
+                <p style="margin: 0; font-weight: bold; color: #4338ca;">${c.banco} - ${c.tipo}</p>
+                <p style="margin: 0; font-size: 0.9em;">N°: <b>${c.numero}</b></p>
+                <p style="margin: 0; font-size: 0.9em;">Titular: ${c.titular} (RUT: ${c.rut})</p>
+              </div>
+            `).join('');
+          } else {
+            cuentasHtml = `<div style="text-align: left; white-space: pre-line; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 10px;">${datos || 'Contactar al vendedor'}</div>`;
+          }
+        } catch (e) {
+          cuentasHtml = `<p>Error al cargar cuentas. Ver detalle en checkout.</p>`;
+        }
+
+        Swal.fire({
+          title: '¡Orden Reservada! 🎉',
+          html: `
+            <p>Tu orden <b>#${orden.id}</b> ha sido creada con éxito.</p>
+            <p class="small text-muted mb-3">Realiza la transferencia por <b>$${this.producto.precioBase.toLocaleString()}</b>:</p>
+            <div style="max-height: 250px; overflow-y: auto;">${cuentasHtml}</div>
+            <div class="mt-3 p-2 bg-info-subtle border rounded small">
+              💡 Una vez realizada la transferencia, sube tu comprobante para que el vendedor valide el pago.
+            </div>
+          `,
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonText: '🚀 Informar Pago Ahora',
+          cancelButtonText: 'Ver mis órdenes',
+          confirmButtonColor: '#6366f1'
+        }).then(res => {
+          if (res.isConfirmed) {
+            this.router.navigate(['/checkout', orden.id]);
+          } else {
+            this.router.navigate(['/admin/mis-compras']);
+          }
+        });
+      },
+      error: (err) => {
+        Swal.close();
+        Swal.fire('Error', err.error?.message || 'No se pudo procesar la compra inmediata.', 'error');
+      }
     });
   }
 

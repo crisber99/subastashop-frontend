@@ -80,38 +80,38 @@
 
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <div class="form-floating">
+                                                <div class="mb-3">
+                                                    <label [for]="'banco'+i" class="form-label fw-bold small mb-1 opacity-75">Institución Bancaria</label>
                                                     <input type="text" class="form-control" [id]="'banco'+i" placeholder="Ej: Banco Estado" 
                                                            [(ngModel)]="cuenta.banco" [name]="'banco'+i">
-                                                    <label [for]="'banco'+i">Institución Bancaria</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="form-floating">
+                                                <div class="mb-3">
+                                                    <label [for]="'tipo'+i" class="form-label fw-bold small mb-1 opacity-75">Tipo de Cuenta</label>
                                                     <input type="text" class="form-control" [id]="'tipo'+i" placeholder="Ej: Cuenta RUT" 
                                                            [(ngModel)]="cuenta.tipo" [name]="'tipo'+i">
-                                                    <label [for]="'tipo'+i">Tipo de Cuenta</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="form-floating">
+                                                <div class="mb-3">
+                                                    <label [for]="'numero'+i" class="form-label fw-bold small mb-1 opacity-75">Número de Cuenta</label>
                                                     <input type="text" class="form-control" [id]="'numero'+i" placeholder="Ej: 123456" 
                                                            [(ngModel)]="cuenta.numero" [name]="'numero'+i">
-                                                    <label [for]="'numero'+i">Número de Cuenta</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="form-floating">
+                                                <div class="mb-3">
+                                                    <label [for]="'titular'+i" class="form-label fw-bold small mb-1 opacity-75">Nombre del Titular</label>
                                                     <input type="text" class="form-control" [id]="'titular'+i" placeholder="Ej: Juan Pérez" 
                                                            [(ngModel)]="cuenta.titular" [name]="'titular'+i">
-                                                    <label [for]="'titular'+i">Nombre del Titular</label>
                                                 </div>
                                             </div>
                                             <div class="col-12">
-                                                <div class="form-floating">
+                                                <div class="mb-1">
+                                                    <label [for]="'rut'+i" class="form-label fw-bold small mb-1 opacity-75">RUT del Titular</label>
                                                     <input type="text" class="form-control" [id]="'rut'+i" placeholder="Ej: 12.345.678-9" 
                                                            [(ngModel)]="cuenta.rut" [name]="'rut'+i">
-                                                    <label [for]="'rut'+i">RUT del Titular</label>
                                                 </div>
                                             </div>
                                         </div>

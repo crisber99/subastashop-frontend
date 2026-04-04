@@ -37,22 +37,92 @@
                             </div>
                         </div>
 
-                        <h5 class="mt-4 mb-3 border-bottom pb-2">Información para Pagos y Facturación</h5>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">RUT Empresa o Personal</label>
-                            <input type="text" class="form-control" [(ngModel)]="config.rutEmpresa" name="rut"
-                                placeholder="Ej: 12.345.678-9">
-                            <div class="form-text">Necesario para la validación interna de tu cuenta comercial.</div>
-                        </div>
+                        <!-- 🏦 Información para Pagos y Facturación -->
+                        <div class="mb-5">
+                            <h4 class="mb-4 text-primary"><i class="bi bi-bank2 me-2"></i>Información para Pagos y Facturación</h4>
+                            
+                            <div class="form-floating mb-4">
+                                <input type="text" class="form-control" id="rutEmpresa" placeholder="12.345.678-9" 
+                                       [(ngModel)]="config.rutEmpresa" name="rutEmpresa">
+                                <label for="rutEmpresa">RUT Empresa o Personal (Para validación)</label>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Datos Bancarios para Transferencias</label>
-                            <textarea class="form-control" rows="5" [(ngModel)]="config.datosBancarios" name="banco"
-                                placeholder="Ej:&#10;Banco: Estado&#10;Tipo de Cuenta: RUT&#10;Nro: 12345678&#10;Titular: Juan Pérez&#10;Email: pagos@mitienda.com"></textarea>
-                            <div class="alert small shadow-sm mt-2 py-3" style="background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">
-                                <i class="bi bi-info-circle-fill me-2"></i> Estos datos se mostrarán <strong>exclusivamente al ganador</strong> 
-                                tras finalizar la subasta para gestionar la transferencia directa.
+                            <!-- Datos Bancarios (Multi-Cuenta) -->
+                            <div class="card p-4 border-0 shadow-sm" style="background: var(--glass-bg);">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">Cuentas Bancarias para Transferencia</h5>
+                                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" (click)="agregarCuenta()">
+                                        <i class="bi bi-plus-circle me-1"></i> Añadir Otra Cuenta
+                                    </button>
+                                </div>
+
+                                <!-- Aviso de Datos Antiguos (Legacy) -->
+                                <div *ngIf="legacyDatosBancarios" class="alert alert-warning border-0 shadow-sm mb-4">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                                        <div>
+                                            <strong>Tienes datos antiguos en formato texto:</strong>
+                                            <p class="mb-2 small opacity-75">{{ legacyDatosBancarios }}</p>
+                                            <button type="button" class="btn btn-sm btn-dark rounded-pill" (click)="convertirLegacy()">
+                                                <i class="bi bi-arrow-repeat me-1"></i> Convertir a Formato Nuevo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div *ngFor="let cuenta of cuentas; let i = index" class="col-12 p-3 mb-3 border rounded position-relative" 
+                                         style="background: rgba(0,0,0,0.05); border-color: var(--glass-border) !important;">
+                                        
+                                        <button *ngIf="cuentas.length > 1" type="button" 
+                                                class="btn-close position-absolute top-0 end-0 m-2" 
+                                                (click)="eliminarCuenta(i)" title="Eliminar esta cuenta"></button>
+
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" [id]="'banco'+i" placeholder="Ej: Banco Estado" 
+                                                           [(ngModel)]="cuenta.banco" [name]="'banco'+i">
+                                                    <label [for]="'banco'+i">Institución Bancaria</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" [id]="'tipo'+i" placeholder="Ej: Cuenta RUT" 
+                                                           [(ngModel)]="cuenta.tipo" [name]="'tipo'+i">
+                                                    <label [for]="'tipo'+i">Tipo de Cuenta</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" [id]="'numero'+i" placeholder="Ej: 123456" 
+                                                           [(ngModel)]="cuenta.numero" [name]="'numero'+i">
+                                                    <label [for]="'numero'+i">Número de Cuenta</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" [id]="'titular'+i" placeholder="Ej: Juan Pérez" 
+                                                           [(ngModel)]="cuenta.titular" [name]="'titular'+i">
+                                                    <label [for]="'titular'+i">Nombre del Titular</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" [id]="'rut'+i" placeholder="Ej: 12.345.678-9" 
+                                                           [(ngModel)]="cuenta.rut" [name]="'rut'+i">
+                                                    <label [for]="'rut'+i">RUT del Titular</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 p-3 rounded" style="background: rgba(255,193,7,0.1); border: 1px dashed rgba(255,193,7,0.3);">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i> Estos datos se mostrarán <strong>exclusivamente al ganador</strong> tras finalizar la subasta para gestionar la transferencia directa.
+                                    </small>
+                                </div>
                             </div>
                         </div>
 

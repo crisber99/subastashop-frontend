@@ -9,6 +9,14 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 
+export interface CuentaBancaria {
+  banco: string;
+  tipo: string;
+  numero: string;
+  titular: string;
+  rut: string;
+}
+
 @Component({
   selector: 'app-admin-config',
   standalone: true,
@@ -27,10 +35,12 @@ export class AdminConfig implements OnInit {
   config = {
     nombre: '',
     rutEmpresa: '',
-    datosBancarios: '',
     colorPrimario: '#0d6efd',
     logoUrl: ''
   };
+
+  cuentas: CuentaBancaria[] = [];
+  legacyDatosBancarios: string = ''; // Para no perder datos si no son JSON
 
   fileLogo: File | null = null;
   logoPreview: string | null = null;
@@ -224,10 +234,24 @@ export class AdminConfig implements OnInit {
       next: (data) => {
         this.config.nombre = data.nombre || '';
         this.config.rutEmpresa = data.rutEmpresa || '';
-        this.config.datosBancarios = data.datosBancarios || '';
         this.config.colorPrimario = data.colorPrimario || '#0d6efd';
         this.config.logoUrl = data.logoUrl || '';
         this.logoPreview = data.logoUrl || null;
+
+        // Intentar parsear las cuentas (JSON)
+        try {
+          if (data.datosBancarios && data.datosBancarios.startsWith('[')) {
+            this.cuentas = JSON.parse(data.datosBancarios);
+            this.legacyDatosBancarios = '';
+          } else {
+            this.legacyDatosBancarios = data.datosBancarios || '';
+            if (!this.legacyDatosBancarios) {
+                this.agregarCuenta(); // Iniciar con una vacía si no hay nada
+            }
+          }
+        } catch (e) {
+          this.legacyDatosBancarios = data.datosBancarios || '';
+        }
 
         if (data.fechaAceptacionTerminos) {
           this.aceptaTerminos = true;
@@ -235,6 +259,26 @@ export class AdminConfig implements OnInit {
       },
       error: (err) => console.error('Error cargando tienda', err)
     });
+  }
+
+  agregarCuenta() {
+    this.cuentas.push({ banco: '', tipo: '', numero: '', titular: '', rut: '' });
+  }
+
+  eliminarCuenta(index: number) {
+    this.cuentas.splice(index, 1);
+    if (this.cuentas.length === 0) this.agregarCuenta();
+  }
+
+  convertirLegacy() {
+    this.cuentas = [{
+        titular: this.config.nombre,
+        rut: this.config.rutEmpresa,
+        banco: '',
+        tipo: '',
+        numero: ''
+    }];
+    this.legacyDatosBancarios = '';
   }
 
   onLogoSelected(event: any) {
@@ -272,7 +316,11 @@ export class AdminConfig implements OnInit {
     const formData = new FormData();
     formData.append('nombreTienda', this.config.nombre);
     formData.append('rutEmpresa', this.config.rutEmpresa);
-    formData.append('datosBancarios', this.config.datosBancarios);
+    
+    // Serializar cuentas a JSON string
+    const datosJSON = JSON.stringify(this.cuentas);
+    formData.append('datosBancarios', datosJSON);
+    
     formData.append('colorPrimario', this.config.colorPrimario);
     formData.append('aceptaTerminos', this.aceptaTerminos.toString());
 

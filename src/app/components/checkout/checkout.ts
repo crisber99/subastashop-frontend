@@ -18,6 +18,8 @@ export class Checkout implements OnInit {
 
   ordenId: number = 0;
   orden: any = null;
+  cuentasBancarias: any[] = [];
+  legacyDatos: string = '';
   loading = false;
   archivoComprobante: File | null = null;
   intentoEnviar = false;
@@ -33,6 +35,19 @@ export class Checkout implements OnInit {
     this.OrdenService.getOrdenById(this.ordenId).subscribe({
       next: (data) => {
         this.orden = data;
+        
+        // Parsear cuentas bancarias
+        try {
+          const datos = data.tienda?.datosBancarios;
+          if (datos && datos.startsWith('[')) {
+            this.cuentasBancarias = JSON.parse(datos);
+          } else {
+            this.legacyDatos = datos || '';
+          }
+        } catch (e) {
+          this.legacyDatos = data.tienda?.datosBancarios || '';
+        }
+
         Swal.close();
       },
       error: (err) => {

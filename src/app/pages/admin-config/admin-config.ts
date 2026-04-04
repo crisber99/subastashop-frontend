@@ -36,7 +36,8 @@ export class AdminConfig implements OnInit {
     nombre: '',
     rutEmpresa: '',
     colorPrimario: '#0d6efd',
-    logoUrl: ''
+    logoUrl: '',
+    opcionesEnvio: ''
   };
 
   cuentas: CuentaBancaria[] = [];
@@ -236,6 +237,7 @@ export class AdminConfig implements OnInit {
         this.config.rutEmpresa = data.rutEmpresa || '';
         this.config.colorPrimario = data.colorPrimario || '#0d6efd';
         this.config.logoUrl = data.logoUrl || '';
+        this.config.opcionesEnvio = data.opcionesEnvio || '';
         this.logoPreview = data.logoUrl || null;
 
         // Intentar parsear las cuentas (JSON)
@@ -322,6 +324,7 @@ export class AdminConfig implements OnInit {
     formData.append('datosBancarios', datosJSON);
     
     formData.append('colorPrimario', this.config.colorPrimario);
+    formData.append('opcionesEnvio', this.config.opcionesEnvio);
     formData.append('aceptaTerminos', this.aceptaTerminos.toString());
 
     if (this.fileLogo) formData.append('fotoLogo', this.fileLogo);

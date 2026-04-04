@@ -75,6 +75,10 @@
                     <h5 class="mb-0">Resumen del Pedido #{{ orden.id }}</h5>
                 </div>
                 <div class="card-body p-0">
+                    <div class="p-3 bg-primary bg-opacity-10 border-bottom" *ngIf="orden.preferenciaEnvio">
+                        <span class="text-primary small fw-bold text-uppercase"><i class="bi bi-truck me-1"></i>Preferencia de Envío</span>
+                        <div class="fs-5 fw-bold">{{ orden.preferenciaEnvio }}</div>
+                    </div>
                     <ul class="list-group list-group-flush">
 
                         @for (detalle of orden.detalles; track detalle.id) {

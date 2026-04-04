@@ -98,7 +98,7 @@ export class Checkout implements OnInit {
           timer: 3000,
           showConfirmButton: false
         }).then(() => {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard'], { queryParams: { tab: 'compras' } });
         });
       },
       error: (err) => {

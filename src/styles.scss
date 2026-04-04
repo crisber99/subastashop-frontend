@@ -301,10 +301,19 @@ body.dark-theme {
 }
 
 .payment-info-box .fw-bold {
-    color: #818cf8 !important; /* Indigo-400 for labels */
+    color: #6366f1; /* Indigo original */
 }
 
-.payment-info-box p, .payment-info-box span {
+body.dark-theme .payment-info-box {
+    background: rgba(255,255,255,0.05) !important;
+}
+
+body.dark-theme .payment-info-box .fw-bold {
+    color: #818cf8 !important; /* Indigo-400 para dark */
+}
+
+body.dark-theme .payment-info-box p, 
+body.dark-theme .payment-info-box span {
     color: #ffffff !important;
 }
 

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { OrdenService } from '../../services/orden';
 import { CartService } from '../../services/cart';   
 import { AuthService } from '../../services/auth-service';
@@ -23,6 +23,7 @@ export class Dashboard implements OnInit {
   public authService = inject(AuthService);
   public pushService = inject(PushNotificationService);
   private router = inject(Router);
+  private activeRoute = inject(ActivatedRoute);
 
   pujas: any[] = [];
   ordenes: any[] = [];
@@ -46,11 +47,18 @@ export class Dashboard implements OnInit {
         this.verificarDisponibilidadCarrito();
     }
 
-    if (this.cartService.cantidadItems() > 0) {
-      this.tabActual = 'carrito';
-    } else {
-      this.tabActual = 'compras';
-    }
+    this.activeRoute.queryParams.subscribe(params => {
+        if (params['tab']) {
+            this.tabActual = params['tab'];
+        } else {
+            // Lógica por defecto
+            if (this.cartService.cantidadItems() > 0) {
+              this.tabActual = 'carrito';
+            } else {
+              this.tabActual = 'compras';
+            }
+        }
+    });
   }
 
   cargarDatos() {

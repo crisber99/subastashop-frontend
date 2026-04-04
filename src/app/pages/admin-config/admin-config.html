@@ -9,7 +9,8 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow-sm mb-4">
-                <div class="card-header fw-bold" style="background: var(--primary-gradient); color: white; border: none;">
+                <div class="card-header fw-bold"
+                    style="background: var(--primary-gradient); color: white; border: none;">
                     🚀 Identidad y Configuración de la Tienda
                 </div>
                 <div class="card-body">
@@ -25,13 +26,17 @@
                                 </div>
                                 <div class="mb-0">
                                     <label class="form-label fw-bold">Logo de la Tienda</label>
-                                    <input type="file" class="form-control" accept="image/*" (change)="onLogoSelected($event)">
+                                    <input type="file" class="form-control" accept="image/*"
+                                        (change)="onLogoSelected($event)">
                                     <div class="form-text">Se recomienda un logo cuadrado de al menos 400x400px.</div>
                                 </div>
                             </div>
-                            <div class="col-md-4 text-center d-flex flex-column align-items-center justify-content-center">
-                                <div class="logo-preview-container shadow-sm p-1 rounded-circle border" [style.border-color]="config.colorPrimario">
-                                    <img [src]="logoPreview || 'assets/img/store-placeholder.png'" class="logo-preview rounded-circle" alt="Preview">
+                            <div
+                                class="col-md-4 text-center d-flex flex-column align-items-center justify-content-center">
+                                <div class="logo-preview-container shadow-sm p-1 rounded-circle border"
+                                    [style.border-color]="config.colorPrimario">
+                                    <img [src]="logoPreview || 'assets/img/store-placeholder.png'"
+                                        class="logo-preview rounded-circle" alt="Preview">
                                 </div>
                                 <small class="text-muted mt-2">Previsualización del Logo</small>
                             </div>
@@ -39,19 +44,28 @@
 
                         <!-- 🏦 Información para Pagos y Facturación -->
                         <div class="mb-5">
-                            <h4 class="mb-4 text-primary"><i class="bi bi-bank2 me-2"></i>Información para Pagos y Facturación</h4>
-                            
+                            <h4 class="mb-4 text-primary"><i class="bi bi-bank2 me-2"></i>Información para Pagos</h4>
+
                             <div class="form-floating mb-4">
-                                <input type="text" class="form-control" id="rutEmpresa" placeholder="12.345.678-9" 
-                                       [(ngModel)]="config.rutEmpresa" name="rutEmpresa">
+                                <input type="text" class="form-control" id="rutEmpresa" placeholder="12.345.678-9"
+                                    [(ngModel)]="config.rutEmpresa" name="rutEmpresa">
                                 <label for="rutEmpresa">RUT Empresa o Personal (Para validación)</label>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <input type="text" class="form-control" id="opcionesEnvio" 
+                                    placeholder="Ej: Blue Express, Starken, Paket" 
+                                    [(ngModel)]="config.opcionesEnvio" name="opcionesEnvio">
+                                <label for="opcionesEnvio">Opciones de Envío (Ej: Blue Express, Starken, Paket)</label>
+                                <div class="form-text mt-1">Ingresa las empresas separadas por comas. Se mostrarán al cliente al pagar.</div>
                             </div>
 
                             <!-- Datos Bancarios (Multi-Cuenta) -->
                             <div class="card p-4 border-0 shadow-sm" style="background: var(--glass-bg);">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="mb-0">Cuentas Bancarias para Transferencia</h5>
-                                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" (click)="agregarCuenta()">
+                                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3"
+                                        (click)="agregarCuenta()">
                                         <i class="bi bi-plus-circle me-1"></i> Añadir Otra Cuenta
                                     </button>
                                 </div>
@@ -63,7 +77,8 @@
                                         <div>
                                             <strong>Tienes datos antiguos en formato texto:</strong>
                                             <p class="mb-2 small opacity-75">{{ legacyDatosBancarios }}</p>
-                                            <button type="button" class="btn btn-sm btn-dark rounded-pill" (click)="convertirLegacy()">
+                                            <button type="button" class="btn btn-sm btn-dark rounded-pill"
+                                                (click)="convertirLegacy()">
                                                 <i class="bi bi-arrow-repeat me-1"></i> Convertir a Formato Nuevo
                                             </button>
                                         </div>
@@ -71,56 +86,75 @@
                                 </div>
 
                                 <div class="row g-3">
-                                    <div *ngFor="let cuenta of cuentas; let i = index" class="col-12 p-3 mb-3 border rounded position-relative" 
-                                         style="background: rgba(0,0,0,0.05); border-color: var(--glass-border) !important;">
-                                        
-                                        <button *ngIf="cuentas.length > 1" type="button" 
-                                                class="btn-close position-absolute top-0 end-0 m-2" 
-                                                (click)="eliminarCuenta(i)" title="Eliminar esta cuenta"></button>
+                                    <div *ngFor="let cuenta of cuentas; let i = index"
+                                        class="col-12 p-3 mb-3 border rounded position-relative"
+                                        style="background: rgba(0,0,0,0.05); border-color: var(--glass-border) !important;">
+
+                                        <button *ngIf="cuentas.length > 1" type="button"
+                                            class="btn-close position-absolute top-0 end-0 m-2"
+                                            (click)="eliminarCuenta(i)" title="Eliminar esta cuenta"></button>
 
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label [for]="'banco'+i" class="form-label fw-bold small mb-1 opacity-75">Institución Bancaria</label>
-                                                    <input type="text" class="form-control" [id]="'banco'+i" placeholder="Ej: Banco Estado" 
-                                                           [(ngModel)]="cuenta.banco" [name]="'banco'+i">
+                                                    <label [for]="'banco'+i"
+                                                        class="form-label fw-bold small mb-1 opacity-75">Institución
+                                                        Bancaria</label>
+                                                    <input type="text" class="form-control" [id]="'banco'+i"
+                                                        placeholder="Ej: Banco Estado" [(ngModel)]="cuenta.banco"
+                                                        [name]="'banco'+i">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label [for]="'tipo'+i" class="form-label fw-bold small mb-1 opacity-75">Tipo de Cuenta</label>
-                                                    <input type="text" class="form-control" [id]="'tipo'+i" placeholder="Ej: Cuenta RUT" 
-                                                           [(ngModel)]="cuenta.tipo" [name]="'tipo'+i">
+                                                    <label [for]="'tipo'+i"
+                                                        class="form-label fw-bold small mb-1 opacity-75">Tipo de
+                                                        Cuenta</label>
+                                                    <input type="text" class="form-control" [id]="'tipo'+i"
+                                                        placeholder="Ej: Cuenta RUT" [(ngModel)]="cuenta.tipo"
+                                                        [name]="'tipo'+i">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label [for]="'numero'+i" class="form-label fw-bold small mb-1 opacity-75">Número de Cuenta</label>
-                                                    <input type="text" class="form-control" [id]="'numero'+i" placeholder="Ej: 123456" 
-                                                           [(ngModel)]="cuenta.numero" [name]="'numero'+i">
+                                                    <label [for]="'numero'+i"
+                                                        class="form-label fw-bold small mb-1 opacity-75">Número de
+                                                        Cuenta</label>
+                                                    <input type="text" class="form-control" [id]="'numero'+i"
+                                                        placeholder="Ej: 123456" [(ngModel)]="cuenta.numero"
+                                                        [name]="'numero'+i">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label [for]="'titular'+i" class="form-label fw-bold small mb-1 opacity-75">Nombre del Titular</label>
-                                                    <input type="text" class="form-control" [id]="'titular'+i" placeholder="Ej: Juan Pérez" 
-                                                           [(ngModel)]="cuenta.titular" [name]="'titular'+i">
+                                                    <label [for]="'titular'+i"
+                                                        class="form-label fw-bold small mb-1 opacity-75">Nombre del
+                                                        Titular</label>
+                                                    <input type="text" class="form-control" [id]="'titular'+i"
+                                                        placeholder="Ej: Juan Pérez" [(ngModel)]="cuenta.titular"
+                                                        [name]="'titular'+i">
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="mb-1">
-                                                    <label [for]="'rut'+i" class="form-label fw-bold small mb-1 opacity-75">RUT del Titular</label>
-                                                    <input type="text" class="form-control" [id]="'rut'+i" placeholder="Ej: 12.345.678-9" 
-                                                           [(ngModel)]="cuenta.rut" [name]="'rut'+i">
+                                                    <label [for]="'rut'+i"
+                                                        class="form-label fw-bold small mb-1 opacity-75">RUT del
+                                                        Titular</label>
+                                                    <input type="text" class="form-control" [id]="'rut'+i"
+                                                        placeholder="Ej: 12.345.678-9" [(ngModel)]="cuenta.rut"
+                                                        [name]="'rut'+i">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="mt-3 p-3 rounded" style="background: rgba(255,193,7,0.1); border: 1px dashed rgba(255,193,7,0.3);">
+                                <div class="mt-3 p-3 rounded"
+                                    style="background: rgba(255,193,7,0.1); border: 1px dashed rgba(255,193,7,0.3);">
                                     <small class="text-muted">
-                                        <i class="bi bi-info-circle me-1"></i> Estos datos se mostrarán <strong>exclusivamente al ganador</strong> tras finalizar la subasta para gestionar la transferencia directa.
+                                        <i class="bi bi-info-circle me-1"></i> Estos datos se mostrarán
+                                        <strong>exclusivamente al ganador</strong> tras finalizar la subasta para
+                                        gestionar la transferencia directa.
                                     </small>
                                 </div>
                             </div>
@@ -140,7 +174,7 @@
                                 <input class="form-check-input" type="checkbox" id="checkLegal"
                                     [(ngModel)]="aceptaTerminos" name="aceptaTerminos">
                                 <label class="form-check-label small" for="checkLegal">
-                                    Declaro que la información es verídica y acepto los 
+                                    Declaro que la información es verídica y acepto los
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#modalTerminos"
                                         class="fw-bold text-decoration-underline" style="color: var(--primary-color);">
                                         Términos y Condiciones de Servicio
@@ -170,66 +204,76 @@
                     <h5 class="card-title d-flex align-items-center">
                         <i class="bi bi-clock-history me-2 text-primary"></i> Estado de la Suscripción
                     </h5>
-                    
+
                     @if (authService.hasActiveSubscription()) {
-                        <div class="alert alert-success d-flex align-items-center mt-3 shadow-sm">
-                            <i class="bi bi-patch-check-fill fs-4 me-3"></i>
-                            <div class="flex-grow-1">
-                                <div class="fw-bold">Suscripción Activa Premium</div>
-                                <div class="small">Tu tienda está operando con todas las funciones activadas.</div>
-                            </div>
-                            <button (click)="sincronizarEstado()" class="btn btn-link text-success p-0 ms-2" title="Sincronizar con Mercado Pago">
-                                <i class="bi bi-arrow-clockwise fs-5"></i>
-                            </button>
+                    <div class="alert alert-success d-flex align-items-center mt-3 shadow-sm">
+                        <i class="bi bi-patch-check-fill fs-4 me-3"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Suscripción Activa Premium</div>
+                            <div class="small">Tu tienda está operando con todas las funciones activadas.</div>
                         </div>
+                        <button (click)="sincronizarEstado()" class="btn btn-link text-success p-0 ms-2"
+                            title="Sincronizar con Mercado Pago">
+                            <i class="bi bi-arrow-clockwise fs-5"></i>
+                        </button>
+                    </div>
 
-                        <div class="mt-3 p-3 border border-danger rounded shadow-sm text-center" 
-                             style="background: rgba(220, 53, 69, 0.1); backdrop-filter: blur(5px);">
-                            <p class="mb-2 small"><strong style="color: #ff4d4d;">Gestión de Suscripción PRO ⭐</strong></p>
-                            <p class="small mb-2 fw-light" style="color: var(--text-color); opacity: 0.8;">Al anular, bajarás a Comprador inmediatamente pero conservarás tu tienda y productos.</p>
-                            <button (click)="cancelarSuscripcion()" class="btn btn-outline-danger btn-sm w-100 mt-2">
-                                <i class="bi bi-x-circle me-1"></i> Anular y bajar a Comprador
-                            </button>
-                        </div>
+                    <div class="mt-3 p-3 border border-danger rounded shadow-sm text-center"
+                        style="background: rgba(220, 53, 69, 0.1); backdrop-filter: blur(5px);">
+                        <p class="mb-2 small"><strong style="color: #ff4d4d;">Gestión de Suscripción PRO ⭐</strong></p>
+                        <p class="small mb-2 fw-light" style="color: var(--text-color); opacity: 0.8;">Al anular,
+                            bajarás a Comprador inmediatamente pero conservarás tu tienda y productos.</p>
+                        <button (click)="cancelarSuscripcion()" class="btn btn-outline-danger btn-sm w-100 mt-2">
+                            <i class="bi bi-x-circle me-1"></i> Anular y bajar a Comprador
+                        </button>
+                    </div>
                     } @else {
-                        <div class="alert alert-info d-flex align-items-center mt-3 shadow-sm">
-                            <i class="bi bi-hourglass-split fs-4 me-3"></i>
-                            <div class="flex-grow-1">
-                                <div class="fw-bold">Periodo de Prueba (Trial)</div>
-                                <div class="small">Te quedan <strong>{{ authService.getTrialDaysLeft() }} días</strong> de prueba gratuita.</div>
-                            </div>
-                            <button (click)="sincronizarEstado()" class="btn btn-link text-info p-0 ms-2" title="Verificar pagos pendientes">
-                                <i class="bi bi-arrow-clockwise fs-5"></i>
-                            </button>
+                    <div class="alert alert-info d-flex align-items-center mt-3 shadow-sm">
+                        <i class="bi bi-hourglass-split fs-4 me-3"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Periodo de Prueba (Trial)</div>
+                            <div class="small">Te quedan <strong>{{ authService.getTrialDaysLeft() }} días</strong> de
+                                prueba gratuita.</div>
                         </div>
+                        <button (click)="sincronizarEstado()" class="btn btn-link text-info p-0 ms-2"
+                            title="Verificar pagos pendientes">
+                            <i class="bi bi-arrow-clockwise fs-5"></i>
+                        </button>
+                    </div>
 
-                        <div class="p-4 border rounded text-center mt-3" style="background: var(--glass-bg);">
-                            <h6>🚀 ¡Lleva tu tienda al siguiente nivel!</h6>
-                            <p class="small" style="color: var(--text-secondary, #888);">Saliendo del periodo de prueba, activa tu suscripción premium sin salir de aquí.</p>
-                            
-                            <!-- Contenedor del Card Brick de Mercado Pago -->
-                            <div id="cardPaymentBrick_container" class="mt-3"></div>
+                    <div class="p-4 border rounded text-center mt-3" style="background: var(--glass-bg);">
+                        <h6>🚀 ¡Lleva tu tienda al siguiente nivel!</h6>
+                        <p class="small" style="color: var(--text-secondary, #888);">Saliendo del periodo de prueba,
+                            activa tu suscripción premium sin salir de aquí.</p>
 
-                            @if (!showCardForm) {
-                                <button (click)="inicializarCardBrick()" class="btn btn-primary btn-lg px-3 shadow-sm mt-3">
-                                    <i class="bi bi-credit-card me-2"></i> Activar Suscripción Premium
-                                </button>
-                            }
-                        </div>
+                        <!-- Contenedor del Card Brick de Mercado Pago -->
+                        <div id="cardPaymentBrick_container" class="mt-3"></div>
+
+                        @if (!showCardForm) {
+                        <button (click)="inicializarCardBrick()" class="btn btn-primary btn-lg px-3 shadow-sm mt-3">
+                            <i class="bi bi-credit-card me-2"></i> Activar Suscripción Premium
+                        </button>
+                        }
+                    </div>
                     }
                 </div>
             </div>
 
-            <div class="card border-0 mb-4 shadow-sm overflow-hidden" style="border-radius: var(--radius-lg) !important;">
-                <div class="card-header text-center py-4" [style.background]="config.colorPrimario + '20'" style="border: none;">
+            <div class="card border-0 mb-4 shadow-sm overflow-hidden"
+                style="border-radius: var(--radius-lg) !important;">
+                <div class="card-header text-center py-4" [style.background]="config.colorPrimario + '20'"
+                    style="border: none;">
                     <div class="d-inline-block p-1 rounded-circle border shadow-sm bg-white mb-2">
-                        <img [src]="logoPreview || 'assets/img/store-placeholder.png'" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
+                        <img [src]="logoPreview || 'assets/img/store-placeholder.png'"
+                            style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
                     </div>
-                    <h6 class="mb-0 fw-bold" style="color: var(--text-color);">{{ config.nombre || 'Nombre de tu Tienda' }}</h6>
+                    <h6 class="mb-0 fw-bold" style="color: var(--text-color);">{{ config.nombre || 'Nombre de tu Tienda'
+                        }}</h6>
                     <span class="badge rounded-pill bg-success small mt-2">Tienda Verificada</span>
                 </div>
                 <div class="card-body">
-                    <p class="small text-center text-muted mb-0">Vista previa de cómo los clientes verán tu perfil de vendedor.</p>
+                    <p class="small text-center text-muted mb-0">Vista previa de cómo los clientes verán tu perfil de
+                        vendedor.</p>
                 </div>
             </div>
 

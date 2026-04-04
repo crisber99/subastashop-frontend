@@ -291,7 +291,7 @@ export class ProductDetail implements OnInit, OnDestroy {
     });
   }
 
-  comprarAhora() {
+  async comprarAhora() {
     if (!this.authService.isLoggedIn()) {
       Swal.fire({
         title: 'Inicia Sesión',
@@ -304,21 +304,51 @@ export class ProductDetail implements OnInit, OnDestroy {
       return;
     }
 
+    // 1. Obtener opciones de envío de la tienda
+    let preferenciaEnvio = '';
+    const opciones = this.producto.tienda?.opcionesEnvio;
+    
+    if (opciones && opciones.trim().length > 0) {
+      const listaOpciones = opciones.split(',').map((o: string) => o.trim());
+      const inputOptions: any = {};
+      listaOpciones.forEach((o: string) => inputOptions[o] = o);
+
+      const { value: seleccion } = await Swal.fire({
+        title: 'Selecciona método de envío 🚚',
+        input: 'select',
+        inputOptions: inputOptions,
+        inputPlaceholder: 'Elige una opción...',
+        showCancelButton: true,
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) resolve(null);
+            else resolve('Debes seleccionar una opción de envío');
+          });
+        }
+      });
+
+      if (!seleccion) return; // Canceló
+      preferenciaEnvio = seleccion;
+    }
+
     Swal.fire({
       title: 'Procesando compra...',
-      text: 'Estamos generando tu orden de pedido',
+      text: 'Estamos generando o recuperando tu orden de pedido',
       allowOutsideClick: false,
       didOpen: () => Swal.showLoading()
     });
 
-    // Creamos el objeto de orden (basado en la estructura del backend)
+    // 2. Creamos el objeto de orden (Corrección: tipoCompra)
     const orderRequest = {
       detalles: [{
         productoId: this.producto.id,
         cantidad: 1,
         precioUnitario: this.producto.precioBase,
-        tipoVenta: 'DIRECTA'
-      }]
+        tipoCompra: 'DIRECTA' // Corregido de tipoVenta
+      }],
+      preferenciaEnvio: preferenciaEnvio
     };
 
     this.ordenService.crearOrden(orderRequest).subscribe({
@@ -332,26 +362,32 @@ export class ProductDetail implements OnInit, OnDestroy {
           if (datos && datos.startsWith('[')) {
             const cuentas = JSON.parse(datos);
             cuentasHtml = cuentas.map((c: any) => `
-              <div style="text-align: left; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #6366f1;">
-                <p style="margin: 0; font-weight: bold; color: #4338ca;">${c.banco} - ${c.tipo}</p>
-                <p style="margin: 0; font-size: 0.9em;">N°: <b>${c.numero}</b></p>
-                <p style="margin: 0; font-size: 0.9em;">Titular: ${c.titular} (RUT: ${c.rut})</p>
+              <div class="payment-info-box" style="text-align: left; padding: 10px; border-radius: 10px; margin-bottom: 15px;">
+                <p style="margin: 0; font-weight: bold; color: #818cf8;">${c.banco} - ${c.tipo}</p>
+                <div style="margin-top: 5px; opacity: 0.9;">
+                  <p style="margin: 0; font-size: 0.9em;">N°: <b>${c.numero}</b></p>
+                  <p style="margin: 0; font-size: 0.9em;">Titular: ${c.titular}</p>
+                  <p style="margin: 0; font-size: 0.9em;">RUT: ${c.rut}</p>
+                </div>
               </div>
             `).join('');
           } else {
-            cuentasHtml = `<div style="text-align: left; white-space: pre-line; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 10px;">${datos || 'Contactar al vendedor'}</div>`;
+            cuentasHtml = `<div class="payment-info-box" style="text-align: left; white-space: pre-line;">${datos || 'Contactar al vendedor'}</div>`;
           }
         } catch (e) {
           cuentasHtml = `<p>Error al cargar cuentas. Ver detalle en checkout.</p>`;
         }
 
+        const envioInfo = preferenciaEnvio ? `<p class="badge bg-primary mb-2">Envío: ${preferenciaEnvio}</p>` : '';
+
         Swal.fire({
           title: '¡Orden Reservada! 🎉',
           html: `
-            <p>Tu orden <b>#${orden.id}</b> ha sido creada con éxito.</p>
-            <p class="small text-muted mb-3">Realiza la transferencia por <b>$${this.producto.precioBase.toLocaleString()}</b>:</p>
-            <div style="max-height: 250px; overflow-y: auto;">${cuentasHtml}</div>
-            <div class="mt-3 p-2 bg-info-subtle border rounded small">
+            <p>Tu orden <b>#${orden.id}</b> ha sido gestionada con éxito.</p>
+            ${envioInfo}
+            <p class="small opacity-75 mb-3">Realiza la transferencia por <b>$${this.producto.precioBase.toLocaleString()}</b>:</p>
+            <div style="max-height: 250px; overflow-y: auto; padding: 5px;">${cuentasHtml}</div>
+            <div class="mt-3 p-2 bg-info-subtle border rounded small" style="color: #0c5460;">
               💡 Una vez realizada la transferencia, sube tu comprobante para que el vendedor valide el pago.
             </div>
           `,
@@ -364,7 +400,7 @@ export class ProductDetail implements OnInit, OnDestroy {
           if (res.isConfirmed) {
             this.router.navigate(['/checkout', orden.id]);
           } else {
-            this.router.navigate(['/admin/mis-compras']);
+            this.router.navigate(['/dashboard'], { queryParams: { tab: 'compras' } });
           }
         });
       },

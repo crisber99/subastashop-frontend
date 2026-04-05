@@ -29,6 +29,7 @@ export class Dashboard implements OnInit {
   ordenes: any[] = [];
   ordenesPendientes: any[] = [];
   ordenesPagadas: any[] = [];
+  ordenesEnRevision: any[] = [];
   tabActual: string = 'carrito'; 
 
   stats = {
@@ -89,6 +90,7 @@ export class Dashboard implements OnInit {
   filtrarOrdenes() {
     this.ordenesPendientes = this.ordenes.filter(o => o.estado === 'PENDIENTE_PAGO');
     this.ordenesPagadas = this.ordenes.filter(o => o.estado === 'PAGADO');
+    this.ordenesEnRevision = this.ordenes.filter(o => o.estado === 'ESPERANDO_APROBACION');
   }
 
   procesarCompraCarrito() {

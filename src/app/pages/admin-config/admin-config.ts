@@ -37,7 +37,8 @@ export class AdminConfig implements OnInit {
     rutEmpresa: '',
     colorPrimario: '#0d6efd',
     logoUrl: '',
-    opcionesEnvio: ''
+    opcionesEnvio: '',
+    whatsapp: ''
   };
 
   cuentas: CuentaBancaria[] = [];
@@ -238,6 +239,7 @@ export class AdminConfig implements OnInit {
         this.config.colorPrimario = data.colorPrimario || '#0d6efd';
         this.config.logoUrl = data.logoUrl || '';
         this.config.opcionesEnvio = data.opcionesEnvio || '';
+        this.config.whatsapp = data.whatsapp || '';
         this.logoPreview = data.logoUrl || null;
 
         // Intentar parsear las cuentas (JSON)
@@ -325,6 +327,7 @@ export class AdminConfig implements OnInit {
     
     formData.append('colorPrimario', this.config.colorPrimario);
     formData.append('opcionesEnvio', this.config.opcionesEnvio);
+    formData.append('whatsapp', this.config.whatsapp);
     formData.append('aceptaTerminos', this.aceptaTerminos.toString());
 
     if (this.fileLogo) formData.append('fotoLogo', this.fileLogo);

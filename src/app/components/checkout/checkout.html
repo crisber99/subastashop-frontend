@@ -48,6 +48,13 @@
                         <span class="badge bg-dark fs-6">#{{ orden.id }}</span>
                     </div>
 
+                    <div *ngIf="orden.tienda?.whatsapp" class="mb-4 text-center p-3 rounded" style="background-color: rgba(37, 211, 102, 0.1); border: 1px dashed #25D366;">
+                        <h6 class="fw-bold" style="color: #128C7E;">¿Tienes dudas o necesitas enviar tu foto por aquí?</h6>
+                        <button class="btn btn-outline-success rounded-pill fw-bold" (click)="redirigirWhatsApp()">
+                            <i class="bi bi-whatsapp me-2"></i>  Escríbele a la tienda por WhatsApp
+                        </button>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">Subir Comprobante (Obligatorio)</label>
                         <input type="file" class="form-control" (change)="onFileSelected($event)"

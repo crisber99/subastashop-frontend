@@ -591,6 +591,21 @@ export class ProductDetail implements OnInit, OnDestroy {
     w.document.close();
   }
 
+  redirigirWhatsAppRifa() {
+    if (!this.tienda?.whatsapp) {
+      Swal.fire('Atención', 'Esta tienda no tiene configurado un número de WhatsApp.', 'info');
+      return;
+    }
+
+    let telefono = String(this.tienda.whatsapp).replace(/\D/g, '');
+    let totalPagar = this.ticketsSeleccionados.length * (this.producto.precioTicket || 0);
+    const url = window.location.origin;
+    const msg = `Hola, acabo de reservar mis tickets en la rifa "${this.producto.nombre}".\nTickets: ${this.ticketsSeleccionados.map(n => '#' + n).join(', ')}\nTotal a Pagar: $${totalPagar}\n¿Me ayudas a validar mi pago para asegurar mis números?\n\nPuedes ver la rifa aquí: ${url}/producto/${this.producto.slug || this.producto.id}`;
+    
+    const fullUrl = `https://wa.me/${telefono}?text=${encodeURIComponent(msg)}`;
+    window.open(fullUrl, '_blank');
+  }
+
   lanzarSorteo() {
     Swal.fire({
         title: '¿Lanzar Sorteo?', text: 'Se seleccionarán los ganadores aleatoriamente.',

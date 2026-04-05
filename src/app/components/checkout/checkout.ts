@@ -107,4 +107,19 @@ export class Checkout implements OnInit {
       }
     });
   }
+
+  redirigirWhatsApp() {
+    if (!this.orden?.tienda?.whatsapp) {
+      Swal.fire('Atención', 'Esta tienda no tiene configurado un número de WhatsApp.', 'info');
+      return;
+    }
+
+    let telefono = String(this.orden.tienda.whatsapp).replace(/\D/g, '');
+    const url = window.location.origin;
+    const msg = `Hola, vengo de comprar en la tienda. Esta es mi Orden #${this.orden.id}.\nTotal Pagar: $${this.orden.total}\n¿Me ayudas a validar mi pago?\n\nDetalles: ${url}/dashboard?tab=compras`;
+    
+    // Check if phone has country code or missing it, usually wa.me requires country code, e.g., 569...
+    const fullUrl = `https://wa.me/${telefono}?text=${encodeURIComponent(msg)}`;
+    window.open(fullUrl, '_blank');
+  }
 }

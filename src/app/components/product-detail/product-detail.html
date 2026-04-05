@@ -447,6 +447,9 @@
                 <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" (click)="imprimirComprobante()">
                     <i class="bi bi-printer me-2"></i> Imprimir
                 </button>
+                <button *ngIf="tienda?.whatsapp" type="button" class="btn btn-success rounded-pill px-4 fw-bold" (click)="redirigirWhatsAppRifa()">
+                    <i class="bi bi-whatsapp me-2"></i> Reportar Pago
+                </button>
             </div>
         </div>
     </div>

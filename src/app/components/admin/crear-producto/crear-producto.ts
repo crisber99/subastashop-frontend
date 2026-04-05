@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product';
 import { AuthService } from '../../../services/auth-service';
@@ -42,7 +42,8 @@ export class CrearProducto implements OnInit {
       fechaFin: [''],
       precioTicket: [0],
       cantidadNumeros: [100],
-      cantidadGanadores: [1]
+      cantidadGanadores: [1],
+      premios: this.fb.array([])
     });
 
     // Validaciones dinámicas según tipo
@@ -95,6 +96,24 @@ export class CrearProducto implements OnInit {
       next: (data) => this.categorias = data,
       error: (err) => console.error('Error al cargar categorías', err)
     });
+  }
+
+  get premiosValidos() {
+    return this.productoForm.get('premios') as FormArray;
+  }
+
+  agregarPremio() {
+    const premio = this.fb.group({
+      nombre: ['', Validators.required],
+      probabilidad: [null, [Validators.required, Validators.min(0), Validators.max(100)]],
+      stock: [null, [Validators.min(0)]],
+      imagenUrl: ['']
+    });
+    this.premiosValidos.push(premio);
+  }
+
+  eliminarPremio(index: number) {
+    this.premiosValidos.removeAt(index);
   }
 
   imageCompressor = inject(ImageCompressorService);
@@ -225,6 +244,10 @@ export class CrearProducto implements OnInit {
       formData.append('precioTicket', value.precioTicket.toString());
       formData.append('cantidadNumeros', value.cantidadNumeros.toString());
       formData.append('cantidadGanadores', value.cantidadGanadores.toString());
+    }
+
+    if (value.tipoVenta === 'CAJA_MISTERIOSA' && value.premios?.length > 0) {
+      formData.append('premiosCaja', JSON.stringify(value.premios));
     }
 
     this.productService.crearProducto(formData).subscribe({

@@ -51,10 +51,11 @@
                   <option value="SUBASTA">Subasta 🔥</option>
                   <option value="DIRECTA">Venta Directa 🛒</option>
                   <option value="RIFA">Rifa / Sorteo 🎟️</option>
+                  <option value="CAJA_MISTERIOSA">Caja Misteriosa 🎁</option>
                 </select>
               </div>
 
-              @if (productoForm.get('tipoVenta')?.value !== 'RIFA') {
+              @if (productoForm.get('tipoVenta')?.value !== 'RIFA' && productoForm.get('tipoVenta')?.value !== 'CAJA_MISTERIOSA') {
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Precio Base / Venta ($)</label>
                   <input type="number" class="form-control" formControlName="precioBase">
@@ -64,6 +65,48 @@
                 </div>
               }
             </div>
+
+            @if (productoForm.get('tipoVenta')?.value === 'CAJA_MISTERIOSA') {
+              <div class="col-md-12 mb-3">
+                  <label class="form-label fw-bold">Precio de la Caja ($)</label>
+                  <input type="number" class="form-control" formControlName="precioTicket" placeholder="Ej: 5000">
+                  <div class="form-text">¿Cuánto cuesta comprar y abrir esta caja misteriosa?</div>
+              </div>
+
+              <div class="card p-3 mb-4 border-warning" style="background: var(--glass-bg);">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="text-warning m-0">🎁 Premios de la Caja</h5>
+                  <button type="button" class="btn btn-sm btn-outline-warning" (click)="agregarPremio()">
+                    + Agregar Premio
+                  </button>
+                </div>
+
+                <div formArrayName="premios">
+                  @for (premio of premiosValidos.controls; track $index) {
+                    <div [formGroupName]="$index" class="row g-2 align-items-end mb-3 pb-3 border-bottom border-secondary">
+                      <div class="col-md-4">
+                        <label class="form-label small">Nombre del Premio</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="nombre" placeholder="Ej: iPhone 14">
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label small">Probabilidad (%)</label>
+                        <input type="number" class="form-control form-control-sm" formControlName="probabilidad" placeholder="Ej: 5.5">
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label small">URL Imagen (Opcional)</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="imagenUrl" placeholder="https://...">
+                      </div>
+                      <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-sm btn-danger" (click)="eliminarPremio($index)">Eliminar</button>
+                      </div>
+                    </div>
+                  }
+                  @if (premiosValidos.length === 0) {
+                    <p class="text-muted small">Haz clic en "+ Agregar Premio" para añadir los posibles premios que contiene esta caja misteriosa.</p>
+                  }
+                </div>
+              </div>
+            }
 
             @if (productoForm.get('tipoVenta')?.value === 'RIFA') {
               <div class="card p-3 mb-4 border-info" style="background: var(--glass-bg);">

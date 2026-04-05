@@ -260,24 +260,25 @@
                         <div class="chat-messages p-3" style="height: 300px; overflow-y: auto; background: var(--bg-color);">
                             @for (msg of (chatService.mensajes$ | async); track msg.id) {
                                 <div class="mb-3 d-flex" [ngClass]="msg.userEmail === authService.currentUser()?.email ? 'justify-content-end' : 'justify-content-start'">
-                                    <div class="position-relative p-2 px-3 rounded-4 shadow-sm"
-                                         [ngStyle]="{
-                                            'background': msg.userEmail === authService.currentUser()?.email ? '#dcf8c6' : 
-                                                          (msg.esVendedor ? '#fff3cd' : (msg.admin ? '#f8d7da' : '#fff')),
-                                            'border': msg.esVendedor ? '1px solid #ffecb5' : (msg.admin ? '1px solid #f1aeb5' : '1px solid #dee2e6')
+                                    <div class="chat-bubble shadow-sm"
+                                         [ngClass]="{
+                                            'bubble-sent': msg.userEmail === authService.currentUser()?.email,
+                                            'bubble-received': msg.userEmail !== authService.currentUser()?.email && !msg.esVendedor && !msg.admin,
+                                            'bubble-vendedor': msg.esVendedor,
+                                            'bubble-admin': msg.admin
                                          }">
                                         <div class="d-flex align-items-center mb-1">
-                                            <span class="small fw-bold me-2" [style.color]="msg.esVendedor ? '#856404' : (msg.admin ? '#842029' : 'var(--text-color)')">
+                                            <span class="bubble-name me-2">
                                                 {{ msg.remitenteNombre }}
                                             </span>
                                             @if (msg.timestamp) {
-                                                <span class="text-muted" style="font-size: 0.65rem;">{{ msg.timestamp }}</span>
+                                                <span class="bubble-time">{{ msg.timestamp }}</span>
                                             }
                                             @if (msg.esVendedor) {
                                                 <span class="badge bg-warning text-dark ms-2" style="font-size: 0.6rem;">VENDEDOR</span>
                                             }
                                         </div>
-                                        <p class="mb-0" style="font-size: 0.9rem; color: #333;">{{ msg.contenido }}</p>
+                                        <p class="mb-0 bubble-content">{{ msg.contenido }}</p>
                                     </div>
                                 </div>
                             }

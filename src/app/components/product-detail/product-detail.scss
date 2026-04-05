@@ -230,3 +230,92 @@
         background: #1e293b !important;
     }
 }
+
+// 💬 BUBBLE VARIANTS 💬
+.chat-bubble {
+    max-width: 85%;
+    position: relative;
+    padding: 0.75rem 1rem;
+    border-radius: 1.5rem;
+    transition: all 0.2s ease;
+    
+    .bubble-name {
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 2px;
+    }
+    .bubble-content {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        display: block;
+    }
+    .bubble-time {
+        font-size: 0.65rem;
+        opacity: 0.6;
+        margin-left: 8px;
+    }
+}
+
+// Lógica de colores (Light/Dark)
+.bubble-sent {
+    background: #dcf8c6; // Verde WhatsApp
+    color: #064e3b;
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+    
+    .bubble-name { color: #059669; }
+}
+
+.bubble-received {
+    background: #ffffff;
+    color: #1e293b;
+    border-bottom-left-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.05);
+    
+    .bubble-name { color: #6366f1; }
+}
+
+.bubble-vendedor {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    .bubble-name { color: #fbbf24; }
+}
+
+.bubble-admin {
+    background: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+    .bubble-name { color: #ef4444; }
+}
+
+// --- DARK MODE OVERRIDES FOR BUBBLES ---
+[data-bs-theme="dark"] {
+    .bubble-sent {
+        background: #065f46 !important; // Verde Esmeralda oscuro
+        color: #ecfdf5 !important;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        .bubble-name { color: #34d399 !important; }
+    }
+    .bubble-received {
+        background: #1e293b !important; // Slate 800
+        color: #f1f5f9 !important;
+        border: 1px solid rgba(255,255,255,0.1);
+        .bubble-name { color: #818cf8 !important; }
+    }
+    .bubble-vendedor {
+        background: #451a03 !important; // Ámbar muy oscuro
+        color: #fef3c7 !important;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        .bubble-name { color: #fbbf24 !important; }
+    }
+    .bubble-admin {
+        background: #450a0a !important; // Rojo muy oscuro
+        color: #fee2e2 !important;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        .bubble-name { color: #f87171 !important; }
+    }
+}

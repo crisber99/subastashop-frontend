@@ -138,6 +138,5 @@ export class ChatService {
       this.stompClient.deactivate();
       this.stompClient = null;
     }
-    this.currentTiendaId = null;
   }
 }

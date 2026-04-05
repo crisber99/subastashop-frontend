@@ -252,8 +252,8 @@ export class ProductDetail implements OnInit, OnDestroy {
         }
         
         // Iniciar chat de la TIENDA del producto
-        if (data.tienda) {
-          this.chatService.initChat(data.tienda.id);
+        if (data.tiendaId) {
+          this.chatService.initChat(data.tiendaId);
         }
 
         this.cargarCalificaciones(data.id);

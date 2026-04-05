@@ -251,9 +251,15 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
         }
         
-        // Iniciar chat de la TIENDA del producto
-        if (data.tiendaId) {
-          this.chatService.initChat(data.tiendaId);
+        // --- DEBUG CHAT ---
+        console.log('📦 Product Data received:', data);
+        const tId = data.tiendaId || (data.tienda ? data.tienda.id : null);
+        console.log('🆔 Tienda ID detectado para chat:', tId);
+
+        if (tId) {
+          this.chatService.initChat(tId);
+        } else {
+          console.error('🚫 No se detectó tiendaId ni tienda.id en el producto cargado.', data);
         }
 
         this.cargarCalificaciones(data.id);

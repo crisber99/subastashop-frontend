@@ -52,9 +52,8 @@ export class ChatService {
     // Si ya existe una conexion activa, desconectarla primero
     this.desconectar();
 
-    // Reemplaza HTTP con WS en la URL o usa la base (environment debería tener base o lo inferimos)
-    // Asumiendo que environment.apiUrl es http://localhost:8080/api, el endpoint es ws-subastas
-    const wsUrl = environment.apiUrl.replace('/api', '/ws-subastas');
+    // Usar la URL de WebSocket definida en el environment para evitar errores de DNS
+    const wsUrl = environment.wsUrl;
 
     this.stompClient = new Client({
       webSocketFactory: () => new SockJS(wsUrl),

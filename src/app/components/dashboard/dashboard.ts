@@ -200,4 +200,67 @@ export class Dashboard implements OnInit {
   recargarPujas() {
       this.productService.getMisPujas().subscribe(data => this.pujas = data);
   }
+
+  // --- LOOT BOX LOGIC ---
+  abrirCajaMisteriosa(detalleId: number) {
+    Swal.fire({
+      title: '¡Preparando tu Caja Misteriosa!',
+      text: 'La suerte está echada...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.ordenService.abrirCaja(detalleId).subscribe({
+      next: (res: any) => {
+        const premioText = res.premio || "Un premio misterioso";
+
+        // Animación de Unboxing
+        Swal.fire({
+          title: '📦 Abriendo Caja...',
+          html: `<div class="lootbox-animation">
+                   <div class="box-shaking" style="font-size: 5rem; animation: shake 0.5s infinite;">🎁</div>
+                   <p class="mt-3 text-muted">Averiguando qué hay dentro...</p>
+                 </div>`,
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: () => {
+             // Inject local CSS for shake
+             const style = document.createElement('style');
+             style.innerHTML = `
+               @keyframes shake {
+                 0% { transform: translate(1px, 1px) rotate(0deg); }
+                 10% { transform: translate(-1px, -2px) rotate(-1deg); }
+                 20% { transform: translate(-3px, 0px) rotate(1deg); }
+                 30% { transform: translate(3px, 2px) rotate(0deg); }
+                 40% { transform: translate(1px, -1px) rotate(1deg); }
+                 50% { transform: translate(-1px, 2px) rotate(-1deg); }
+                 60% { transform: translate(-3px, 1px) rotate(0deg); }
+                 70% { transform: translate(3px, 1px) rotate(-1deg); }
+                 80% { transform: translate(-1px, -1px) rotate(1deg); }
+                 90% { transform: translate(1px, 2px) rotate(0deg); }
+                 100% { transform: translate(1px, -2px) rotate(-1deg); }
+               }
+             `;
+             document.head.appendChild(style);
+          }
+        }).then(() => {
+          Swal.fire({
+            title: '¡Felicidades!',
+            html: `<h3>Has ganado:</h3><br><h2 class="text-success fw-bold animate__animated animate__tada">${premioText}</h2>`,
+            icon: 'success',
+            confirmButtonText: '¡Genial!',
+            confirmButtonColor: '#3085d6'
+          }).then(() => {
+            this.cargarDatos(); // Refrescar para ver el resultado guardado
+          });
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', err.error || 'No se pudo abrir la caja.', 'error');
+      }
+    });
+  }
 }

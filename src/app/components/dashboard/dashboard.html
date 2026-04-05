@@ -203,8 +203,43 @@
                             <div class="alert alert-success-light border border-success extra-small p-2 rounded mb-3">
                                 <i class="bi bi-check-circle-fill"></i> ¡Pago confirmado con éxito!
                             </div>
-                            <button class="btn btn-outline-secondary w-100" disabled>
-                                <i class="bi bi-receipt"></i> Detalle y Factura
+
+                            <!-- Listado de Detalles de la Orden -->
+                            <div class="mt-3">
+                                <h6>Contenido de tu Orden:</h6>
+                                <ul class="list-group list-group-flush small mb-3">
+                                    @for (detalle of orden.detalles; track detalle.id) {
+                                      <li class="list-group-item bg-transparent px-0 d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ detalle.cantidad }}x</strong> {{ detalle.producto?.nombre }}
+                                            <br>
+                                            <span class="text-muted" style="font-size: 0.8rem;">
+                                                Subtotal: ${{ detalle.precioUnitario * detalle.cantidad | number }}
+                                            </span>
+                                            
+                                            <!-- Si es Caja Misteriosa y tiene premio revelado -->
+                                            @if (detalle.producto?.tipoVenta === 'CAJA_MISTERIOSA' && detalle.datosExtra?.startsWith('Premio:')) {
+                                                <div class="mt-1 text-success fw-bold animate__animated animate__pulse">
+                                                    🎉 Obtenido: {{ detalle.datosExtra.replace('Premio: ', '') }}
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Botón de Abrir si no se ha revelado -->
+                                        @if (detalle.producto?.tipoVenta === 'CAJA_MISTERIOSA' && !detalle.datosExtra?.startsWith('Premio:')) {
+                                            <button 
+                                                class="btn btn-warning btn-sm fw-bold text-dark shadow-sm animate__animated animate__pulse animate__infinite" 
+                                                (click)="abrirCajaMisteriosa(detalle.id)">
+                                                🎁 ABRIR CAJA
+                                            </button>
+                                        }
+                                      </li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <button class="btn btn-outline-secondary w-100" [routerLink]="['/mis-compras', orden.id]">
+                                <i class="bi bi-receipt"></i> Ver Detalle y Factura
                             </button>
                         </div>
                     </div>

@@ -12,6 +12,7 @@ import { LayoutService } from '../../services/layout';
 import { CalificacionService } from '../../services/calificacion';
 import { FavoritoService } from '../../services/favorito.service';
 import { OrdenService } from '../../services/orden';
+import { ChatService } from '../../services/chat';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -32,6 +33,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   public layoutService = inject(LayoutService);
   cartService = inject(CartService);
   ordenService = inject(OrdenService);
+  chatService = inject(ChatService);
   router = inject(Router);
   
   websocketService = inject(Websocket);
@@ -79,6 +81,9 @@ export class ProductDetail implements OnInit, OnDestroy {
   nuevaPuntuacion: number = 5;
   nuevoComentario: string = '';
   promedioCalificacion: number = 0;
+
+  // CHAT
+  nuevoMensajeChat: string = '';
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
@@ -246,11 +251,28 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
         }
         
+        // Iniciar chat si es SUBASTA o CAJA o RIFA y no esta finalizada (O siempre, si quieres ver historial)
+        this.chatService.initChat(data.id);
+
         this.cargarCalificaciones(data.id);
       },
       error: (err) => console.error('Error cargando producto:', err)
     });
   }
+
+  // --- LOGICA DE CHAT EN VIVO ---
+  enviarMensajeChat() {
+    if (!this.nuevoMensajeChat.trim()) return;
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Inicia Sesión', 'Debes estar logueado para enviar mensajes al chat en vivo.', 'warning');
+      return;
+    }
+    const email = this.authService.currentUser()?.email || '';
+    this.chatService.enviarMensaje(email, this.nuevoMensajeChat);
+    this.nuevoMensajeChat = '';
+  }
+
+
 
   toggleFavorito(productoId: number, event: Event) {
     event.stopPropagation();
@@ -712,5 +734,6 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.websocketService.desconectar();
+    this.chatService.desconectar();
   }
 }

@@ -191,3 +191,42 @@
 
 .ls-2 { letter-spacing: 0.2rem; }
 .fw-900 { font-weight: 900; }
+
+// 💬 CHAT STYLES 💬
+.chat-messages {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.05);
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.1);
+        border-radius: 10px;
+    }
+}
+
+.pulse-animation {
+    animation: pulse-green 2s infinite;
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+}
+
+@keyframes pulse-green {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+}
+
+[data-bs-theme="dark"] {
+    .chat-messages {
+        background: #0f172a !important;
+        &::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+    }
+    .card-header.bg-dark {
+        background: #1e293b !important;
+    }
+    .card-footer {
+        background: #1e293b !important;
+    }
+}

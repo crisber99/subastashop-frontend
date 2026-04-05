@@ -45,6 +45,10 @@ export class OrdenService {
     return this.http.post(`${this.apiUrl}/${id}/informar-pago`, formData);
   }
 
+  abrirCaja(detalleId: number) {
+    return this.http.post<{premio: string}>(`${this.apiUrl}/detalle/${detalleId}/abrir-caja`, {});
+  }
+
   // --- ADMIN ---
   getPendientesValidacion() {
     return this.http.get<any[]>(`${environment.apiUrl}/admin/ordenes/pendientes-validacion`);

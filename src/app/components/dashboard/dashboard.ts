@@ -7,11 +7,13 @@ import { CartService } from '../../services/cart';
 import { AuthService } from '../../services/auth-service';
 import { PushNotificationService } from '../../services/push-notification.service';
 import Swal from 'sweetalert2'; 
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BaseChartDirective],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -36,10 +38,41 @@ export class Dashboard implements OnInit {
     usuarios: 0,
     ventas: 0,
     subastasActivas: 0,
-    ingresos: 0
+    ingresos: 0,
+    ventasPorDia: [] as any[],
+    distribucionVentasPorTipo: [] as any[],
+    topSellingProducts: [] as any[],
+    pagosPendientesCount: 0
   };
 
   loading = false;
+
+  // --- CONFIGURACIÓN DE GRÁFICOS 📊 ---
+  public lineChartData: ChartConfiguration['data'] = {
+    datasets: [],
+    labels: []
+  };
+
+  public lineChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    elements: { line: { tension: 0.4 } },
+    scales: { 
+      y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+      x: { grid: { display: false } }
+    },
+    plugins: { legend: { display: false } }
+  };
+
+  public pieChartData: ChartData<'pie', number[], string | string[]> = {
+    labels: [],
+    datasets: [{ data: [] }]
+  };
+
+  public barChartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [{ data: [], label: 'Ingresos por Producto' }]
+  };
 
   ngOnInit() {
     this.cargarDatos();
@@ -66,12 +99,8 @@ export class Dashboard implements OnInit {
     if (this.authService.isAdmin()) {
       this.productService.getAdminStats().subscribe({
         next: (data: any) => {
-          this.stats = {
-            usuarios: data.totalUsuarios,
-            subastasActivas: data.subastasActivas,
-            ventas: data.ventasCerradas,
-            ingresos: data.gananciasTotales
-          };
+          this.stats = data;
+          this.prepararGraficos();
         },
         error: (err) => console.error('Error stats:', err)
       });
@@ -262,5 +291,48 @@ export class Dashboard implements OnInit {
         Swal.fire('Error', err.error || 'No se pudo abrir la caja.', 'error');
       }
     });
+  }
+
+  // --- LÓGICA DE PROCESAMIENTO DE GRÁFICOS 📈 ---
+  prepararGraficos() {
+    // 1. Gráfico de Líneas (Ventas por Día)
+    if (this.stats.ventasPorDia && this.stats.ventasPorDia.length > 0) {
+      this.lineChartData = {
+        labels: this.stats.ventasPorDia.map((v: any) => new Date(v[0]).toLocaleDateString()),
+        datasets: [{
+          data: this.stats.ventasPorDia.map((v: any) => v[1]),
+          label: 'Ventas ($)',
+          fill: true,
+          borderColor: '#6f42c1',
+          backgroundColor: 'rgba(111, 66, 193, 0.2)',
+          pointBackgroundColor: '#6f42c1',
+          pointBorderColor: '#fff',
+        }]
+      };
+    }
+
+    // 2. Gráfico de Pie (Distribución por Tipo)
+    if (this.stats.distribucionVentasPorTipo && this.stats.distribucionVentasPorTipo.length > 0) {
+      this.pieChartData = {
+        labels: this.stats.distribucionVentasPorTipo.map((t: any) => t[0]),
+        datasets: [{
+          data: this.stats.distribucionVentasPorTipo.map((t: any) => t[1]),
+          backgroundColor: ['#0d6efd', '#fd7e14', '#198754', '#6610f2']
+        }]
+      };
+    }
+
+    // 3. Gráfico de Barras (Top Productos)
+    if (this.stats.topSellingProducts && this.stats.topSellingProducts.length > 0) {
+      this.barChartData = {
+        labels: this.stats.topSellingProducts.map((p: any) => p[0]),
+        datasets: [{
+          data: this.stats.topSellingProducts.map((p: any) => p[1]),
+          label: 'Ingresos Totales ($)',
+          backgroundColor: '#0dcaf0',
+          borderRadius: 8
+        }]
+      };
+    }
   }
 }

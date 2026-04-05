@@ -45,6 +45,11 @@
                 🔨 Mis Pujas
             </button>
         </li>
+        <li class="nav-item" *ngIf="authService.isAdmin()">
+            <button class="nav-link" [class.active]="tabActual === 'stats'" (click)="cambiarTab('stats')">
+                📊 Analíticas
+            </button>
+        </li>
     </ul>
 
     @if (tabActual === 'carrito') {
@@ -300,4 +305,99 @@
     </div>
     }
 
+    <!-- 📊 SECCIÓN DE ESTADÍSTICAS (CHARTS) 📊 -->
+    @if (tabActual === 'stats') {
+    <div class="animate__animated animate__fadeIn">
+        
+        <!-- Tarjetas de Resumen Rápido -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 stats-card sales">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-3"><i class="bi bi-currency-dollar"></i></div>
+                        <div>
+                            <p class="text-muted small mb-0">Ganancias Totales</p>
+                            <h4 class="fw-bold mb-0">${{ stats.ingresos | number }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 stats-card items">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-3"><i class="bi bi-box-seam"></i></div>
+                        <div>
+                            <p class="text-muted small mb-0">Subastas Activas</p>
+                            <h4 class="fw-bold mb-0">{{ stats.subastasActivas }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 stats-card users">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-3"><i class="bi bi-ticket-perforated"></i></div>
+                        <div>
+                            <p class="text-muted small mb-0">Ventas Cerradas</p>
+                            <h4 class="fw-bold mb-0">{{ stats.ventas }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 stats-card alerts">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-3"><i class="bi bi-exclamation-circle text-danger"></i></div>
+                        <div>
+                            <p class="text-muted small mb-0">Pagos Pendientes</p>
+                            <h4 class="fw-bold mb-0">{{ stats.pagosPendientesCount }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Gráfico de Ventas en el Tiempo -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                    <h5 class="fw-bold mb-4">Ventas (Últimos 30 días)</h5>
+                    <div class="chart-container" style="position: relative; height:350px; width:100%">
+                        <canvas baseChart
+                                [data]="lineChartData"
+                                [options]="lineChartOptions"
+                                [type]="'line'">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribución por Tipo -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                    <h5 class="fw-bold mb-4">Ventas por Tipo</h5>
+                    <div class="chart-container" style="position: relative; height:300px; width:100%">
+                        <canvas baseChart
+                                [data]="pieChartData"
+                                [type]="'pie'">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Productos -->
+            <div class="col-lg-12">
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <h5 class="fw-bold mb-4">Top 5 Productos por Ingresos</h5>
+                    <div class="chart-container" style="position: relative; height:300px; width:100%">
+                        <canvas baseChart
+                                [data]="barChartData"
+                                [type]="'bar'">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
 </div>

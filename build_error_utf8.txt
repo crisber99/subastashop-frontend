@@ -1,0 +1,167 @@
+﻿
+> subasta-frontend@0.0.0 build
+> ng build
+
+[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mmain-LEBR2BHF.js[39m     [2m | [22m[2mmain[22m         [2m | [22m  [36m1.04 MB[39m[2m | [22m              [36m256.82 kB[39m
+[32mstyles-UZHZESXH.css[39m  [2m | [22m[2mstyles[22m       [2m | [22m[36m326.61 kB[39m[2m | [22m               [36m34.55 kB[39m
+[32mscripts-SQ7W6IC7.js[39m  [2m | [22m[2mscripts[22m      [2m | [22m [36m80.42 kB[39m[2m | [22m               [36m21.62 kB[39m
+[32mpolyfills-S7EIKARU.js[39m[2m | [22m[2mpolyfills[22m    [2m | [22m [36m34.62 kB[39m[2m | [22m               [36m11.37 kB[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m[2m | [22m  [1m1.48 MB[22m[2m | [22m              [1m324.36 kB[22m
+
+Application bundle generation failed. [7.333 seconds]
+
+node.exe : [1m[33m[33mÔû▓ 
+[43;33m[[43;30mWARNING[43;
+33m][0m [1msrc/app/componen
+ts/login/login.scss exceeded 
+maximum budget. Budget 2.00 
+kB was not met by 1.89 kB 
+with a total of 3.89 kB.[0m
+En C:\Program 
+Files\nodejs\npm.ps1: 29 
+Carácter: 3
++   & $NODE_EXE $NPM_CLI_JS 
+$args
++   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: ([1m[3  
+  3m[33mÔ...of 3.89 kB.[   
+ 0m:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1msrc/app
+/components/dashboard/dashboa
+rd.scss exceeded maximum 
+budget. Budget 2.00 kB was 
+not met by 252 bytes with a 
+total of 2.25 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1msrc/app
+/components/support/support.s
+css exceeded maximum budget. 
+Budget 2.00 kB was not met 
+by 410 bytes with a total of 
+2.41 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1msrc/app
+/components/product-detail/pr
+oduct-detail.scss exceeded 
+maximum budget. Budget 2.00 
+kB was not met by 2.02 kB 
+with a total of 4.02 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1msrc/app
+/components/navbar/navbar.scs
+s exceeded maximum budget. 
+Budget 2.00 kB was not met 
+by 83 bytes with a total of 
+2.08 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1msrc/app
+/components/register/register
+.scss exceeded maximum 
+budget. Budget 2.00 kB was 
+not met by 1.96 kB with a 
+total of 3.96 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1msrc/app
+/components/sidebar/sidebar.s
+css exceeded maximum budget. 
+Budget 2.00 kB was not met 
+by 503 bytes with a total of 
+2.50 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1mModule 
+'sweetalert2' used by 
+'src/app/app.ts' is not 
+ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information see: 
+[4mhttps://angular.dev/tools/
+cli/build#configuring-commonj
+s-dependencies[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1mModule 
+'@stomp/stompjs' used by 'src
+/app/services/websocket.ts' 
+is not ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information see: 
+[4mhttps://angular.dev/tools/
+cli/build#configuring-commonj
+s-dependencies[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1mModule 
+'sockjs-client' used by 'src/
+app/services/websocket.ts' 
+is not ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information see: 
+[4mhttps://angular.dev/tools/
+cli/build#configuring-commonj
+s-dependencies[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWAR
+NING[43;33m][0m [1m4 
+rules skipped due to 
+selector errors:
+  .form-floating>~label -> 
+Did not expect successive 
+traversals.
+  .btn-group>+.btn -> Did 
+not expect successive 
+traversals.
+  .btn-group>+.btn -> Did 
+not expect successive 
+traversals.
+  .btn-group-vertical>+.btn 
+-> Did not expect successive 
+traversals.[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41
+;97mERROR[41;31m][0m [1msr
+c/app/components/product-deta
+il/product-detail.scss 
+exceeded maximum budget. 
+Budget 4.00 kB was not met 
+by 17 bytes with a total of 
+4.02 kB.[0m
+
+[39m[22m

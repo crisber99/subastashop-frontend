@@ -251,8 +251,10 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
         }
         
-        // Iniciar chat si es SUBASTA o CAJA o RIFA y no esta finalizada (O siempre, si quieres ver historial)
-        this.chatService.initChat(data.id);
+        // Iniciar chat de la TIENDA del producto
+        if (data.tienda) {
+          this.chatService.initChat(data.tienda.id);
+        }
 
         this.cargarCalificaciones(data.id);
       },
@@ -267,8 +269,13 @@ export class ProductDetail implements OnInit, OnDestroy {
       Swal.fire('Inicia Sesión', 'Debes estar logueado para enviar mensajes al chat en vivo.', 'warning');
       return;
     }
-    const email = this.authService.currentUser()?.email || '';
-    this.chatService.enviarMensaje(email, this.nuevoMensajeChat);
+    
+    const user = this.authService.currentUser();
+    const email = user?.email || '';
+    const nombre = user?.nombre || 'Usuario';
+    
+    // El ChatService ahora usa tiendaId internamente, nosotros solo enviamos contenido
+    this.chatService.enviarMensaje(nombre, this.nuevoMensajeChat, email);
     this.nuevoMensajeChat = '';
   }
 

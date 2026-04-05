@@ -3,16 +3,23 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Client, Message } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
+/**
+ * MensajeChatDTO sincronizado con el Backend
+ * contenido = mensaje
+ * remitenteNombre = usuarioNombre
+ * tiendaId = productoId (en este contexto de chat de tienda)
+ */
 export interface MensajeChatDTO {
-  usuarioEmail?: string;
-  usuarioNombre: string;
-  productoId: number;
-  mensaje: string;
-  fechaEnvio?: string;
-  esVendedor: boolean;
-  admin: boolean;
+  id?: string;
+  contenido: string; 
+  remitenteNombre: string;
+  tiendaId: number;
+  timestamp?: string;
+  userEmail?: string;
+  esVendedor?: boolean;
+  admin?: boolean;
 }
 
 @Injectable({
@@ -24,90 +31,113 @@ export class ChatService {
   private messageSubject = new BehaviorSubject<MensajeChatDTO[]>([]);
 
   public mensajes$ = this.messageSubject.asObservable();
-  private currentProductoId: number | null = null;
+  private currentTiendaId: number | null = null;
   private currentMessages: MensajeChatDTO[] = [];
 
   constructor() { }
 
-  // 1. Obtener historial REST y conectar a WebSocket
-  public initChat(productoId: number) {
-    this.currentProductoId = productoId;
+  // 1. Obtener historial REST y conectar a WebSocket por TIENDA
+  public initChat(tiendaId: number) {
+    if (!tiendaId) {
+      console.warn("⚠️ ChatService: No se puede iniciar chat sin tiendaId.");
+      return;
+    }
+    
+    this.currentTiendaId = tiendaId;
     this.currentMessages = [];
     this.messageSubject.next([]);
 
-    // Cargar historial
-    this.http.get<MensajeChatDTO[]>(`${environment.apiUrl}/chat/producto/${productoId}`).subscribe({
+    console.log(`💬 ChatService: Iniciando chat para tienda ${tiendaId}...`);
+
+    // Intentamos cargar historial (opcional, si el endpoint existe)
+    this.http.get<MensajeChatDTO[]>(`${environment.apiUrl}/chat/tienda/${tiendaId}`).subscribe({
       next: (historial) => {
-        this.currentMessages = historial;
+        this.currentMessages = historial || [];
         this.messageSubject.next([...this.currentMessages]);
       },
-      error: (err) => console.error("Error cargando historial de chat:", err)
+      error: (err) => console.warn("Historial de chat no disponible o error:", err.message)
     });
 
     // Conectar WebSocket
-    this.conectarWebSocket(productoId);
+    this.conectarWebSocket(tiendaId);
   }
 
-  private conectarWebSocket(productoId: number) {
-    // Si ya existe una conexion activa, desconectarla primero
+  private conectarWebSocket(tiendaId: number) {
     this.desconectar();
 
-    // Usar la URL de WebSocket definida en el environment para evitar errores de DNS
     const wsUrl = environment.wsUrl;
+    console.log(`🔌 ChatService: Intentando conectar a ${wsUrl} (Tienda: ${tiendaId})`);
 
     this.stompClient = new Client({
       webSocketFactory: () => new SockJS(wsUrl),
       reconnectDelay: 5000,
       debug: (str) => {
-        // console.log(str); // Comenta o descomenta para depuración
+        console.log('STOMP Debug (Chat):', str);
       }
     });
 
     this.stompClient.onConnect = (frame) => {
-      // Suscribirse al canal específico del producto
-      this.stompClient?.subscribe(`/topic/chat/${productoId}`, (message: Message) => {
+      console.log('✅ ChatService: Conectado existosamente!');
+      
+      // Suscribirse al canal de la tienda
+      this.stompClient?.subscribe(`/topic/tienda/${tiendaId}`, (message: Message) => {
         if (message.body) {
-          const mensajeNuevo: MensajeChatDTO = JSON.parse(message.body);
-          this.currentMessages.push(mensajeNuevo);
-          this.messageSubject.next([...this.currentMessages]);
+          try {
+            const mensajeNuevo: MensajeChatDTO = JSON.parse(message.body);
+            console.log('📩 ChatService: Nuevo mensaje recibido!', mensajeNuevo);
+            this.currentMessages.push(mensajeNuevo);
+            this.messageSubject.next([...this.currentMessages]);
+          } catch (e) {
+            console.error("Error parseando mensaje de chat:", e);
+          }
         }
       });
     };
 
     this.stompClient.onStompError = (frame) => {
-      console.error('Broker error: ' + frame.headers['message']);
-      console.error('Additional details: ' + frame.body);
+      console.error('❌ ChatService Broker Error: ' + frame.headers['message']);
+      console.error('Detalles:', frame.body);
+    };
+
+    this.stompClient.onWebSocketClose = () => {
+       console.warn('⚠️ ChatService: Conexión WebSocket cerrada.');
     };
 
     this.stompClient.activate();
   }
 
   // 2. Enviar mensaje por WS
-  public enviarMensaje(usuarioEmail: string, mensaje: string) {
-    if (this.stompClient && this.stompClient.connected && this.currentProductoId) {
-      const payload = {
-        usuarioEmail: usuarioEmail,
-        productoId: this.currentProductoId,
-        mensaje: mensaje
+  public enviarMensaje(usuarioNombre: string, mensaje: string, email: string) {
+    if (this.stompClient && this.stompClient.connected && this.currentTiendaId) {
+      
+      const payload: MensajeChatDTO = {
+        contenido: mensaje,
+        remitenteNombre: usuarioNombre,
+        userEmail: email,
+        tiendaId: Number(this.currentTiendaId)
       };
       
+      console.log('📤 ChatService: Enviando mensaje...', payload);
+
       this.stompClient.publish({
-        destination: `/app/chat/${this.currentProductoId}`,
+        destination: `/app/chat/${this.currentTiendaId}`,
         body: JSON.stringify(payload)
       });
     } else {
-      console.error("STOMP no está conectado o producto no definido.");
+      console.error("❌ ChatService: No se puede enviar mensaje. Estado:", {
+        existeSTOMP: !!this.stompClient,
+        conectado: this.stompClient?.connected,
+        ID_Tienda: this.currentTiendaId
+      });
     }
   }
 
-  // 3. Limpiar al destruir componente
   public desconectar() {
     if (this.stompClient) {
-      if (this.stompClient.connected) {
-         this.stompClient.deactivate();
-      }
+      console.log('🔌 ChatService: Desconectando...');
+      this.stompClient.deactivate();
       this.stompClient = null;
     }
-    this.currentProductoId = null;
+    this.currentTiendaId = null;
   }
 }

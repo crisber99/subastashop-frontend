@@ -24,6 +24,14 @@
         <input type="datetime-local" class="form-control" [(ngModel)]="producto.fechaFinSubasta" name="fechaFin" required>
       </div>
 
+      <div class="mb-4">
+        <div class="form-check form-switch fs-5">
+          <input class="form-check-input" type="checkbox" role="switch" id="chatHabilitadoEdit" [(ngModel)]="producto.chatHabilitado" name="chatHabilitado">
+          <label class="form-check-label fw-bold" for="chatHabilitadoEdit">Habilitar Chat en Vivo</label>
+        </div>
+        <div class="form-text text-muted">Permite chatear en tiempo real con los compradores interesados en este artículo. 💎 Exclusivo Vendedor PRO.</div>
+      </div>
+
       <div class="mb-3">
         <label class="form-label">Imágenes (Opcional)</label>
         <input type="file" class="form-control" (change)="onFilesSelected($event)" accept="image/*" multiple>

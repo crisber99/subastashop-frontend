@@ -250,7 +250,7 @@
                 }
 
                 <!-- LIVE CHAT WEB SOCKET -->
-                <div class="card border-0 shadow-sm mb-4" style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);">
+                <div *ngIf="producto?.chatHabilitado" class="card border-0 shadow-sm mb-4" style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);">
                     <div class="card-header bg-dark text-white d-flex align-items-center py-3">
                         <i class="bi bi-chat-left-text-fill me-2 text-warning"></i>
                         <h6 class="mb-0 fw-bold">Live Chat (Vendedor y Clientes)</h6>

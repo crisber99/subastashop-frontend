@@ -37,6 +37,7 @@ export class ProductService {
     if (producto.categoriaId) {
       formData.append('categoriaId', producto.categoriaId.toString());
     }
+    formData.append('chatHabilitado', producto.chatHabilitado ? 'true' : 'false');
 
     if (imagenes && imagenes.length > 0) {
       imagenes.forEach(file => {

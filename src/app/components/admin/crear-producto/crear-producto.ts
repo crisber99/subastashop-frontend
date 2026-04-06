@@ -43,6 +43,7 @@ export class CrearProducto implements OnInit {
       precioTicket: [0],
       cantidadNumeros: [100],
       cantidadGanadores: [1],
+      chatHabilitado: [true],
       premios: this.fb.array([])
     });
 
@@ -249,6 +250,9 @@ export class CrearProducto implements OnInit {
     if (value.tipoVenta === 'CAJA_MISTERIOSA' && value.premios?.length > 0) {
       formData.append('premiosCaja', JSON.stringify(value.premios));
     }
+    
+    // Anexamos el chat habilitado
+    formData.append('chatHabilitado', value.chatHabilitado ? 'true' : 'false');
 
     this.productService.crearProducto(formData).subscribe({
       next: () => {

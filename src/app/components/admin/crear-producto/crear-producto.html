@@ -153,6 +153,14 @@
             }
 
             <div class="mb-4">
+              <div class="form-check form-switch fs-5">
+                <input class="form-check-input" type="checkbox" role="switch" id="chatHabilitado" formControlName="chatHabilitado">
+                <label class="form-check-label fw-bold" for="chatHabilitado">Habilitar Chat en Vivo</label>
+              </div>
+              <div class="form-text text-muted">Permite chatear en tiempo real con los compradores interesados en este artículo. 💎 Exclusivo Vendedor PRO.</div>
+            </div>
+
+            <div class="mb-4">
               <label class="form-label">Fotos del Producto (Máx. {{ limiteImagenes }})</label>
               <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" multiple required>
               <div class="form-text" [ngClass]="{'text-danger': archivosSeleccionados.length > limiteImagenes}">

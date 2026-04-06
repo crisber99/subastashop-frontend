@@ -109,15 +109,38 @@ export class LoginComponent implements OnInit {
     const { value: formValues } = await Swal.fire({
       title: 'Restablecer Contraseña',
       html:
-        '<p class="small text-muted">Ingresa el código que recibiste en tu email y tu nueva contraseña.</p>' +
+        '<p class="small text-muted">La contraseña debe tener mín. 10 caracteres, incluir Mayús, Minús, Número y Especial.</p>' +
         '<input id="swal-input1" class="swal2-input" placeholder="Código de 6 dígitos">' +
-        '<input id="swal-input2" type="password" class="swal2-input" placeholder="Nueva Contraseña (min 8 car.)">',
+        '<input id="swal-input2" type="password" class="swal2-input" placeholder="Nueva Contraseña">',
       focusConfirm: false,
       preConfirm: () => {
-        return [
-          (document.getElementById('swal-input1') as HTMLInputElement).value,
-          (document.getElementById('swal-input2') as HTMLInputElement).value
-        ]
+        const code = (document.getElementById('swal-input1') as HTMLInputElement).value;
+        const password = (document.getElementById('swal-input2') as HTMLInputElement).value;
+
+        if (!code) {
+           Swal.showValidationMessage('El código es obligatorio');
+           return false;
+        }
+
+        // Validación manual de reglas (para coincidir con el backend)
+        const errors = [];
+        if (password.length < 10) errors.push('Mínimo 10 caracteres');
+        if (!/[A-Z]/.test(password)) errors.push('Una mayúscula');
+        if (!/[a-z]/.test(password)) errors.push('Una minúscula');
+        if (!/[0-9]/.test(password)) errors.push('Un número');
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push('Un carácter especial');
+        
+        const emailPrefix = email.split('@')[0].toLowerCase();
+        if (password.toLowerCase().includes(emailPrefix)) {
+           errors.push('No puede contener tu email');
+        }
+
+        if (errors.length > 0) {
+           Swal.showValidationMessage('Falta: ' + errors.join(', '));
+           return false;
+        }
+
+        return [code, password];
       },
       confirmButtonText: 'Actualizar Contraseña',
       confirmButtonColor: '#6366f1'
@@ -125,11 +148,6 @@ export class LoginComponent implements OnInit {
 
     if (formValues) {
       const [code, newPassword] = formValues;
-      if (!code || !newPassword) {
-        Swal.fire('Error', 'Debes completar ambos campos', 'error');
-        return;
-      }
-
       this.authService.resetPassword({ email, code, newPassword }).subscribe({
         next: () => {
           Swal.fire('¡Éxito!', 'Tu contraseña ha sido actualizada. Ya puedes iniciar sesión.', 'success');

@@ -7,6 +7,8 @@ import { AuthService } from '../../services/auth-service';
 import { MercadoPagoService } from '../../services/mercadopago';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { ProductService } from '../../services/product';
+import { LegalTermsComponent } from '../../components/legal-terms/legal-terms';
 import Swal from 'sweetalert2';
 
 export interface CuentaBancaria {
@@ -20,7 +22,7 @@ export interface CuentaBancaria {
 @Component({
   selector: 'app-admin-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, LegalTermsComponent],
   templateUrl: './admin-config.html',
   styleUrl: './admin-config.scss',
 })
@@ -31,6 +33,7 @@ export class AdminConfig implements OnInit {
   private mpService = inject(MercadoPagoService);
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
+  private productService = inject(ProductService);
 
   config = {
     nombre: '',
@@ -308,40 +311,50 @@ export class AdminConfig implements OnInit {
   }
 
   guardarCambios() {
-    this.loading = true;
-    this.mensaje = '';
+    if (!this.aceptaTerminos) {
+      this.loading = false;
+      Swal.fire('Gestión Legal', 'Debes aceptar los Términos y Condiciones para operar como vendedor.', 'warning');
+      return;
+    }
 
+    this.loading = true;
     Swal.fire({
         title: 'Guardando...',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading()
     });
 
-    const formData = new FormData();
-    formData.append('nombreTienda', this.config.nombre);
-    formData.append('rutEmpresa', this.config.rutEmpresa);
-    
-    // Serializar cuentas a JSON string
-    const datosJSON = JSON.stringify(this.cuentas);
-    formData.append('datosBancarios', datosJSON);
-    
-    formData.append('colorPrimario', this.config.colorPrimario);
-    formData.append('opcionesEnvio', this.config.opcionesEnvio);
-    formData.append('whatsapp', this.config.whatsapp);
-    formData.append('aceptaTerminos', this.aceptaTerminos.toString());
-
-    if (this.fileLogo) formData.append('fotoLogo', this.fileLogo);
-
-    this.tiendaService.actualizarConfiguracion(formData).subscribe({
+    // ⚖️ Registrar aceptación legal en el nuevo sistema
+    this.productService.acceptLegalTerms('SELLER_REGISTRATION').subscribe({
       next: () => {
-        this.loading = false;
-        Swal.fire('¡Guardado!', 'La configuración se actualizó correctamente.', 'success');
+        const formData = new FormData();
+        formData.append('nombreTienda', this.config.nombre);
+        formData.append('rutEmpresa', this.config.rutEmpresa);
+        
+        const datosJSON = JSON.stringify(this.cuentas);
+        formData.append('datosBancarios', datosJSON);
+        
+        formData.append('colorPrimario', this.config.colorPrimario);
+        formData.append('opcionesEnvio', this.config.opcionesEnvio);
+        formData.append('whatsapp', this.config.whatsapp);
+        formData.append('aceptaTerminos', 'true');
+
+        if (this.fileLogo) formData.append('fotoLogo', this.fileLogo);
+
+        this.tiendaService.actualizarConfiguracion(formData).subscribe({
+          next: () => {
+            this.loading = false;
+            Swal.fire('¡Éxito!', 'Los datos y la aceptación legal se han guardado correctamente.', 'success');
+          },
+          error: (err) => {
+            this.loading = false;
+            Swal.fire('Error', 'Se registró la aceptación pero no pudimos guardar los datos de la tienda.', 'error');
+          }
+        });
       },
       error: (err) => {
         this.loading = false;
-        console.error(err);
-        const errorMsg = err.error?.message || 'No se pudieron guardar los cambios.';
-        Swal.fire('Error', errorMsg, 'error');
+        Swal.fire('Error Legal', 'No pudimos registrar tu firma digital legal. Inténtalo de nuevo.', 'error');
       }
     });
   }

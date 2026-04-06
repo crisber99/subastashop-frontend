@@ -1,0 +1,116 @@
+.memorice-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.timer-display {
+  display: inline-block;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #fff;
+  padding: 8px 24px;
+  background: #1a1a2e;
+  border-radius: 12px;
+  border: 1px solid rgba(13, 110, 253, 0.3);
+  margin-top: 10px;
+  transition: all 0.3s ease;
+
+  &.running {
+    border-color: #6366f1;
+    color: #a855f7;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+  }
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  perspective: 1000px;
+  margin-top: 25px;
+
+  @media (max-width: 450px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.card-scene {
+  aspect-ratio: 3/4;
+  cursor: pointer;
+  perspective: 600px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+
+  &.is-flipped {
+    transform: rotateY(180deg);
+  }
+
+  &.is-matched {
+    transform: rotateY(180deg) scale(0.95);
+    .card-back {
+      background: linear-gradient(135deg, #10b981, #059669) !important;
+      border-color: #34d399 !important;
+      opacity: 0.8;
+    }
+  }
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.8rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-front {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #6366f1;
+  font-weight: 900;
+
+  .logo {
+    opacity: 0.2;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+  }
+}
+
+.card-back {
+  background: linear-gradient(135deg, #4338ca, #6d28d9);
+  color: white;
+  transform: rotateY(180deg);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-value {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+button:focus {
+  outline: none;
+}

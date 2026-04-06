@@ -109,55 +109,103 @@
             }
 
             @if (productoForm.get('tipoVenta')?.value === 'RIFA') {
-              <div class="card p-3 mb-4 border-info" style="background: var(--glass-bg);">
+              <div class="card p-3 mb-4 border-info shadow-sm" style="background: var(--glass-bg); border-radius: 15px;">
                 <div class="d-flex align-items-center mb-3">
-                  <span class="fs-4 me-2">🎟️</span>
-                  <h5 class="text-primary m-0">Configuración de la Rifa</h5>
+                  <span class="fs-4 me-2">🧠</span>
+                  <h5 class="text-primary m-0">Configuración del Concurso (Memorice)</h5>
                 </div>
 
-                <div class="row g-2">
-                  <div class="col-md-4">
-                    <label class="form-label fw-bold small">Precio Ticket ($)</label>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold small">Precio Inscripción ($)</label>
                     <input type="number" class="form-control" formControlName="precioTicket" placeholder="Ej: 1000">
                   </div>
 
-                  <div class="col-md-4">
-                    <label class="form-label fw-bold small">Total Números</label>
-                    <input type="number" class="form-control" formControlName="cantidadNumeros" placeholder="Ej: 100">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold small">Dificultad (Número de Pares)</label>
+                    <select class="form-select" formControlName="numeroPares">
+                      <option [ngValue]="3">Fácil (3 pares)</option>
+                      <option [ngValue]="5">Normal (5 pares)</option>
+                      <option [ngValue]="8">Intermedio (8 pares)</option>
+                      <option [ngValue]="12">Duro (12 pares)</option>
+                      <option [ngValue]="15">Experto (15 pares)</option>
+                    </select>
+                    <div class="form-text small">Más pares = mayor reto táctico.</div>
                   </div>
 
-                  <div class="col-md-4">
-                    <label class="form-label fw-bold small">Ganadores</label>
-                    <select class="form-select" formControlName="cantidadGanadores">
-                      <option [ngValue]="1">1 Ganador</option>
-                      <option [ngValue]="2">2 Ganadores</option>
-                      <option [ngValue]="3">3 Ganadores</option>
-                    </select>
+                  <div class="col-md-12">
+                    <label class="form-label fw-bold small text-muted">¿Cuándo finaliza?</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-white border-end-0">🎟️</span>
+                      <input type="number" class="form-control border-start-0" formControlName="cantidadNumeros" placeholder="Total de cupos">
+                    </div>
+                    <div class="form-text mt-1 text-muted">
+                      <small>El concurso se cerrará cuando se completen todas las inscripciones permitidas.</small>
+                    </div>
                   </div>
-                </div>
-                <div class="form-text mt-2 text-muted">
-                  <small>La rifa se cerrará automáticamente cuando se vendan todos los números.</small>
                 </div>
               </div>
             }
             
             @if (productoForm.get('tipoVenta')?.value === 'SUBASTA') {
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold text-success">Fecha de Inicio Oficial</label>
+                  <input type="datetime-local" class="form-control" formControlName="fechaInicio">
+                  @if (productoForm.get('fechaInicio')?.invalid && productoForm.get('fechaInicio')?.touched) {
+                    <small class="text-danger">La fecha de inicio es obligatoria.</small>
+                  }
+                  <div class="form-text">¿Cuándo abre la subasta al público general?</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label fw-bold text-primary">Horas Acceso PRO</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control" formControlName="horasVentaAnticipada">
+                    <span class="input-group-text">Horas</span>
+                  </div>
+                  @if (productoForm.get('horasVentaAnticipada')?.invalid && productoForm.get('horasVentaAnticipada')?.touched) {
+                    <small class="text-danger">Debes indicar las horas (mínimo 1).</small>
+                  }
+                  <div class="form-text">¿Cuántas horas antes pueden pujar los usuarios <b>PRO</b>?</div>
+                </div>
+              </div>
+
               <div class="mb-3">
                 <label class="form-label fw-bold text-danger">Fecha de Cierre</label>
                 <input type="datetime-local" class="form-control" formControlName="fechaFin">
                 @if (productoForm.get('fechaFin')?.invalid && productoForm.get('fechaFin')?.touched) {
                   <small class="text-danger">La fecha de cierre es obligatoria para subastas.</small>
                 }
-                <div class="form-text">¿Cuándo termina la subasta?</div>
+                <div class="form-text">¿Cuándo termina la subasta definitivamente?</div>
               </div>
             }
 
-            <div class="mb-4">
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="form-check form-switch p-3 bg-light rounded-4 border d-flex justify-content-between align-items-center">
+                        <div>
+                            <label class="form-check-label fw-bold mb-0" for="chatHabilitado">Habilitar Chat en Vivo</label>
+                            <p class="text-muted small mb-0">Permite mensajes en tiempo real</p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span *ngIf="!isProUsuario" class="badge bg-warning text-dark me-2 small" style="font-size: 0.6rem;">PRO</span>
+                            <input class="form-check-input ms-0" type="checkbox" id="chatHabilitado" formControlName="chatHabilitado" [disabled]="!isProUsuario" style="width: 2.5rem; height: 1.25rem;">
+                        </div>
+                    </div>
+                    @if (!isProUsuario) {
+                        <div class="small text-primary mt-1 ms-2">
+                             <i class="bi bi-star-fill"></i> <a href="/admin/configuracion" class="text-decoration-none">Hazte PRO para activar el chat</a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="mb-4 card p-3 border-warning" style="background: rgba(255, 193, 7, 0.05);">
               <div class="form-check form-switch fs-5">
-                <input class="form-check-input" type="checkbox" role="switch" id="chatHabilitado" formControlName="chatHabilitado">
-                <label class="form-check-label fw-bold" for="chatHabilitado">Habilitar Chat en Vivo</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="destacado" formControlName="destacado">
+                <label class="form-check-label fw-bold text-warning" for="destacado">⭐ Destacar en la Página Principal</label>
               </div>
-              <div class="form-text text-muted">Permite chatear en tiempo real con los compradores interesados en este artículo. 💎 Exclusivo Vendedor PRO.</div>
+              <div class="form-text text-muted">Tu producto aparecerá en el carrusel principal de la plataforma. Máxima visibilidad para tus ventas. 🚀</div>
             </div>
 
             <div class="mb-4">

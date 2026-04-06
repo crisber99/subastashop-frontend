@@ -85,8 +85,19 @@
                 <!-- SECCIÓN SUBASTA -->
                 <div *ngIf="producto.tipoVenta === 'SUBASTA'" class="card border-0 mb-4 overflow-hidden">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3 border-0">
-                        <span class="badge bg-danger animate__animated animate__pulse animate__infinite px-3 py-2">🔥 EN SUBASTA</span>
-                        <small class="fw-500 opacity-75"><i class="bi bi-clock me-1"></i> Finaliza: {{ producto.fechaFinSubasta | date:'short' }}</small>
+                        @if (periodoSubasta === 'ANUNCIO') {
+                            <span class="badge bg-secondary px-3 py-2"><i class="bi bi-calendar-event me-1"></i> ANUNCIO</span>
+                        } @else if (periodoSubasta === 'PREVIA_PRO') {
+                            <span class="badge bg-primary animate__animated animate__pulse animate__infinite px-3 py-2"><i class="bi bi-star-fill me-1"></i> ACCESO ANTICIPADO PRO</span>
+                        } @else if (periodoSubasta === 'ABIERTA') {
+                            <span class="badge bg-danger animate__animated animate__pulse animate__infinite px-3 py-2">🔥 EN SUBASTA</span>
+                        } @else {
+                            <span class="badge bg-secondary px-3 py-2">🔒 FINALIZADA</span>
+                        }
+                        <small class="fw-500 opacity-75">
+                            <i class="bi bi-clock me-1"></i> 
+                            {{ periodoSubasta === 'FINALIZADA' ? 'Finalizó el: ' + (producto.fechaFinSubasta | date:'short') : 'Finaliza: ' + (producto.fechaFinSubasta | date:'short') }}
+                        </small>
                     </div>
 
                     <div class="card-body p-4 text-center">
@@ -95,22 +106,98 @@
                             ${{ producto.precioActual | number }}
                         </h2>
 
-                        <div *ngIf="subastaFinalizada" class="alert alert-secondary text-center fw-bold rounded-4">
-                            <i class="bi bi-lock-fill"></i> Subasta Finalizada
-                        </div>
+                        @if (periodoSubasta === 'ANUNCIO') {
+                            <div class="alert alert-info rounded-4 border-0">
+                                <p class="mb-1 fw-bold">Próximamente</p>
+                                <p class="small mb-0">Esta subasta abre para todo el público el <b>{{ fechaInicioVisible | date:'short' }}</b>.</p>
+                                <p class="small mt-2 text-primary"><i class="bi bi-star-fill"></i> Usuarios <b>PRO</b> podrán entrar el <b>{{ fechaProVisible | date:'short' }}</b>.</p>
+                            </div>
+                        } @else if (periodoSubasta === 'PREVIA_PRO') {
+                            <div class="alert alert-primary rounded-4 border-0 shadow-sm mb-4">
+                                <p class="mb-1 fw-bold">💎 Exclusivo PRO</p>
+                                <p class="small mb-0">Periodo de acceso anticipado activo. Abre para el público general el <b>{{ fechaInicioVisible | date:'short' }}</b>.</p>
+                            </div>
 
-                        <div *ngIf="authService.isLoggedIn(); else loginSubasta">
-                            <div class="mb-3 text-start" *ngIf="!subastaFinalizada">
-                                <label class="form-label fw-600 small ms-1">Tu próxima puja ($):</label>
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-text bg-transparent border-end-0">$</span>
-                                    <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta">
-                                    <button class="btn btn-primary px-4 fw-bold" (click)="pujar()">
-                                        Pujar
-                                    </button>
+                            @if (authService.isLoggedIn()) {
+                                @if (authService.currentUser()?.suscripcionActiva || authService.currentUser()?.pagoAutomatico) {
+                                    <div class="input-group input-group-lg mb-3 shadow-sm rounded-4 overflow-hidden">
+                                        <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                                        <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta" [min]="producto.precioActual + 1000">
+                                        <button class="btn btn-primary px-4 fw-bold" type="button" (click)="pujar()">PUJAR</button>
+                                    </div>
+                                } @else {
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-secondary btn-lg py-3 fw-bold rounded-4 opacity-75" disabled>
+                                            <i class="bi bi-lock-fill me-2"></i> Solo Usuarios PRO
+                                        </button>
+                                        <a href="/admin/configuracion" class="btn btn-link text-primary fw-bold">¡Hazte PRO para pujar ya!</a>
+                                    </div>
+                                }
+                            } @else {
+                                <div class="alert alert-info rounded-4 border-0 text-center">
+                                    Para participar debes <a routerLink="/login" class="fw-bold text-primary text-decoration-none">iniciar sesión</a>.
                                 </div>
-                                <div class="form-text text-muted text-center mt-3">
-                                    Mínimo sugerido: <span class="fw-bold">${{ (producto.precioActual || producto.precioBase) + 1000 | number }}</span>
+                            }
+                        } @else if (periodoSubasta === 'ABIERTA') {
+                            <div *ngIf="authService.isLoggedIn(); else loginSubasta">
+                                <div class="input-group input-group-lg mb-3 shadow-sm rounded-4 overflow-hidden">
+                                    <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                                    <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta" [min]="producto.precioActual + 1000">
+                                    <button class="btn btn-primary px-4 fw-bold" type="button" (click)="pujar()">PUJAR</button>
+                                </div>
+                            </div>
+                        } @else {
+                            <div class="alert alert-secondary text-center fw-bold rounded-4">
+                                <i class="bi bi-lock-fill"></i> Subasta Finalizada
+                            </div>
+                        }
+                    </div>
+
+                            <!-- 🤖 SNIPER BOT (PUJAS AUTOMÁTICAS) -->
+                            <div class="mt-4 pt-3 border-top" *ngIf="!subastaFinalizada">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-robot fs-4 text-primary me-2"></i>
+                                        <h6 class="mb-0 fw-bold">Sniper Bot</h6>
+                                        <span class="badge bg-warning text-dark ms-2 small" style="font-size: 0.65rem; letter-spacing: 0.5px;">PRO</span>
+                                    </div>
+                                    <span *ngIf="sniperActivo" class="badge rounded-pill bg-success-subtle text-success border border-success px-2 py-1 small">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Activo
+                                    </span>
+                                </div>
+
+                                <div class="glass-card p-3 rounded-4 border-0 shadow-sm mb-3" 
+                                     style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.1) !important;">
+                                    
+                                    <div *ngIf="!sniperActivo">
+                                        <p class="text-muted small mb-3">¿No tienes tiempo para seguir la subasta? Deja que nuestro bot puje por ti hasta tu límite marcado.</p>
+                                        <button class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold py-2" (click)="configurarSniper()">
+                                            <i class="bi bi-rocket-takeoff me-2"></i> Configurar Pujas Automáticas
+                                        </button>
+                                    </div>
+
+                                    <div *ngIf="sniperActivo" class="animate__animated animate__fadeIn">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="small text-muted">Tu límite máximo:</span>
+                                            <span class="fw-bold text-primary fs-5">${{ sniperActivo.montoMaximo | number }}</span>
+                                        </div>
+                                        <div class="progress mb-2" style="height: 6px;">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                                                 role="progressbar" [style.width]="'100%'"></div>
+                                        </div>
+                                        <p class="text-muted" style="font-size: 0.75rem;">
+                                            <i class="bi bi-info-circle me-1"></i> El bot pujará un <b>1%</b> más cada vez que alguien te supere, hasta alcanzar tu límite.
+                                        </p>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-light btn-sm flex-grow-1 rounded-pill border text-muted" (click)="configurarSniper()">
+                                                <i class="bi bi-pencil me-1"></i> Cambiar Límite
+                                            </button>
+                                            <button class="btn btn-outline-danger btn-sm rounded-circle" style="width: 32px; height: 32px; padding: 0;" 
+                                                    (click)="desactivarSniper()" title="Desactivar Bot">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -123,97 +210,90 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN RIFA -->
-                <div *ngIf="producto.tipoVenta === 'RIFA'" class="card border-0 mb-4 overflow-hidden">
-                    <div class="card-header bg-info text-white py-3 border-0 text-center">
-                        <h5 class="mb-0 fw-bold"><i class="bi bi-ticket-perforated me-2"></i> Rifa / Sorteo Activo</h5>
+                <!-- SECCIÓN CONCURSO DE HABILIDAD (MEMORICE) -->
+                <div *ngIf="producto.tipoVenta === 'RIFA'" class="card border-0 mb-4 overflow-hidden shadow-sm">
+                    <div class="card-header bg-gradient-primary text-white py-3 border-0 text-center" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-controller me-2"></i> Concurso de Habilidad</h5>
                     </div>
-                    <div class="card-body p-4">
+                    <div class="card-body p-4 bg-glass">
                         <div class="text-center mb-4">
-                            <p class="text-muted mb-1 small">Valor del Ticket</p>
-                            <h2 class="fw-800 text-success">${{ producto.precioTicket | number }}</h2>
-                            <p class="badge bg-light text-dark mt-1">
-                                {{ producto.cantidadNumeros }} Números | {{ producto.cantidadGanadores }} Premios
-                            </p>
+                            <p class="text-muted mb-1 small uppercase ls-1">Inscripción al Concurso</p>
+                            <h2 class="fw-800 text-primary">${{ producto.precioTicket | number }}</h2>
+                            <div class="d-flex justify-content-center gap-2 mt-2">
+                                <span class="badge bg-light text-dark border"><i class="bi bi-clock-history me-1"></i> Basado en Tiempo</span>
+                                <span class="badge bg-light text-dark border"><i class="bi bi-trophy me-1"></i> {{ producto.cantidadGanadores }} Premios</span>
+                            </div>
                         </div>
 
-                        <p class="fw-bold mb-2 small"><i class="bi bi-grid-3x3-gap me-1 text-primary"></i> Selecciona tus números:</p>
-                        <p class="text-muted" style="font-size: 11px;">
-                            <i class="bi bi-info-circle me-1"></i> Pulsa para seleccionar, pulsa de nuevo para deseleccionar. Usa el carrito flotante para comprar.
-                        </p>
-                        <div class="d-flex flex-wrap gap-2 justify-content-center p-3 bg-light rounded-4"
-                            style="max-height: 250px; overflow-y: auto; border: 1px solid var(--glass-border);">
-                            @for (num of numerosRifa; track num) {
-                            <button class="btn ticket-btn transition-all" 
-                                [class.btn-danger]="isTicketVendido(num)"
-                                [class.btn-success]="isTicketSeleccionado(num) && !isTicketVendido(num)"
-                                [class.btn-outline-primary]="!isTicketVendido(num) && !isTicketSeleccionado(num)"
-                                [class.disabled]="isTicketVendido(num)"
-                                (click)="!isTicketVendido(num) && toggleSeleccion(num)"
-                                [title]="isTicketVendido(num) ? 'Vendido' : isTicketSeleccionado(num) ? 'Click para deseleccionar' : 'Click para seleccionar'"
-                                style="width: 48px; height: 48px; font-weight: 700; border-radius: 12px;">
-                                @if (isTicketVendido(num)) { <i class="bi bi-x"></i> }
-                                @else if (isTicketSeleccionado(num)) { <i class="bi bi-check-lg"></i> }
-                                @else { {{ num }} }
-                            </button>
-                            }
+                        <!-- 🕹️ JUEGO MEMORICE -->
+                        <div *ngIf="authService.isLoggedIn(); else loginRequired">
+                            <!-- Si ya tiene participación y no ha jugado, o quiere practicar -->
+                            <div *ngIf="haPagado() || true" class="animate__animated animate__fadeIn">
+                                <app-memorice 
+                                    [contestId]="producto.id" 
+                                    [userId]="authService.currentUser()?.id"
+                                    [totalPairs]="producto.numeroPares || 5"
+                                    (onComplete)="onGameComplete($event)">
+                                </app-memorice>
+                            </div>
+
+                            <!-- Si no se ha unido al concurso -->
+                            <div *ngIf="!yaParticipa()" class="text-center py-4">
+                                <div class="mb-4 text-start">
+                                    <app-legal-terms></app-legal-terms>
+                                    <div class="form-check mt-3 d-flex align-items-center justify-content-center p-3 rounded-4" 
+                                         style="background: rgba(99, 102, 241, 0.05); border: 1px dashed #6366f1;">
+                                        <input class="form-check-input me-3" type="checkbox" id="checkLegal" 
+                                               [(ngModel)]="legalTermsChecked" style="width: 24px; height: 24px; cursor: pointer;">
+                                        <label class="form-check-label fw-bold mb-0" for="checkLegal" style="cursor: pointer; color: var(--text-color);">
+                                            He leído y acepto las Bases Legales del Concurso
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-lg py-3 w-100" 
+                                        (click)="unirseAlConcurso()" [disabled]="!legalTermsChecked">
+                                    🚀 Inscribirse ahora por ${{ producto.precioTicket | number }}
+                                </button>
+                                <p class="text-muted small mt-3 px-3">
+                                    <i class="bi bi-shield-check me-1"></i> Tu participación será registrada con firma digital simple (IP/Timestamp).
+                                </p>
+                            </div>
                         </div>
 
-                        <!-- 🛠️ BOTÓN ADMIN: LANZAR SORTEO -->
+                        <ng-template #loginRequired>
+                            <div class="alert alert-info rounded-4 border-0 text-center py-4">
+                                <p class="mb-3">Para participar en este concurso de habilidad debes estar registrado.</p>
+                                <a routerLink="/login" class="btn btn-primary rounded-pill px-4 fw-bold">Iniciar Sesión</a>
+                            </div>
+                        </ng-template>
+
+                        <!-- 🛠️ BOTÓN ADMIN: LANZAR DETERMINACIÓN DE GANADORES -->
                         <div *ngIf="esDuenoProducto() && producto.estado !== 'FINALIZADA'" class="mt-4 border-top pt-4">
                             <p class="text-muted small mb-2 text-center text-uppercase ls-1">Panel de Administrador</p>
-                            <button class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-sm py-3" (click)="lanzarSorteo()">
-                                <i class="bi bi-gear-fill me-2"></i> Girar Tómbola y Sortear
+                            <button class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-sm py-3" (click)="lanzarConcurso()">
+                                <i class="bi bi-trophy-fill me-2"></i> Determinar Ganadores por Tiempo
                             </button>
                         </div>
 
-                        <!-- 🏆 GANADORES OFICIALES (Visible para todos al finalizar) -->
-                        <div *ngIf="producto.estado === 'FINALIZADA' && ganadores && ganadores.length > 0" 
+                        <!-- 🏆 RANKING DE LÍDERES (Ganadores) -->
+                        <div *ngIf="ganadores && ganadores.length > 0" 
                              class="mt-4 border-top pt-4 animate__animated animate__fadeIn">
-                            <h5 class="fw-bold text-center mb-3">🏆 Ganadores Oficiales</h5>
-                            <div class="list-group list-group-flush rounded-4 overflow-hidden border">
-                                @for (g of ganadores; track g.id) {
-                                <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <h5 class="fw-bold text-center mb-3">🏆 Tabla de Líderes</h5>
+                            <div class="list-group list-group-flush rounded-4 overflow-hidden border shadow-sm">
+                                @for (g of ganadores; track $index) {
+                                <div class="list-group-item d-flex justify-content-between align-items-center p-3" 
+                                     [class.bg-warning-subtle]="$index === 0">
                                     <div class="d-flex align-items-center">
-                                        <span class="badge rounded-pill bg-warning text-dark me-3 fw-bold" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                                            {{ g.puesto || '1' }}
-                                        </span>
-                                        <div>
-                                            <p class="mb-0 fw-bold">Ticket #{{ g.numeroTicket }}</p>
-                                            <p class="mb-0 small text-muted">{{ g.comprador }}</p>
-                                        </div>
-                                    </div>
-                                    <i class="bi bi-patch-check-fill text-primary fs-5"></i>
-                                </div>
-                                }
-                            </div>
-                        </div>
-
-                        <!-- 🎟️ MIS TICKETS (Solo si está logueado y tiene tickets) -->
-                        <div *ngIf="authService.isLoggedIn() && misTickets && misTickets.length > 0"
-                             class="mt-4 border-top pt-4 animate__animated animate__fadeIn">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="fw-bold mb-0">🎟️ Mis Tickets</h5>
-                                <span class="badge bg-primary rounded-pill">{{ misTickets.length }}</span>
-                            </div>
-                            <div class="d-flex flex-column gap-2">
-                                @for (t of misTickets; track t.id) {
-                                <div class="ticket-mini-card p-3 rounded-4 d-flex justify-content-between align-items-center"
-                                     style="background: linear-gradient(135deg, #0d1117, #1a1a2e); border: 1px solid rgba(109,66,193,0.3);">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="ticket-num-badge text-white fw-bold" 
-                                             style="background: linear-gradient(135deg, #6f42c1, #0d6efd); border-radius: 10px; padding: 8px 14px; font-size: 1.2rem; font-weight: 900;">
-                                            #{{ t.numeroTicket }}
+                                        <div class="rank-badge me-3" [class.gold]="$index === 0" [class.silver]="$index === 1" [class.bronze]="$index === 2">
+                                            {{ $index + 1 }}
                                         </div>
                                         <div>
-                                            <p class="mb-0 small text-white-50 text-uppercase" style="font-size: 10px; letter-spacing: 1px;">Código</p>
-                                            <p class="mb-0 fw-bold text-warning" style="font-size: 12px; font-family: monospace; letter-spacing: 1px;">{{ t.codigoVerificacion }}</p>
+                                            <p class="mb-0 fw-bold">{{ g.participant }}</p>
+                                            <p class="mb-0 small text-muted">Tiempo: {{ (g.durationMs / 1000) | number:'1.2-2' }}s</p>
                                         </div>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-light rounded-pill px-3" 
-                                            (click)="imprimirTicket(t)" title="Imprimir comprobante">
-                                        <i class="bi bi-printer me-1"></i> Imprimir
-                                    </button>
+                                    <i *ngIf="$index === 0" class="bi bi-star-fill text-warning fs-5"></i>
                                 </div>
                                 }
                             </div>

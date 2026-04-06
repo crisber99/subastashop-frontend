@@ -9,6 +9,7 @@ export interface AuthUser {
   id?: number;
   nombre?: string;
   email?: string;
+  alias?: string;
   role?: string;
   rol?: string;
   fechaFinPrueba?: string;

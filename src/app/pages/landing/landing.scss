@@ -61,3 +61,82 @@
         transform: translateY(-2px);
     }
 }
+
+/* Featured Carousel Styles */
+.featured-carousel-container {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.3);
+        border-radius: 10px;
+    }
+}
+
+.featured-carousel {
+    display: flex;
+    gap: 1.25rem;
+    padding: 0.5rem 0.25rem;
+}
+
+.featured-item {
+    min-width: 240px;
+    max-width: 240px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: var(--glass-bg, rgba(255, 255, 255, 0.8));
+    backdrop-filter: blur(10px);
+
+    &:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+        
+        .featured-img {
+            transform: scale(1.1);
+        }
+    }
+}
+
+.featured-img {
+    height: 160px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.featured-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
+
+    &.SUBASTA { background: linear-gradient(45deg, #ef4444, #f97316); }
+    &.RIFA { background: linear-gradient(45deg, #3b82f6, #06b6d4); }
+    &.DIRECTA { background: linear-gradient(45deg, #10b981, #34d399); }
+}
+
+.tienda-tag {
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

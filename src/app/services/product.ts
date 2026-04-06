@@ -12,9 +12,10 @@ export class ProductService {
   private apiUrlSubastas = `${environment.apiUrl}/subastas`;
   private apiUrlUsuario = `${environment.apiUrl}/usuario`;
   private apiUrlOrdenes = `${environment.apiUrl}/ordenes`;
-  private apiUrlRifas = `${environment.apiUrl}/rifas`;
+  private apiUrlContests = `${environment.apiUrl}/contests`;
   private apiUrlAdmin = `${environment.apiUrl}/admin`;
   private apiUrlPublic = `${environment.apiUrl}/public`;
+  private apiUrlSnipers = `${environment.apiUrl}/snipers`;
 
   getProductos(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrlProductos);
@@ -34,10 +35,22 @@ export class ProductService {
     formData.append('descripcion', producto.descripcion);
     formData.append('precioBase', producto.precioBase);
     formData.append('fechaFin', producto.fechaFinSubasta || '');
+    
+    if (producto.fechaInicioSubasta) {
+      formData.append('fechaInicioSubasta', producto.fechaInicioSubasta);
+    }
+    if (producto.horasVentaAnticipada) {
+      formData.append('horasVentaAnticipada', producto.horasVentaAnticipada.toString());
+    }
+
     if (producto.categoriaId) {
       formData.append('categoriaId', producto.categoriaId.toString());
     }
     formData.append('chatHabilitado', producto.chatHabilitado ? 'true' : 'false');
+    formData.append('destacado', producto.destacado ? 'true' : 'false');
+    if (producto.numeroPares) {
+      formData.append('numeroPares', producto.numeroPares.toString());
+    }
 
     if (imagenes && imagenes.length > 0) {
       imagenes.forEach(file => {
@@ -46,6 +59,10 @@ export class ProductService {
     }
 
     return this.http.put(`${this.apiUrlProductos}/${id}`, formData);
+  }
+
+  getProductosDestacados(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrlPublic}/productos/destacados`);
   }
 
   realizarPuja(productoId: number, monto: number): Observable<any> {
@@ -77,36 +94,32 @@ export class ProductService {
     return this.http.post(`${this.apiUrlOrdenes}/${id}/pagar`, datosPago);
   }
 
-  comprarTicket(productoId: number, numero: number) {
-    return this.http.post(`${this.apiUrlRifas}/${productoId}/comprar/${numero}`, {});
+  unirseAlConcurso(contestId: number) {
+    return this.http.post(`${this.apiUrlContests}/${contestId}/join`, {});
   }
 
-  comprarTicketsMultiple(productoId: number, numeros: number[]) {
-    return this.http.post(`${this.apiUrlRifas}/${productoId}/comprar-multiple`, numeros);
+  getParticipacionesVendidas(contestId: number) {
+    return this.http.get<any[]>(`${this.apiUrlContests}/${contestId}/participants`);
   }
 
-  getTicketsVendidos(productoId: number) {
-    return this.http.get<number[]>(`${this.apiUrlRifas}/${productoId}/tickets`);
+  lanzarConcurso(contestId: number) {
+    return this.http.post(`${this.apiUrlContests}/${contestId}/lanzar`, {});
   }
 
-  lanzarRifa(productoId: number) {
-    return this.http.post(`${this.apiUrlRifas}/${productoId}/lanzar`, {});
-  }
-
-  getDetallesRifaAdmin(productoId: number) {
-    return this.http.get<any[]>(`${this.apiUrlRifas}/${productoId}/admin/detalles`);
+  getParticipacionesAdmin(contestId: number) {
+    return this.http.get<any[]>(`${this.apiUrlContests}/${contestId}/admin/detalles`);
   }
 
   getAdminStats() {
     return this.http.get<any>(`${this.apiUrlAdmin}/stats`);
   }
 
-  getGanadoresRifa(id: number) {
-    return this.http.get<any[]>(`${this.apiUrlRifas}/${id}/ganadores`);
+  getGanadoresConcurso(id: number) {
+    return this.http.get<any[]>(`${this.apiUrlContests}/${id}/winners`);
   }
 
-  getMisTickets(productoId: number) {
-    return this.http.get<any[]>(`${this.apiUrlRifas}/${productoId}/mis-tickets`);
+  getMisParticipaciones(contestId: number) {
+    return this.http.get<any[]>(`${this.apiUrlContests}/${contestId}/mis-participaciones`);
   }
 
   getProductosPorTienda(slug: string) {
@@ -115,5 +128,24 @@ export class ProductService {
 
   obtenerTiendaPorSlug(slug: string) {
     return this.http.get<any>(`${this.apiUrlPublic}/tiendas/${slug}`);
+  }
+
+  // --- Sniper Bot Settings ---
+  configurarSniper(productoId: number, montoMaximo: number): Observable<any> {
+    return this.http.post(`${this.apiUrlSnipers}/configurar`, { productoId, montoMaximo });
+  }
+
+  obtenerSniper(productoId: number): Observable<any> {
+    return this.http.get(`${this.apiUrlSnipers}/producto/${productoId}`);
+  }
+
+  desactivarSniper(productoId: number): Observable<any> {
+    return this.http.post(`${this.apiUrlSnipers}/desactivar/${productoId}`, {});
+  }
+
+  // --- Legal & Terms ---
+  acceptLegalTerms(type: string, version: string = 'v1.0'): Observable<any> {
+    const body = { type, version };
+    return this.http.post(`${environment.apiUrl}/legal/accept`, body);
   }
 }

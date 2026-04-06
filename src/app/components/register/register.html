@@ -50,44 +50,91 @@
              {{ mensajeError }}
           </div>
 
-          <form (ngSubmit)="onSubmit()">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingNombre" [(ngModel)]="form.nombre" name="nombre" 
-                     placeholder="Juan Pérez" required>
+              <input type="text" class="form-control" id="floatingNombre" formControlName="nombre" 
+                     placeholder="Nombre Completo">
               <label for="floatingNombre">Nombre Completo</label>
+              <div *ngIf="registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid" class="text-danger small ms-2 mt-1">
+                El nombre es obligatorio.
+              </div>
             </div>
 
             <div class="form-floating mb-3">
-              <input type="email" class="form-control" id="floatingEmail" [(ngModel)]="form.email" name="email" 
-                     placeholder="correo@ejemplo.com" required>
+              <input type="email" class="form-control" id="floatingEmail" formControlName="email" 
+                     placeholder="correo@ejemplo.com">
               <label for="floatingEmail">Correo Electrónico</label>
+              <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-danger small ms-2 mt-1">
+                Ingresa un correo válido.
+              </div>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="floatingAlias" formControlName="alias" 
+                     placeholder="Tu Alias">
+              <label for="floatingAlias">Alias (Nombre de usuario)</label>
+              <div *ngIf="registerForm.get('alias')?.touched && registerForm.get('alias')?.invalid" class="text-danger small ms-2 mt-1">
+                El alias debe tener entre 3 y 20 caracteres.
+              </div>
             </div>
 
             <div class="row g-2">
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingTel" [(ngModel)]="form.telefono" name="telefono" 
-                         placeholder="+56 9..." required>
+                  <input type="text" class="form-control" id="floatingTel" formControlName="telefono" 
+                         placeholder="+56 9...">
                   <label for="floatingTel">Teléfono</label>
                 </div>
               </div>
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingDir" [(ngModel)]="form.direccion" name="direccion" 
-                         placeholder="Calle, Ciudad" required>
+                  <input type="text" class="form-control" id="floatingDir" formControlName="direccion" 
+                         placeholder="Calle, Ciudad">
                   <label for="floatingDir">Dirección</label>
                 </div>
               </div>
             </div>
 
             <div class="form-floating mb-3">
-              <input type="password" class="form-control" id="floatingPass" [(ngModel)]="form.password" name="password" 
-                     placeholder="Contraseña" required minlength="8">
+              <input type="password" class="form-control" id="floatingPass" formControlName="password" 
+                     placeholder="Contraseña" [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
               <label for="floatingPass">Contraseña</label>
-              <div class="form-text small text-muted-custom opacity-75">Mínimo 8 caracteres, incluye letras y números.</div>
+              
+              <!-- Lista dinámica de requisitos faltantes -->
+              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="mt-2 p-2 bg-light rounded border border-danger-subtle">
+                <p class="text-danger fw-bold small mb-1">Tu contraseña aún no cumple con:</p>
+                <ul class="mb-0 ps-3">
+                  @for (error of getPasswordErrors(); track error) {
+                    <li class="text-danger-emphasis small">{{ error }}</li>
+                  }
+                  @if (registerForm.get('password')?.errors?.['containsEmail']) {
+                    <li class="text-danger-emphasis small">No puede contener parte de tu email</li>
+                  }
+                  @if (registerForm.get('password')?.errors?.['containsAlias']) {
+                    <li class="text-danger-emphasis small">No puede contener tu alias</li>
+                  }
+                </ul>
+              </div>
             </div>
 
-            <button type="submit" class="btn-auth-premium mt-3" [disabled]="cargando">
+            <div class="mb-4 pt-2">
+              <h6 class="fw-bold mb-3 small text-muted-custom uppercase">Cumplimiento Legal</h6>
+              <app-legal-terms></app-legal-terms>
+              
+              <div class="form-check mt-3 d-flex align-items-center p-2 rounded border border-success-subtle bg-success-light">
+                <input class="form-check-input me-2" type="checkbox" id="checkLegal" 
+                       formControlName="aceptaTerminos" style="width: 20px; height: 20px; cursor: pointer;">
+                <label class="form-check-label small fw-bold mb-0" for="checkLegal" style="cursor: pointer;">
+                  Acepto los Términos y Condiciones Legales de SubastaShop
+                </label>
+              </div>
+              <div *ngIf="registerForm.get('aceptaTerminos')?.touched && registerForm.get('aceptaTerminos')?.invalid" 
+                   class="text-danger small ms-1 mt-1 animate__animated animate__headShake">
+                Dato obligatorio para registrar su firma digital y participar.
+              </div>
+            </div>
+
+            <button type="submit" class="btn-auth-premium" [disabled]="cargando">
               <div *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></div>
               {{ cargando ? 'Creando perfil...' : 'Registrarme' }}
             </button>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../services/product';
+import { AuthService } from '../../../services/auth-service';
 import { ImageCompressorService } from '../../../services/image-compressor';
 import Swal from 'sweetalert2'; 
 
@@ -17,25 +18,42 @@ export class EditarProducto implements OnInit {
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private authService = inject(AuthService);
   private imageCompressor = inject(ImageCompressorService);
 
   producto: any = {
     nombre: '',
     descripcion: '',
     precioBase: 0,
-    fechaFin: ''
+    fechaInicioSubasta: '',
+    fechaFinSubasta: '',
+    horasVentaAnticipada: 24,
+    chatHabilitado: true,
+    destacado: false,
+    numeroPares: 5
   };
 
   archivosSeleccionados: File[] = [];
   imagenesPreview: string[] = [];
   cargando = false;
   idProducto: number = 0;
+  isProUsuario: boolean = false;
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.idProducto = +id;
+      this.checkProStatus();
       this.cargarProducto(this.idProducto);
+    }
+  }
+
+  checkProStatus() {
+    const user = this.authService.currentUser();
+    if (user?.role === 'ROLE_SUPER_ADMIN') {
+      this.isProUsuario = true;
+    } else {
+      this.isProUsuario = !!(user?.suscripcionActiva || user?.pagoAutomatico);
     }
   }
 
@@ -65,8 +83,16 @@ export class EditarProducto implements OnInit {
         }
 
         this.producto = data;
+        
+        if (!this.isProUsuario) {
+          this.producto.chatHabilitado = false;
+        }
+
         if (this.producto.fechaFinSubasta) {
           this.producto.fechaFinSubasta = this.formatearFechaParaInput(this.producto.fechaFinSubasta);
+        }
+        if (this.producto.fechaInicioSubasta) {
+          this.producto.fechaInicioSubasta = this.formatearFechaParaInput(this.producto.fechaInicioSubasta);
         }
 
         this.imagenesPreview = data.imagenes || [];

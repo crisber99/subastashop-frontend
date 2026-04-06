@@ -24,7 +24,7 @@
             </button>
 
             <span class="small fw-bold me-3" style="color: var(--text-color);">
-                {{ authService.currentUser()?.nombre || authService.currentUser()?.email }} 
+                {{ authService.currentUser()?.alias || authService.currentUser()?.nombre || authService.currentUser()?.email }} 
             </span>
 
             <!-- Botón Cerrar Sesión -->

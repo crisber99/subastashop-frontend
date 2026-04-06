@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { ProductService } from '../../services/product';
+import { LegalTermsComponent } from '../legal-terms/legal-terms';
+import { CartFloat } from '../cart-float/cart-float';
 import { AuthService } from '../../services/auth-service';
 import { Websocket } from '../../services/websocket';
 import { SuperAdminService } from '../../services/super-admin';
@@ -19,10 +21,12 @@ import Swal from 'sweetalert2';
 declare var bootstrap: any;
 import confetti from 'canvas-confetti';
 
+import { MemoriceComponent } from '../memorice/memorice';
+
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, MemoriceComponent, CartFloat, LegalTermsComponent],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })
@@ -31,14 +35,14 @@ export class ProductDetail implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private superAdminService = inject(SuperAdminService);
   public layoutService = inject(LayoutService);
-  cartService = inject(CartService);
-  ordenService = inject(OrdenService);
-  chatService = inject(ChatService);
-  router = inject(Router);
+  public cartService = inject(CartService);
+  public ordenService = inject(OrdenService);
+  public chatService = inject(ChatService);
+  public router = inject(Router);
   
-  websocketService = inject(Websocket);
-  authService = inject(AuthService);
-  calificacionService = inject(CalificacionService);
+  public websocketService = inject(Websocket);
+  public authService = inject(AuthService);
+  public calificacionService = inject(CalificacionService);
   public favoritoService = inject(FavoritoService);
   
   titleService = inject(Title);
@@ -48,6 +52,11 @@ export class ProductDetail implements OnInit, OnDestroy {
   montoOferta: number = 0;
   mensaje: string = '';
   esError: boolean = false;
+  tiendaSlug: string | null = null;
+
+  // ⚖️ LEGAL TERMS
+  legalTermsChecked: boolean = false;
+  legalAcceptedOnBackend: boolean = false;
 
   // Variables Rifa
   numerosRifa: number[] = [];
@@ -70,11 +79,18 @@ export class ProductDetail implements OnInit, OnDestroy {
   productos: any[] = [];
   nombreTienda: string = '';
   tienda: any = null; 
+  
+  // Variables Sniper Bot 🤖
+  sniperActivo: any = null;
+  loadingSniper: boolean = false;
 
   // Estado visual
   subastaFinalizada: boolean = false;
   isLive: boolean = false;
   procesandoCompra: boolean = false;
+  periodoSubasta: 'ANUNCIO' | 'PREVIA_PRO' | 'ABIERTA' | 'FINALIZADA' = 'ABIERTA';
+  fechaInicioVisible: Date | null = null;
+  fechaProVisible: Date | null = null;
 
   // Calificaciones
   calificaciones: any[] = [];
@@ -220,14 +236,11 @@ export class ProductDetail implements OnInit, OnDestroy {
         // --------------------------------
 
         if (this.producto.tipoVenta === 'RIFA') {
-          this.generarNumeros(this.producto.cantidadNumeros);
-          this.cargarVendidos();
-          if (this.authService.isAdmin()) this.cargarTablaAdmin();
-          if (this.authService.isLoggedIn()) this.cargarMisTickets();
+          this.cargarMisParticipaciones();
+          this.cargarGanadoresHistorial();
           
-          // Mostrar ganadores siempre si la rifa ya terminó
-          if (this.producto.estado === 'FINALIZADA' || this.producto.estado === 'VENDIDO') {
-            this.cargarGanadoresHistorial();
+          if (this.authService.isAdmin()) {
+            this.cargarTablaAdmin();
           }
         }
 
@@ -238,17 +251,33 @@ export class ProductDetail implements OnInit, OnDestroy {
           }
         });
 
-        if (data.tipoVenta === 'SUBASTA' && data.fechaFinSubasta) {
-          const fechaFin = new Date(data.fechaFinSubasta);
+        if (data.tipoVenta === 'SUBASTA') {
           const ahora = new Date();
-          if (fechaFin < ahora) {
+          const fechaFin = data.fechaFinSubasta ? new Date(data.fechaFinSubasta) : null;
+          const inicioOficial = data.fechaInicioSubasta ? new Date(data.fechaInicioSubasta) : new Date(data.fechaCreacion);
+          const horasAnticipo = data.horasVentaAnticipada || 24;
+          const inicioPro = new Date(inicioOficial.getTime() - (horasAnticipo * 60 * 60 * 1000));
+
+          if (fechaFin && ahora > fechaFin) {
             this.subastaFinalizada = true;
             this.mensaje = 'Esta subasta ha finalizado.';
             this.esError = true;
+            this.periodoSubasta = 'FINALIZADA';
+          } else if (ahora < inicioPro) {
+            this.periodoSubasta = 'ANUNCIO'; // No abierta para nadie
+            this.subastaFinalizada = false;
+          } else if (ahora < inicioOficial) {
+            this.periodoSubasta = 'PREVIA_PRO'; // Solo PRO
+            this.subastaFinalizada = false;
+            this.montoOferta = (data.precioActual || data.precioBase) + 1000;
           } else {
+            this.periodoSubasta = 'ABIERTA'; // Todo el mundo
             this.subastaFinalizada = false;
             this.montoOferta = (data.precioActual || data.precioBase) + 1000;
           }
+          
+          this.fechaInicioVisible = inicioOficial;
+          this.fechaProVisible = inicioPro;
         }
         
         // --- DEBUG CHAT ---
@@ -262,9 +291,115 @@ export class ProductDetail implements OnInit, OnDestroy {
           console.error('🚫 No se detectó tiendaId ni tienda.id en el producto cargado.', data);
         }
 
+        if (this.authService.isLoggedIn() && data.tipoVenta === 'SUBASTA') {
+          this.cargarSniper(data.id);
+        }
+
         this.cargarCalificaciones(data.id);
       },
       error: (err) => console.error('Error cargando producto:', err)
+    });
+  }
+
+  cargarSniper(productoId: number) {
+    if (!this.authService.isLoggedIn()) return;
+    this.productService.obtenerSniper(productoId).subscribe({
+      next: (data) => this.sniperActivo = data,
+      error: () => this.sniperActivo = null
+    });
+  }
+
+  async configurarSniper() {
+    const user = this.authService.currentUser();
+    // Validar si es PRO (suponiendo que 'esPro' o 'suscripcionActiva' está en el objeto de usuario)
+    if (!user?.suscripcionActiva && !user?.pagoAutomatico) {
+        Swal.fire({
+            title: '⭐ Función PRO',
+            text: 'El Sniper Bot es una función exclusiva para miembros PRO. ¡Suscríbete para automatizar tus pujas!',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Ver Planes PRO',
+            cancelButtonText: 'Cerrar'
+        }).then(r => { if(r.isConfirmed) this.router.navigate(['/admin/configuracion']); });
+        return;
+    }
+
+    const { value: monto } = await Swal.fire({
+      title: '🤖 Configurar Sniper Bot',
+      html: `
+        <p class="text-muted small">El bot pujará un <b>1%</b> extra automáticamente cada vez que alguien te supere.</p>
+        <label class="form-label fw-bold">Monto Máximo a Pujar ($):</label>
+      `,
+      input: 'number',
+      inputAttributes: { min: (this.producto.precioActual || this.producto.precioBase).toString(), step: '100' },
+      inputValue: (this.producto.precioActual || this.producto.precioBase) + 5000,
+      showCancelButton: true,
+      confirmButtonText: '🚀 Activar Bot',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value || Number(value) <= (this.producto.precioActual || this.producto.precioBase)) {
+          return 'El monto máximo debe ser superior al precio actual.';
+        }
+        return null;
+      }
+    });
+
+    if (monto) {
+      this.productService.configurarSniper(this.producto.id, Number(monto)).subscribe({
+        next: (res) => {
+          this.sniperActivo = res;
+          Swal.fire({
+            icon: 'success',
+            title: '¡Bot Activado!',
+            text: `Pujaremos por ti hasta un máximo de $${Number(monto).toLocaleString()}`,
+            timer: 3000,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false
+          });
+        },
+        error: (err) => {
+          Swal.fire('Error', err.error?.message || 'No se pudo activar el bot.', 'error');
+        }
+      });
+    }
+  }
+
+  desactivarSniper() {
+    if (!this.sniperActivo) return;
+    
+    // Podríamos crear un endpoint DELETE, pero por ahora lo desactivamos 
+    // pasando un monto 0 o simplemente con un endpoint dedicado.
+    // Usaremos el mismo configurarSniper pero con el flag activo=false si el backend lo soporta, 
+    // o simplemente creamos el endpoint ahora.
+    
+    Swal.fire({
+      title: '¿Desactivar Sniper?',
+      text: 'El bot dejará de pujar automáticamente por este producto.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, desactivar',
+      cancelButtonText: 'Mantener activo'
+    }).then(r => {
+      if (r.isConfirmed) {
+        this.productService.desactivarSniper(this.producto.id).subscribe({
+          next: () => {
+            this.sniperActivo = null;
+            Swal.fire({
+              icon: 'success',
+              title: 'Sniper Desactivado',
+              text: 'El bot ya no realizará pujas por ti.',
+              timer: 2000,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false
+            });
+          },
+          error: (err) => {
+            Swal.fire('Error', 'No se pudo desactivar el bot.', 'error');
+          }
+        });
+      }
     });
   }
 
@@ -446,220 +581,105 @@ export class ProductDetail implements OnInit, OnDestroy {
     });
   }
 
-  cargarTablaAdmin() {
-    this.productService.getDetallesRifaAdmin(this.producto.id).subscribe(data => {
-      this.ticketsDetalle = data.sort((a: any, b: any) => a.numero - b.numero);
-    });
-  }
-
-  cargarGanadoresHistorial() {
-    this.productService.getGanadoresRifa(this.producto.id).subscribe({
-      next: (data) => {
-        this.ganadores = data || [];
-      },
-      error: () => this.ganadores = []
-    });
-  }
-
-  generarNumeros(cantidad: number) {
-    this.numerosRifa = Array.from({ length: cantidad }, (_, i) => i + 1);
-  }
-
-  cargarMisTickets() {
-    this.productService.getMisTickets(this.producto.id).subscribe({
+  cargarMisParticipaciones() {
+    if (!this.authService.isLoggedIn()) return;
+    this.productService.getMisParticipaciones(this.producto.id).subscribe({
       next: (data) => this.misTickets = data || [],
       error: () => this.misTickets = []
     });
   }
 
-  cargarVendidos() {
-    this.productService.getTicketsVendidos(this.producto.id).subscribe(data => {
-      this.ticketsVendidos = data;
-    });
+  yaParticipa(): boolean {
+    return this.misTickets && this.misTickets.length > 0;
   }
 
-  isTicketVendido(num: number): boolean {
-    return this.ticketsVendidos.includes(num);
+  haPagado(): boolean {
+    // Para simplificar esta versión, si tiene participación asumimos que puede jugar.
+    // En una versión más estricta, validaríamos el campo 'pagado'.
+    return this.yaParticipa();
   }
 
-  comprarNumero(num: number) {
+  unirseAlConcurso() {
     if (!this.authService.isLoggedIn()) {
-      Swal.fire('Inicia Sesión', 'Debes iniciar sesión para comprar un ticket.', 'info');
+      Swal.fire('Inicia Sesión', 'Debes iniciar sesión para participar.', 'info');
       return;
     }
-    Swal.fire({
-        title: `¿Comprar el #${num}?`,
-        html: `<p>El precio es <b>$${this.producto.precioTicket?.toLocaleString()}</b></p><p class="text-muted small">Recibirás un comprobante por email.</p>`,
-        icon: 'question', showCancelButton: true, confirmButtonText: 'Sí, comprar 🎟️', cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-            this.productService.comprarTicket(this.producto.id, num).subscribe({
-                next: (resp: any) => {
-                  Swal.close();
-                  this.comprobante = resp;
-                  this.cargarVendidos();
-                  this.cargarMisTickets();
-                  // Mostrar modal de comprobante
-                  const modalEl = document.getElementById('modalComprobante');
-                  if (modalEl) {
-                    const modal = new (window as any).bootstrap.Modal(modalEl);
-                    modal.show();
-                  }
-                },
-                error: (err) => {
-                  Swal.close();
-                  const errorMsg = err.error?.message || err.error || 'No se pudo comprar el ticket';
-                  Swal.fire('Error', errorMsg, 'error');
-                }
+
+    if (!this.legalTermsChecked) {
+      Swal.fire('Gestión Legal', 'Debes leer y aceptar las bases legales antes de participar.', 'warning');
+      return;
+    }
+
+    // Primero enviamos la aceptación al backend (Auditoría Forense)
+    this.productService.acceptLegalTerms('CONTEST_JOIN').subscribe({
+      next: () => {
+        // Enviar inscripción al backend
+        this.productService.unirseAlConcurso(this.producto.id).subscribe({
+          next: () => {
+            this.cargarMisParticipaciones();
+            Swal.fire({
+              title: '¡Inscrito!',
+              text: 'Ya puedes participar en el concurso de habilidad.',
+              icon: 'success',
+              confirmButtonText: 'Cerrar'
             });
-        }
-    });
-  }
-
-  // --- SELECCIÓN MÚLTIPLE DE TICKETS ---
-  ticketsSeleccionados: number[] = [];
-
-  isTicketSeleccionado(num: number): boolean {
-    return this.ticketsSeleccionados.includes(num);
-  }
-
-  toggleSeleccion(num: number) {
-    if (!this.authService.isLoggedIn()) {
-      Swal.fire('Inicia Sesión', 'Debes iniciar sesión para comprar tickets.', 'info');
-      return;
-    }
-    if (this.isTicketSeleccionado(num)) {
-      this.ticketsSeleccionados = this.ticketsSeleccionados.filter(n => n !== num);
-    } else {
-      this.ticketsSeleccionados.push(num);
-    }
-  }
-
-  limpiarSeleccion() {
-    this.ticketsSeleccionados = [];
-  }
-
-  async comprarSeleccionados() {
-    if (this.ticketsSeleccionados.length === 0) return;
-
-    const total = this.ticketsSeleccionados.length * (this.producto.precioTicket || 0);
-    const confirmacion = await Swal.fire({
-      title: `¿Comprar ${this.ticketsSeleccionados.length} ticket(s)?`,
-      html: `<p>Tickets: <b>${this.ticketsSeleccionados.map(n => '#' + n).join(', ')}</b></p>
-             <p>Total: <b class="text-warning">$${total.toLocaleString()}</b></p>
-             <p class="text-muted small">Recibirás un comprobante por email.</p>`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: '🎟️ Confirmar Compra',
-      cancelButtonText: 'Cancelar'
-    });
-
-    if (!confirmacion.isConfirmed) return;
-
-    Swal.fire({ title: 'Procesando...', html: 'Reservando tus tickets...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-    this.procesandoCompra = true;
-
-    this.productService.comprarTicketsMultiple(this.producto.id, this.ticketsSeleccionados).subscribe({
-      next: (resp: any) => {
-        this.procesandoCompra = false;
-        Swal.close();
-        this.comprobante = { ...resp, tickets: this.ticketsSeleccionados };
-        this.cargarVendidos();
-        this.cargarMisTickets();
-        this.limpiarSeleccion();
-        
-        const modalEl = document.getElementById('modalComprobante');
-        if (modalEl) new (window as any).bootstrap.Modal(modalEl).show();
-
-        if (resp.omitidos && resp.omitidos.length > 0) {
-          Swal.fire({ 
-            icon: 'warning', 
-            title: 'Algunos tickets no estaban disponibles', 
-            text: `Se compraron ${resp.comprados.length}. Los números ${resp.omitidos.join(', ')} ya estaban ocupados.`,
-            timer: 4000, 
-            showConfirmButton: false 
-          });
-        }
+          },
+          error: (err) => {
+            console.error('Error al unirse al concurso', err);
+            const msg = err.error || 'Ocurrió un problema.';
+            Swal.fire('Error', msg, 'error');
+          }
+        });
       },
       error: (err) => {
-        this.procesandoCompra = false;
-        Swal.close();
-        const msg = err.error?.message || err.error || 'Error al procesar la compra';
-        Swal.fire('Error', msg, 'error');
+        Swal.fire('Error Legal', 'No pudimos registrar tu aceptación de bases. Reintenta.', 'error');
       }
     });
   }
 
-  imprimirComprobante() {
-    this.imprimirTicket(this.comprobante);
+  onGameComplete(time: number) {
+    console.log('🎮 Juego completado en:', time, 'ms');
+    this.cargarGanadoresHistorial(); // Refrescar tabla de líderes
   }
 
-  imprimirTicket(t: any) {
-    const tickets = t.tickets || [t.numeroTicket];
-    const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.write(`<!DOCTYPE html><html lang="es"><head>
-      <meta charset="UTF-8"><title>Comprobante SubastaShop</title>
-      <style>
-        body { font-family: Arial, sans-serif; background: #0f0f1a; color: #fff; margin: 0; padding: 30px; }
-        .card { background: #1a1a2e; border-radius: 20px; padding: 30px; max-width: 560px; margin: auto; }
-        .header { background: linear-gradient(135deg, #6f42c1, #0d6efd); border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 24px; }
-        .header h1 { margin: 0; font-size: 24px; font-weight: 900; }
-        .ticket-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; }
-        .ticket-item { background: linear-gradient(135deg, #6f42c1, #0d6efd); border-radius: 10px; padding: 12px 20px; text-align: center; }
-        .ticket-item .num { font-size: 2rem; font-weight: 900; }
-        .code { background: #0a0a14; border: 1px dashed rgba(255,193,7,0.4); border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 20px; }
-        .code p { color: #ffc107; font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 3px; margin: 0; }
-        .label { color: #a0a0c0; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
-        @media print { body { background: white; color: #000; } .header { color: white; } }
-      </style></head><body>
-      <div class="card">
-        <div class="header"><h1>🎟️ SUBASTA<span style="color:#ffc107">SHOP</span></h1><p style="margin:4px 0 0;opacity:.8;font-size:13px">COMPROBANTE OFICIAL</p></div>
-        <div class="ticket-grid">${tickets.map((n: number) => `<div class="ticket-item"><div class="label">TICKET</div><div class="num">#${n}</div></div>`).join('')}</div>
-        <div style="margin-bottom:16px"><span class="label">Rifa</span><p style="margin:4px 0 0;font-size:16px;font-weight:700">${t.nombreRifa || this.producto?.nombre}</p></div>
-        <div style="margin-bottom:16px"><span class="label">Comprador</span><p style="margin:4px 0 0">${t.comprador}</p></div>
-        <div class="code"><p class="label" style="margin-bottom:6px">Código de Verificación</p><p>${t.codigoVerificacion}</p></div>
-        <p style="font-size:12px;color:#606080;text-align:center">Comprobante generado por SubastaShop. No requiere firma.</p>
-      </div>
-      <script>window.print(); window.onafterprint = () => window.close();<\/script></body></html>`);
-    w.document.close();
-  }
-
-  redirigirWhatsAppRifa() {
-    if (!this.tienda?.whatsapp) {
-      Swal.fire('Atención', 'Esta tienda no tiene configurado un número de WhatsApp.', 'info');
-      return;
-    }
-
-    let telefono = String(this.tienda.whatsapp).replace(/\D/g, '');
-    let totalPagar = this.ticketsSeleccionados.length * (this.producto.precioTicket || 0);
-    const url = window.location.origin;
-    const msg = `Hola, acabo de reservar mis tickets en la rifa "${this.producto.nombre}".\nTickets: ${this.ticketsSeleccionados.map(n => '#' + n).join(', ')}\nTotal a Pagar: $${totalPagar}\n¿Me ayudas a validar mi pago para asegurar mis números?\n\nPuedes ver la rifa aquí: ${url}/producto/${this.producto.slug || this.producto.id}`;
-    
-    const fullUrl = `https://wa.me/${telefono}?text=${encodeURIComponent(msg)}`;
-    window.open(fullUrl, '_blank');
-  }
-
-  lanzarSorteo() {
+  lanzarConcurso() {
     Swal.fire({
-        title: '¿Lanzar Sorteo?', text: 'Se seleccionarán los ganadores aleatoriamente.',
-        icon: 'warning', showCancelButton: true, confirmButtonText: '¡Girar Tómbola!',
+      title: '¿Determinar Ganadores?',
+      text: 'Se cerrará el concurso y se asignarán los puestos según los mejores tiempos registrados.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, finalizar y premiar 🏆',
+      cancelButtonText: 'Cancelar'
     }).then((res) => {
-        if(res.isConfirmed) {
-            Swal.fire({ title: 'Sorteando...', didOpen: () => Swal.showLoading() });
-            this.productService.lanzarRifa(this.producto.id).subscribe({
-                next: (res: any) => {
-                  Swal.close();
-                  // No mostramos ganadores aquí. El WebSocket (status: 'PREPARANDO')
-                  // se encargará de iniciar el show y la cuenta regresiva.
-                },
-                error: (err) => {
-                  Swal.close();
-                  Swal.fire('Error', 'Error al lanzar rifa', 'error');
-                }
-            });
-        }
+      if (res.isConfirmed) {
+        Swal.fire({ title: 'Procesando...', didOpen: () => Swal.showLoading() });
+        this.productService.lanzarConcurso(this.producto.id).subscribe({
+          next: () => {
+            Swal.close();
+            Swal.fire('¡Concurso Finalizado!', 'Los ganadores han sido determinados por sus tiempos.', 'success');
+            this.cargarProducto(this.producto.slug || this.producto.id);
+          },
+          error: (err) => {
+            Swal.close();
+            Swal.fire('Error', 'Hubo un problema al finalizar el concurso.', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  cargarTablaAdmin() {
+    this.productService.getParticipacionesAdmin(this.producto.id).subscribe(data => {
+      this.ticketsDetalle = data;
+    });
+  }
+
+  cargarGanadoresHistorial() {
+    this.productService.getGanadoresConcurso(this.producto.id).subscribe({
+      next: (data) => {
+        this.ganadores = data || [];
+      },
+      error: () => this.ganadores = []
     });
   }
 

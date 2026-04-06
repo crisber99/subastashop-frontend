@@ -30,6 +30,7 @@ export class CrearProducto implements OnInit {
   limiteImagenes: number = 8;
   mensajeError = '';
   cargando = false;
+  isProUsuario: boolean = false;
 
   ngOnInit() {
     this.productoForm = this.fb.group({
@@ -39,11 +40,15 @@ export class CrearProducto implements OnInit {
       tipoVenta: ['SUBASTA', [Validators.required]],
       precioBase: [0],
       stock: [1, [Validators.required, Validators.min(1)]],
+      fechaInicio: [''],
       fechaFin: [''],
+      horasVentaAnticipada: [24, [Validators.required, Validators.min(1)]],
       precioTicket: [0],
       cantidadNumeros: [100],
       cantidadGanadores: [1],
+      numeroPares: [5, [Validators.required, Validators.min(2), Validators.max(15)]],
       chatHabilitado: [true],
+      destacado: [false],
       premios: this.fb.array([])
     });
 
@@ -58,8 +63,15 @@ export class CrearProducto implements OnInit {
     const user = this.authService.currentUser();
     if (user?.role === 'ROLE_SUPER_ADMIN') {
       this.limiteImagenes = 10;
+      this.isProUsuario = true; // Super Admin siempre es PRO
     } else {
       this.limiteImagenes = 8;
+      this.isProUsuario = !!(user?.suscripcionActiva || user?.pagoAutomatico);
+    }
+
+    if (!this.isProUsuario) {
+      this.productoForm.get('chatHabilitado')?.setValue(false);
+      this.productoForm.get('chatHabilitado')?.disable();
     }
 
     this.cargarCategorias();
@@ -67,29 +79,39 @@ export class CrearProducto implements OnInit {
 
   actualizarValidaciones(tipoVenta: string) {
     const precioBase = this.productoForm.get('precioBase');
+    const fechaInicio = this.productoForm.get('fechaInicio');
     const fechaFin = this.productoForm.get('fechaFin');
+    const horasVentaAnticipada = this.productoForm.get('horasVentaAnticipada');
     const precioTicket = this.productoForm.get('precioTicket');
     const cantidadNumeros = this.productoForm.get('cantidadNumeros');
+    const numeroPares = this.productoForm.get('numeroPares');
 
     precioBase?.clearValidators();
     fechaFin?.clearValidators();
     precioTicket?.clearValidators();
     cantidadNumeros?.clearValidators();
+    numeroPares?.clearValidators();
 
     if (tipoVenta === 'SUBASTA') {
       precioBase?.setValidators([Validators.required, Validators.min(1)]);
+      fechaInicio?.setValidators([Validators.required]);
       fechaFin?.setValidators([Validators.required]);
+      horasVentaAnticipada?.setValidators([Validators.required, Validators.min(1)]);
     } else if (tipoVenta === 'DIRECTA') {
       precioBase?.setValidators([Validators.required, Validators.min(1)]);
     } else if (tipoVenta === 'RIFA') {
       precioTicket?.setValidators([Validators.required, Validators.min(1)]);
       cantidadNumeros?.setValidators([Validators.required, Validators.min(1)]);
+      numeroPares?.setValidators([Validators.required, Validators.min(2), Validators.max(15)]);
     }
 
     precioBase?.updateValueAndValidity();
+    fechaInicio?.updateValueAndValidity();
     fechaFin?.updateValueAndValidity();
+    horasVentaAnticipada?.updateValueAndValidity();
     precioTicket?.updateValueAndValidity();
     cantidadNumeros?.updateValueAndValidity();
+    numeroPares?.updateValueAndValidity();
   }
 
   cargarCategorias() {
@@ -237,22 +259,26 @@ export class CrearProducto implements OnInit {
       formData.append('categoriaId', value.categoriaId.toString());
     }
 
-    if (value.tipoVenta === 'SUBASTA' && value.fechaFin) {
-      formData.append('fechaFin', value.fechaFin);
+    if (value.tipoVenta === 'SUBASTA') {
+      if (value.fechaInicio) formData.append('fechaInicioSubasta', value.fechaInicio);
+      if (value.fechaFin) formData.append('fechaFin', value.fechaFin);
+      if (value.horasVentaAnticipada) formData.append('horasVentaAnticipada', value.horasVentaAnticipada.toString());
     }
 
     if (value.tipoVenta === 'RIFA') {
       formData.append('precioTicket', value.precioTicket.toString());
       formData.append('cantidadNumeros', value.cantidadNumeros.toString());
       formData.append('cantidadGanadores', value.cantidadGanadores.toString());
+      formData.append('numeroPares', value.numeroPares.toString());
     }
 
     if (value.tipoVenta === 'CAJA_MISTERIOSA' && value.premios?.length > 0) {
       formData.append('premiosCaja', JSON.stringify(value.premios));
     }
     
-    // Anexamos el chat habilitado
+    // Anexamos el chat habilitado y destacado
     formData.append('chatHabilitado', value.chatHabilitado ? 'true' : 'false');
+    formData.append('destacado', value.destacado ? 'true' : 'false');
 
     this.productService.crearProducto(formData).subscribe({
       next: () => {

@@ -1,0 +1,44 @@
+<div class="memorice-container">
+  <div class="header text-center mb-4">
+    <h3 class="fw-bold text-gradient">🎯 ¡Demuestra tu habilidad!</h3>
+    <p class="text-muted small">Encuentra los <span class="text-primary fw-bold">5 pares</span> lo más rápido posible. El mejor tiempo gana.</p>
+    
+    <div class="timer-display shadow-sm" [class.running]="gameStarted && !gameFinished">
+      ⏱️ {{ formatTime(elapsedTime) }}
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    <div *ngFor="let card of cards" 
+         class="card-scene" 
+         (click)="flipCard(card)">
+      <div class="card-inner" 
+           [class.is-flipped]="card.flipped || card.matched"
+           [class.is-matched]="card.matched">
+        
+        <!-- Cara Frontal (Oculta) -->
+        <div class="card-face card-front">
+          <div class="logo">SS</div>
+        </div>
+
+        <!-- Cara Trasera (Revelada) -->
+        <div class="card-face card-back">
+          <span class="card-value">{{ card.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-actions mt-4 text-center">
+    <button *ngIf="gameFinished" 
+            class="btn btn-outline-primary btn-sm rounded-pill px-4"
+            (click)="initGame()">
+      🔄 Reintentar (Práctica)
+    </button>
+    
+    <div *ngIf="isProcessing" class="mt-2 text-primary">
+      <span class="spinner-border spinner-border-sm me-2"></span>
+      Registrando tu tiempo...
+    </div>
+  </div>
+</div>

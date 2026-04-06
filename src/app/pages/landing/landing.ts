@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth-service';
 import { CategoriaService } from '../../services/categoria';
 import { Categoria } from '../../models/categoria';
 import { Router } from '@angular/router';
+import { ProductService } from '../../services/product';
 
 @Component({
   selector: 'app-landing',
@@ -22,12 +23,15 @@ export class Landing implements OnInit {
   public authService = inject(AuthService);
   private categoriaService = inject(CategoriaService);
   private router = inject(Router);
+  private productService = inject(ProductService);
 
   tiendas: any[] = [];
   tiendasFiltradas: any[] = [];
+  productosDestacados: any[] = [];
   categorias: Categoria[] = [];
   busqueda: string = '';
   loading: boolean = true;
+  loadingDestacados: boolean = true;
 
   ngOnInit() {
     this.loading = true;
@@ -42,7 +46,22 @@ export class Landing implements OnInit {
         this.loading = false;
       }
     });
+    this.cargarDestacados();
     this.cargarCategorias();
+  }
+
+  cargarDestacados() {
+    this.loadingDestacados = true;
+    this.productService.getProductosDestacados().subscribe({
+      next: (data) => {
+        this.productosDestacados = data;
+        this.loadingDestacados = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar destacados:', err);
+        this.loadingDestacados = false;
+      }
+    });
   }
 
   cargarCategorias() {

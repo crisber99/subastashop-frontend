@@ -21,8 +21,15 @@ interface Card {
 export class MemoriceComponent {
   @Input() contestId!: number;
   @Input() userId!: number;
-  @Input() totalPairs: number = 5; // Dificultad dinámica
+  @Input() totalPairs: number = 5;
+  @Input() contestStatus: string = 'DISPONIBLE'; // Estado del concurso
   @Output() onComplete = new EventEmitter<number>();
+
+  // Estados que bloquean el juego
+  get isBlocked(): boolean {
+    const blockedStates = ['FINALIZADO', 'GANADORES_DEFINIDOS', 'ESPERANDO_APROBACION', 'VERIFICADO', 'CERRADO'];
+    return blockedStates.includes(this.contestStatus?.toUpperCase());
+  }
 
   private http = inject(HttpClient);
 
@@ -74,7 +81,7 @@ export class MemoriceComponent {
   }
 
   flipCard(card: Card) {
-    if (this.gameFinished || card.flipped || card.matched || this.flippedCards.length >= 2) return;
+    if (this.isBlocked || this.gameFinished || card.flipped || card.matched || this.flippedCards.length >= 2) return;
 
     if (!this.gameStarted) {
       this.startTimer();

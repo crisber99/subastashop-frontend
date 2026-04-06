@@ -1,9 +1,9 @@
 <!-- [START CONTAINER O1] -->
 <div class="container mt-5 mb-5 animate__animated animate__fadeIn" *ngIf="producto; else loadingTemplate">
     <div class="mb-4">
-        @if (producto.slugTienda) {
-        <a [routerLink]="['/tienda', producto.slugTienda]" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-            <i class="bi bi-arrow-left me-1"></i> Volver a {{ producto.nombreTienda || 'la Tienda' }}
+        @if (producto.tienda?.slug) {
+        <a [routerLink]="['/tienda', producto.tienda?.slug]" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Volver a {{ producto.tienda?.nombre || 'la Tienda' }}
         </a>
         } @else {
         <a routerLink="/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
@@ -169,6 +169,7 @@
                                     [contestId]="producto.id" 
                                     [userId]="authService.currentUser()?.id || 0"
                                     [totalPairs]="producto.numeroPares || 5"
+                                    [contestStatus]="producto.estado"
                                     (onComplete)="onGameComplete($event)">
                                 </app-memorice>
                             </div>

@@ -1,7 +1,17 @@
-<div class="memorice-container">
+<div class="memorice-container" [class.is-blocked]="isBlocked">
+  <!-- OVERLAY DE BLOQUEO -->
+  <div *ngIf="isBlocked" class="blocked-overlay">
+    <div class="blocked-content">
+      <div class="blocked-icon">🔒</div>
+      <h4 class="fw-bold mb-2">Concurso Cerrado</h4>
+      <p class="text-muted small mb-0">Este concurso ya no acepta nuevos registros.</p>
+      <span class="badge bg-secondary mt-2">{{ contestStatus }}</span>
+    </div>
+  </div>
+
   <div class="header text-center mb-4">
     <h3 class="fw-bold text-gradient">🎯 ¡Demuestra tu habilidad!</h3>
-    <p class="text-muted small">Encuentra los <span class="text-primary fw-bold">5 pares</span> lo más rápido posible. El mejor tiempo gana.</p>
+    <p class="text-muted small">Encuentra los <span class="text-primary fw-bold">{{ totalPairs }} pares</span> lo más rápido posible. El mejor tiempo gana.</p>
     
     <div class="timer-display shadow-sm" [class.running]="gameStarted && !gameFinished">
       ⏱️ {{ formatTime(elapsedTime) }}

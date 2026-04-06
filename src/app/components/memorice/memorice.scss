@@ -1,4 +1,5 @@
 .memorice-container {
+  position: relative; // Para el overlay de bloqueo
   max-width: 500px;
   margin: 0 auto;
   padding: 20px;
@@ -7,7 +8,45 @@
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+
+  // En móvil: ocupa ancho disponible
+  @media (max-width: 576px) {
+    max-width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+  }
 }
+
+// ===== OVERLAY BLOQUEO =====
+.blocked-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(10, 10, 18, 0.85);
+  backdrop-filter: blur(6px);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.blocked-content {
+  padding: 24px;
+  color: #fff;
+}
+
+.blocked-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.is-blocked .cards-grid {
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+// ===== FIN OVERLAY =====
 
 .text-gradient {
   background: linear-gradient(135deg, #6366f1, #a855f7);
@@ -37,13 +76,15 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+  // Adaptación fluida: mínimo 60px, máximo libre
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 8px;
   perspective: 1000px;
   margin-top: 25px;
 
-  @media (max-width: 450px) {
-    grid-template-columns: repeat(4, 1fr);
+  @media (min-width: 400px) {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
   }
 }
 
@@ -84,8 +125,13 @@
   justify-content: center;
   border-radius: 12px;
   border: 2px solid rgba(255, 255, 255, 0.1);
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 400px) {
+    font-size: 1rem;
+    border-radius: 8px;
+  }
 }
 
 .card-front {
@@ -95,7 +141,7 @@
 
   .logo {
     opacity: 0.2;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     letter-spacing: 2px;
   }
 }

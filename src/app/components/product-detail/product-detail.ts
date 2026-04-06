@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { ProductService } from '../../services/product';
@@ -25,7 +25,7 @@ import { MemoriceComponent } from '../memorice/memorice';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MemoriceComponent, LegalTermsComponent],
+  imports: [CommonModule, AsyncPipe, FormsModule, RouterModule, MemoriceComponent, LegalTermsComponent],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })

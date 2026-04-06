@@ -167,7 +167,7 @@
                             <div class="mb-4">
                                 <app-memorice 
                                     [contestId]="producto.id" 
-                                    [userId]="authService.currentUser()?.id"
+                                    [userId]="authService.currentUser()?.id || 0"
                                     [totalPairs]="producto.numeroPares || 5"
                                     (onComplete)="onGameComplete($event)">
                                 </app-memorice>
@@ -271,13 +271,4 @@
 
 <div class="modal fade" id="modalComprobante" tabindex="-1" aria-hidden="true">
     <!-- Modal interior content -->
-</div>
-
-<!-- CART FLOAT -->
-<div *ngIf="ticketsSeleccionados.length > 0" class="ticket-cart-float" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1050;">
-    <div class="p-3 px-4 rounded-pill shadow-lg bg-primary text-white d-flex align-items-center gap-3">
-        <span class="fw-bold">{{ ticketsSeleccionados.length }} tickets</span>
-        <button class="btn btn-sm btn-warning rounded-pill fw-bold" (click)="comprarAhora()">Comprar</button>
-        <button class="btn btn-sm btn-light rounded-circle" (click)="limpiarSeleccion()">×</button>
-    </div>
 </div>

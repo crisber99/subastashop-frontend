@@ -345,7 +345,7 @@ export class AdminConfig implements OnInit {
         
         // También actualizamos el alias del usuario mediante el nuevo endpoint de perfil
         this.authService.updateProfile({ alias: this.config.ownerAlias }).subscribe({
-          error: (e) => console.error("No se pudo actualizar el alias del dueño", e)
+          error: (e: any) => console.error("No se pudo actualizar el alias del dueño", e)
         });
 
         this.tiendaService.actualizarConfiguracion(formData).subscribe({

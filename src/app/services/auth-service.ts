@@ -17,6 +17,10 @@ export interface AuthUser {
   pagoAutomatico?: boolean;
   tiendaId?: number | string;
   tienda?: any;
+  nombreCompleto?: string; // 👈 NUEVO
+  telefono?: string;       // 👈 NUEVO
+  direccion?: string;      // 👈 NUEVO
+  preferenciaEnvio?: string; // 👈 NUEVO
 }
 
 @Injectable({
@@ -169,6 +173,16 @@ export class AuthService {
 
   resetPassword(datos: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/reset-password`, datos);
+  }
+
+  // --- MI CUENTA: ACTUALIZAR PERFIL ---
+  updateProfile(updates: any): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/auth/me`, updates);
+  }
+
+  // --- MI CUENTA: CAMBIAR CONTRASEÑA ---
+  changePassword(data: any): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/auth/change-password`, data);
   }
 
   // --- REFRESCAR SESIÓN ---

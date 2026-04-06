@@ -78,7 +78,7 @@ export class ProfileComponent implements OnInit {
         Swal.fire('¡Éxito!', 'Tus datos han sido actualizados.', 'success');
         this.authService.refreshSession().subscribe();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         Swal.fire('Error', err.error?.message || 'No se pudo actualizar el perfil.', 'error');
       }
@@ -106,7 +106,7 @@ export class ProfileComponent implements OnInit {
         this.passwords = { current: '', new: '', confirm: '' };
         Swal.fire('Contraseña Cambiada', 'Tu seguridad ha sido actualizada.', 'success');
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         Swal.fire('Error', err.error?.error || 'La contraseña actual es incorrecta.', 'error');
       }

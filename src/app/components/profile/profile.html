@@ -42,7 +42,12 @@
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label class="form-label fw-bold">RUT (Identidad)</label>
-                    <input type="text" [value]="formatRut(profileData.rut)" class="form-control rounded-pill bg-light" disabled title="El RUT no se puede modificar">
+                    <input type="text" [(ngModel)]="profileData.rut" name="rut" 
+                           class="form-control rounded-pill" 
+                           [class.bg-light]="rutAlreadyExists"
+                           [disabled]="rutAlreadyExists" 
+                           [placeholder]="rutAlreadyExists ? formatRut(profileData.rut) : '12345678-9'"
+                           title="El RUT solo se puede registrar una vez">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Teléfono</label>

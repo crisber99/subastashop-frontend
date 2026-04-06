@@ -37,6 +37,7 @@ export class ProfileComponent implements OnInit {
 
   shippingOptions: string[] = [];
   loading = false;
+  rutAlreadyExists = false; // 👈 NUEVO
 
   ngOnInit() {
     this.shippingOptions = ['1-Bluexpress', '2-Paket', '3-Starken'];
@@ -47,6 +48,7 @@ export class ProfileComponent implements OnInit {
     const user = this.authService.currentUser();
     console.log("Cargando datos de perfil del usuario:", user);
     if (user) {
+      this.rutAlreadyExists = !!user.rut && user.rut.trim().length > 0; // 👈 Detectar si ya hay RUT
       this.profileData = {
         nombre: user.nombre || user.nombreCompleto || '',
         alias: user.alias || '',

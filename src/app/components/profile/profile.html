@@ -1,0 +1,96 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header bg-primary text-white p-4">
+          <h2 class="mb-0 fw-bold"><i class="bi bi-person-circle me-3"></i>Mi Perfil</h2>
+          <p class="mb-0 opacity-75">Administra tu identidad y seguridad</p>
+        </div>
+
+        <div class="card-body p-0">
+          <!-- Nav Tabs -->
+          <ul class="nav nav-tabs nav-fill border-0 bg-light">
+            <li class="nav-item">
+              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'data'" (click)="activeTab = 'data'">
+                <i class="bi bi-card-list me-2"></i> Mis Datos
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'security'" (click)="activeTab = 'security'">
+                <i class="bi bi-shield-lock me-2"></i> Seguridad
+              </button>
+            </li>
+          </ul>
+
+          <div class="p-4" [ngSwitch]="activeTab">
+            <!-- PESTAÑA DATOS -->
+            <div *ngSwitchCase="'data'">
+              <form (ngSubmit)="updateProfile()" #profileForm="ngForm">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Nombre Completo</label>
+                    <input type="text" class="form-control rounded-pill" [(ngModel)]="profileData.nombre" name="nombre" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Alias (Nombre Público)</label>
+                    <input type="text" class="form-control rounded-pill" [(ngModel)]="profileData.alias" name="alias" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Teléfono</label>
+                    <input type="text" class="form-control rounded-pill" [(ngModel)]="profileData.telefono" name="telefono">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Preferencia de Envío</label>
+                    <select class="form-select rounded-pill" [(ngModel)]="profileData.preferenciaEnvio" name="envio">
+                      <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold">Dirección</label>
+                    <textarea class="form-control rounded-4" rows="2" [(ngModel)]="profileData.direccion" name="direccion"></textarea>
+                  </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                  <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" [disabled]="loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    Guardar Cambios
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- PESTAÑA SEGURIDAD -->
+            <div *ngSwitchCase="'security'">
+              <form (ngSubmit)="updatePassword()" #securityForm="ngForm">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Contraseña Actual</label>
+                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.current" name="current" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Nueva Contraseña</label>
+                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.new" name="new" required minlength="6">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Confirmar Nueva Contraseña</label>
+                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.confirm" name="confirm" required>
+                </div>
+
+                <div class="alert alert-info rounded-4 shadow-sm text-center">
+                  <i class="bi bi-info-circle me-2"></i> Se cerrará tu sesión en otros dispositivos tras cambiar la contraseña.
+                </div>
+
+                <div class="mt-4 text-center">
+                  <button type="submit" class="btn btn-dark btn-lg rounded-pill px-5 fw-bold" [disabled]="loading || securityForm.invalid">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    Actualizar Contraseña
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

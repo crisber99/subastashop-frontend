@@ -18,6 +18,7 @@ import { SupportComponent } from './components/support/support';
 import { MisFavoritosComponent } from './pages/mis-favoritos/mis-favoritos.component';
 import { PrivacidadComponent } from './pages/privacidad/privacidad.component';
 import { TerminosComponent } from './pages/terminos/terminos.component';
+import { ProfileComponent } from './components/profile/profile';
 
 export const routes: Routes = [
     // Rutes Públiques
@@ -33,7 +34,7 @@ export const routes: Routes = [
     // Rutes Privades (Protegides per el AuthGuard)
     { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
     { path: 'mis-favoritos', component: MisFavoritosComponent, canActivate: [authGuard] },
-    { path: 'mi-cuenta', redirectTo: 'dashboard', pathMatch: 'full' },
+    { path: 'mi-cuenta', component: ProfileComponent, canActivate: [authGuard] },
     { path: 'checkout/:id', component: Checkout, canActivate: [authGuard] },
     { path: 'admin', component: AdminDashboard, canActivate: [authGuard] },
     { path: 'admin/crear', component: CrearProducto, canActivate: [authGuard] },

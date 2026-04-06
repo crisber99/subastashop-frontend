@@ -26,7 +26,7 @@ export class MenuService {
       label: 'Mi Perfil',
       icon: 'bi-person-badge',
       route: '/mi-cuenta',
-      roles: ['ROLE_USER']
+      roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_COMPRADOR']
     },
     {
       label: 'Panel Administración',

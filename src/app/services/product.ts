@@ -143,9 +143,13 @@ export class ProductService {
     return this.http.post(`${this.apiUrlSnipers}/desactivar/${productoId}`, {});
   }
 
-  // --- Legal & Terms ---
   acceptLegalTerms(type: string, version: string = 'v1.0'): Observable<any> {
     const body = { type, version };
     return this.http.post(`${environment.apiUrl}/legal/accept`, body);
+  }
+
+  // --- Store Config ---
+  getStoreConfig(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrlPublic}/config`);
   }
 }

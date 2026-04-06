@@ -41,7 +41,8 @@ export class AdminConfig implements OnInit {
     colorPrimario: '#0d6efd',
     logoUrl: '',
     opcionesEnvio: '',
-    whatsapp: ''
+    whatsapp: '',
+    ownerAlias: '' // 👈 NUEVO: Alias del dueño
   };
 
   cuentas: CuentaBancaria[] = [];
@@ -243,6 +244,7 @@ export class AdminConfig implements OnInit {
         this.config.logoUrl = data.logoUrl || '';
         this.config.opcionesEnvio = data.opcionesEnvio || '';
         this.config.whatsapp = data.whatsapp || '';
+        this.config.ownerAlias = this.authService.currentUser()?.alias || ''; // 👈 Cargar alias actual
         this.logoPreview = data.logoUrl || null;
 
         // Intentar parsear las cuentas (JSON)
@@ -340,6 +342,11 @@ export class AdminConfig implements OnInit {
         formData.append('aceptaTerminos', 'true');
 
         if (this.fileLogo) formData.append('fotoLogo', this.fileLogo);
+        
+        // También actualizamos el alias del usuario mediante el nuevo endpoint de perfil
+        this.authService.updateProfile({ alias: this.config.ownerAlias }).subscribe({
+          error: (e) => console.error("No se pudo actualizar el alias del dueño", e)
+        });
 
         this.tiendaService.actualizarConfiguracion(formData).subscribe({
           next: () => {

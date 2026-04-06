@@ -225,7 +225,7 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="chat-messages p-3" style="height: 250px; overflow-y: auto;">
-                            @for (msg of (chatService.mensajes$ | async); track msg.id) {
+                            @for (msg of (chatService.mensajes$ | async); track $index) {
                                 <div class="mb-2" [class.text-end]="msg.userEmail === authService.currentUser()?.email">
                                     <span class="badge bg-light text-dark shadow-sm p-2 rounded-3">{{ msg.contenido }}</span>
                                 </div>

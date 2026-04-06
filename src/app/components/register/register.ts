@@ -24,8 +24,11 @@ export class Register implements OnInit {
   registerForm!: FormGroup;
   mensajeError = '';
   cargando = false;
+  shippingOptions: string[] = []; // 👈 NUEVO: Lista de opciones de envío
 
   ngOnInit() {
+    this.cargarOpcionesEnvio();
+
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required]],
       alias: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
@@ -33,9 +36,29 @@ export class Register implements OnInit {
       password: ['', [Validators.required, passwordValidator()]],
       telefono: [''],
       direccion: [''],
+      opcionEnvio: ['', [Validators.required]], // 👈 NUEVO: Selección obligatoria
       aceptaTerminos: [false, [Validators.requiredTrue]]
     }, {
       validators: [noPersonalDataValidator('email', 'alias', 'password')]
+    });
+  }
+
+  private cargarOpcionesEnvio() {
+    this.productService.getStoreConfig().subscribe({
+      next: (config) => {
+        if (config && config.opcionesEnvio) {
+          // Convertimos el string "Op1, Op2, Op3" en un array limpio
+          this.shippingOptions = config.opcionesEnvio.split(',')
+            .map((s: string) => s.trim())
+            .filter((s: string) => s.length > 0);
+        } else {
+          // Opciones por defecto si la tienda no tiene configuradas
+          this.shippingOptions = ['Despacho a Domicilio', 'Retiro en Tienda', 'Envío por Pagar'];
+        }
+      },
+      error: () => {
+        this.shippingOptions = ['Envío Estándar'];
+      }
     });
   }
 

@@ -69,12 +69,25 @@
               </div>
             </div>
 
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingAlias" formControlName="alias" 
-                     placeholder="Tu Alias">
-              <label for="floatingAlias">Alias (Nombre de usuario)</label>
-              <div *ngIf="registerForm.get('alias')?.touched && registerForm.get('alias')?.invalid" class="text-danger small ms-2 mt-1">
-                El alias debe tener entre 3 y 20 caracteres.
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control" id="floatingAlias" formControlName="alias" 
+                         placeholder="Tu Alias">
+                  <label for="floatingAlias">Alias (Nombre Público)</label>
+                  <div *ngIf="registerForm.get('alias')?.touched && registerForm.get('alias')?.invalid" class="text-danger small ms-2 mt-1">
+                    Mínimo 3 caracteres.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating mb-3">
+                  <select class="form-select" id="floatingShipping" formControlName="opcionEnvio">
+                    <option value="" disabled selected>Selecciona una opción</option>
+                    <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
+                  </select>
+                  <label for="floatingShipping">Preferencia de Envío</label>
+                </div>
               </div>
             </div>
 

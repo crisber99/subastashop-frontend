@@ -27,7 +27,7 @@ export class Register implements OnInit {
   shippingOptions: string[] = []; // 👈 NUEVO: Lista de opciones de envío
 
   ngOnInit() {
-    this.cargarOpcionesEnvio();
+    this.shippingOptions = ['1-Bluexpress', '2-Paket', '3-Starken'];
 
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required]],
@@ -36,6 +36,7 @@ export class Register implements OnInit {
       password: ['', [Validators.required, passwordValidator()]],
       telefono: [''],
       direccion: [''],
+      rut: ['', [Validators.required]],
       opcionEnvio: ['', [Validators.required]], // 👈 NUEVO: Selección obligatoria
       aceptaTerminos: [false, [Validators.requiredTrue]]
     }, {
@@ -43,24 +44,7 @@ export class Register implements OnInit {
     });
   }
 
-  private cargarOpcionesEnvio() {
-    this.productService.getStoreConfig().subscribe({
-      next: (config) => {
-        if (config && config.opcionesEnvio) {
-          // Convertimos el string "Op1, Op2, Op3" en un array limpio
-          this.shippingOptions = config.opcionesEnvio.split(',')
-            .map((s: string) => s.trim())
-            .filter((s: string) => s.length > 0);
-        } else {
-          // Opciones por defecto si la tienda no tiene configuradas
-          this.shippingOptions = ['Despacho a Domicilio', 'Retiro en Tienda', 'Envío por Pagar'];
-        }
-      },
-      error: () => {
-        this.shippingOptions = ['Envío Estándar'];
-      }
-    });
-  }
+
 
   // Helper para obtener errores como array para mostrar la lista completa
   getPasswordErrors(): string[] {

@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
     alias: '',
     telefono: '',
     direccion: '',
+    rut: '',
     preferenciaEnvio: ''
   };
 
@@ -38,37 +39,45 @@ export class ProfileComponent implements OnInit {
   loading = false;
 
   ngOnInit() {
+    this.shippingOptions = ['1-Bluexpress', '2-Paket', '3-Starken'];
     this.cargarDatos();
-    this.cargarOpcionesEnvio();
   }
 
   cargarDatos() {
     const user = this.authService.currentUser();
+    console.log("Cargando datos de perfil del usuario:", user);
     if (user) {
       this.profileData = {
-        nombre: user.nombreCompleto || '',
+        nombre: user.nombre || user.nombreCompleto || '',
         alias: user.alias || '',
         telefono: user.telefono || '',
         direccion: user.direccion || '',
+        rut: user.rut || '',
         preferenciaEnvio: user.preferenciaEnvio || ''
       };
     }
   }
 
-  cargarOpcionesEnvio() {
-    this.productService.getStoreConfig().subscribe({
-      next: (config) => {
-        if (config && config.opcionesEnvio) {
-          this.shippingOptions = config.opcionesEnvio.split(',')
-            .map((s: string) => s.trim())
-            .filter((s: string) => s.length > 0);
-        } else {
-          this.shippingOptions = ['Despacho a Domicilio', 'Retiro en Tienda', 'Envío por Pagar'];
-        }
-      },
-      error: () => this.shippingOptions = ['Envío Estándar']
-    });
+  formatRut(rut: string): string {
+    if (!rut) return 'No registrado';
+    let value = rut.replace(/\./g, '').replace('-', '');
+    if (value.length < 2) return value;
+    
+    let cuerpo = value.slice(0, -1);
+    let dv = value.slice(-1).toUpperCase();
+    
+    // Formatear cuerpo con puntos
+    let result = '';
+    while (cuerpo.length > 3) {
+      result = '.' + cuerpo.slice(-3) + result;
+      cuerpo = cuerpo.slice(0, -3);
+    }
+    result = cuerpo + result;
+    
+    return result + '-' + dv;
   }
+
+
 
   async updateProfile() {
     this.loading = true;

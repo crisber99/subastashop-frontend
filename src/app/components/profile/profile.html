@@ -26,28 +26,42 @@
             <!-- PESTAÑA DATOS -->
             <div *ngSwitchCase="'data'">
               <form (ngSubmit)="updateProfile()" #profileForm="ngForm">
-                <div class="row g-3">
+                <!-- Nombre Completo y Alias -->
+                <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Nombre Completo</label>
-                    <input type="text" class="form-control rounded-pill" [(ngModel)]="profileData.nombre" name="nombre" required>
+                    <input type="text" [(ngModel)]="profileData.nombre" name="nombre" class="form-control rounded-pill" placeholder="Tu nombre">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Alias (Nombre Público)</label>
-                    <input type="text" class="form-control rounded-pill" [(ngModel)]="profileData.alias" name="alias" required>
+                    <input type="text" [(ngModel)]="profileData.alias" name="alias" class="form-control rounded-pill" placeholder="Tu alias">
+                  </div>
+                </div>
+
+                <!-- RUT y Teléfono -->
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">RUT (Identidad)</label>
+                    <input type="text" [value]="formatRut(profileData.rut)" class="form-control rounded-pill bg-light" disabled title="El RUT no se puede modificar">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Teléfono</label>
-                    <input type="text" class="form-control rounded-pill" [(ngModel)]="profileData.telefono" name="telefono">
+                    <input type="text" [(ngModel)]="profileData.telefono" name="telefono" class="form-control rounded-pill" placeholder="+56 9 ...">
+                  </div>
+                </div>
+
+                <!-- Dirección y Preferencia de Envío -->
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Dirección</label>
+                    <input type="text" [(ngModel)]="profileData.direccion" name="direccion" class="form-control rounded-pill" placeholder="Calle, Número, Comuna">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Preferencia de Envío</label>
-                    <select class="form-select rounded-pill" [(ngModel)]="profileData.preferenciaEnvio" name="envio">
+                    <select [(ngModel)]="profileData.preferenciaEnvio" name="preferenciaEnvio" class="form-select rounded-pill">
+                      <option value="">Seleccione una opción...</option>
                       <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
                     </select>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label fw-bold">Dirección</label>
-                    <textarea class="form-control rounded-4" rows="2" [(ngModel)]="profileData.direccion" name="direccion"></textarea>
                   </div>
                 </div>
 

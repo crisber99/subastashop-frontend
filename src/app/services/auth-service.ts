@@ -20,6 +20,7 @@ export interface AuthUser {
   nombreCompleto?: string; // 👈 NUEVO
   telefono?: string;       // 👈 NUEVO
   direccion?: string;      // 👈 NUEVO
+  rut?: string;            // 👈 NUEVO
   preferenciaEnvio?: string; // 👈 NUEVO
 }
 

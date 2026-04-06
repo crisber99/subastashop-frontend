@@ -80,13 +80,30 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-floating mb-3">
-                  <select class="form-select" id="floatingShipping" formControlName="opcionEnvio">
+              
+              <!-- RUT -->
+              <div class="col-md-6 mb-3">
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingRut" formControlName="rut" 
+                           placeholder="12345678-9" [class.is-invalid]="registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid">
+                    <label for="floatingRut">RUT (Sin puntos y con guion)</label>
+                    @if (registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid) {
+                        <div class="invalid-feedback">El RUT es obligatorio.</div>
+                    }
+                  </div>
+              </div>
+
+              <!-- Preferencia de Envío -->
+              <div class="col-md-12 mb-3">
+                <div class="form-floating">
+                  <select class="form-select" id="floatingShipping" formControlName="opcionEnvio" [class.is-invalid]="registerForm.get('opcionEnvio')?.touched && registerForm.get('opcionEnvio')?.invalid">
                     <option value="" disabled selected>Selecciona una opción</option>
                     <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
                   </select>
                   <label for="floatingShipping">Preferencia de Envío</label>
+                  @if (registerForm.get('opcionEnvio')?.touched && registerForm.get('opcionEnvio')?.invalid) {
+                      <div class="invalid-feedback">Debe seleccionar una opción de envío.</div>
+                  }
                 </div>
               </div>
             </div>

@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { ProductService } from '../../services/product';
 import { LegalTermsComponent } from '../legal-terms/legal-terms';
-import { CartFloat } from '../cart-float/cart-float';
 import { AuthService } from '../../services/auth-service';
 import { Websocket } from '../../services/websocket';
 import { SuperAdminService } from '../../services/super-admin';
@@ -26,7 +25,7 @@ import { MemoriceComponent } from '../memorice/memorice';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MemoriceComponent, CartFloat, LegalTermsComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MemoriceComponent, LegalTermsComponent],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })

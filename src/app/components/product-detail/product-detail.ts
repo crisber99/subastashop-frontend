@@ -284,10 +284,10 @@ export class ProductDetail implements OnInit, OnDestroy {
         const tId = data.tiendaId || (data.tienda ? data.tienda.id : null);
         console.log('🆔 Tienda ID detectado para chat:', tId);
 
-        if (tId) {
-          this.chatService.initChat(tId);
+        if (data.id) {
+          this.chatService.initChat(data.id);
         } else {
-          console.error('🚫 No se detectó tiendaId ni tienda.id en el producto cargado.', data);
+          console.error('🚫 No se detectó producto.id para iniciar el chat.', data);
         }
 
         if (this.authService.isLoggedIn() && data.tipoVenta === 'SUBASTA') {
@@ -414,8 +414,10 @@ export class ProductDetail implements OnInit, OnDestroy {
     const email = user?.email || '';
     const nombre = user?.nombre || 'Usuario';
     
-    // El ChatService ahora usa tiendaId internamente, nosotros solo enviamos contenido
-    this.chatService.enviarMensaje(nombre, this.nuevoMensajeChat, email);
+    const tId = this.producto.tiendaId || (this.producto.tienda ? this.producto.tienda.id : null);
+    
+    // El ChatService ahora usa productoId desde el initChat, pasamos tId opcionalmente
+    this.chatService.enviarMensaje(nombre, this.nuevoMensajeChat, email, tId);
     this.nuevoMensajeChat = '';
   }
 

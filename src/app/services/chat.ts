@@ -15,7 +15,8 @@ export interface MensajeChatDTO {
   id?: string;
   contenido: string; 
   remitenteNombre: string;
-  tiendaId: number;
+  productoId: number;
+  tiendaId?: number;
   timestamp?: string;
   userEmail?: string;
   esVendedor?: boolean;
@@ -31,26 +32,27 @@ export class ChatService {
   private messageSubject = new BehaviorSubject<MensajeChatDTO[]>([]);
 
   public mensajes$ = this.messageSubject.asObservable();
-  private currentTiendaId: number | null = null;
+  private currentProductoId: number | null = null;
   private currentMessages: MensajeChatDTO[] = [];
 
   constructor() { }
 
-  // 1. Obtener historial REST y conectar a WebSocket por TIENDA
-  public initChat(tiendaId: number) {
-    if (!tiendaId) {
-      console.warn("⚠️ ChatService: No se puede iniciar chat sin tiendaId.");
+  // 1. Obtener historial REST y conectar a WebSocket por PRODUCTO
+  public initChat(productoId: number) {
+    if (!productoId) {
+      console.warn("⚠️ ChatService: No se puede iniciar chat sin productoId.");
       return;
     }
     
-    this.currentTiendaId = tiendaId;
+    this.currentProductoId = productoId;
     this.currentMessages = [];
     this.messageSubject.next([]);
+    this.messageSubject.next([]);
 
-    console.log(`💬 ChatService: Iniciando chat para tienda ${tiendaId}...`);
+    console.log(`💬 ChatService: Iniciando chat para producto ${productoId}...`);
 
-    // Intentamos cargar historial (opcional, si el endpoint existe)
-    this.http.get<MensajeChatDTO[]>(`${environment.apiUrl}/chat/tienda/${tiendaId}`).subscribe({
+    // Intentamos cargar historial por producto
+    this.http.get<MensajeChatDTO[]>(`${environment.apiUrl}/chat/producto/${productoId}`).subscribe({
       next: (historial) => {
         this.currentMessages = historial || [];
         this.messageSubject.next([...this.currentMessages]);
@@ -59,14 +61,14 @@ export class ChatService {
     });
 
     // Conectar WebSocket
-    this.conectarWebSocket(tiendaId);
+    this.conectarWebSocket(productoId);
   }
 
-  private conectarWebSocket(tiendaId: number) {
+  private conectarWebSocket(productoId: number) {
     this.desconectar();
 
     const wsUrl = environment.wsUrl;
-    console.log(`🔌 ChatService: Intentando conectar a ${wsUrl} (Tienda: ${tiendaId})`);
+    console.log(`🔌 ChatService: Intentando conectar a ${wsUrl} (Producto: ${productoId})`);
 
     this.stompClient = new Client({
       webSocketFactory: () => new SockJS(wsUrl),
@@ -79,8 +81,8 @@ export class ChatService {
     this.stompClient.onConnect = (frame) => {
       console.log('✅ ChatService: Conectado existosamente!');
       
-      // Suscribirse al canal de la tienda
-      this.stompClient?.subscribe(`/topic/tienda/${tiendaId}`, (message: Message) => {
+      // Suscribirse al canal del producto
+      this.stompClient?.subscribe(`/topic/producto/${productoId}`, (message: Message) => {
         if (message.body) {
           try {
             const mensajeNuevo: MensajeChatDTO = JSON.parse(message.body);
@@ -107,27 +109,28 @@ export class ChatService {
   }
 
   // 2. Enviar mensaje por WS
-  public enviarMensaje(usuarioNombre: string, mensaje: string, email: string) {
-    if (this.stompClient && this.stompClient.connected && this.currentTiendaId) {
+  public enviarMensaje(usuarioNombre: string, mensaje: string, email: string, tiendaId?: number) {
+    if (this.stompClient && this.stompClient.connected && this.currentProductoId) {
       
       const payload: MensajeChatDTO = {
         contenido: mensaje,
         remitenteNombre: usuarioNombre,
         userEmail: email,
-        tiendaId: Number(this.currentTiendaId)
+        productoId: Number(this.currentProductoId),
+        tiendaId: tiendaId
       };
       
       console.log('📤 ChatService: Enviando mensaje...', payload);
 
       this.stompClient.publish({
-        destination: `/app/chat/${this.currentTiendaId}`,
+        destination: `/app/chat/${this.currentProductoId}`,
         body: JSON.stringify(payload)
       });
     } else {
       console.error("❌ ChatService: No se puede enviar mensaje. Estado:", {
         existeSTOMP: !!this.stompClient,
         conectado: this.stompClient?.connected,
-        ID_Tienda: this.currentTiendaId
+        ID_Producto: this.currentProductoId
       });
     }
   }

@@ -1,3 +1,4 @@
+<!-- [START CONTAINER O1] -->
 <div class="container mt-5 mb-5 animate__animated animate__fadeIn" *ngIf="producto; else loadingTemplate">
     <div class="mb-4">
         @if (producto.slugTienda) {
@@ -11,8 +12,9 @@
         }
     </div>
 
+    <!-- [START ROW O2] -->
     <div class="row g-4">
-        <!-- Columna Imagen -->
+        <!-- Columna Imagen [LEFT O3] -->
         <div class="col-lg-7">
             <div class="detalle-image-container position-relative">
                 
@@ -59,10 +61,11 @@
                         alt="{{ producto.nombre }}">
                 </ng-template>
             </div>
-        </div>
+        </div> <!-- [CLOSE LEFT O3] -->
 
-        <!-- Columna Info -->
+        <!-- Columna Info [RIGHT O3] -->
         <div class="col-lg-5">
+            <!-- [START P-2 O4] -->
             <div class="p-2">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <nav aria-label="breadcrumb">
@@ -94,10 +97,6 @@
                         } @else {
                             <span class="badge bg-secondary px-3 py-2">🔒 FINALIZADA</span>
                         }
-                        <small class="fw-500 opacity-75">
-                            <i class="bi bi-clock me-1"></i> 
-                            {{ periodoSubasta === 'FINALIZADA' ? 'Finalizó el: ' + (producto.fechaFinSubasta | date:'short') : 'Finaliza: ' + (producto.fechaFinSubasta | date:'short') }}
-                        </small>
                     </div>
 
                     <div class="card-body p-4 text-center">
@@ -107,36 +106,18 @@
                         </h2>
 
                         @if (periodoSubasta === 'ANUNCIO') {
-                            <div class="alert alert-info rounded-4 border-0">
-                                <p class="mb-1 fw-bold">Próximamente</p>
-                                <p class="small mb-0">Esta subasta abre para todo el público el <b>{{ fechaInicioVisible | date:'short' }}</b>.</p>
-                                <p class="small mt-2 text-primary"><i class="bi bi-star-fill"></i> Usuarios <b>PRO</b> podrán entrar el <b>{{ fechaProVisible | date:'short' }}</b>.</p>
+                            <div class="alert alert-info rounded-4">
+                                <p class="small mb-0">Esta subasta abre el <b>{{ fechaInicioVisible | date:'short' }}</b>.</p>
                             </div>
                         } @else if (periodoSubasta === 'PREVIA_PRO') {
-                            <div class="alert alert-primary rounded-4 border-0 shadow-sm mb-4">
-                                <p class="mb-1 fw-bold">💎 Exclusivo PRO</p>
-                                <p class="small mb-0">Periodo de acceso anticipado activo. Abre para el público general el <b>{{ fechaInicioVisible | date:'short' }}</b>.</p>
-                            </div>
-
-                            @if (authService.isLoggedIn()) {
-                                @if (authService.currentUser()?.suscripcionActiva || authService.currentUser()?.pagoAutomatico) {
-                                    <div class="input-group input-group-lg mb-3 shadow-sm rounded-4 overflow-hidden">
-                                        <span class="input-group-text bg-white border-end-0 text-muted">$</span>
-                                        <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta" [min]="producto.precioActual + 1000">
-                                        <button class="btn btn-primary px-4 fw-bold" type="button" (click)="pujar()">PUJAR</button>
-                                    </div>
-                                } @else {
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-secondary btn-lg py-3 fw-bold rounded-4 opacity-75" disabled>
-                                            <i class="bi bi-lock-fill me-2"></i> Solo Usuarios PRO
-                                        </button>
-                                        <a href="/admin/configuracion" class="btn btn-link text-primary fw-bold">¡Hazte PRO para pujar ya!</a>
-                                    </div>
-                                }
-                            } @else {
-                                <div class="alert alert-info rounded-4 border-0 text-center">
-                                    Para participar debes <a routerLink="/login" class="fw-bold text-primary text-decoration-none">iniciar sesión</a>.
+                            @if (authService.isLoggedIn() && (authService.currentUser()?.suscripcionActiva || authService.currentUser()?.pagoAutomatico)) {
+                                <div class="input-group input-group-lg mb-3 shadow-sm rounded-4 overflow-hidden">
+                                    <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                                    <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta" [min]="producto.precioActual + 1000">
+                                    <button class="btn btn-primary px-4 fw-bold" type="button" (click)="pujar()">PUJAR</button>
                                 </div>
+                            } @else {
+                                <div class="alert alert-primary rounded-4">💎 Exclusivo Usuarios PRO</div>
                             }
                         } @else if (periodoSubasta === 'ABIERTA') {
                             <div *ngIf="authService.isLoggedIn(); else loginSubasta">
@@ -146,88 +127,44 @@
                                     <button class="btn btn-primary px-4 fw-bold" type="button" (click)="pujar()">PUJAR</button>
                                 </div>
                             </div>
+                            <ng-template #loginSubasta>
+                                <div class="alert alert-info rounded-4">Inicia sesión para pujar.</div>
+                            </ng-template>
                         } @else {
-                            <div class="alert alert-secondary text-center fw-bold rounded-4">
-                                <i class="bi bi-lock-fill"></i> Subasta Finalizada
-                            </div>
+                            <div class="alert alert-secondary rounded-4">Subasta Finalizada</div>
                         }
-                    </div>
 
-                            <!-- 🤖 SNIPER BOT (PUJAS AUTOMÁTICAS) -->
-                            <div class="mt-4 pt-3 border-top" *ngIf="!subastaFinalizada">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-robot fs-4 text-primary me-2"></i>
-                                        <h6 class="mb-0 fw-bold">Sniper Bot</h6>
-                                        <span class="badge bg-warning text-dark ms-2 small" style="font-size: 0.65rem; letter-spacing: 0.5px;">PRO</span>
-                                    </div>
-                                    <span *ngIf="sniperActivo" class="badge rounded-pill bg-success-subtle text-success border border-success px-2 py-1 small">
-                                        <i class="bi bi-check-circle-fill me-1"></i> Activo
-                                    </span>
+                        <!-- SNIPER BOT -->
+                        <div class="mt-4 pt-3 border-top" *ngIf="!subastaFinalizada">
+                            <div class="glass-card p-3 rounded-4 border-0 shadow-sm mb-3">
+                                <div *ngIf="!sniperActivo">
+                                    <button class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" (click)="configurarSniper()">
+                                        Configurar Bot Sniper
+                                    </button>
                                 </div>
-
-                                <div class="glass-card p-3 rounded-4 border-0 shadow-sm mb-3" 
-                                     style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.1) !important;">
-                                    
-                                    <div *ngIf="!sniperActivo">
-                                        <p class="text-muted small mb-3">¿No tienes tiempo para seguir la subasta? Deja que nuestro bot puje por ti hasta tu límite marcado.</p>
-                                        <button class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold py-2" (click)="configurarSniper()">
-                                            <i class="bi bi-rocket-takeoff me-2"></i> Configurar Pujas Automáticas
-                                        </button>
-                                    </div>
-
-                                    <div *ngIf="sniperActivo" class="animate__animated animate__fadeIn">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="small text-muted">Tu límite máximo:</span>
-                                            <span class="fw-bold text-primary fs-5">${{ sniperActivo.montoMaximo | number }}</span>
-                                        </div>
-                                        <div class="progress mb-2" style="height: 6px;">
-                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
-                                                 role="progressbar" [style.width]="'100%'"></div>
-                                        </div>
-                                        <p class="text-muted" style="font-size: 0.75rem;">
-                                            <i class="bi bi-info-circle me-1"></i> El bot pujará un <b>1%</b> más cada vez que alguien te supere, hasta alcanzar tu límite.
-                                        </p>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-light btn-sm flex-grow-1 rounded-pill border text-muted" (click)="configurarSniper()">
-                                                <i class="bi bi-pencil me-1"></i> Cambiar Límite
-                                            </button>
-                                            <button class="btn btn-outline-danger btn-sm rounded-circle" style="width: 32px; height: 32px; padding: 0;" 
-                                                    (click)="desactivarSniper()" title="Desactivar Bot">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div *ngIf="sniperActivo" class="text-start">
+                                    <p class="small text-muted mb-1">Límite bot: <b>${{ sniperActivo.montoMaximo | number }}</b></p>
+                                    <button class="btn btn-link btn-sm p-0 text-danger" (click)="desactivarSniper()">Desactivar</button>
                                 </div>
                             </div>
                         </div>
-
-                        <ng-template #loginSubasta>
-                            <div class="alert alert-info rounded-4 border-0 text-center">
-                                Para participar debes <a routerLink="/login" class="fw-bold text-primary text-decoration-none">iniciar sesión</a>.
-                            </div>
-                        </ng-template>
                     </div>
+                </div>
 
-                <!-- SECCIÓN CONCURSO DE HABILIDAD (MEMORICE) -->
+                <!-- SECCIÓN CONCURSO MEMORICE (RIFA) -->
                 <div *ngIf="producto.tipoVenta === 'RIFA'" class="card border-0 mb-4 overflow-hidden shadow-sm">
                     <div class="card-header bg-gradient-primary text-white py-3 border-0 text-center" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
                         <h5 class="mb-0 fw-bold"><i class="bi bi-controller me-2"></i> Concurso de Habilidad</h5>
                     </div>
                     <div class="card-body p-4 bg-glass">
                         <div class="text-center mb-4">
-                            <p class="text-muted mb-1 small uppercase ls-1">Inscripción al Concurso</p>
+                            <p class="text-muted mb-1 small uppercase">Inscripción al Concurso</p>
                             <h2 class="fw-800 text-primary">${{ producto.precioTicket | number }}</h2>
-                            <div class="d-flex justify-content-center gap-2 mt-2">
-                                <span class="badge bg-light text-dark border"><i class="bi bi-clock-history me-1"></i> Basado en Tiempo</span>
-                                <span class="badge bg-light text-dark border"><i class="bi bi-trophy me-1"></i> {{ producto.cantidadGanadores }} Premios</span>
-                            </div>
                         </div>
 
-                        <!-- 🕹️ JUEGO MEMORICE -->
+                        <!-- 🕹️ JUEGO -->
                         <div *ngIf="authService.isLoggedIn(); else loginRequired">
-                            <!-- Si ya tiene participación y no ha jugado, o quiere practicar -->
-                            <div *ngIf="haPagado() || true" class="animate__animated animate__fadeIn">
+                            <div class="mb-4">
                                 <app-memorice 
                                     [contestId]="producto.id" 
                                     [userId]="authService.currentUser()?.id"
@@ -236,374 +173,111 @@
                                 </app-memorice>
                             </div>
 
-                            <!-- Si no se ha unido al concurso -->
-                            <div *ngIf="!yaParticipa()" class="text-center py-4">
-                                <div class="mb-4 text-start">
-                                    <app-legal-terms></app-legal-terms>
-                                    <div class="form-check mt-3 d-flex align-items-center justify-content-center p-3 rounded-4" 
-                                         style="background: rgba(99, 102, 241, 0.05); border: 1px dashed #6366f1;">
-                                        <input class="form-check-input me-3" type="checkbox" id="checkLegal" 
-                                               [(ngModel)]="legalTermsChecked" style="width: 24px; height: 24px; cursor: pointer;">
-                                        <label class="form-check-label fw-bold mb-0" for="checkLegal" style="cursor: pointer; color: var(--text-color);">
-                                            He leído y acepto las Bases Legales del Concurso
-                                        </label>
-                                    </div>
+                            <div *ngIf="!yaParticipa()" class="text-center py-3">
+                                <app-legal-terms></app-legal-terms>
+                                <div class="form-check mt-3 d-flex justify-content-center align-items-center">
+                                    <input class="form-check-input me-3" type="checkbox" id="checkLegal" [(ngModel)]="legalTermsChecked">
+                                    <label class="form-check-label fw-bold" for="checkLegal">Acepto las Bases Legales</label>
                                 </div>
-
-                                <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-lg py-3 w-100" 
+                                <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-lg w-100 mt-3" 
                                         (click)="unirseAlConcurso()" [disabled]="!legalTermsChecked">
                                     🚀 Inscribirse ahora por ${{ producto.precioTicket | number }}
                                 </button>
-                                <p class="text-muted small mt-3 px-3">
-                                    <i class="bi bi-shield-check me-1"></i> Tu participación será registrada con firma digital simple (IP/Timestamp).
-                                </p>
                             </div>
                         </div>
-
                         <ng-template #loginRequired>
-                            <div class="alert alert-info rounded-4 border-0 text-center py-4">
-                                <p class="mb-3">Para participar en este concurso de habilidad debes estar registrado.</p>
-                                <a routerLink="/login" class="btn btn-primary rounded-pill px-4 fw-bold">Iniciar Sesión</a>
-                            </div>
+                            <div class="alert alert-info text-center rounded-4">Inicia sesión para participar.</div>
                         </ng-template>
 
-                        <!-- 🛠️ BOTÓN ADMIN: LANZAR DETERMINACIÓN DE GANADORES -->
-                        <div *ngIf="esDuenoProducto() && producto.estado !== 'FINALIZADA'" class="mt-4 border-top pt-4">
-                            <p class="text-muted small mb-2 text-center text-uppercase ls-1">Panel de Administrador</p>
-                            <button class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-sm py-3" (click)="lanzarConcurso()">
-                                <i class="bi bi-trophy-fill me-2"></i> Determinar Ganadores por Tiempo
-                            </button>
-                        </div>
-
-                        <!-- 🏆 RANKING DE LÍDERES (Ganadores) -->
-                        <div *ngIf="ganadores && ganadores.length > 0" 
-                             class="mt-4 border-top pt-4 animate__animated animate__fadeIn">
+                        <!-- RANKING -->
+                        <div *ngIf="ganadores && ganadores.length > 0" class="mt-4 border-top pt-4">
                             <h5 class="fw-bold text-center mb-3">🏆 Tabla de Líderes</h5>
-                            <div class="list-group list-group-flush rounded-4 overflow-hidden border shadow-sm">
-                                @for (g of ganadores; track $index) {
-                                <div class="list-group-item d-flex justify-content-between align-items-center p-3" 
-                                     [class.bg-warning-subtle]="$index === 0">
-                                    <div class="d-flex align-items-center">
-                                        <div class="rank-badge me-3" [class.gold]="$index === 0" [class.silver]="$index === 1" [class.bronze]="$index === 2">
-                                            {{ $index + 1 }}
-                                        </div>
-                                        <div>
-                                            <p class="mb-0 fw-bold">{{ g.participant }}</p>
-                                            <p class="mb-0 small text-muted">Tiempo: {{ (g.durationMs / 1000) | number:'1.2-2' }}s</p>
-                                        </div>
-                                    </div>
-                                    <i *ngIf="$index === 0" class="bi bi-star-fill text-warning fs-5"></i>
+                            <div class="list-group list-group-flush rounded-4 overflow-hidden shadow-sm">
+                                <div class="list-group-item d-flex justify-content-between p-3" *ngFor="let g of ganadores; let i = index">
+                                    <span>{{ i + 1 }}. {{ g.participant }}</span>
+                                    <span class="fw-bold">{{ (g.durationMs / 1000) | number:'1.2-2' }}s</span>
                                 </div>
-                                }
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECCIÓN VENTA DIRECTA -->
-                @if (producto.tipoVenta === 'DIRECTA' || !producto.tipoVenta) {
-                <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+                <!-- VENTA DIRECTA -->
+                <div *ngIf="producto.tipoVenta === 'DIRECTA' || !producto.tipoVenta" class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4 text-center">
-                        <p class="text-muted mb-1 small uppercase ls-1">Precio Final</p>
-                        <h1 class="display-3 fw-800 text-success mb-4">
-                            ${{ producto.precioBase | number }}
-                        </h1>
-
+                        <p class="text-muted mb-1 small uppercase">Precio Final</p>
+                        <h1 class="display-3 fw-800 text-success mb-4">${{ producto.precioBase | number }}</h1>
                         <div class="d-grid gap-3"> 
-                            <button class="btn btn-primary btn-lg py-3 fw-bold shadow-lg"
-                                (click)="comprarAhora()" [disabled]="cartService.estaEnCarrito(producto.id)">
-                                @if (cartService.estaEnCarrito(producto.id)) {
-                                    <i class="bi bi-cart-check me-2"></i> En el Carrito
-                                } @else {
-                                    ⚡ Comprar Ahora
-                                }
+                            <button class="btn btn-primary btn-lg py-3 fw-bold" (click)="comprarAhora()" [disabled]="cartService.estaEnCarrito(producto.id)">
+                                ⚡ Comprar Ahora
                             </button>
-
-                            <button class="btn btn-outline-primary btn-lg py-3 fw-bold" (click)="agregarAlCarrito()"
-                                [disabled]="cartService.estaEnCarrito(producto.id)">
+                            <button class="btn btn-outline-primary btn-lg py-3 fw-bold" (click)="agregarAlCarrito()" [disabled]="cartService.estaEnCarrito(producto.id)">
                                 <i class="bi bi-cart-plus me-2"></i> Agregar al Carrito
                             </button>
                         </div>
                     </div>
                 </div>
-                }
 
-                <!-- LIVE CHAT WEB SOCKET -->
-                <div *ngIf="producto?.chatHabilitado" class="card border-0 shadow-sm mb-4" style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);">
-                    <div class="card-header bg-dark text-white d-flex align-items-center py-3">
-                        <i class="bi bi-chat-left-text-fill me-2 text-warning"></i>
-                        <h6 class="mb-0 fw-bold">Live Chat (Vendedor y Clientes)</h6>
-                        <span class="ms-auto badge bg-success pulse-animation">● Online</span>
+                <!-- CHAT -->
+                <div *ngIf="producto?.chatHabilitado" class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white py-3">
+                        <h6 class="mb-0 fw-bold">Live Chat</h6>
                     </div>
                     <div class="card-body p-0">
-                        <div class="chat-messages p-3" style="height: 300px; overflow-y: auto; background: var(--bg-color);">
+                        <div class="chat-messages p-3" style="height: 250px; overflow-y: auto;">
                             @for (msg of (chatService.mensajes$ | async); track msg.id) {
-                                <div class="mb-3 d-flex" [ngClass]="msg.userEmail === authService.currentUser()?.email ? 'justify-content-end' : 'justify-content-start'">
-                                    <div class="chat-bubble shadow-sm"
-                                         [ngClass]="{
-                                            'bubble-sent': msg.userEmail === authService.currentUser()?.email,
-                                            'bubble-received': msg.userEmail !== authService.currentUser()?.email && !msg.esVendedor && !msg.admin,
-                                            'bubble-vendedor': msg.esVendedor,
-                                            'bubble-admin': msg.admin
-                                         }">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <span class="bubble-name me-2">
-                                                {{ msg.remitenteNombre }}
-                                            </span>
-                                            @if (msg.timestamp) {
-                                                <span class="bubble-time">{{ msg.timestamp }}</span>
-                                            }
-                                            @if (msg.esVendedor) {
-                                                <span class="badge bg-warning text-dark ms-2" style="font-size: 0.6rem;">VENDEDOR</span>
-                                            }
-                                        </div>
-                                        <p class="mb-0 bubble-content">{{ msg.contenido }}</p>
-                                    </div>
+                                <div class="mb-2" [class.text-end]="msg.userEmail === authService.currentUser()?.email">
+                                    <span class="badge bg-light text-dark shadow-sm p-2 rounded-3">{{ msg.contenido }}</span>
                                 </div>
                             }
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-3 border-top">
+                    <div class="card-footer p-3">
                         <form (ngSubmit)="enviarMensajeChat()" #chatForm="ngForm" class="d-flex gap-2">
-                            <input type="text" class="form-control rounded-pill" placeholder="Escribe un mensaje..."
-                                   [(ngModel)]="nuevoMensajeChat" name="nuevoMensajeChat" [disabled]="!authService.isLoggedIn()" required autocomplete="off">
-                            <button type="submit" class="btn btn-primary rounded-pill px-3 shadow" [disabled]="!authService.isLoggedIn() || !nuevoMensajeChat.trim()">
-                                <i class="bi bi-send-fill fs-5"></i>
+                            <input type="text" class="form-control rounded-pill" placeholder="Escribe..." [(ngModel)]="nuevoMensajeChat" name="chatMsg" required>
+                            <button type="submit" class="btn btn-primary rounded-pill px-3" [disabled]="!nuevoMensajeChat.trim()">
+                                <i class="bi bi-send-fill"></i>
                             </button>
                         </form>
-                        @if (!authService.isLoggedIn()) {
-                            <div class="text-center mt-2 small text-muted">Debes iniciar sesión para unirte al chat.</div>
-                        }
                     </div>
                 </div>
 
-                <div *ngIf="mensaje" class="alert mt-3 animate__animated animate__shakeX rounded-4 border-0 shadow-sm"
-                     [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
-                    <i class="bi" [ngClass]="esError ? 'bi-exclamation-octagon' : 'bi-check-circle'"></i> {{ mensaje }}
+                <div *ngIf="mensaje" class="alert mt-3 rounded-4 shadow-sm" [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
+                    {{ mensaje }}
                 </div>
 
-                <!-- SECCIÓN CALIFICACIONES - DESACTIVADA TEMPORALMENTE -->
-                @if (false) {
-                <div class="mt-5 pt-4 border-top">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0">Opiniones de Compradores</h4>
-                        <div class="d-flex align-items-center" *ngIf="calificaciones.length > 0">
-                            <div class="text-warning me-2 fs-4">
-                                <i class="bi bi-star-fill" *ngFor="let s of getStarArray(promedioCalificacion)"></i>
-                                <i class="bi bi-star" *ngFor="let s of getEmptyStarArray(promedioCalificacion)"></i>
-                            </div>
-                            <span class="fw-bold fs-5">{{ promedioCalificacion | number:'1.1-1' }}</span>
-                            <span class="text-muted small ms-2">({{ calificaciones.length }})</span>
-                        </div>
-                    </div>
+            </div> <!-- [CLOSE P-2 O4] -->
+        </div> <!-- [CLOSE RIGHT O3] -->
+    </div> <!-- [CLOSE ROW O2] -->
+</div> <!-- [CLOSE CONTAINER O1] -->
 
-                    <div class="calificaciones-list mb-5">
-                        <div *ngIf="calificaciones.length === 0" class="text-center py-5 bg-light rounded-4">
-                            <i class="bi bi-chat-dots fs-1 text-muted opacity-50"></i>
-                            <p class="text-muted mt-2">Aún no hay opiniones. ¡Sé el primero en calificar!</p>
-                        </div>
-                        <div class="card border-0 shadow-sm rounded-4 mb-3 p-3 glass-card" *ngFor="let c of calificaciones">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-sm bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold">
-                                        {{ c.usuario.nombre?.substring(0,1) || 'U' }}
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0 fw-bold">{{ c.usuario.nombre || 'Usuario' }}</h6>
-                                        <small class="text-muted">{{ c.fecha | date:'mediumDate' }}</small>
-                                    </div>
-                                </div>
-                                <div class="text-warning">
-                                    <i class="bi bi-star-fill text-warning me-1" *ngFor="let s of getStarArray(c.puntuacion)"></i>
-                                </div>
-                            </div>
-                            <p class="mt-3 mb-0 text-secondary">{{ c.comentario }}</p>
-                        </div>
-                    </div>
-
-                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-5" *ngIf="authService.isLoggedIn()">
-                        <h5 class="fw-bold mb-3">Deja tu opinión</h5>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Puntuación</label>
-                            <div class="star-rating-input">
-                                <div class="btn-group w-100" role="group">
-                                    <input type="radio" class="btn-check" name="btnstar" id="st5" [(ngModel)]="nuevaPuntuacion" [value]="5">
-                                    <label class="btn btn-outline-warning" for="st5"><i class="bi bi-star-fill me-1"></i>5</label>
-                                    <input type="radio" class="btn-check" name="btnstar" id="st4" [(ngModel)]="nuevaPuntuacion" [value]="4">
-                                    <label class="btn btn-outline-warning" for="st4"><i class="bi bi-star-fill me-1"></i>4</label>
-                                    <input type="radio" class="btn-check" name="btnstar" id="st3" [(ngModel)]="nuevaPuntuacion" [value]="3">
-                                    <label class="btn btn-outline-warning" for="st3"><i class="bi bi-star-fill me-1"></i>3</label>
-                                    <input type="radio" class="btn-check" name="btnstar" id="st2" [(ngModel)]="nuevaPuntuacion" [value]="2">
-                                    <label class="btn btn-outline-warning" for="st2"><i class="bi bi-star-fill me-1"></i>2</label>
-                                    <input type="radio" class="btn-check" name="btnstar" id="st1" [(ngModel)]="nuevaPuntuacion" [value]="1">
-                                    <label class="btn btn-outline-warning" for="st1"><i class="bi bi-star-fill me-1"></i>1</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Comentario</label>
-                            <textarea class="form-control" rows="3" placeholder="Cuéntanos tu experiencia..." [(ngModel)]="nuevoComentario"></textarea>
-                        </div>
-                        <button class="btn btn-primary fw-bold w-100 py-3 rounded-pill" (click)="enviarCalificacion()">
-                            Publicar Opinión ✨
-                        </button>
-                    </div>
-
-                    <div *ngIf="!authService.isLoggedIn()" class="alert alert-light text-center rounded-4 border p-4">
-                        <p class="mb-2">¿Te gustaría calificar este producto?</p>
-                        <a routerLink="/login" class="btn btn-outline-primary rounded-pill px-4">Inicia sesión aquí</a>
-                    </div>
-                </div>
-                } <!-- Fin: @if(false) calificaciones -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 🎡 SHOW DEL SORTEO EN TIEMPO REAL 🎡 -->
+<!-- SIBLINGS (Siblings to the main container) -->
 <div class="rifa-show-overlay animate__animated animate__fadeIn" *ngIf="showSorteo">
     <div class="show-container text-center text-white">
-        
-        <!-- 1. CUENTA REGRESIVA ⏳ -->
-        <div class="countdown-section animate__animated animate__zoomIn" *ngIf="cuentaRegresiva > 0">
-            <h1 class="display-1 fw-900 glow-text">{{ cuentaRegresiva }}</h1>
-            <p class="lead text-uppercase fw-bold ls-2">¡El sorteo está por comenzar!</p>
-            <div class="spinner-grow text-primary mt-4" role="status" style="width: 3rem; height: 3rem;"></div>
+        <!-- Ruleta / Ganadores -->
+        <div class="mt-5" *ngIf="ganadoresRevelados.length > 0">
+            <h2 class="fw-bold mb-4">🏆 Ganadores Oficiales</h2>
+            <button class="btn btn-primary btn-lg rounded-pill" (click)="cerrarShow()">Cerrar</button>
         </div>
-
-        <!-- 2. RULETA 🎰 -->
-        <div class="roulette-section animate__animated animate__fadeInUp" *ngIf="cuentaRegresiva <= 0 && ruletaActiva">
-            <p class="text-white-50 text-uppercase mb-2 small ls-2">Buscando ticket ganador...</p>
-            <div class="roulette-box shadow-lg mb-4">
-                <span class="display-2 fw-900">{{ numeroRuleta }}</span>
-            </div>
-            <div class="typing-indicator">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-
-        <!-- 3. GANADORES REVELADOS 🏆 -->
-        <div class="winners-reveal-section mt-4" *ngIf="cuentaRegresiva <= 0">
-            <div class="d-flex flex-wrap justify-content-center gap-4">
-                @for (g of ganadoresRevelados; track g.puesto) {
-                <div class="winner-card animate__animated animate__backInDown shadow-lg">
-                    <div class="winner-puesto bg-warning text-dark">#{{ g.puesto }}</div>
-                    <div class="winner-number display-4 fw-bold">Ticket #{{ g.numeroTicket }}</div>
-                    <div class="winner-email opacity-75 small">{{ g.comprador }}</div>
-                </div>
-                }
-            </div>
-
-            <!-- BOTÓN FINAL -->
-            <div class="mt-5 animate__animated animate__fadeInUp animate__delay-1s" *ngIf="!ruletaActiva && ganadoresRevelados.length > 0">
-                <h2 class="fw-bold mb-4">✨ ¡FELICIDADES A LOS GANADORES! ✨</h2>
-                <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg" (click)="cerrarShow()">
-                    Ver Resultados Oficiales
-                </button>
-            </div>
-        </div>
-
     </div>
 </div>
-
 
 <ng-template #loadingTemplate>
     <div class="d-flex flex-column justify-content-center align-items-center vh-50 mt-5">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-        <h4 class="mt-3 text-muted">Cargando producto...</h4>
+        <div class="spinner-border text-primary" role="status"></div>
+        <h4 class="mt-3 text-muted">Cargando...</h4>
     </div>
 </ng-template>
 
-    <div class="modal fade" id="modalComprobante" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg overflow-hidden" style="background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border);">
-            <div class="modal-header border-0 text-white py-4" style="background: linear-gradient(135deg, #6f42c1, #0d6efd);">
-                <div>
-                    <h5 class="modal-title fw-bold mb-0">🎟️ Comprobante de Compra</h5>
-                    <p class="mb-0 small opacity-75" *ngIf="comprobante">{{ comprobante.nombreRifa }}</p>
-                </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4" *ngIf="comprobante">
-                <!-- Tickets comprados -->
-                <div class="d-flex flex-wrap gap-3 justify-content-center mb-4">
-                    @for (num of (comprobante.tickets || [comprobante.numeroTicket]); track num) {
-                    <div class="text-center px-4 py-3 rounded-3" 
-                         style="background: linear-gradient(135deg, #6f42c1, #0d6efd); min-width: 90px;">
-                        <p class="mb-0 small text-white opacity-75" style="font-size:10px; letter-spacing: 2px;">TICKET</p>
-                        <h2 class="text-white fw-900 mb-0">#{{ num }}</h2>
-                    </div>
-                    }
-                </div>
-
-                <!-- Info -->
-                <div class="row g-3 mb-4">
-                    <div class="col-6">
-                        <div class="p-3 rounded-3" style="background: rgba(109,66,193,0.1); border: 1px solid rgba(109,66,193,0.2);">
-                            <p class="mb-1 text-muted small">👤 Comprador</p>
-                            <p class="mb-0 fw-bold" style="color: var(--text-color);">{{ comprobante.comprador }}</p>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="p-3 rounded-3" style="background: rgba(109,66,193,0.1); border: 1px solid rgba(109,66,193,0.2);">
-                            <p class="mb-1 text-muted small">💰 Total a Pagar</p>
-                            <p class="mb-0 text-warning fw-bold fs-5">
-                                ${{ ((comprobante.tickets?.length || 1) * comprobante.precioTicket) | number }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Código de verificación -->
-                <div class="p-3 rounded-3 text-center mb-4" 
-                     style="background: rgba(255,193,7,0.08); border: 1px dashed rgba(255,193,7,0.4);">
-                    <p class="mb-1 text-muted small text-uppercase" style="letter-spacing: 2px;">Código de Verificación</p>
-                    <p class="mb-0 text-warning fw-bold" style="font-family: monospace; font-size: 1.1rem; letter-spacing: 3px;">
-                        {{ comprobante.codigoVerificacion }}
-                    </p>
-                </div>
-
-                <!-- Info de pago -->
-                <div class="p-3 rounded-3" style="background: rgba(13,110,253,0.08); border-left: 3px solid #0d6efd;">
-                    <p class="mb-0 small" style="color: var(--text-color);">
-                        📌 <strong>Instrucciones de Pago:</strong> Para confirmar tu participación, deberás contactar al organizador de la tienda y realizar la transferencia según sus instrucciones. Guarda este código de verificación — será solicitado ante cualquier consulta. También te enviamos el comprobante a tu email.
-                    </p>
-                </div>
-            </div>
-            <div class="modal-footer border-top pb-4" style="border-color: var(--glass-border) !important;">
-                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" (click)="imprimirComprobante()">
-                    <i class="bi bi-printer me-2"></i> Imprimir
-                </button>
-                <button *ngIf="tienda?.whatsapp" type="button" class="btn btn-success rounded-pill px-4 fw-bold" (click)="redirigirWhatsAppRifa()">
-                    <i class="bi bi-whatsapp me-2"></i> Reportar Pago
-                </button>
-            </div>
-        </div>
-    </div>
+<div class="modal fade" id="modalComprobante" tabindex="-1" aria-hidden="true">
+    <!-- Modal interior content -->
 </div>
 
-<!-- 🛒 CARRITO FLOTANTE DE TICKETS -->
-<div *ngIf="ticketsSeleccionados.length > 0" 
-     class="ticket-cart-float animate__animated animate__slideInUp"
-     style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; width: min(90vw, 480px);">
-    <div class="d-flex align-items-center justify-content-between gap-3 p-3 px-4 rounded-pill shadow-lg text-white"
-         style="background: linear-gradient(135deg, #6f42c1, #0d6efd); backdrop-filter: blur(10px);">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <i class="bi bi-cart3 fs-5"></i>
-            <span class="fw-bold">{{ ticketsSeleccionados.length }} ticket{{ ticketsSeleccionados.length > 1 ? 's' : '' }}</span>
-            <span class="opacity-75">·</span>
-            <span class="text-warning fw-bold">${{ (ticketsSeleccionados.length * (producto?.precioTicket || 0)) | number }}</span>
-        </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-light text-dark rounded-pill px-3 fw-bold" (click)="limpiarSeleccion()">
-                <i class="bi bi-x"></i>
-            </button>
-            <button class="btn btn-sm btn-warning rounded-pill px-3 fw-bold" 
-                    (click)="comprarSeleccionados()" [disabled]="procesandoCompra">
-                <span *ngIf="procesandoCompra" class="spinner-border spinner-border-sm me-1"></span>
-                {{ procesandoCompra ? 'Procesando...' : 'Comprar' }} <i *ngIf="!procesandoCompra" class="bi bi-arrow-right ms-1"></i>
-            </button>
-        </div>
+<!-- CART FLOAT -->
+<div *ngIf="ticketsSeleccionados.length > 0" class="ticket-cart-float" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1050;">
+    <div class="p-3 px-4 rounded-pill shadow-lg bg-primary text-white d-flex align-items-center gap-3">
+        <span class="fw-bold">{{ ticketsSeleccionados.length }} tickets</span>
+        <button class="btn btn-sm btn-warning rounded-pill fw-bold" (click)="comprarAhora()">Comprar</button>
+        <button class="btn btn-sm btn-light rounded-circle" (click)="limpiarSeleccion()">×</button>
     </div>
 </div>

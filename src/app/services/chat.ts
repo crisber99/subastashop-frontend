@@ -47,13 +47,13 @@ export class ChatService {
     this.currentProductoId = productoId;
     this.currentMessages = [];
     this.messageSubject.next([]);
-    this.messageSubject.next([]);
 
     console.log(`💬 ChatService: Iniciando chat para producto ${productoId}...`);
 
     // Intentamos cargar historial por producto
     this.http.get<MensajeChatDTO[]>(`${environment.apiUrl}/chat/producto/${productoId}`).subscribe({
       next: (historial) => {
+        console.log('📚 ChatService: Historial cargado:', historial?.length || 0, 'mensajes');
         this.currentMessages = historial || [];
         this.messageSubject.next([...this.currentMessages]);
       },
@@ -86,7 +86,7 @@ export class ChatService {
         if (message.body) {
           try {
             const mensajeNuevo: MensajeChatDTO = JSON.parse(message.body);
-            console.log('📩 ChatService: Nuevo mensaje recibido!', mensajeNuevo);
+            console.log('📩 ChatService: ¡Mensaje Recibido Localmente!', mensajeNuevo);
             this.currentMessages.push(mensajeNuevo);
             this.messageSubject.next([...this.currentMessages]);
           } catch (e) {

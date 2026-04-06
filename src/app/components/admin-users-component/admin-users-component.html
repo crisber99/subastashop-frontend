@@ -58,7 +58,12 @@
                                     {{ user.nombreCompleto?.charAt(0) || 'U' }}
                                 </div>
                                 <div>
-                                    <div class="fw-bold">{{ user.nombreCompleto || 'Sin Nombre' }}</div>
+                                    <div class="fw-bold d-flex align-items-center">
+                                        {{ user.nombreCompleto || 'Sin Nombre' }}
+                                        <span *ngIf="user.alias" class="badge bg-light text-primary border ms-2" style="font-size: 0.65rem;">
+                                            &#64;{{ user.alias }}
+                                        </span>
+                                    </div>
                                     <div class="small text-muted">{{ user.email }}</div>
                                     <div class="small text-muted" style="font-size: 0.75rem;">ID: {{ user.id }}</div>
                                 </div>

@@ -412,12 +412,12 @@ export class ProductDetail implements OnInit, OnDestroy {
     
     const user = this.authService.currentUser();
     const email = user?.email || '';
-    const nombre = user?.nombre || 'Usuario';
+    const nombreRemitente = user?.alias || user?.nombre || 'Usuario';
     
     const tId = this.producto.tiendaId || (this.producto.tienda ? this.producto.tienda.id : null);
     
     // El ChatService ahora usa productoId desde el initChat, pasamos tId opcionalmente
-    this.chatService.enviarMensaje(nombre, this.nuevoMensajeChat, email, tId);
+    this.chatService.enviarMensaje(nombreRemitente, this.nuevoMensajeChat, email, tId);
     this.nuevoMensajeChat = '';
   }
 

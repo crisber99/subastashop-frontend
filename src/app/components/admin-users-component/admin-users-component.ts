@@ -184,6 +184,9 @@ export class AdminUsersComponent implements OnInit {
           <label class="form-label mb-1 fw-bold small">Dirección</label>
           <input id="swal-input3" class="form-control mb-3" value="${user.direccion || ''}" placeholder="Calle 123...">
           
+          <label class="form-label mb-1 fw-bold small">Alias (Nombre Público)</label>
+          <input id="swal-input-alias" class="form-control mb-3" value="${user.alias || ''}" placeholder="Ej: @juan_pro">
+          
           <label class="form-label mb-1 fw-bold small">Email</label>
           <input id="swal-input4" class="form-control mb-1" value="${user.email || ''}" placeholder="correo@ejemplo.com">
         </div>
@@ -196,6 +199,7 @@ export class AdminUsersComponent implements OnInit {
           nombreCompleto: (document.getElementById('swal-input1') as HTMLInputElement).value,
           telefono: (document.getElementById('swal-input2') as HTMLInputElement).value,
           direccion: (document.getElementById('swal-input3') as HTMLInputElement).value,
+          alias: (document.getElementById('swal-input-alias') as HTMLInputElement).value,
           email: (document.getElementById('swal-input4') as HTMLInputElement).value
         }
       }

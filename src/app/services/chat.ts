@@ -111,7 +111,7 @@ export class ChatService {
     this.stompClient.activate();
   }
 
-  // 2. Enviar mensaje (con update optimista instantáneo)
+  // 2. Enviar mensaje (el remitente también recibirá el eco por WS como todos)
   public enviarMensaje(usuarioNombre: string, mensaje: string, email: string, tiendaId?: number) {
     if (!this.stompClient?.connected || !this.currentProductoId) {
       console.error('❌ ChatService: No se puede enviar. Revisa la conexión.');
@@ -123,18 +123,12 @@ export class ChatService {
       remitenteNombre: usuarioNombre,
       userEmail: email,
       productoId: Number(this.currentProductoId),
-      tiendaId: tiendaId,
-      timestamp: new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })
+      tiendaId: tiendaId
     };
-
-    // Update optimista: mostrar el mensaje al remitente de inmediato
-    this.zone.run(() => {
-      this.currentMessages.push(payload);
-      this.messageSubject.next([...this.currentMessages]);
-    });
 
     console.log('📤 ChatService: Enviando mensaje...', payload);
 
+    // Publicar al broker → el servidor guarda y difunde a TODOS los suscritos (incluido el remitente)
     this.stompClient.publish({
       destination: `/app/chat/${this.currentProductoId}`,
       body: JSON.stringify(payload)

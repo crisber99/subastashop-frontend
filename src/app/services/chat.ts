@@ -62,9 +62,10 @@ export class ChatService {
         this.zone.run(() => this.messageSubject.next([...this.currentMessages]));
       },
       error: (err) => {
-        console.warn('❌ ChatService: Error cargando historial:', err.status, err.error);
-        if (err.error && typeof err.error === 'object') {
-          console.error('Detalles del error:', err.error.message || err.error.error);
+        console.warn('❌ ChatService: Error cargando historial:', err.status, err.message);
+        if (err.error) {
+          console.error('Cuerpo del error:', err.error);
+          if (err.error.location) console.error('Ubicación del error:', err.error.location);
         }
       }
     });

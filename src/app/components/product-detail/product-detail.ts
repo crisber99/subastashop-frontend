@@ -770,7 +770,8 @@ export class ProductDetail implements OnInit, OnDestroy {
     const user = this.authService.currentUser();
     const alias = user?.alias || user?.nombre || user?.email || 'Anónimo';
     const email = user?.email || '';
-    const tiendaId = this.producto?.tienda?.id;
+    // Usar tiendaId (campo plano del DTO) con fallback al sub-objeto tienda
+    const tiendaId = this.producto?.tiendaId || this.producto?.tienda?.id;
     this.chatService.enviarMensaje(alias, this.nuevoMensajeChat, email, tiendaId);
     this.nuevoMensajeChat = '';
   }

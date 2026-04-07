@@ -82,7 +82,7 @@ export class ChatService {
     this.stompClient.onConnect = () => {
       console.log('✅ ChatService: Conectado exitosamente!');
 
-      this.stompClient?.subscribe(`/topic/producto/${productoId}`, (message: Message) => {
+      this.stompClient?.subscribe(`/topic/chat/${productoId}`, (message: Message) => {
         if (!message.body) return;
         try {
           const nuevo: MensajeChatDTO = JSON.parse(message.body);

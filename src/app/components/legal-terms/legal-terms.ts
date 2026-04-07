@@ -21,9 +21,59 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: [`
+    /* Estilos Base y Modo Claro (Por defecto) */
+    .legal-container { 
+      text-align: justify; 
+      max-height: 300px; 
+      overflow-y: auto; 
+      font-size: 0.9rem; 
+      line-height: 1.5;
+      backdrop-filter: blur(5px);
+      
+      background: rgba(255, 255, 255, 0.8); 
+      color: #333;
+    }
+
     .legal-container::-webkit-scrollbar { width: 6px; }
     .legal-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-    .legal-container { text-align: justify; background: rgba(255,255,255,0.8) !important; backdrop-filter: blur(5px); }
+
+    /* --- ADAPTACIÓN AL MODO OSCURO --- */
+    /* Opción A: Detectar preferencia del sistema operativo */
+    @media (prefers-color-scheme: dark) {
+      .legal-container {
+        background: rgba(30, 30, 30, 0.8); /* Fondo oscuro semitransparente */
+        color: #e2e8f0; /* Texto claro */
+        border-color: #475569 !important; /* Suaviza el borde de Bootstrap */
+      }
+      
+      .legal-container::-webkit-scrollbar-thumb { 
+        background: #64748b; /* Scrollbar más oscuro */
+      }
+
+      .text-muted {
+        color: #94a3b8 !important; /* Ajuste para el texto inferior */
+      }
+    }
+
+    /* Opción B: Si usas una clase global (ej: un botón que le pone .dark a tu body/html). 
+       Si este es tu caso, borra el @media de arriba y descomenta lo siguiente: */
+    
+    /*
+    :host-context(.dark) .legal-container,
+    :host-context([data-bs-theme="dark"]) .legal-container {
+      background: rgba(30, 30, 30, 0.8);
+      color: #e2e8f0;
+      border-color: #475569 !important;
+    }
+    :host-context(.dark) .legal-container::-webkit-scrollbar-thumb,
+    :host-context([data-bs-theme="dark"]) .legal-container::-webkit-scrollbar-thumb {
+      background: #64748b;
+    }
+    :host-context(.dark) .text-muted,
+    :host-context([data-bs-theme="dark"]) .text-muted {
+      color: #94a3b8 !important;
+    }
+    */
   `]
 })
 export class LegalTermsComponent {

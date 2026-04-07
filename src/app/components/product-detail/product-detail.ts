@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CommonModule, AsyncPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { ProductService } from '../../services/product';
@@ -25,7 +25,7 @@ import { MemoriceComponent } from '../memorice/memorice';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, FormsModule, RouterModule, MemoriceComponent, LegalTermsComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MemoriceComponent, LegalTermsComponent],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })
@@ -409,24 +409,6 @@ export class ProductDetail implements OnInit, OnDestroy {
     });
   }
 
-  // --- LOGICA DE CHAT EN VIVO ---
-  enviarMensajeChat() {
-    if (!this.nuevoMensajeChat.trim()) return;
-    if (!this.authService.isLoggedIn()) {
-      Swal.fire('Inicia Sesión', 'Debes estar logueado para enviar mensajes al chat en vivo.', 'warning');
-      return;
-    }
-    
-    const user = this.authService.currentUser();
-    const email = user?.email || '';
-    const nombreRemitente = user?.alias || user?.nombre || 'Usuario';
-    
-    const tId = this.producto.tiendaId || (this.producto.tienda ? this.producto.tienda.id : null);
-    
-    // El ChatService ahora usa productoId desde el initChat, pasamos tId opcionalmente
-    this.chatService.enviarMensaje(nombreRemitente, this.nuevoMensajeChat, email, tId);
-    this.nuevoMensajeChat = '';
-  }
 
 
 

@@ -61,7 +61,12 @@ export class ChatService {
         this.currentMessages.forEach(m => { if (m.id) this.seenIds.add(m.id); });
         this.zone.run(() => this.messageSubject.next([...this.currentMessages]));
       },
-      error: (err) => console.warn('Historial de chat no disponible:', err.message)
+      error: (err) => {
+        console.warn('❌ ChatService: Error cargando historial:', err.status, err.error);
+        if (err.error && typeof err.error === 'object') {
+          console.error('Detalles del error:', err.error.message || err.error.error);
+        }
+      }
     });
 
     this.conectarWebSocket(productoId);

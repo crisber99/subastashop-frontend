@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import confetti from 'canvas-confetti';
+import { environment } from '../../../environments/environment';
 
 interface Card {
   id: number;
@@ -32,6 +33,7 @@ export class MemoriceComponent {
   }
 
   private http = inject(HttpClient);
+  readonly environment = environment;
 
   cards: Card[] = [];
   flippedCards: Card[] = [];
@@ -141,7 +143,7 @@ export class MemoriceComponent {
 
   submitScore(totalTime: number) {
     this.isProcessing = true;
-    const apiUrl = `/api/contests/${this.contestId}/submit-score`;
+    const apiUrl = `${this.environment.apiUrl}/contests/${this.contestId}/submit-score`;
     
     this.http.post(apiUrl, {
       userId: this.userId,

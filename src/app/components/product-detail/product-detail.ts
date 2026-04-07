@@ -13,7 +13,7 @@ import { LayoutService } from '../../services/layout';
 import { CalificacionService } from '../../services/calificacion';
 import { FavoritoService } from '../../services/favorito.service';
 import { OrdenService } from '../../services/orden';
-import { ChatService } from '../../services/chat';
+import { ChatService, MensajeChatDTO } from '../../services/chat';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -99,6 +99,8 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   // CHAT
   nuevoMensajeChat: string = '';
+  mensajesChat: MensajeChatDTO[] = [];
+  private chatSub: any;
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
@@ -286,6 +288,11 @@ export class ProductDetail implements OnInit, OnDestroy {
 
         if (data.id) {
           this.chatService.initChat(data.id);
+          // Suscribirse localmente para evitar problemas de change detection con async pipe
+          if (this.chatSub) this.chatSub.unsubscribe();
+          this.chatSub = this.chatService.mensajes$.subscribe(msgs => {
+            this.mensajesChat = msgs;
+          });
         } else {
           console.error('🚫 No se detectó producto.id para iniciar el chat.', data);
         }
@@ -769,5 +776,20 @@ export class ProductDetail implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.websocketService.desconectar();
     this.chatService.desconectar();
+    if (this.chatSub) this.chatSub.unsubscribe();
+  }
+
+  enviarMensajeChat() {
+    if (!this.nuevoMensajeChat.trim()) return;
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Atención', 'Debes iniciar sesión para enviar mensajes.', 'warning');
+      return;
+    }
+    const user = this.authService.currentUser();
+    const alias = user?.alias || user?.nombre || user?.email || 'Anónimo';
+    const email = user?.email || '';
+    const tiendaId = this.producto?.tienda?.id;
+    this.chatService.enviarMensaje(alias, this.nuevoMensajeChat, email, tiendaId);
+    this.nuevoMensajeChat = '';
   }
 }

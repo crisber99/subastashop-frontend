@@ -220,28 +220,38 @@
                 </div>
 
                 <!-- CHAT -->
-                <div *ngIf="producto?.chatHabilitado" class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-dark text-white py-3">
-                        <h6 class="mb-0 fw-bold">Live Chat</h6>
+                <div *ngIf="producto?.chatHabilitado" class="chat-card mb-4">
+                    <div class="chat-card-header">
+                        <span class="chat-dot"></span>
+                        <h6 class="mb-0 fw-bold">💬 Live Chat</h6>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="chat-messages p-3" style="height: 250px; overflow-y: auto;">
-                            @for (msg of (chatService.mensajes$ | async); track $index) {
-                                <div class="mb-2" [class.text-end]="msg.userEmail === authService.currentUser()?.email">
-                                    <span class="badge bg-light text-dark shadow-sm p-2 rounded-3">{{ msg.contenido }}</span>
+                    <div class="chat-messages-wrapper">
+                        <div class="chat-messages" id="chatMessagesBox">
+                            <div *ngIf="mensajesChat.length === 0" class="chat-empty">
+                                <span>💬 Sé el primero en escribir...</span>
+                            </div>
+                            <div *ngFor="let msg of mensajesChat; let i = index" 
+                                 class="chat-bubble-row"
+                                 [class.own]="msg.userEmail === authService.currentUser()?.email">
+                                <div class="chat-bubble" [class.own-bubble]="msg.userEmail === authService.currentUser()?.email">
+                                    <span class="chat-author">{{ msg.remitenteNombre }}</span>
+                                    <span class="chat-text">{{ msg.contenido }}</span>
+                                    <span class="chat-time">{{ msg.timestamp }}</span>
                                 </div>
-                            }
+                            </div>
                         </div>
                     </div>
-                    <div class="card-footer p-3">
-                        <form (ngSubmit)="enviarMensajeChat()" #chatForm="ngForm" class="d-flex gap-2">
-                            <input type="text" class="form-control rounded-pill" placeholder="Escribe..." [(ngModel)]="nuevoMensajeChat" name="chatMsg" required>
-                            <button type="submit" class="btn btn-primary rounded-pill px-3" [disabled]="!nuevoMensajeChat.trim()">
+                    <div class="chat-input-row">
+                        <form (ngSubmit)="enviarMensajeChat()" class="d-flex gap-2 w-100">
+                            <input type="text" class="chat-input" placeholder="Escribe un mensaje..." 
+                                   [(ngModel)]="nuevoMensajeChat" name="chatMsg" required autocomplete="off">
+                            <button type="submit" class="chat-send-btn" [disabled]="!nuevoMensajeChat.trim()">
                                 <i class="bi bi-send-fill"></i>
                             </button>
                         </form>
                     </div>
                 </div>
+
 
                 <div *ngIf="mensaje" class="alert mt-3 rounded-4 shadow-sm" [ngClass]="{'alert-success': !esError, 'alert-danger': esError}">
                     {{ mensaje }}

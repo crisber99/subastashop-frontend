@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
  */
 export interface MensajeChatDTO {
   id?: string;
-  contenido: string; 
+  contenido: string;
   remitenteNombre: string;
   productoId: number;
   tiendaId?: number;
@@ -18,6 +18,7 @@ export interface MensajeChatDTO {
   userEmail?: string;
   esVendedor?: boolean;
   admin?: boolean;
+  _optimistic?: boolean; // flag interno, NO se envía al servidor
 }
 
 @Injectable({
@@ -25,27 +26,31 @@ export interface MensajeChatDTO {
 })
 export class ChatService {
   private http = inject(HttpClient);
-  private zone = inject(NgZone);   // ← FIX: para forzar change detection
+  private zone = inject(NgZone);
   private stompClient: Client | null = null;
   private messageSubject = new BehaviorSubject<MensajeChatDTO[]>([]);
 
   public mensajes$ = this.messageSubject.asObservable();
   private currentProductoId: number | null = null;
   private currentMessages: MensajeChatDTO[] = [];
-  private seenIds = new Set<string>(); // evitar duplicados
+  private seenIds = new Set<string>();
+
+  // Claves de mensajes optimistas pendientes: "userEmail:contenido"
+  private pendingOptimistic = new Set<string>();
 
   constructor() { }
 
-  // 1. Iniciar historial REST + WebSocket
+  // ① Iniciar historial REST + conexión WebSocket
   public initChat(productoId: number) {
     if (!productoId) {
       console.warn('⚠️ ChatService: No se puede iniciar chat sin productoId.');
       return;
     }
-    
+
     this.currentProductoId = productoId;
     this.currentMessages = [];
     this.seenIds.clear();
+    this.pendingOptimistic.clear();
     this.messageSubject.next([]);
 
     // Cargar historial vía REST
@@ -54,7 +59,6 @@ export class ChatService {
         console.log('📚 ChatService: Historial cargado:', historial?.length || 0, 'mensajes');
         this.currentMessages = historial || [];
         this.currentMessages.forEach(m => { if (m.id) this.seenIds.add(m.id); });
-        // FIX: zone.run para que Angular detecte el cambio
         this.zone.run(() => this.messageSubject.next([...this.currentMessages]));
       },
       error: (err) => console.warn('Historial de chat no disponible:', err.message)
@@ -79,23 +83,40 @@ export class ChatService {
       console.log('✅ ChatService: Conectado exitosamente!');
 
       this.stompClient?.subscribe(`/topic/producto/${productoId}`, (message: Message) => {
-        if (message.body) {
-          try {
-            const nuevo: MensajeChatDTO = JSON.parse(message.body);
-            console.log('📩 ChatService: Mensaje recibido por WS:', nuevo);
+        if (!message.body) return;
+        try {
+          const nuevo: MensajeChatDTO = JSON.parse(message.body);
+          console.log('📩 ChatService: Mensaje recibido por WS:', nuevo);
 
-            // Evitar duplicados (el sender ya lo añadió optimistamente)
-            if (nuevo.id && this.seenIds.has(nuevo.id)) return;
-            if (nuevo.id) this.seenIds.add(nuevo.id);
+          // Deduplicar por ID de BD (evita recargar mensajes ya vistos)
+          if (nuevo.id && this.seenIds.has(nuevo.id)) return;
+          if (nuevo.id) this.seenIds.add(nuevo.id);
 
-            // FIX CRÍTICO: NgZone.run fuerza el change detection de Angular
-            this.zone.run(() => {
-              this.currentMessages.push(nuevo);
-              this.messageSubject.next([...this.currentMessages]);
-            });
-          } catch (e) {
-            console.error('Error parseando mensaje de chat:', e);
+          // ¿Es el eco de un mensaje optimista propio?
+          const key = `${nuevo.userEmail}:${nuevo.contenido}`;
+          if (this.pendingOptimistic.has(key)) {
+            this.pendingOptimistic.delete(key);
+
+            // Reemplazar el optimista con la versión oficial del servidor (que trae ID real y timestamp oficial)
+            const idx = this.currentMessages.findIndex(
+              m => m._optimistic && m.userEmail === nuevo.userEmail && m.contenido === nuevo.contenido
+            );
+            if (idx >= 0) {
+              this.zone.run(() => {
+                this.currentMessages[idx] = nuevo; // versión oficial reemplaza optimista
+                this.messageSubject.next([...this.currentMessages]);
+              });
+            }
+            return; // no duplicar
           }
+
+          // Mensaje nuevo de otro usuario — añadir normalmente
+          this.zone.run(() => {
+            this.currentMessages.push(nuevo);
+            this.messageSubject.next([...this.currentMessages]);
+          });
+        } catch (e) {
+          console.error('Error parseando mensaje de chat:', e);
         }
       });
     };
@@ -111,24 +132,36 @@ export class ChatService {
     this.stompClient.activate();
   }
 
-  // 2. Enviar mensaje (el remitente también recibirá el eco por WS como todos)
+  // ② Enviar mensaje con update optimista + deduplicación al recibir eco del servidor
   public enviarMensaje(usuarioNombre: string, mensaje: string, email: string, tiendaId?: number) {
     if (!this.stompClient?.connected || !this.currentProductoId) {
       console.error('❌ ChatService: No se puede enviar. Revisa la conexión.');
       return;
     }
 
+    const hora = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+
     const payload: MensajeChatDTO = {
       contenido: mensaje,
       remitenteNombre: usuarioNombre,
       userEmail: email,
       productoId: Number(this.currentProductoId),
-      tiendaId: tiendaId
+      tiendaId: tiendaId,
+      timestamp: hora
     };
+
+    // Registrar clave pendiente para deduplicar el eco
+    const key = `${email}:${mensaje}`;
+    this.pendingOptimistic.add(key);
+
+    // Mostrar el mensaje al remitente de inmediato (update optimista)
+    this.zone.run(() => {
+      this.currentMessages.push({ ...payload, _optimistic: true });
+      this.messageSubject.next([...this.currentMessages]);
+    });
 
     console.log('📤 ChatService: Enviando mensaje...', payload);
 
-    // Publicar al broker → el servidor guarda y difunde a TODOS los suscritos (incluido el remitente)
     this.stompClient.publish({
       destination: `/app/chat/${this.currentProductoId}`,
       body: JSON.stringify(payload)

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Client, Message } from '@stomp/stompjs';
@@ -7,9 +7,6 @@ import { BehaviorSubject } from 'rxjs';
 
 /**
  * MensajeChatDTO sincronizado con el Backend
- * contenido = mensaje
- * remitenteNombre = usuarioNombre
- * tiendaId = productoId (en este contexto de chat de tienda)
  */
 export interface MensajeChatDTO {
   id?: string;
@@ -28,39 +25,41 @@ export interface MensajeChatDTO {
 })
 export class ChatService {
   private http = inject(HttpClient);
+  private zone = inject(NgZone);   // ← FIX: para forzar change detection
   private stompClient: Client | null = null;
   private messageSubject = new BehaviorSubject<MensajeChatDTO[]>([]);
 
   public mensajes$ = this.messageSubject.asObservable();
   private currentProductoId: number | null = null;
   private currentMessages: MensajeChatDTO[] = [];
+  private seenIds = new Set<string>(); // evitar duplicados
 
   constructor() { }
 
-  // 1. Obtener historial REST y conectar a WebSocket por PRODUCTO
+  // 1. Iniciar historial REST + WebSocket
   public initChat(productoId: number) {
     if (!productoId) {
-      console.warn("⚠️ ChatService: No se puede iniciar chat sin productoId.");
+      console.warn('⚠️ ChatService: No se puede iniciar chat sin productoId.');
       return;
     }
     
     this.currentProductoId = productoId;
     this.currentMessages = [];
+    this.seenIds.clear();
     this.messageSubject.next([]);
 
-    console.log(`💬 ChatService: Iniciando chat para producto ${productoId}...`);
-
-    // Intentamos cargar historial por producto
+    // Cargar historial vía REST
     this.http.get<MensajeChatDTO[]>(`${environment.apiUrl}/chat/producto/${productoId}`).subscribe({
       next: (historial) => {
         console.log('📚 ChatService: Historial cargado:', historial?.length || 0, 'mensajes');
         this.currentMessages = historial || [];
-        this.messageSubject.next([...this.currentMessages]);
+        this.currentMessages.forEach(m => { if (m.id) this.seenIds.add(m.id); });
+        // FIX: zone.run para que Angular detecte el cambio
+        this.zone.run(() => this.messageSubject.next([...this.currentMessages]));
       },
-      error: (err) => console.warn("Historial de chat no disponible o error:", err.message)
+      error: (err) => console.warn('Historial de chat no disponible:', err.message)
     });
 
-    // Conectar WebSocket
     this.conectarWebSocket(productoId);
   }
 
@@ -68,71 +67,78 @@ export class ChatService {
     this.desconectar();
 
     const wsUrl = environment.wsUrl;
-    console.log(`🔌 ChatService: Intentando conectar a ${wsUrl} (Producto: ${productoId})`);
+    console.log(`🔌 ChatService: Conectando a ${wsUrl} (Producto: ${productoId})`);
 
     this.stompClient = new Client({
       webSocketFactory: () => new SockJS(wsUrl),
       reconnectDelay: 5000,
-      debug: (str) => {
-        console.log('STOMP Debug (Chat):', str);
-      }
+      debug: (str) => console.log('STOMP Debug (Chat):', str)
     });
 
-    this.stompClient.onConnect = (frame) => {
-      console.log('✅ ChatService: Conectado existosamente!');
-      
-      // Suscribirse al canal del producto
+    this.stompClient.onConnect = () => {
+      console.log('✅ ChatService: Conectado exitosamente!');
+
       this.stompClient?.subscribe(`/topic/producto/${productoId}`, (message: Message) => {
         if (message.body) {
           try {
-            const mensajeNuevo: MensajeChatDTO = JSON.parse(message.body);
-            console.log('📩 ChatService: ¡Mensaje Recibido Localmente!', mensajeNuevo);
-            this.currentMessages.push(mensajeNuevo);
-            this.messageSubject.next([...this.currentMessages]);
+            const nuevo: MensajeChatDTO = JSON.parse(message.body);
+            console.log('📩 ChatService: Mensaje recibido por WS:', nuevo);
+
+            // Evitar duplicados (el sender ya lo añadió optimistamente)
+            if (nuevo.id && this.seenIds.has(nuevo.id)) return;
+            if (nuevo.id) this.seenIds.add(nuevo.id);
+
+            // FIX CRÍTICO: NgZone.run fuerza el change detection de Angular
+            this.zone.run(() => {
+              this.currentMessages.push(nuevo);
+              this.messageSubject.next([...this.currentMessages]);
+            });
           } catch (e) {
-            console.error("Error parseando mensaje de chat:", e);
+            console.error('Error parseando mensaje de chat:', e);
           }
         }
       });
     };
 
     this.stompClient.onStompError = (frame) => {
-      console.error('❌ ChatService Broker Error: ' + frame.headers['message']);
-      console.error('Detalles:', frame.body);
+      console.error('❌ ChatService Broker Error:', frame.headers['message']);
     };
 
     this.stompClient.onWebSocketClose = () => {
-       console.warn('⚠️ ChatService: Conexión WebSocket cerrada.');
+      console.warn('⚠️ ChatService: Conexión WebSocket cerrada.');
     };
 
     this.stompClient.activate();
   }
 
-  // 2. Enviar mensaje por WS
+  // 2. Enviar mensaje (con update optimista instantáneo)
   public enviarMensaje(usuarioNombre: string, mensaje: string, email: string, tiendaId?: number) {
-    if (this.stompClient && this.stompClient.connected && this.currentProductoId) {
-      
-      const payload: MensajeChatDTO = {
-        contenido: mensaje,
-        remitenteNombre: usuarioNombre,
-        userEmail: email,
-        productoId: Number(this.currentProductoId),
-        tiendaId: tiendaId
-      };
-      
-      console.log('📤 ChatService: Enviando mensaje...', payload);
-
-      this.stompClient.publish({
-        destination: `/app/chat/${this.currentProductoId}`,
-        body: JSON.stringify(payload)
-      });
-    } else {
-      console.error("❌ ChatService: No se puede enviar mensaje. Estado:", {
-        existeSTOMP: !!this.stompClient,
-        conectado: this.stompClient?.connected,
-        ID_Producto: this.currentProductoId
-      });
+    if (!this.stompClient?.connected || !this.currentProductoId) {
+      console.error('❌ ChatService: No se puede enviar. Revisa la conexión.');
+      return;
     }
+
+    const payload: MensajeChatDTO = {
+      contenido: mensaje,
+      remitenteNombre: usuarioNombre,
+      userEmail: email,
+      productoId: Number(this.currentProductoId),
+      tiendaId: tiendaId,
+      timestamp: new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })
+    };
+
+    // Update optimista: mostrar el mensaje al remitente de inmediato
+    this.zone.run(() => {
+      this.currentMessages.push(payload);
+      this.messageSubject.next([...this.currentMessages]);
+    });
+
+    console.log('📤 ChatService: Enviando mensaje...', payload);
+
+    this.stompClient.publish({
+      destination: `/app/chat/${this.currentProductoId}`,
+      body: JSON.stringify(payload)
+    });
   }
 
   public desconectar() {

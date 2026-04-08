@@ -67,37 +67,28 @@ export class Register implements OnInit {
         didOpen: () => Swal.showLoading()
     });
 
-    // ⚖️ Primero registramos la aceptación legal auditada (IP, User-Agent, Timestamp)
-    this.productService.acceptLegalTerms('USER_REGISTRATION').subscribe({
+    this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        this.authService.register(this.registerForm.value).subscribe({
-          next: () => {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Cuenta Creada!',
-                text: 'Ahora puedes iniciar sesión con tus datos.',
-                confirmButtonColor: '#6366f1',
-                confirmButtonText: 'Ir al Login'
-            }).then(() => {
-                this.router.navigate(['/login']);
-            });
-          },
-          error: (err) => {
-            this.cargando = false;
-            if (err.status === 400 && err.error && typeof err.error === 'object') {
-                 const allErrors = Object.values(err.error).flat().join('<br>');
-                 this.mensajeError = allErrors;
-                 Swal.fire({ title: 'Error de Validación', html: allErrors, icon: 'error' });
-            } else {
-                 this.mensajeError = err.error?.message || err.error?.error || err.message || 'Error al registrarse.';
-                 Swal.fire('Error', this.mensajeError, 'error');
-            }
-          }
+        Swal.fire({
+            icon: 'success',
+            title: '¡Cuenta Creada!',
+            text: 'Ahora puedes iniciar sesión con tus datos.',
+            confirmButtonColor: '#6366f1',
+            confirmButtonText: 'Ir al Login'
+        }).then(() => {
+            this.router.navigate(['/login']);
         });
       },
       error: (err) => {
         this.cargando = false;
-        Swal.fire('Error Legal', 'No pudimos registrar tu firma digital legal. Por favor, intenta de nuevo.', 'error');
+        if (err.status === 400 && err.error && typeof err.error === 'object') {
+             const allErrors = Object.values(err.error).flat().join('<br>');
+             this.mensajeError = allErrors;
+             Swal.fire({ title: 'Error de Validación', html: allErrors, icon: 'error' });
+        } else {
+             this.mensajeError = err.error?.message || err.error?.error || err.message || 'Error al registrarse.';
+             Swal.fire('Error', this.mensajeError, 'error');
+        }
       }
     });
   }

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SuperAdmin } from './super-admin';
+import { SuperAdminService } from './super-admin';
 
-describe('SuperAdmin', () => {
-  let service: SuperAdmin;
+describe('SuperAdminService', () => {
+  let service: SuperAdminService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SuperAdmin);
+    service = TestBed.inject(SuperAdminService);
   });
 
   it('should be created', () => {

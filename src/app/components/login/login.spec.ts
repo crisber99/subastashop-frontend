@@ -1,18 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LoginComponent } from './login';
+import { AuthService } from '../../services/auth-service';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
+import { of } from 'rxjs';
 
-import { Login } from './login';
-
-describe('Login', () => {
-  let component: Login;
-  let fixture: ComponentFixture<Login>;
+describe('LoginComponent', () => {
+  let component: LoginComponent;
+  let fixture: ComponentFixture<LoginComponent>;
+  let authServiceMock: any;
+  let socialAuthServiceMock: any;
 
   beforeEach(async () => {
+    authServiceMock = {
+      login: jasmine.createSpy('login').and.returnValue(of({})),
+      socialLogin: jasmine.createSpy('socialLogin').and.returnValue(of({}))
+    };
+    socialAuthServiceMock = {
+      authState: of(null),
+      signIn: jasmine.createSpy('signIn').and.returnValue(Promise.resolve())
+    };
+
     await TestBed.configureTestingModule({
-      imports: [Login]
+      imports: [LoginComponent],
+      providers: [
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: SocialAuthService, useValue: socialAuthServiceMock }
+      ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Login);
+    fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

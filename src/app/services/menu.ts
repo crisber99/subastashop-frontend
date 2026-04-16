@@ -40,6 +40,12 @@ export class MenuService {
       route: '/admin/configuracion',
       roles: ['ROLE_ADMIN']
     },
+    /* {
+      label: 'Analista de Datos IA',
+      icon: 'bi-robot',
+      route: '/admin/analisis-ia',
+      roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+    }, */
     {
       label: 'Usuarios del Sistema',
       icon: 'bi-people',

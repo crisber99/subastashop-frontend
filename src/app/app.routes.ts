@@ -19,6 +19,7 @@ import { MisFavoritosComponent } from './pages/mis-favoritos/mis-favoritos.compo
 import { PrivacidadComponent } from './pages/privacidad/privacidad.component';
 import { TerminosComponent } from './pages/terminos/terminos.component';
 import { ProfileComponent } from './components/profile/profile';
+import { AdminDataAnalysisComponent } from './components/admin/admin-data-analysis/admin-data-analysis.component';
 
 export const routes: Routes = [
     // Rutes Públiques
@@ -40,6 +41,7 @@ export const routes: Routes = [
     { path: 'admin/crear', component: CrearProducto, canActivate: [authGuard] },
     { path: 'admin/editar/:id', component: EditarProducto, canActivate: [authGuard] },
     { path: 'admin/configuracion', component: AdminConfig, canActivate: [authGuard] },
+    { path: 'admin/analisis-ia', component: AdminDataAnalysisComponent, canActivate: [authGuard] },
     { path: 'super-admin', component: SuperAdminDashboard, canActivate: [authGuard] },
     { path: 'super-admin/reportes', component: SuperAdminReportes, canActivate: [authGuard] },
     { path: 'super-admin/usuarios', component: AdminUsersComponent, canActivate: [authGuard] },

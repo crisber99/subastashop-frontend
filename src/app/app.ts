@@ -9,13 +9,14 @@ import { Sidebar } from './components/sidebar/sidebar';
 import { FooterComponent } from './components/footer/footer';
 import { CartFloat } from './components/cart-float/cart-float';
 import { PromotionBanner } from './components/promotion-banner/promotion-banner';
+import { AiSupportChatComponent } from './components/ai-support-chat/ai-support-chat.component';
 import { Websocket } from './services/websocket';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner],
+  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner, AiSupportChatComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

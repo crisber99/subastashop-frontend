@@ -1,0 +1,45 @@
+<div class="ai-chat-container">
+  <!-- Botón Flotante -->
+  <button class="chat-bubble-btn" (click)="toggleChat()" title="Soporte IA">
+    <i class="bi" [class.bi-chat-dots]="!isOpen()" [class.bi-chevron-down]="isOpen()"></i>
+  </button>
+
+  <!-- Ventana de Chat -->
+  @if (isOpen()) {
+    <div class="chat-window">
+      <div class="chat-header">
+        <h3><i class="bi bi-robot me-2"></i>Soporte SubastaShop</h3>
+        <button class="close-btn" (click)="toggleChat()">&times;</button>
+      </div>
+
+      <div class="chat-messages" #scrollContainer>
+        @for (msg of messages(); track $index) {
+          <div [class]="'message ' + msg.role">
+            <div [innerHTML]="formatMessage(msg.content)"></div>
+          </div>
+        }
+        @if (isTyping()) {
+          <div class="message ai">
+            <div class="typing-indicator">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="chat-footer">
+        <input 
+          type="text" 
+          class="chat-input" 
+          placeholder="Escribe tu duda..." 
+          [(ngModel)]="userInput"
+          (keyup.enter)="sendMessage()"
+          [disabled]="isTyping()"
+        />
+        <button class="send-btn" (click)="sendMessage()" [disabled]="isTyping() || !userInput()">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>

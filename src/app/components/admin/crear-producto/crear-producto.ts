@@ -87,7 +87,9 @@ export class CrearProducto implements OnInit {
     const numeroPares = this.productoForm.get('numeroPares');
 
     precioBase?.clearValidators();
+    fechaInicio?.clearValidators();
     fechaFin?.clearValidators();
+    horasVentaAnticipada?.clearValidators();
     precioTicket?.clearValidators();
     cantidadNumeros?.clearValidators();
     numeroPares?.clearValidators();

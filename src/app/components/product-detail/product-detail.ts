@@ -577,8 +577,8 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   cargarMisParticipaciones() {
     if (!this.authService.isLoggedIn()) return;
-    this.productService.getMisParticipaciones(this.producto.id).subscribe({
-      next: (data) => this.misTickets = data || [],
+    this.productService.getMisParticipaciones().subscribe({
+      next: (data) => this.misTickets = data?.filter((p: any) => p.contest.id === this.producto.id) || [],
       error: () => this.misTickets = []
     });
   }

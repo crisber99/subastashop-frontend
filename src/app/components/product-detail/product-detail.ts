@@ -122,9 +122,18 @@ export class ProductDetail implements OnInit, OnDestroy {
         
         // --- LOGICA DE SORTEO EN TIEMPO REAL (RIFA) ---
         if (mensaje.status === 'PREPARANDO') {
-          this.iniciarSorteoShow();
+          // Para subastas (show de ruleta). En concursos Memorice ignoramos la animación.
+          if (this.producto.tipoVenta !== 'RIFA') {
+            this.iniciarSorteoShow();
+          }
         } else if (mensaje.status === 'FINALIZADO') {
-          this.procesarGanadoresSecuencial(mensaje.ganadores);
+          if (this.producto.tipoVenta === 'RIFA') {
+            // Recargar desde la API para obtener el estado actualizado y los ganadores con el formato correcto
+            this.cargarProducto(this.producto.slug || this.producto.id);
+            this.cargarGanadoresHistorial();
+          } else {
+            this.procesarGanadoresSecuencial(mensaje.ganadores);
+          }
         }
 
         if (mensaje.tipo === 'TICKET_VENDIDO') {
@@ -652,6 +661,8 @@ export class ProductDetail implements OnInit, OnDestroy {
             Swal.close();
             Swal.fire('¡Concurso Finalizado!', 'Los ganadores han sido determinados por sus tiempos.', 'success');
             this.cargarProducto(this.producto.slug || this.producto.id);
+            // Esperar a que el proceso asíncrono del backend termine (3s sleep + tiempo de escritura)
+            setTimeout(() => this.cargarGanadoresHistorial(), 4500);
           },
           error: (err) => {
             Swal.close();

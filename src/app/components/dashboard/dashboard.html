@@ -117,7 +117,7 @@
                 <div class="text-center py-5">
                     <i class="bi bi-cart-x text-muted" style="font-size: 4rem;"></i>
                     <h4 class="mt-3">Tu carrito está vacío</h4>
-                    <p class="text-muted">Explora el catálogo y agrega productos, rifas o subastas.</p>
+                    <p class="text-muted">Explora el catálogo y agrega productos, concursos o subastas.</p>
                     <a routerLink="/" class="btn btn-primary mt-2">Ir al Catálogo</a>
                 </div>
             }
@@ -256,7 +256,42 @@
                 </div>
                 }
             </div>
+        <!-- SECCIÓN 3: MIS CONCURSOS / MEMORICE -->
+        <div class="col-12 mt-4" *ngIf="misConcursos.length > 0">
+            <h5 class="fw-bold mb-3 d-flex align-items-center text-primary">
+                <i class="bi bi-controller me-2"></i> Mis Concursos (Memorice)
+            </h5>
+            <div class="row">
+                @for (p of misConcursos; track p.id) {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0 border-start border-5 border-primary bg-card-custom">
+                        <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-3">
+                            <span class="fw-bold">{{ p.contest.nombre }}</span>
+                            <span class="badge bg-primary rounded-pill">CONCURSO</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-2">Comprado el: {{ p.createdAt | date:'short' }}</p>
+
+                            @if (p.durationMs) {
+                                <div class="alert alert-success mt-3 py-2 mb-3">
+                                    <i class="bi bi-trophy-fill"></i> ¡Ya jugaste! Tiempo: <strong>{{ p.durationMs }} ms</strong>
+                                </div>
+                            } @else {
+                                <div class="alert alert-warning mt-3 py-2 mb-3">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> Tienes acceso pendiente para jugar.
+                                </div>
+                            }
+
+                            <button class="btn btn-primary w-100 fw-bold" [routerLink]="['/producto', p.contest.slug || p.contest.id]">
+                                <i class="bi bi-joystick"></i> Ir al Concurso
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
         </div>
+
     </div>
     }
 

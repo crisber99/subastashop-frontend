@@ -61,6 +61,21 @@ export class Websocket {
     }
   }
 
+  suscribirsePodio(productoId: number) {
+    if (this.stompClient && this.stompClient.connected) {
+      console.log(`📡 Suscribiéndose al podio: /topic/concurso/${productoId}/podio`);
+      
+      return this.stompClient.subscribe(`/topic/concurso/${productoId}/podio`, (mensaje) => {
+        console.log('📩 ¡Mensaje de podio recibido!', mensaje.body);
+        const data = JSON.parse(mensaje.body);
+        this.precioUpdates.next({ tipo: 'PODIO_ACTUALIZADO', podio: data });
+      });
+    } else {
+      console.warn('⚠️ Intentando suscribir a podio sin conexión activa');
+      return null;
+    }
+  }
+
   suscribirseProducto(productoId: number) {
     if (this.stompClient && this.stompClient.connected) {
       console.log(`📡 Suscribiéndose al canal: /topic/producto/${productoId}`);

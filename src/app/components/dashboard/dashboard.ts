@@ -32,6 +32,7 @@ export class Dashboard implements OnInit {
   ordenesPendientes: any[] = [];
   ordenesPagadas: any[] = [];
   ordenesEnRevision: any[] = [];
+  misConcursos: any[] = [];
   tabActual: string = 'carrito'; 
 
   stats = {
@@ -107,6 +108,12 @@ export class Dashboard implements OnInit {
     }
 
     this.productService.getMisPujas().subscribe(data => this.pujas = data);
+    
+    this.productService.getMisParticipaciones().subscribe({
+      next: (data) => this.misConcursos = data,
+      error: (err) => console.error('Error cargando concursos', err)
+    });
+
     this.ordenService.getMisOrdenes().subscribe({
       next: (data) => {
         this.ordenes = data;
@@ -213,6 +220,9 @@ export class Dashboard implements OnInit {
 
   recargarOrdenes() {
     this.loading = true; 
+    
+    this.productService.getMisParticipaciones().subscribe(data => this.misConcursos = data);
+
     this.ordenService.getMisOrdenes().subscribe({
         next: (data) => {
             this.ordenes = data;

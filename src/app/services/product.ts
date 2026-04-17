@@ -107,7 +107,7 @@ export class ProductService {
   }
 
   getParticipacionesAdmin(contestId: number) {
-    return this.http.get<any[]>(`${this.apiUrlContests}/${contestId}/admin/detalles`);
+    return this.http.get<any[]>(`${this.apiUrlContests}/${contestId}/participants`);
   }
 
   getAdminStats() {
@@ -118,8 +118,8 @@ export class ProductService {
     return this.http.get<any[]>(`${this.apiUrlContests}/${id}/winners`);
   }
 
-  getMisParticipaciones(contestId: number) {
-    return this.http.get<any[]>(`${this.apiUrlContests}/${contestId}/mis-participaciones`);
+  getMisParticipaciones() {
+    return this.http.get<any[]>(`${this.apiUrlContests}/my-participations`);
   }
 
   getProductosPorTienda(slug: string) {

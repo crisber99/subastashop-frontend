@@ -63,6 +63,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   ticketsDetalle: any[] = [];
   ganadores: any[] = [];
   misTickets: any[] = [];
+  podioTiempoReal: any[] = [];
   comprobante: any = null;
   
   // Variables del Show de Sorteo ✨
@@ -134,6 +135,8 @@ export class ProductDetail implements OnInit, OnDestroy {
           if (this.authService.isAdmin()) {
             this.cargarTablaAdmin();
           }
+        } else if (mensaje.tipo === 'PODIO_ACTUALIZADO') {
+          this.podioTiempoReal = mensaje.podio;
         } else if (mensaje.tipo === 'SORTEO_FINALIZADO') {
           // Si llega este mensaje genérico pero no el status (retrocompatibilidad)
           this.ganadores = mensaje.ganadores;
@@ -249,6 +252,7 @@ export class ProductDetail implements OnInit, OnDestroy {
           this.websocketService.suscribirseProducto(this.producto.id);
           if (this.producto.tipoVenta === 'RIFA') {
             this.websocketService.suscribirseRifa(this.producto.id);
+            this.websocketService.suscribirsePodio(this.producto.id);
           }
         });
 

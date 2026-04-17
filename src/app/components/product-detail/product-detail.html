@@ -71,7 +71,7 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
                           <li class="breadcrumb-item small text-muted">SubastaShop</li>
-                          <li class="breadcrumb-item small text-primary active" aria-current="page">{{ producto.tipoVenta }}</li>
+                          <li class="breadcrumb-item small text-primary active" aria-current="page">{{ producto.tipoVenta === 'RIFA' ? 'CONCURSO' : producto.tipoVenta }}</li>
                         </ol>
                     </nav>
                     
@@ -162,42 +162,77 @@
                             <h2 class="fw-800 text-primary">${{ producto.precioTicket | number }}</h2>
                         </div>
 
-                        <!-- 🕹️ JUEGO -->
-                        <div *ngIf="authService.isLoggedIn(); else loginRequired">
-                            <div class="mb-4">
-                                <app-memorice 
-                                    [contestId]="producto.id" 
-                                    [userId]="authService.currentUser()?.id || 0"
-                                    [totalPairs]="producto.numeroPares || 5"
-                                    [contestStatus]="producto.estado"
-                                    (onComplete)="onGameComplete($event)">
-                                </app-memorice>
-                            </div>
-
-                            <div *ngIf="!yaParticipa()" class="text-center py-3">
-                                <app-legal-terms></app-legal-terms>
-                                <div class="form-check mt-3 d-flex justify-content-center align-items-center">
-                                    <input class="form-check-input me-3" type="checkbox" id="checkLegal" [(ngModel)]="legalTermsChecked">
-                                    <label class="form-check-label fw-bold" for="checkLegal">Acepto las Bases Legales</label>
-                                </div>
-                                <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-lg w-100 mt-3" 
-                                        (click)="unirseAlConcurso()" [disabled]="!legalTermsChecked">
-                                    🚀 Inscribirse ahora por ${{ producto.precioTicket | number }}
-                                </button>
+                        <!-- 🕹️ JUEGO O FINALIZADO -->
+                        <div *ngIf="producto.estado === 'FINALIZADA'; else juegoActivo">
+                            <div class="alert alert-secondary text-center rounded-4 shadow-sm py-4">
+                                <h2>✅ CONCURSO FINALIZADO</h2>
+                                <p class="mb-0">Los ganadores han sido determinados y el concurso está cerrado.</p>
                             </div>
                         </div>
-                        <ng-template #loginRequired>
-                            <div class="alert alert-info text-center rounded-4">Inicia sesión para participar.</div>
+
+                        <ng-template #juegoActivo>
+                            <div *ngIf="authService.isLoggedIn(); else loginRequired">
+                                <div class="mb-4">
+                                    <app-memorice 
+                                        [contestId]="producto.id" 
+                                        [userId]="authService.currentUser()?.id || 0"
+                                        [totalPairs]="producto.numeroPares || 5"
+                                        [contestStatus]="producto.estado"
+                                        (onComplete)="onGameComplete($event)">
+                                    </app-memorice>
+                                </div>
+
+                                <div *ngIf="!yaParticipa()" class="text-center py-3">
+                                    <app-legal-terms></app-legal-terms>
+                                    <div class="form-check mt-3 d-flex justify-content-center align-items-center">
+                                        <input class="form-check-input me-3" type="checkbox" id="checkLegal" [(ngModel)]="legalTermsChecked">
+                                        <label class="form-check-label fw-bold" for="checkLegal">Acepto las Bases Legales</label>
+                                    </div>
+                                    <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-lg w-100 mt-3" 
+                                            (click)="unirseAlConcurso()" [disabled]="!legalTermsChecked">
+                                        🚀 Inscribirse ahora por ${{ producto.precioTicket | number }}
+                                    </button>
+                                </div>
+                            </div>
+                            <ng-template #loginRequired>
+                                <div class="alert alert-info text-center rounded-4">Inicia sesión para participar.</div>
+                            </ng-template>
                         </ng-template>
 
-                        <!-- RANKING -->
-                        <div *ngIf="ganadores && ganadores.length > 0" class="mt-4 border-top pt-4">
-                            <h5 class="fw-bold text-center mb-3">🏆 Tabla de Líderes</h5>
+                        <!-- PODIO EN VIVO -->
+                        <div *ngIf="producto.estado !== 'FINALIZADA' && podioTiempoReal.length > 0" class="mt-4 border-top pt-4">
+                            <h5 class="fw-bold text-center mb-3">🔥 Podio en Tiempo Real <span class="spinner-grow spinner-grow-sm text-danger" role="status"></span></h5>
+                            <div class="list-group list-group-flush rounded-4 overflow-hidden shadow-sm border border-danger">
+                                <div class="list-group-item d-flex justify-content-between p-3" *ngFor="let g of podioTiempoReal; let i = index"
+                                     [ngClass]="{'bg-warning-subtle fw-bold': i === 0}">
+                                    <span>
+                                        <span class="badge bg-dark rounded-circle me-2">{{ g.rank }}</span>
+                                        {{ g.participant }}
+                                    </span>
+                                    <span class="text-primary">{{ (g.durationMs / 1000) | number:'1.2-2' }}s</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RESULTADOS FINALES -->
+                        <div *ngIf="producto.estado === 'FINALIZADA' && ganadores && ganadores.length > 0" class="mt-4 border-top pt-4">
+                            <h5 class="fw-bold text-center mb-3">🏆 Ganadores Oficiales</h5>
                             <div class="list-group list-group-flush rounded-4 overflow-hidden shadow-sm">
                                 <div class="list-group-item d-flex justify-content-between p-3" *ngFor="let g of ganadores; let i = index">
-                                    <span>{{ i + 1 }}. {{ g.participant }}</span>
+                                    <span><span class="badge bg-success rounded-circle me-2">{{ i + 1 }}</span> {{ g.participant }}</span>
                                     <span class="fw-bold">{{ (g.durationMs / 1000) | number:'1.2-2' }}s</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 🛠️ HERRAMIENTA DEL DUEÑO -->
+                        <div *ngIf="esDuenoProducto() && producto.estado !== 'FINALIZADA'" class="mt-4 pt-3 border-top">
+                            <div class="alert alert-dark text-center rounded-4 mb-0">
+                                <h6 class="mb-3"><i class="bi bi-shield-lock-fill text-warning me-2"></i>Controles del Dueño</h6>
+                                <button class="btn btn-warning fw-bold text-dark w-100 rounded-pill shadow-sm" (click)="lanzarConcurso()">
+                                    <i class="bi bi-flag-fill"></i> Finalizar Concurso y Premiar
+                                </button>
+                                <p class="small text-muted mt-2 mb-0">Esta acción cerrará las participaciones y asignará los puestos irrevocablemente.</p>
                             </div>
                         </div>
                     </div>

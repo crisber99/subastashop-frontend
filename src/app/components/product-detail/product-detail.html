@@ -75,9 +75,14 @@
                         </ol>
                     </nav>
                     
-                    <div *ngIf="isLive" class="badge rounded-pill bg-success-subtle text-success border border-success fw-bold px-3 py-2 shadow-sm animate__animated animate__fadeIn">
-                        <span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true" style="width: 0.5rem; height: 0.5rem;"></span>
-                        En Vivo
+                    <div class="d-flex gap-2 align-items-center">
+                        <div *ngIf="isLive" class="badge rounded-pill bg-success-subtle text-success border border-success fw-bold px-3 py-2 shadow-sm animate__animated animate__fadeIn">
+                            <span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true" style="width: 0.5rem; height: 0.5rem;"></span>
+                            En Vivo
+                        </div>
+                        <a *ngIf="esDuenoProducto()" [routerLink]="['/admin/editar', producto.id]" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold shadow-sm">
+                            <i class="bi bi-pencil-square me-1"></i> Editar
+                        </a>
                     </div>
                 </div>
                 <h1 class="fw-bold mb-3 display-5 mt-2">{{ producto.nombre }}</h1>

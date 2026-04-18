@@ -170,9 +170,12 @@
                     }">{{ p.estado || 'S/E' }}</span>
                 </td>
                 <td class="text-center">
-                  <div class="btn-group">
+                  <div class="btn-group shadow-sm">
                     <a [routerLink]="['/producto', p.slug || p.id]" class="btn btn-sm btn-outline-primary" title="Ver">
                       <i class="bi bi-eye"></i>
+                    </a>
+                    <a [routerLink]="['/admin/editar', p.id]" class="btn btn-sm btn-outline-warning" title="Editar">
+                      <i class="bi bi-pencil-square"></i>
                     </a>
                     <button (click)="eliminarProducto(p)" class="btn btn-sm btn-outline-danger" title="Eliminar">
                       <i class="bi bi-trash"></i>

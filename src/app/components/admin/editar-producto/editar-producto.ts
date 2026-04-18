@@ -69,6 +69,23 @@ export class EditarProducto implements OnInit {
       next: (data: any) => {
         Swal.close(); // Cerramos el loader
 
+        // --- VALIDACIÓN DE AUTORÍA ---
+        const user = this.authService.currentUser();
+        const isAdmin = user?.role === 'ROLE_SUPER_ADMIN';
+        const isOwner = user?.id === data.tiendaUsuarioId;
+
+        if (!isAdmin && !isOwner) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Acceso Denegado',
+            text: '⛔ No tienes permisos para editar este producto.',
+            confirmButtonText: 'Volver'
+          }).then(() => {
+            this.router.navigate(['/admin']);
+          });
+          return;
+        }
+
         // Validar si es editable antes de mostrar el formulario
         if (['SUBASTA', 'ADJUDICADO', 'PAGADO'].includes(data.estado)) {
           Swal.fire({

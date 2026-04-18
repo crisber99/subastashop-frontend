@@ -163,7 +163,7 @@
                 @if (productoForm.get('fechaInicio')?.invalid && productoForm.get('fechaInicio')?.touched) {
                 <small class="text-danger">La fecha de inicio es obligatoria.</small>
                 }
-                <div class="form-text">¿Cuándo abre la subasta al público general?</div>
+                <div class="form-text text-muted">¿Cuándo abre la subasta al público general?</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-bold text-primary">Horas Acceso PRO</label>
@@ -175,7 +175,7 @@
                 productoForm.get('horasVentaAnticipada')?.touched) {
                 <small class="text-danger">Debes indicar las horas (mínimo 1).</small>
                 }
-                <div class="form-text">¿Cuántas horas antes pueden pujar los usuarios <b>PRO</b>?</div>
+                <div class="form-text text-muted">¿Cuántas horas antes pueden pujar los usuarios <b>PRO</b>?</div>
               </div>
             </div>
 
@@ -185,14 +185,15 @@
               @if (productoForm.get('fechaFin')?.invalid && productoForm.get('fechaFin')?.touched) {
               <small class="text-danger">La fecha de cierre es obligatoria para subastas.</small>
               }
-              <div class="form-text">¿Cuándo termina la subasta definitivamente?</div>
+              <div class="form-text text-muted">¿Cuándo termina la subasta definitivamente?</div>
             </div>
             }
 
             <div class="row g-3 mb-4">
               <div class="col-md-6">
                 <div
-                  class="form-check form-switch p-3 bg-light rounded-4 border d-flex justify-content-between align-items-center">
+                  class="form-check form-switch p-3 rounded-4 border d-flex justify-content-between align-items-center"
+                  style="background: var(--glass-bg, rgba(0,0,0,0.02));">
                   <div>
                     <label class="form-check-label fw-bold mb-0" for="chatHabilitado">Habilitar Chat en Vivo</label>
                     <p class="text-muted small mb-0">Permite mensajes en tiempo real</p>

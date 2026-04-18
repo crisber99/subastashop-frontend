@@ -17,7 +17,7 @@ export class ProfileComponent implements OnInit {
   private productService = inject(ProductService);
 
   activeTab: 'data' | 'security' = 'data';
-  
+
   // Datos Personales
   profileData = {
     nombre: '',
@@ -40,7 +40,7 @@ export class ProfileComponent implements OnInit {
   rutAlreadyExists = false; // 👈 NUEVO
 
   ngOnInit() {
-    this.shippingOptions = ['1-Bluexpress', '2-Paket', '3-Starken'];
+    this.shippingOptions = ['Bluexpress', 'Paket', 'Starken'];
     this.cargarDatos();
   }
 
@@ -64,10 +64,10 @@ export class ProfileComponent implements OnInit {
     if (!rut) return 'No registrado';
     let value = rut.replace(/\./g, '').replace('-', '');
     if (value.length < 2) return value;
-    
+
     let cuerpo = value.slice(0, -1);
     let dv = value.slice(-1).toUpperCase();
-    
+
     // Formatear cuerpo con puntos
     let result = '';
     while (cuerpo.length > 3) {
@@ -75,7 +75,7 @@ export class ProfileComponent implements OnInit {
       cuerpo = cuerpo.slice(0, -3);
     }
     result = cuerpo + result;
-    
+
     return result + '-' + dv;
   }
 

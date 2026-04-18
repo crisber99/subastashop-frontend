@@ -27,7 +27,7 @@ export class Register implements OnInit {
   shippingOptions: string[] = []; // 👈 NUEVO: Lista de opciones de envío
 
   ngOnInit() {
-    this.shippingOptions = ['1-Bluexpress', '2-Paket', '3-Starken'];
+    this.shippingOptions = ['Bluexpress', 'Paket', 'Starken'];
 
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required]],
@@ -60,34 +60,34 @@ export class Register implements OnInit {
     }
 
     this.cargando = true;
-    
+
     Swal.fire({
-        title: 'Procesando registro y firma digital...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
+      title: 'Procesando registro y firma digital...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
     });
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
         Swal.fire({
-            icon: 'success',
-            title: '¡Cuenta Creada!',
-            text: 'Ahora puedes iniciar sesión con tus datos.',
-            confirmButtonColor: '#6366f1',
-            confirmButtonText: 'Ir al Login'
+          icon: 'success',
+          title: '¡Cuenta Creada!',
+          text: 'Ahora puedes iniciar sesión con tus datos.',
+          confirmButtonColor: '#6366f1',
+          confirmButtonText: 'Ir al Login'
         }).then(() => {
-            this.router.navigate(['/login']);
+          this.router.navigate(['/login']);
         });
       },
       error: (err) => {
         this.cargando = false;
         if (err.status === 400 && err.error && typeof err.error === 'object') {
-             const allErrors = Object.values(err.error).flat().join('<br>');
-             this.mensajeError = allErrors;
-             Swal.fire({ title: 'Error de Validación', html: allErrors, icon: 'error' });
+          const allErrors = Object.values(err.error).flat().join('<br>');
+          this.mensajeError = allErrors;
+          Swal.fire({ title: 'Error de Validación', html: allErrors, icon: 'error' });
         } else {
-             this.mensajeError = err.error?.message || err.error?.error || err.message || 'Error al registrarse.';
-             Swal.fire('Error', this.mensajeError, 'error');
+          this.mensajeError = err.error?.message || err.error?.error || err.message || 'Error al registrarse.';
+          Swal.fire('Error', this.mensajeError, 'error');
         }
       }
     });

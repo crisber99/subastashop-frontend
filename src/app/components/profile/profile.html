@@ -9,14 +9,16 @@
 
         <div class="card-body p-0">
           <!-- Nav Tabs -->
-          <ul class="nav nav-tabs nav-fill border-0 bg-light">
+          <ul class="nav nav-tabs nav-fill border-0">
             <li class="nav-item">
-              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'data'" (click)="activeTab = 'data'">
+              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'data'"
+                (click)="activeTab = 'data'">
                 <i class="bi bi-card-list me-2"></i> Mis Datos
               </button>
             </li>
             <li class="nav-item">
-              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'security'" (click)="activeTab = 'security'">
+              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'security'"
+                (click)="activeTab = 'security'">
                 <i class="bi bi-shield-lock me-2"></i> Seguridad
               </button>
             </li>
@@ -30,11 +32,13 @@
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Nombre Completo</label>
-                    <input type="text" [(ngModel)]="profileData.nombre" name="nombre" class="form-control rounded-pill" placeholder="Tu nombre">
+                    <input type="text" [(ngModel)]="profileData.nombre" name="nombre" class="form-control rounded-pill"
+                      placeholder="Tu nombre">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Alias (Nombre Público)</label>
-                    <input type="text" [(ngModel)]="profileData.alias" name="alias" class="form-control rounded-pill" placeholder="Tu alias">
+                    <input type="text" [(ngModel)]="profileData.alias" name="alias" class="form-control rounded-pill"
+                      placeholder="Tu alias">
                   </div>
                 </div>
 
@@ -42,16 +46,14 @@
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label class="form-label fw-bold">RUT (Identidad)</label>
-                    <input type="text" [(ngModel)]="profileData.rut" name="rut" 
-                           class="form-control rounded-pill" 
-                           [class.bg-light]="rutAlreadyExists"
-                           [disabled]="rutAlreadyExists" 
-                           [placeholder]="rutAlreadyExists ? formatRut(profileData.rut) : '12345678-9'"
-                           title="El RUT solo se puede registrar una vez">
+                    <input type="text" [(ngModel)]="profileData.rut" name="rut"
+                      class="form-control rounded-pill" [disabled]="rutAlreadyExists" placeholder="11.111.111-1"
+                      title="El RUT solo se puede registrar una vez">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Teléfono</label>
-                    <input type="text" [(ngModel)]="profileData.telefono" name="telefono" class="form-control rounded-pill" placeholder="+56 9 ...">
+                    <input type="text" [(ngModel)]="profileData.telefono" name="telefono"
+                      class="form-control rounded-pill" placeholder="+56 9 ...">
                   </div>
                 </div>
 
@@ -59,11 +61,13 @@
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Dirección</label>
-                    <input type="text" [(ngModel)]="profileData.direccion" name="direccion" class="form-control rounded-pill" placeholder="Calle, Número, Comuna">
+                    <input type="text" [(ngModel)]="profileData.direccion" name="direccion"
+                      class="form-control rounded-pill" placeholder="Calle, Número, Comuna">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-bold">Preferencia de Envío</label>
-                    <select [(ngModel)]="profileData.preferenciaEnvio" name="preferenciaEnvio" class="form-select rounded-pill">
+                    <select [(ngModel)]="profileData.preferenciaEnvio" name="preferenciaEnvio"
+                      class="form-select rounded-pill">
                       <option value="">Seleccione una opción...</option>
                       <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
                     </select>
@@ -84,23 +88,28 @@
               <form (ngSubmit)="updatePassword()" #securityForm="ngForm">
                 <div class="mb-3">
                   <label class="form-label fw-bold">Contraseña Actual</label>
-                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.current" name="current" required>
+                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.current"
+                    name="current" required>
                 </div>
                 <div class="mb-3">
                   <label class="form-label fw-bold">Nueva Contraseña</label>
-                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.new" name="new" required minlength="6">
+                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.new" name="new"
+                    required minlength="6">
                 </div>
                 <div class="mb-3">
                   <label class="form-label fw-bold">Confirmar Nueva Contraseña</label>
-                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.confirm" name="confirm" required>
+                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.confirm"
+                    name="confirm" required>
                 </div>
 
                 <div class="alert alert-info rounded-4 shadow-sm text-center">
-                  <i class="bi bi-info-circle me-2"></i> Se cerrará tu sesión en otros dispositivos tras cambiar la contraseña.
+                  <i class="bi bi-info-circle me-2"></i> Se cerrará tu sesión en otros dispositivos tras cambiar la
+                  contraseña.
                 </div>
 
                 <div class="mt-4 text-center">
-                  <button type="submit" class="btn btn-dark btn-lg rounded-pill px-5 fw-bold" [disabled]="loading || securityForm.invalid">
+                  <button type="submit" class="btn btn-dark btn-lg rounded-pill px-5 fw-bold"
+                    [disabled]="loading || securityForm.invalid">
                     <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
                     Actualizar Contraseña
                   </button>

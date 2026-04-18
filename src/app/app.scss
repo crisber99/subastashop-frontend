@@ -12,7 +12,7 @@
   flex-direction: column;
   min-width: 0;
   position: relative;
-  
+
   app-navbar {
     position: sticky;
     top: 0;
@@ -38,15 +38,17 @@
 }
 
 @keyframes gradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .loader-overlay {
@@ -58,4 +60,24 @@
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(4px);
+}
+
+/* =========================================
+   AJUSTES GLOBALES PARA MODO OSCURO
+   ========================================= */
+[data-bs-theme="dark"] {
+
+  /* 1. Hacer visibles los mensajes de ayuda y textos secundarios */
+  .form-text,
+  .text-muted {
+    color: #adb5bd !important;
+    /* Gris claro diseñado para fondos oscuros */
+  }
+
+  /* 2. Corregir los complementos de los inputs (ej: "Horas") */
+  .input-group-text {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #f8f9fa;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
 }

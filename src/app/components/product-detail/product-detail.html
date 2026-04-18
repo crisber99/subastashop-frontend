@@ -238,6 +238,42 @@
                     </div>
                 </div>
 
+                <!-- CAJA MISTERIOSA 🎁 -->
+                <div *ngIf="producto.tipoVenta === 'CAJA_MISTERIOSA'" class="card border-0 mb-4 overflow-hidden shadow-sm">
+                    <div class="card-header py-3 border-0 text-white text-center"
+                         style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-box-seam-fill me-2"></i> Caja Misteriosa 🎁</h5>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <p class="text-muted mb-1 small text-uppercase">Precio de la Caja</p>
+                        <h1 class="display-4 fw-bold text-warning mb-3">${{ producto.precioBase | number }}</h1>
+
+                        <div class="alert rounded-4 mb-4 py-3" style="background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);">
+                            <i class="bi bi-question-circle-fill text-warning me-2"></i>
+                            <strong>¿Qué hay dentro?</strong>
+                            <p class="mb-0 mt-1 small text-muted">Compra la caja y abre tu premio sorpresa. Puedes ganar cualquiera de los artículos configurados por la tienda.</p>
+                        </div>
+
+                        <div *ngIf="authService.isLoggedIn(); else loginParaCaja">
+                            <button class="btn btn-warning btn-lg fw-bold w-100 rounded-pill py-3 shadow-lg"
+                                    (click)="comprarCajaMisteriosa()"
+                                    [disabled]="procesandoCompra">
+                                <span *ngIf="procesandoCompra" class="spinner-border spinner-border-sm me-2"></span>
+                                🎁 Comprar Caja Misteriosa
+                            </button>
+                            <p class="small text-muted mt-3">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Tras confirmar el pago puedes abrir tu caja desde <strong>Mis Compras</strong>.
+                            </p>
+                        </div>
+                        <ng-template #loginParaCaja>
+                            <div class="alert alert-info rounded-4 text-center">
+                                <i class="bi bi-person-lock me-2"></i> Inicia sesión para comprar esta caja.
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
                 <!-- VENTA DIRECTA -->
                 <div *ngIf="producto.tipoVenta === 'DIRECTA' || !producto.tipoVenta" class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4 text-center">

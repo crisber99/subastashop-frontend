@@ -584,6 +584,69 @@ export class ProductDetail implements OnInit, OnDestroy {
     });
   }
 
+  comprarCajaMisteriosa() {
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire({ title: 'Inicia Sesión', text: 'Debes estar registrado para comprar.', icon: 'info',
+        showCancelButton: true, confirmButtonText: 'Ir a Login', cancelButtonText: 'Cancelar'
+      }).then(r => { if (r.isConfirmed) this.router.navigate(['/login']); });
+      return;
+    }
+
+    this.procesandoCompra = true;
+    Swal.fire({ title: '🎁 Preparando tu caja...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+    const orderRequest = {
+      detalles: [{ productoId: this.producto.id, cantidad: 1, tipoCompra: 'CAJA_MISTERIOSA' }]
+    };
+
+    this.ordenService.crearOrden(orderRequest).subscribe({
+      next: (orden: any) => {
+        this.procesandoCompra = false;
+        Swal.close();
+
+        // Parsear cuentas bancarias
+        let cuentasHtml = '';
+        try {
+          const datos = this.producto.tienda?.datosBancarios;
+          if (datos && datos.startsWith('[')) {
+            const cuentas = JSON.parse(datos);
+            cuentasHtml = cuentas.map((c: any) => `
+              <div style="text-align:left;padding:10px;border-radius:10px;margin-bottom:10px;background:rgba(245,158,11,0.1)">
+                <p style="margin:0;font-weight:bold;color:#f59e0b">${c.banco} - ${c.tipo}</p>
+                <p style="margin:0;font-size:0.9em">N°: <b>${c.numero}</b></p>
+                <p style="margin:0;font-size:0.9em">Titular: ${c.titular}</p>
+                <p style="margin:0;font-size:0.9em">RUT: ${c.rut}</p>
+              </div>`).join('');
+          } else {
+            cuentasHtml = `<p style="white-space:pre-line">${datos || 'Contactar al vendedor'}</p>`;
+          }
+        } catch (e) { cuentasHtml = '<p>Contactar al vendedor para los datos de pago.</p>'; }
+
+        Swal.fire({
+          title: '¡Caja Reservada! 🎁',
+          html: `<p>Tu orden <b>#${orden.id}</b> ha sido creada.</p>
+                 <p class="small opacity-75 mb-3">Realiza la transferencia por <b>$${this.producto.precioBase.toLocaleString()}</b>:</p>
+                 <div style="max-height:200px;overflow-y:auto">${cuentasHtml}</div>
+                 <div class="mt-3 p-2 rounded small" style="background:rgba(245,158,11,0.15)">
+                   🎁 Una vez validado el pago podrás abrir tu caja desde <b>Mis Compras</b>.</div>`,
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonText: '🚀 Informar Pago Ahora',
+          cancelButtonText: 'Ver mis compras',
+          confirmButtonColor: '#f59e0b'
+        }).then(res => {
+          if (res.isConfirmed) this.router.navigate(['/checkout', orden.id]);
+          else this.router.navigate(['/dashboard'], { queryParams: { tab: 'compras' } });
+        });
+      },
+      error: (err) => {
+        this.procesandoCompra = false;
+        Swal.close();
+        Swal.fire('Error', err.error?.message || 'No se pudo reservar la caja.', 'error');
+      }
+    });
+  }
+
   cargarMisParticipaciones() {
     if (!this.authService.isLoggedIn()) return;
     this.productService.getMisParticipaciones().subscribe({

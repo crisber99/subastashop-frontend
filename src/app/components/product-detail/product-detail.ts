@@ -595,11 +595,12 @@ export class ProductDetail implements OnInit, OnDestroy {
     this.procesandoCompra = true;
     Swal.fire({ title: '🎁 Preparando tu caja...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
+    const precio = this.producto.precioBase || this.producto.precioTicket;
     const orderRequest = {
       detalles: [{ 
         productoId: this.producto.id, 
         cantidad: 1, 
-        precioUnitario: this.producto.precioBase,
+        precioUnitario: precio,
         tipoCompra: 'CAJA_MISTERIOSA' 
       }]
     };
@@ -630,7 +631,7 @@ export class ProductDetail implements OnInit, OnDestroy {
         Swal.fire({
           title: '¡Caja Reservada! 🎁',
           html: `<p>Tu orden <b>#${orden.id}</b> ha sido creada.</p>
-                 <p class="small opacity-75 mb-3">Realiza la transferencia por <b>$${this.producto.precioBase.toLocaleString()}</b>:</p>
+                 <p class="small opacity-75 mb-3">Realiza la transferencia por <b>$${precio?.toLocaleString()}</b>:</p>
                  <div style="max-height:200px;overflow-y:auto">${cuentasHtml}</div>
                  <div class="mt-3 p-2 rounded small" style="background:rgba(245,158,11,0.15)">
                    🎁 Una vez validado el pago podrás abrir tu caja desde <b>Mis Compras</b>.</div>`,

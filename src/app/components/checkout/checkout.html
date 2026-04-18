@@ -7,11 +7,13 @@
                     <h5 class="mb-0"><i class="bi bi-bank"></i> Datos para Transferir</h5>
                 </div>
                 <div class="card-body p-4">
-                    <p class="mb-3">Por favor, realiza la transferencia exacta a una de las siguientes cuentas del vendedor:</p>
-                    
+                    <p class="mb-3">Por favor, realiza la transferencia exacta a una de las siguientes cuentas del
+                        vendedor:</p>
+
                     <!-- 🏦 LISTADO DE CUENTAS (NUEVO FORMATO) -->
                     <div *ngFor="let cuenta of cuentasBancarias; let i = index" class="payment-info-box mb-3 shadow-sm">
-                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2 border-white border-opacity-10">
+                        <div
+                            class="d-flex justify-content-between border-bottom pb-2 mb-2 border-white border-opacity-10">
                             <span class="fw-bold fs-6"><i class="bi bi-bank me-2"></i>{{ cuenta.banco }}</span>
                             <span class="badge bg-primary rounded-pill">{{ cuenta.tipo }}</span>
                         </div>
@@ -48,10 +50,12 @@
                         <span class="badge bg-dark fs-6">#{{ orden.id }}</span>
                     </div>
 
-                    <div *ngIf="orden.tienda?.whatsapp" class="mb-4 text-center p-3 rounded" style="background-color: rgba(37, 211, 102, 0.1); border: 1px dashed #25D366;">
-                        <h6 class="fw-bold" style="color: #128C7E;">¿Tienes dudas o necesitas enviar tu foto por aquí?</h6>
+                    <div *ngIf="orden.tienda?.whatsapp" class="mb-4 text-center p-3 rounded"
+                        style="background-color: rgba(37, 211, 102, 0.1); border: 1px dashed #25D366;">
+                        <h6 class="fw-bold" style="color: #128C7E;">¿Tienes dudas o necesitas enviar tu foto por aquí?
+                        </h6>
                         <button class="btn btn-outline-success rounded-pill fw-bold" (click)="redirigirWhatsApp()">
-                            <i class="bi bi-whatsapp me-2"></i>  Escríbele a la tienda por WhatsApp
+                            <i class="bi bi-whatsapp me-2"></i> Escríbele a la tienda por WhatsApp
                         </button>
                     </div>
 
@@ -78,12 +82,13 @@
 
         <div class="col-md-5">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-light">
+                <div class="card-header" style="background: var(--bs-tertiary-bg, #f8f9fa);">
                     <h5 class="mb-0">Resumen del Pedido #{{ orden.id }}</h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="p-3 bg-primary bg-opacity-10 border-bottom" *ngIf="orden.preferenciaEnvio">
-                        <span class="text-primary small fw-bold text-uppercase"><i class="bi bi-truck me-1"></i>Preferencia de Envío</span>
+                        <span class="text-primary small fw-bold text-uppercase"><i
+                                class="bi bi-truck me-1"></i>Preferencia de Envío</span>
                         <div class="fs-5 fw-bold">{{ orden.preferenciaEnvio }}</div>
                     </div>
                     <ul class="list-group list-group-flush">
@@ -99,7 +104,7 @@
                         </li>
                         }
 
-                        <li class="list-group-item d-flex justify-content-between bg-light">
+                        <li class="list-group-item d-flex justify-content-between">
                             <span class="fw-bold">Total a Transferir (CLP)</span>
                             <strong class="fs-4 text-success">${{ orden.total | number }}</strong>
                         </li>

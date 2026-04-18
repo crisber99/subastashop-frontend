@@ -596,7 +596,12 @@ export class ProductDetail implements OnInit, OnDestroy {
     Swal.fire({ title: '🎁 Preparando tu caja...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
     const orderRequest = {
-      detalles: [{ productoId: this.producto.id, cantidad: 1, tipoCompra: 'CAJA_MISTERIOSA' }]
+      detalles: [{ 
+        productoId: this.producto.id, 
+        cantidad: 1, 
+        precioUnitario: this.producto.precioBase,
+        tipoCompra: 'CAJA_MISTERIOSA' 
+      }]
     };
 
     this.ordenService.crearOrden(orderRequest).subscribe({

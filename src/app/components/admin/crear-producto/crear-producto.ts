@@ -101,10 +101,12 @@ export class CrearProducto implements OnInit {
       horasVentaAnticipada?.setValidators([Validators.required, Validators.min(1)]);
     } else if (tipoVenta === 'DIRECTA') {
       precioBase?.setValidators([Validators.required, Validators.min(1)]);
-    } else if (tipoVenta === 'RIFA') {
+    } else if (tipoVenta === 'RIFA' || tipoVenta === 'CAJA_MISTERIOSA') {
       precioTicket?.setValidators([Validators.required, Validators.min(1)]);
-      cantidadNumeros?.setValidators([Validators.required, Validators.min(1)]);
-      numeroPares?.setValidators([Validators.required, Validators.min(2), Validators.max(15)]);
+      if (tipoVenta === 'RIFA') {
+        cantidadNumeros?.setValidators([Validators.required, Validators.min(1)]);
+        numeroPares?.setValidators([Validators.required, Validators.min(2), Validators.max(15)]);
+      }
     }
 
     precioBase?.updateValueAndValidity();

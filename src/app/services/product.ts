@@ -34,6 +34,11 @@ export class ProductService {
     formData.append('nombre', producto.nombre);
     formData.append('descripcion', producto.descripcion);
     formData.append('precioBase', producto.precioBase);
+    
+    if (producto.precioTicket) {
+      formData.append('precioTicket', producto.precioTicket.toString());
+    }
+
     formData.append('fechaFin', producto.fechaFinSubasta || '');
     
     if (producto.fechaInicioSubasta) {

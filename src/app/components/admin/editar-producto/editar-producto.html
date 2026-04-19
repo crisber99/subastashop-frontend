@@ -15,10 +15,21 @@
       </div>
 
       <!-- Sección: Precio (Venta Directa o Subasta) -->
-      @if (producto.tipoVenta !== 'RIFA') {
+      @if (producto.tipoVenta === 'SUBASTA' || producto.tipoVenta === 'DIRECTA') {
         <div class="mb-3">
           <label class="form-label">Precio Base ($)</label>
           <input type="number" class="form-control" [(ngModel)]="producto.precioBase" name="precioBase" required>
+        </div>
+      }
+
+      @if (producto.tipoVenta === 'CAJA_MISTERIOSA') {
+        <div class="card p-3 mb-4 border-warning shadow-sm" style="background: rgba(255, 193, 7, 0.05); border-radius: 12px;">
+          <h5 class="text-warning mb-3">🎁 Configuración de la Caja</h5>
+          <div class="mb-3">
+            <label class="form-label fw-bold small">Precio de la Caja ($)</label>
+            <input type="number" class="form-control" [(ngModel)]="producto.precioTicket" name="precioTicket">
+            <div class="form-text">Este es el monto que se cobrará al cliente.</div>
+          </div>
         </div>
       }
 

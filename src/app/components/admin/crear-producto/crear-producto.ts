@@ -143,6 +143,34 @@ export class CrearProducto implements OnInit {
     this.premiosValidos.removeAt(index);
   }
 
+  async onPremioImagenSelected(index: number, event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    Swal.fire({ 
+      title: 'Optimizando...', 
+      text: 'Preparando imagen del premio',
+      allowOutsideClick: false, 
+      didOpen: () => Swal.showLoading() 
+    });
+
+    try {
+      // Comprimimos un poco más para los premios ya que son secundarios (800px max)
+      const compressedFile = await this.imageCompressor.compressImage(file, 800, 0.7);
+      
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        this.premiosValidos.at(index).get('imagenUrl')?.setValue(base64);
+        Swal.close();
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Error', 'No se pudo procesar la imagen del premio.', 'error');
+    }
+  }
+
   imageCompressor = inject(ImageCompressorService);
 
   async onFileSelected(event: any) {
@@ -274,6 +302,8 @@ export class CrearProducto implements OnInit {
       formData.append('cantidadNumeros', value.cantidadNumeros.toString());
       formData.append('cantidadGanadores', value.cantidadGanadores.toString());
       formData.append('numeroPares', value.numeroPares.toString());
+    } else if (value.tipoVenta === 'CAJA_MISTERIOSA') {
+      formData.append('precioTicket', value.precioTicket.toString());
     }
 
     if (value.tipoVenta === 'CAJA_MISTERIOSA' && value.premios?.length > 0) {

@@ -58,7 +58,7 @@ export class OrdenService {
     return this.http.post(`${environment.apiUrl}/admin/ordenes/${id}/aprobar`, {});
   }
 
-  rechazarPago(id: number) {
-    return this.http.post(`${environment.apiUrl}/admin/ordenes/${id}/rechazar`, {});
+  rechazarPago(id: number, motivo: string = '') {
+    return this.http.post(`${environment.apiUrl}/admin/ordenes/${id}/rechazar?motivo=${encodeURIComponent(motivo)}`, {});
   }
 }

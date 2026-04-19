@@ -72,18 +72,21 @@ export class AdminValidarPagos implements OnInit {
   rechazar(id: number) {
     Swal.fire({
       title: '¿Rechazar pago?',
-      text: "La orden volverá a estar pendiente y el cliente podrá subir otro comprobante.",
+      text: "Indica el motivo del rechazo para informar al cliente por correo electrónico:",
       icon: 'warning',
+      input: 'textarea',
+      inputPlaceholder: 'Ej: El comprobante no es legible o el monto es incorrecto...',
       showCancelButton: true,
-      confirmButtonText: 'Sí, rechazar',
+      confirmButtonText: 'Sí, rechazar y notificar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33'
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({ title: 'Procesando...', didOpen: () => Swal.showLoading() });
-        this.ordenService.rechazarPago(id).subscribe({
+        const motivo = result.value || '';
+        Swal.fire({ title: 'Procesando...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+        this.ordenService.rechazarPago(id, motivo).subscribe({
           next: () => {
-            Swal.fire('Información', 'El pago ha sido rechazado.', 'info');
+            Swal.fire('¡Orden Cancelada!', 'El pago ha sido rechazado y se ha notificado al cliente por email.', 'info');
             this.cargarPendientes();
           },
           error: () => Swal.fire('Error', 'No se pudo realizar la acción.', 'error')

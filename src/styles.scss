@@ -16,9 +16,9 @@
   --glass-border: rgba(255, 255, 255, 0.4);
   
   /* Text & Borders */
-  --text-color: #0f172a;
-  --text-muted: #64748b;
-  --border-color: rgba(226, 232, 240, 0.8);
+  --text-color: #000000;
+  --text-muted: #475569;
+  --border-color: rgba(15, 23, 42, 0.15);
   
   /* Shadows & Geometry */
   --premium-shadow: 0 10px 40px -10px rgba(0,0,0,0.05);
@@ -43,9 +43,9 @@ body.dark-theme {
   --glass-border: rgba(255, 255, 255, 0.05);
   
   /* Text & Borders */
-  --text-color: #f1f5f9;
-  --text-muted: #94a3b8;
-  --border-color: rgba(51, 65, 85, 0.5);
+  --text-color: #ffffff;
+  --text-muted: #cbd5e1;
+  --border-color: rgba(255, 255, 255, 0.2);
   --is-dark: 1;
   --premium-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
 
@@ -59,12 +59,31 @@ body.dark-theme {
 
   .card-text, small {
     color: var(--text-muted);
+    opacity: 1 !important; /* Ensure visibility */
+  }
+
+  /* Force brightness for small muted texts in dark mode */
+  .text-muted, .small, small, .opacity-75, .opacity-50 {
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
   }
 
   /* Reset all common text and elements to be themed */
   h1, h2, h3, h4, h5, h6, p, li, label, th, td, span:not(.badge):not(.text-success):not(.text-danger):not(.text-warning):not(.text-info) {
     color: var(--text-color);
   }
+
+  /* Semantic Color Boosts for Dark Mode */
+  .text-success { color: #4ade80 !important; }
+  .text-info    { color: #60a5fa !important; }
+  .text-warning { color: #fbbf24 !important; }
+  .text-danger  { color: #f87171 !important; }
+  .text-primary { color: #818cf8 !important; }
+
+  .bg-success-subtle { background-color: rgba(74, 222, 128, 0.15) !important; color: #4ade80 !important; }
+  .bg-info-subtle    { background-color: rgba(96, 165, 250, 0.15) !important; color: #60a5fa !important; }
+  .bg-warning-subtle { background-color: rgba(251, 191, 36, 0.15)  !important; color: #fbbf24 !important; }
+  .bg-danger-subtle  { background-color: rgba(248, 113, 113, 0.15) !important; color: #f87171 !important; }
 
   .btn-outline-secondary {
     color: var(--text-muted) !important;
@@ -219,6 +238,42 @@ body.dark-theme input:-webkit-autofill {
   }
 }
 
+/* --- ALERTS ENHANCEMENT --- */
+.alert {
+    border-radius: var(--radius-md) !important;
+    border-width: 1px !important;
+    
+    &.alert-success, &.alert-success-light {
+        background: rgba(34, 197, 94, 0.1) !important;
+        border-color: rgba(34, 197, 94, 0.4) !important;
+        color: #22c55e !important;
+        
+        i, strong { color: #22c55e !important; }
+    }
+}
+
+body.dark-theme .alert {
+    &.alert-success, &.alert-success-light {
+        background: rgba(34, 197, 94, 0.15) !important;
+        border-color: rgba(34, 197, 94, 0.5) !important;
+        color: #4ade80 !important; /* Brighter green for dark mode */
+        
+        i, strong { color: #4ade80 !important; }
+    }
+    
+    &.alert-warning {
+        background: rgba(245, 158, 11, 0.15) !important;
+        border-color: rgba(245, 158, 11, 0.5) !important;
+        color: #fbbf24 !important;
+    }
+
+    &.alert-info {
+        background: rgba(59, 130, 246, 0.15) !important;
+        border-color: rgba(59, 130, 246, 0.5) !important;
+        color: #60a5fa !important;
+    }
+}
+
 /* --- MODALS PREMIUM --- */
 .modal-content {
     background: var(--card-bg) !important;
@@ -247,8 +302,14 @@ body.dark-theme input:-webkit-autofill {
 /* Custom Utilities for Theme Consistency */
 .bg-card-custom {
     background: var(--card-bg) !important;
-    border: 1px solid var(--glass-border) !important;
+    border: 1px solid var(--border-color) !important; /* Brighter border */
     transition: all 0.3s ease;
+}
+
+.list-group-item {
+    background: transparent !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
 }
 
 .btn-surface {

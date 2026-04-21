@@ -32,18 +32,39 @@ export class AdminValidarPagos implements OnInit {
 
   verComprobante(url: string) {
     if (!url) {
-        Swal.fire('Error', 'No hay comprobante disponible', 'error');
+        Swal.fire('Error', 'No hay comprobante disponible para esta orden.', 'error');
         return;
     }
-    Swal.fire({
-      title: 'Comprobante de Pago',
-      imageUrl: url,
-      imageAlt: 'Captura de transferencia',
-      width: '600px',
-      showCloseButton: true,
-      confirmButtonText: 'Cerrar',
-      confirmButtonColor: '#3085d6'
-    });
+
+    const esPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().includes('application/pdf');
+
+    if (esPdf) {
+      // Para PDFs abrimos en nueva pestaña para que el browser lo renderice nativamente
+      Swal.fire({
+        title: 'Comprobante PDF',
+        icon: 'info',
+        html: `
+          <p class="text-muted">El comprobante es un archivo PDF.</p>
+          <a href="${url}" target="_blank" class="btn btn-primary px-4 mt-2">
+            <i class="bi bi-file-earmark-pdf me-2"></i> Abrir PDF en nueva pestaña
+          </a>
+        `,
+        showCloseButton: true,
+        showConfirmButton: false,
+        width: '500px'
+      });
+    } else {
+      Swal.fire({
+        title: 'Comprobante de Pago',
+        imageUrl: url,
+        imageAlt: 'Captura de transferencia',
+        imageWidth: '100%',
+        width: '700px',
+        showCloseButton: true,
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#3085d6'
+      });
+    }
   }
 
   aprobar(id: number) {

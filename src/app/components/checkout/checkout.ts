@@ -23,6 +23,11 @@ export class Checkout implements OnInit {
   loading = false;
   archivoComprobante: File | null = null;
   intentoEnviar = false;
+  previewUrl: string | null = null;
+  previewEsPdf = false;
+
+  readonly TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+  readonly MAX_SIZE_MB = 8;
 
   ngOnInit() {
     this.ordenId = Number(this.route.snapshot.paramMap.get('id'));
@@ -58,11 +63,43 @@ export class Checkout implements OnInit {
   }
 
   onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.archivoComprobante = file;
-      this.intentoEnviar = false; 
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    // Validar tipo
+    if (!this.TIPOS_PERMITIDOS.includes(file.type)) {
+      Swal.fire('Tipo no permitido', 'Solo se aceptan imágenes (JPG, PNG, GIF, WEBP) o archivos PDF.', 'warning');
+      (event.target as HTMLInputElement).value = '';
+      return;
     }
+
+    // Validar tamaño
+    const sizeMB = file.size / (1024 * 1024);
+    if (sizeMB > this.MAX_SIZE_MB) {
+      Swal.fire('Archivo muy grande', `El archivo supera el límite de ${this.MAX_SIZE_MB} MB. Por favor comprime la imagen o usa un PDF más liviano.`, 'warning');
+      (event.target as HTMLInputElement).value = '';
+      return;
+    }
+
+    this.archivoComprobante = file;
+    this.intentoEnviar = false;
+    this.previewEsPdf = file.type === 'application/pdf';
+
+    // Generar previsualización
+    if (!this.previewEsPdf) {
+      const reader = new FileReader();
+      reader.onload = (e) => { this.previewUrl = e.target?.result as string; };
+      reader.readAsDataURL(file);
+    } else {
+      this.previewUrl = URL.createObjectURL(file);
+    }
+  }
+
+  limpiarArchivo(fileInput: HTMLInputElement) {
+    this.archivoComprobante = null;
+    this.previewUrl = null;
+    this.previewEsPdf = false;
+    fileInput.value = '';
   }
 
   confirmarTransferencia() {

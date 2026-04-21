@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule, CdkDrag } from '@angular/cdk/drag-drop';
 import Swal from 'sweetalert2';
 import confetti from 'canvas-confetti';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 export interface Disk {
   size: number;

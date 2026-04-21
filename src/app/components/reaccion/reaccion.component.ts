@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { Subscription, fromEvent, timer, of } from 'rxjs';
 import { switchMap, take, takeUntil, tap, filter } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 import confetti from 'canvas-confetti';
 
 @Component({

@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner, AiSupportChatComponent],
+  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -1,0 +1,47 @@
+<div class="reaction-container p-4 rounded bg-dark text-white text-center shadow-lg position-relative d-flex flex-column align-items-center" style="min-height: 400px;">
+  
+  <div class="header mb-2 w-100">
+    <h3 class="fw-bold mb-1"><i class="bi bi-lightning-charge-fill text-warning"></i> Prueba de Reacción</h3>
+    <p class="text-muted small mb-3">Haz clic lo más rápido que puedas cuando la pantalla cambie a verde.</p>
+    
+    <div class="d-flex justify-content-center gap-3 align-items-center mb-3">
+      <div class="badge bg-secondary fs-6 p-2 rounded-pill">
+        Intento: {{ attemptsCount }}/{{ maxAttempts }}
+      </div>
+      <div class="badge bg-primary fs-6 p-2 rounded-pill">
+        Promedio: {{ averageTime }} ms
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de Reacción Central -->
+  <div #reactionArea
+       class="reaction-pad w-100 flex-grow-1 rounded-4 d-flex align-items-center justify-content-center shadow-inner mt-2 mb-3"
+       [ngClass]="{
+         'bg-danger cursor-wait pulse-slow': gameState === 'WAITING',
+         'bg-success cursor-pointer pulse-fast': gameState === 'CLICK_NOW',
+         'bg-light text-dark': gameState === 'IDLE' || gameState === 'FINISHED'
+       }"
+       style="min-height: 250px; user-select: none;">
+       
+       <h1 class="display-3 fw-bold m-0" style="pointer-events: none;">
+          <span *ngIf="gameState === 'WAITING'" class="text-white">ESPERA...</span>
+          <span *ngIf="gameState === 'CLICK_NOW'" class="text-white">¡PULSA AHORA!</span>
+          <span *ngIf="gameState === 'IDLE' && attemptsCount > 0" class="text-dark">Preparando...</span>
+          <span *ngIf="gameState === 'FINISHED'" class="text-dark">¡Terminado!</span>
+       </h1>
+  </div>
+
+  <!-- Botón de Inicio si no ha comenzado -->
+  <div *ngIf="gameState === 'IDLE' && attemptsCount === 0" class="position-absolute d-flex flex-column align-items-center justify-content-center bg-black bg-opacity-75 rounded" style="inset: 0;">
+    <h2 class="text-white fw-bold display-5 mb-4">¿Preparado?</h2>
+    
+    <button *ngIf="!isBlocked" class="btn btn-warning btn-lg rounded-pill px-5 py-3 fs-4 fw-bold shadow text-dark pulse-btn"
+            (click)="startGame()" [disabled]="isProcessing">
+      {{ isProcessing ? 'Cargando...' : 'EMPEZAR (3 Intentos)' }}
+    </button>
+    <button *ngIf="isBlocked" class="btn btn-secondary btn-lg rounded-pill px-5" disabled>
+       Concurso Finalizado
+    </button>
+  </div>
+</div>

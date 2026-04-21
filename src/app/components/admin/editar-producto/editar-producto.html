@@ -36,20 +36,37 @@
       <!-- Sección: Configuración de Concurso (RIFA) -->
       @if (producto.tipoVenta === 'RIFA') {
         <div class="card p-3 mb-4 border-info shadow-sm" style="background: rgba(13, 202, 240, 0.05); border-radius: 12px;">
-          <h5 class="text-info mb-3">🧠 Configuración del Concurso</h5>
+          <h5 class="text-info mb-3">🎮 Configuración del Concurso</h5>
           <div class="row g-3">
+            <div class="col-md-12 mb-2">
+              <label class="form-label fw-bold text-success">Seleccionar Juego de Destreza</label>
+              <select class="form-select form-select-lg" [(ngModel)]="producto.tipoJuego" name="tipoJuego">
+                <option value="MEMORICE">🧠 Memorice (Agilidad Mental)</option>
+                <option value="HANOI">🗼 Torre de Hanói (Lógica Espacial)</option>
+                <option value="REACCION">⚡ Prueba de Reacción (Velocidad Visual)</option>
+              </select>
+            </div>
             <div class="col-md-6">
               <label class="form-label fw-bold small">Precio Inscripción ($)</label>
               <input type="number" class="form-control" [(ngModel)]="producto.precioTicket" name="precioTicket">
             </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold small">Dificultad (Pares)</label>
+            <div class="col-md-6" *ngIf="producto.tipoJuego === 'MEMORICE' || producto.tipoJuego === 'HANOI'">
+              <label class="form-label fw-bold small">Dificultad {{ producto.tipoJuego === 'MEMORICE' ? '(Pares)' : '(Discos)' }}</label>
               <select class="form-select text-center" [(ngModel)]="producto.numeroPares" name="numeroPares">
-                <option [ngValue]="3">3 Pares (Fácil)</option>
-                <option [ngValue]="5" selected>5 Pares (Normal)</option>
-                <option [ngValue]="8">8 Pares (Intermedio)</option>
-                <option [ngValue]="12">12 Pares (Difícil)</option>
-                <option [ngValue]="15">15 Pares (Extremo)</option>
+                <ng-container *ngIf="producto.tipoJuego === 'MEMORICE'">
+                  <option [ngValue]="3">3 Pares (Fácil)</option>
+                  <option [ngValue]="5" selected>5 Pares (Normal)</option>
+                  <option [ngValue]="8">8 Pares (Intermedio)</option>
+                  <option [ngValue]="12">12 Pares (Difícil)</option>
+                  <option [ngValue]="15">15 Pares (Extremo)</option>
+                </ng-container>
+                <ng-container *ngIf="producto.tipoJuego === 'HANOI'">
+                  <option [ngValue]="3" selected>Nivel 1 (3 discos)</option>
+                  <option [ngValue]="4">Nivel 2 (4 discos)</option>
+                  <option [ngValue]="5">Nivel 3 (5 discos)</option>
+                  <option [ngValue]="6">Nivel 4 (6 discos)</option>
+                  <option [ngValue]="7">Nivel 5 (7 discos)</option>
+                </ng-container>
               </select>
             </div>
             <div class="col-md-12">

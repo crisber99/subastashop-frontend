@@ -47,6 +47,7 @@ export class CrearProducto implements OnInit {
       cantidadNumeros: [100],
       cantidadGanadores: [1],
       numeroPares: [5, [Validators.required, Validators.min(2), Validators.max(15)]],
+      tipoJuego: ['MEMORICE', [Validators.required]],
       chatHabilitado: [true],
       destacado: [false],
       premios: this.fb.array([])
@@ -302,6 +303,7 @@ export class CrearProducto implements OnInit {
       formData.append('cantidadNumeros', value.cantidadNumeros.toString());
       formData.append('cantidadGanadores', value.cantidadGanadores.toString());
       formData.append('numeroPares', value.numeroPares.toString());
+      formData.append('tipoJuego', value.tipoJuego);
     } else if (value.tipoVenta === 'CAJA_MISTERIOSA') {
       formData.append('precioTicket', value.precioTicket.toString());
     }

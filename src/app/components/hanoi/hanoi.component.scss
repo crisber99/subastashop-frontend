@@ -1,0 +1,58 @@
+.pulse-btn {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(13, 110, 253, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+}
+
+.hanoi-container {
+  overflow: hidden;
+}
+
+.board {
+  border-bottom: 5px solid #6c757d;
+  padding-bottom: 0px; 
+}
+
+.peg-container {
+  min-width: 80px;
+  /* El drop container ocupa el alto total para drag target */
+}
+
+.hanoi-disk {
+  height: 30px;
+  border-radius: 15px;
+  cursor: grab;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  margin-top: 2px; /* Espacio mínimo entre discos */
+}
+
+.hanoi-disk:active {
+  cursor: grabbing;
+}
+
+/* Modificadores de arrastre CDK */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  opacity: 0.9;
+  z-index: 1000 !important;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.disks-wrapper.cdk-drop-list-dragging .hanoi-disk:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

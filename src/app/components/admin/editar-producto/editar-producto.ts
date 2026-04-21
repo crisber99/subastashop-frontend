@@ -30,7 +30,8 @@ export class EditarProducto implements OnInit {
     horasVentaAnticipada: 24,
     chatHabilitado: true,
     destacado: false,
-    numeroPares: 5
+    numeroPares: 5,
+    tipoJuego: 'MEMORICE'
   };
 
   archivosSeleccionados: File[] = [];

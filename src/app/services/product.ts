@@ -56,6 +56,9 @@ export class ProductService {
     if (producto.numeroPares) {
       formData.append('numeroPares', producto.numeroPares.toString());
     }
+    if (producto.tipoJuego) {
+      formData.append('tipoJuego', producto.tipoJuego);
+    }
 
     if (imagenes && imagenes.length > 0) {
       imagenes.forEach(file => {

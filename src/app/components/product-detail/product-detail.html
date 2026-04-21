@@ -178,8 +178,24 @@
 
                         <ng-template #juegoActivo>
                             <div *ngIf="authService.isLoggedIn(); else loginRequired">
-                                <div class="mb-4">
-                                    <app-memorice 
+                                <div class="mb-4" [ngSwitch]="producto.tipoJuego">
+                                    <app-hanoi *ngSwitchCase="'HANOI'"
+                                        [contestId]="producto.id" 
+                                        [userId]="authService.currentUser()?.id || 0"
+                                        [totalDisks]="producto.numeroPares || 5"
+                                        [contestStatus]="producto.estado"
+                                        (onComplete)="onGameComplete($event)">
+                                    </app-hanoi>
+
+                                    <app-reaccion *ngSwitchCase="'REACCION'"
+                                        [contestId]="producto.id" 
+                                        [userId]="authService.currentUser()?.id || 0"
+                                        [contestStatus]="producto.estado"
+                                        (onComplete)="onGameComplete($event)">
+                                    </app-reaccion>
+
+                                    <!-- Por defecto, Memorice -->
+                                    <app-memorice *ngSwitchDefault
                                         [contestId]="producto.id" 
                                         [userId]="authService.currentUser()?.id || 0"
                                         [totalPairs]="producto.numeroPares || 5"

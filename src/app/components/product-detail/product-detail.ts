@@ -21,11 +21,13 @@ declare var bootstrap: any;
 import confetti from 'canvas-confetti';
 
 import { MemoriceComponent } from '../memorice/memorice';
+import { HanoiComponent } from '../hanoi/hanoi.component';
+import { ReaccionComponent } from '../reaccion/reaccion.component';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MemoriceComponent, LegalTermsComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MemoriceComponent, HanoiComponent, ReaccionComponent, LegalTermsComponent],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })

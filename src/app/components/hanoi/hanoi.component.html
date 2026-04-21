@@ -1,0 +1,66 @@
+<div class="hanoi-container p-4 rounded bg-dark text-white text-center shadow-lg position-relative">
+  <div class="header mb-4">
+    <h3 class="fw-bold mb-1">🗼 Torre de Hanói</h3>
+    <p class="text-muted small mb-3">Mueve todos los discos a la derecha de uno en uno, sin colocar un disco superior sobre uno menor.</p>
+    
+    <div class="d-flex justify-content-center gap-4 align-items-center mb-3">
+      <div class="badge bg-primary fs-5 p-2 px-3 rounded-pill">
+        <i class="bi bi-clock me-2"></i> {{ formatTime(elapsedTime) }}
+      </div>
+      <div class="badge bg-info text-dark fs-5 p-2 px-3 rounded-pill">
+        <i class="bi bi-arrow-down-up me-2"></i> {{ moves }} movs
+      </div>
+    </div>
+  </div>
+
+  <!-- Board / Pegs Container -->
+  <div *ngIf="gameStarted" class="board d-flex justify-content-around align-items-end mx-auto gap-3" cdkDropListGroup style="height: 300px; max-width: 600px;">
+    
+    <!-- Cada Poste -->
+    <div *ngFor="let peg of pegs; let i = index" class="peg-container position-relative flex-grow-1 h-100 d-flex flex-column align-items-center justify-content-end"
+         cdkDropList
+         [cdkDropListData]="peg"
+         (cdkDropListDropped)="drop($event)"
+         [cdkDropListEnterPredicate]="diskEnterPredicate"
+         id="peg-{{i}}">
+      
+      <!-- El poste visual (madera) -->
+      <div class="peg-rod position-absolute bg-secondary translate-middle-x start-50 rounded-top" style="width: 15px; height: 80%; bottom: 15px; z-index: 0;"></div>
+      
+      <!-- La base -->
+      <div class="peg-base position-absolute w-100 bg-secondary rounded" style="height: 15px; bottom: 0;"></div>
+
+      <!-- Discos en el poste (flujo visual inverso al DOM, flex-column-reverse) -->
+      <div class="disks-wrapper d-flex flex-column-reverse w-100 align-items-center" style="z-index: 1; padding-bottom: 15px;">
+        <div *ngFor="let disk of peg" 
+             class="hanoi-disk text-center fw-bold shadow-sm d-flex align-items-center justify-content-center"
+             [style.width.%]="20 + (disk.size * 10)"
+             [style.background]="'hsl(' + (disk.size * 50) + ', 70%, 50%)'"
+             cdkDrag
+             [cdkDragData]="disk"
+             [cdkDragDisabled]="!canDrag($any({data: disk}), peg)">
+          <!-- Visual size cue -->
+          <span class="small opacity-50">{{ disk.size }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Start Frame overlay -->
+  <div *ngIf="!gameStarted && !gameFinished" class="overlay d-flex flex-column align-items-center justify-content-center bg-black bg-opacity-75 rounded" style="position: absolute; inset: 0;">
+    <h2 class="text-white fw-bold display-4 mb-4">¿Listo?</h2>
+    
+    <div class="alert bg-warning text-dark border-0 fw-bold px-4 mb-4">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> Tienes que mover los {{totalDisks}} discos al último poste.
+    </div>
+
+    <button *ngIf="!isBlocked" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fs-4 fw-bold shadow pulse-btn"
+            (click)="startGame()" [disabled]="isProcessing">
+      {{ isProcessing ? 'Iniciando...' : '🔥 INICIAR JUEGO 🔥' }}
+    </button>
+    <button *ngIf="isBlocked" class="btn btn-secondary btn-lg rounded-pill px-5" disabled>
+       Concurso Finalizado
+    </button>
+  </div>
+</div>

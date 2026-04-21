@@ -11,6 +11,7 @@
   --bg-color: #f8fafc;
   --bg-gradient: radial-gradient(circle at top right, #f1f5f9, #f8fafc);
   --card-bg: rgba(255, 255, 255, 0.85);
+  --surface-color: #ffffff;
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.4);
   
@@ -25,7 +26,7 @@
   --radius-lg: 1.5rem; /* 24px */
   --radius-md: 1rem;   /* 16px */
   --radius-sm: 0.75rem; /* 12px */
-  --is-dark: invert(0);
+  --is-dark: 0;
 }
 
 .text-muted {
@@ -37,37 +38,37 @@ body.dark-theme {
   --bg-color: #0f172a;
   --bg-gradient: radial-gradient(circle at top right, #1e293b, #0f172a);
   --card-bg: rgba(30, 41, 59, 0.8);
+  --surface-color: #1e293b;
   --glass-bg: rgba(15, 23, 42, 0.7);
   --glass-border: rgba(255, 255, 255, 0.05);
   
   /* Text & Borders */
-  --text-color: #f8fafc;
-  --text-muted: #cbd5e1;
+  --text-color: #f1f5f9;
+  --text-muted: #94a3b8;
   --border-color: rgba(51, 65, 85, 0.5);
-  --is-dark: invert(1);
+  --is-dark: 1;
   --premium-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
 
-  /* Force light text for components in dark mode */
+  /* Improved Text Rules (Avoid forced color on everything) */
   h1, h2, h3, h4, h5, h6, 
   .h1, .h2, .h3, .h4, .h5, .h6,
-  .card-title, 
+  .card-title,
   .nav-link:not(.active) {
-    color: var(--text-color) !important;
+    color: var(--text-color);
   }
 
-  .card-text, .text-muted, small {
-    color: var(--text-muted) !important;
+  .card-text, small {
+    color: var(--text-muted);
   }
 
   /* Reset all common text and elements to be themed */
-  h1, h2, h3, h4, h5, h6, p, li, label, th, td, span:not(.badge) {
-    color: var(--text-color) !important;
+  h1, h2, h3, h4, h5, h6, p, li, label, th, td, span:not(.badge):not(.text-success):not(.text-danger):not(.text-warning):not(.text-info) {
+    color: var(--text-color);
   }
 
-  .table {
-    td, th {
-      background-color: transparent !important;
-    }
+  .btn-outline-secondary {
+    color: var(--text-muted) !important;
+    border-color: var(--border-color) !important;
   }
 }
 
@@ -243,6 +244,26 @@ body.dark-theme input:-webkit-autofill {
 }
 
 /* Utility Classes */
+/* Custom Utilities for Theme Consistency */
+.bg-card-custom {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    transition: all 0.3s ease;
+}
+
+.btn-surface {
+    background: var(--glass-bg);
+    color: var(--text-color);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    
+    &:hover {
+        background: var(--surface-color);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+}
+
 .premium-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent 0%, var(--glass-border) 50%, transparent 100%);

@@ -19,8 +19,8 @@
             <div class="detalle-image-container position-relative">
                 
                 <!-- BOTÓN CORAZÓN -->
-                <button class="btn btn-light rounded-circle shadow-lg p-0 d-flex align-items-center justify-content-center position-absolute top-0 end-0 m-3 z-3"
-                        style="width: 50px; height: 50px; border: 1px solid var(--border-color); backdrop-filter: blur(5px); background: rgba(255,255,255,0.7);"
+                <button class="btn btn-surface rounded-circle shadow-lg p-0 d-flex align-items-center justify-content-center position-absolute top-0 end-0 m-3 z-3"
+                        style="width: 50px; height: 50px;"
                         (click)="authService.isLoggedIn() ? toggleFavorito(producto.id, $event) : router.navigate(['/login'])">
                     <i class="fs-4" 
                        [ngClass]="(authService.isLoggedIn() && favoritoService.isFavorito(producto.id)) ? 'bi bi-heart-fill text-danger animate__animated animate__heartBeat' : 'bi bi-heart text-muted'">
@@ -89,8 +89,9 @@
                 <div class="premium-divider my-4"></div>
 
                 <!-- SECCIÓN SUBASTA -->
-                <div *ngIf="producto.tipoVenta === 'SUBASTA'" class="card border-0 mb-4 overflow-hidden">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3 border-0">
+                <div *ngIf="producto.tipoVenta === 'SUBASTA'" class="card border-0 mb-4 overflow-hidden bg-card-custom">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3 border-0" 
+                         style="background: var(--glass-bg);">
                         @if (periodoSubasta === 'ANUNCIO') {
                             <span class="badge bg-secondary px-3 py-2"><i class="bi bi-calendar-event me-1"></i> ANUNCIO</span>
                         } @else if (periodoSubasta === 'PREVIA_PRO') {
@@ -115,7 +116,7 @@
                         } @else if (periodoSubasta === 'PREVIA_PRO') {
                             @if (authService.isLoggedIn() && (authService.currentUser()?.suscripcionActiva || authService.currentUser()?.pagoAutomatico)) {
                                 <div class="input-group input-group-lg mb-3 shadow-sm rounded-4 overflow-hidden">
-                                    <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                                    <span class="input-group-text bg-transparent border-end-0 text-muted">$</span>
                                     <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta" [min]="producto.precioActual + 1000">
                                     <button class="btn btn-primary px-4 fw-bold" type="button" (click)="pujar()">PUJAR</button>
                                 </div>
@@ -125,7 +126,7 @@
                         } @else if (periodoSubasta === 'ABIERTA') {
                             <div *ngIf="authService.isLoggedIn(); else loginSubasta">
                                 <div class="input-group input-group-lg mb-3 shadow-sm rounded-4 overflow-hidden">
-                                    <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                                    <span class="input-group-text bg-transparent border-end-0 text-muted">$</span>
                                     <input type="number" class="form-control border-start-0" [(ngModel)]="montoOferta" [min]="producto.precioActual + 1000">
                                     <button class="btn btn-primary px-4 fw-bold" type="button" (click)="pujar()">PUJAR</button>
                                 </div>
@@ -158,11 +159,11 @@
                 </div>
 
                 <!-- SECCIÓN CONCURSO MEMORICE (RIFA) -->
-                <div *ngIf="producto.tipoVenta === 'RIFA'" class="card border-0 mb-4 overflow-hidden shadow-sm">
-                    <div class="card-header bg-gradient-primary text-white py-3 border-0 text-center" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
-                        <h5 class="mb-0 fw-bold"><i class="bi bi-controller me-2"></i> Concurso de Habilidad</h5>
+                <div *ngIf="producto.tipoVenta === 'RIFA'" class="card border-0 mb-4 overflow-hidden bg-card-custom shadow-sm">
+                    <div class="card-header py-3 border-0 text-center" style="background: var(--primary-gradient);">
+                        <h5 class="mb-0 fw-bold text-white"><i class="bi bi-controller me-2"></i> Concurso de Habilidad</h5>
                     </div>
-                    <div class="card-body p-4 bg-glass">
+                    <div class="card-body p-4 bg-transparent">
                         <div class="text-center mb-4">
                             <p class="text-muted mb-1 small uppercase">Inscripción al Concurso</p>
                             <h2 class="fw-800 text-primary">${{ producto.precioTicket | number }}</h2>

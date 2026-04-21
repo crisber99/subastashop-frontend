@@ -1,7 +1,7 @@
 <div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="col-md-10 col-lg-8">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-card-custom">
         <div class="card-header bg-primary text-white p-4">
           <h2 class="mb-0 fw-bold"><i class="bi bi-person-circle me-3"></i>Mi Perfil</h2>
           <p class="mb-0 opacity-75">Administra tu identidad y seguridad</p>
@@ -9,7 +9,7 @@
 
         <div class="card-body p-0">
           <!-- Nav Tabs -->
-          <ul class="nav nav-tabs nav-fill border-0">
+          <ul class="nav nav-tabs nav-fill border-0 bg-card-custom border-bottom" style="--bs-nav-link-color: var(--text-color);">
             <li class="nav-item">
               <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'data'"
                 (click)="activeTab = 'data'">

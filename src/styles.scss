@@ -108,11 +108,18 @@ body {
   background: var(--card-bg) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border) !important;
+  border: 1px solid var(--border-color) !important; /* Brighter border */
   border-radius: var(--radius-lg) !important;
   box-shadow: var(--premium-shadow) !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
+  color: var(--text-color) !important;
+}
+
+.card-header, .card-footer {
+  background: transparent !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-color) !important;
 }
 
 .card:hover {
@@ -211,10 +218,11 @@ body.dark-theme input:-webkit-autofill {
 /* Tables */
 .table {
   color: var(--text-color) !important;
-  --bs-table-bg: transparent;
-  --bs-table-border-color: var(--glass-border);
+  background-color: transparent !important;
+  --bs-table-bg: transparent !important;
+  --bs-table-border-color: var(--border-color);
+  border-color: var(--border-color) !important;
   border-radius: var(--radius-md);
-  overflow: hidden;
   
   thead th {
       background: var(--glass-bg) !important;
@@ -228,14 +236,26 @@ body.dark-theme input:-webkit-autofill {
   }
   
   tbody td {
+      background: transparent !important;
       padding: 1rem;
       vertical-align: middle;
       border-bottom: 1px solid var(--border-color) !important;
+      color: var(--text-color) !important;
   }
 
   tr:last-child td {
       border-bottom: none !important;
   }
+}
+
+body.dark-theme .table {
+    background-color: transparent !important;
+    color: var(--text-color) !important;
+    
+    thead th {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: var(--border-color) !important;
+    }
 }
 
 /* --- ALERTS ENHANCEMENT --- */

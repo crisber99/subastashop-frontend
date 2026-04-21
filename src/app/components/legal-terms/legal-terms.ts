@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="legal-container p-3 border rounded-3 bg-light shadow-sm" style="max-height: 300px; overflow-y: auto; font-size: 0.9rem; line-height: 1.5; color: #444;">
+    <div class="legal-container p-3 border rounded-3 bg-card-custom shadow-sm">
       <h6 class="fw-bold mb-3">Términos y Condiciones Legales (Chile) - SubastaShop</h6>
       
       <p><strong>1. Concursos de Habilidad:</strong> De acuerdo con la Ley N° 19.995 y el Código Civil chileno, los concursos ofrecidos en esta plataforma (Memorice) corresponden a <strong>Juegos de Destreza y Habilidad</strong>. El resultado depende exclusivamente de la memoria y rapidez del participante, por lo que no constituyen juegos de azar ni están sujetos a la fiscalización de la Superintendencia de Casinos de Juego.</p>
@@ -21,7 +21,6 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: [`
-    /* Estilos Base y Modo Claro (Por defecto) */
     .legal-container { 
       text-align: justify; 
       max-height: 300px; 
@@ -29,32 +28,20 @@ import { CommonModule } from '@angular/common';
       font-size: 0.9rem; 
       line-height: 1.5;
       backdrop-filter: blur(5px);
-      
-      background: rgba(255, 255, 255, 0.8); 
-      color: #333;
+      background: var(--card-bg);
+      color: var(--text-color);
+      border-color: var(--border-color) !important;
     }
 
     .legal-container::-webkit-scrollbar { width: 6px; }
-    .legal-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-
-    /* --- ADAPTACIÓN AL MODO OSCURO MEDIANTE CLASES GLOBALES --- */
-    /* Esto detecta si Bootstrap o Tailwind activaron el modo oscuro en la app */
-    
-    :host-context([data-bs-theme="dark"]) .legal-container,
-    :host-context(.dark) .legal-container {
-      background: rgba(30, 30, 30, 0.8) !important; /* Forzamos el fondo oscuro */
-      color: #e2e8f0 !important; /* Aseguramos que el texto sea visible */
-      border-color: #475569 !important;
-    }
-    
-    :host-context([data-bs-theme="dark"]) .legal-container::-webkit-scrollbar-thumb,
-    :host-context(.dark) .legal-container::-webkit-scrollbar-thumb {
-      background: #64748b !important;
+    .legal-container::-webkit-scrollbar-thumb { 
+      background: var(--border-color); 
+      border-radius: 10px; 
     }
 
-    :host-context([data-bs-theme="dark"]) .text-muted,
-    :host-context(.dark) .text-muted {
-      color: #94a3b8 !important;
+    body.dark-theme .legal-container {
+      background: rgba(15, 23, 42, 0.8) !important;
+      color: #ffffff !important;
     }
   `]
 })

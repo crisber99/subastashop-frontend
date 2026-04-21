@@ -240,7 +240,37 @@ export class Dashboard implements OnInit {
       this.productService.getMisPujas().subscribe(data => this.pujas = data);
   }
 
-  // --- LOOT BOX LOGIC ---
+  cancelarOrden(ordenId: number) {
+    Swal.fire({
+      title: '¿Cancelar esta orden?',
+      text: 'Los productos reservados quedarán disponibles nuevamente. Se te enviará una confirmación por correo.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar orden',
+      cancelButtonText: 'No, mantener',
+      confirmButtonColor: '#dc3545'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({ title: 'Cancelando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        this.ordenService.cancelarOrden(ordenId).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Orden Cancelada',
+              text: 'Te hemos enviado una confirmación por correo.',
+              timer: 3000,
+              showConfirmButton: false
+            });
+            this.recargarOrdenes();
+          },
+          error: (err) => {
+            Swal.fire('Error', err.error?.error || 'No se pudo cancelar la orden.', 'error');
+          }
+        });
+      }
+    });
+  }
+
   abrirCajaMisteriosa(detalleId: number) {
     Swal.fire({
       title: '¡Preparando tu Caja Misteriosa!',

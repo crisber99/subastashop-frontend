@@ -147,9 +147,12 @@
                             <div class="alert alert-warning small py-2 mb-3">
                                 <i class="bi bi-info-circle"></i> Tienes productos reservados. Paga pronto para no perderlos.
                             </div>
-                            <a [routerLink]="['/checkout', orden.id]" class="btn btn-warning w-100 fw-bold shadow-sm">
+                            <a [routerLink]="['/checkout', orden.id]" class="btn btn-warning w-100 fw-bold shadow-sm mb-2">
                                 <i class="bi bi-credit-card"></i> Pagar / Subir Comprobante
                             </a>
+                            <button class="btn btn-outline-danger w-100 btn-sm" (click)="cancelarOrden(orden.id)">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar Orden
+                            </button>
                         </div>
                     </div>
                 </div>

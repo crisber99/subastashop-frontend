@@ -61,4 +61,8 @@ export class OrdenService {
   rechazarPago(id: number, motivo: string = '') {
     return this.http.post(`${environment.apiUrl}/admin/ordenes/${id}/rechazar?motivo=${encodeURIComponent(motivo)}`, {});
   }
-}
+
+  cancelarOrden(id: number) {
+    return this.http.delete<any>(`${this.apiUrl}/${id}/cancelar`);
+  }
+}

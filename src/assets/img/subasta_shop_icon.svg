@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#1F2833" stroke="#45A29E" stroke-width="2"/>
+  <!-- First S - Turquesa -->
+  <path d="M 60,30 C 45,20 25,30 30,45 C 35,60 60,55 60,70 C 60,85 40,85 25,75" fill="none" stroke="#45A29E" stroke-width="10" stroke-linecap="round" />
+  <!-- Second S - Salmón, offset slightly -->
+  <path d="M 75,40 C 60,30 40,40 45,55 C 50,70 75,65 75,80 C 75,95 55,95 40,85" fill="none" stroke="#E27D60" stroke-width="10" stroke-linecap="round" opacity="0.9"/>
+</svg>

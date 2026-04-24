@@ -128,7 +128,7 @@ export class HanoiComponent implements OnInit {
       event.previousContainer.data,
       event.container.data,
       event.previousIndex,
-      event.container.data.length
+      event.currentIndex
     );
 
     this.moves++;

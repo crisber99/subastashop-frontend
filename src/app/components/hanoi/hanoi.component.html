@@ -20,6 +20,7 @@
     <div *ngFor="let peg of pegs; let i = index" class="peg-container position-relative flex-grow-1 h-100 d-flex flex-column align-items-center justify-content-end"
          cdkDropList
          [cdkDropListData]="peg"
+         [cdkDropListSortingDisabled]="true"
          (cdkDropListDropped)="drop($event)"
          [cdkDropListEnterPredicate]="diskEnterPredicate"
          id="peg-{{i}}">

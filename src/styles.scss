@@ -184,9 +184,16 @@ body {
   }
 
   &::placeholder {
-    color: var(--text-muted) !important;
+    color: var(--text-muted);
     opacity: 0.6;
   }
+}
+
+.form-floating > .form-control::placeholder {
+  color: transparent;
+}
+.form-floating > .form-control:focus::placeholder {
+  color: var(--text-muted);
 }
 
 body.dark-theme .form-control, body.dark-theme .form-select {

@@ -1,4 +1,4 @@
-<div class="hero-section text-center text-white mb-5">
+<div class="hero-section text-center mb-5">
     <div class="hero-content d-flex flex-column justify-content-center align-items-center animate__animated animate__fadeIn">
         <div class="logo-hero-wrapper mb-3">
             <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop Logo" style="width: 80px; filter: drop-shadow(0 0 20px var(--primary-color));">
@@ -8,9 +8,9 @@
         <p class="mb-5 opacity-75">Explora subastas, concursos y ventas directas de tiendas verificadas.</p>
 
         <div class="search-container p-2 rounded-pill shadow-xl d-flex mb-4"
-            style="max-width: 600px; width: 90%; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1);">
-            <input type="text" class="form-control border-0 rounded-pill px-4 shadow-none bg-transparent text-white"
-                style="color: white !important;" placeholder="Buscar una tienda (ej: MiniMundo)..." [(ngModel)]="busqueda" (keyup)="filtrar()">
+            style="max-width: 600px; width: 90%; background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--border-color);">
+            <input type="text" class="form-control border-0 rounded-pill px-4 shadow-none bg-transparent"
+                style="color: var(--text-color) !important;" placeholder="Buscar una tienda (ej: MiniMundo)..." [(ngModel)]="busqueda" (keyup)="filtrar()">
             <button class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Buscar</button>
         </div>
     </div>
@@ -19,13 +19,13 @@
     <div class="category-chips mt-4 d-flex flex-wrap justify-content-center gap-2 animate__animated animate__fadeInUp animate__delay-1s px-3 mx-auto"
          style="max-width: 900px;">
         <button class="btn btn-sm rounded-pill px-3 border shadow-sm transition-all"
-                style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white;"
+                style="background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-color);"
                 (click)="seleccionarCategoria(null)">
             <i class="bi bi-grid-fill me-1"></i> Todo
         </button>
         <button *ngFor="let cat of categorias" 
                 class="btn btn-sm rounded-pill px-3 border shadow-sm transition-all bg-glass-hover"
-                style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white;"
+                style="background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-color);"
                 (click)="seleccionarCategoria(cat.id)">
             <i [class]="cat.icono + ' me-1'"></i> {{ cat.nombre }}
         </button>

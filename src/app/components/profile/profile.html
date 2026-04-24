@@ -4,7 +4,7 @@
       <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-card-custom mb-4">
         
         <!-- HEADER PREMIUM -->
-        <div class="card-header border-0 p-5 position-relative text-center text-white" 
+        <div class="card-header border-0 p-5 position-relative text-center" 
              style="background: var(--primary-gradient);">
           <div class="mb-3 position-relative d-inline-block">
             <div class="avatar-circle shadow-lg" 
@@ -12,7 +12,7 @@
               {{ (profileData?.nombre || 'U').charAt(0).toUpperCase() }}
             </div>
           </div>
-          <h2 class="mb-1 fw-bold" style="text-shadow: 0 2px 10px rgba(0,0,0,0.2);">{{ profileData?.nombre || 'Mi Perfil' }}</h2>
+          <h2 class="mb-1 fw-bold">{{ profileData?.nombre || 'Mi Perfil' }}</h2>
           <p class="mb-0 opacity-90"><i class="bi bi-shield-check me-1"></i> Miembro de SubastaShop</p>
         </div>
 
@@ -53,14 +53,14 @@
                   <div class="col-md-6">
                     <div class="form-floating">
                       <input type="text" [(ngModel)]="profileData.nombre" name="nombre" class="form-control"
-                        id="floatingNombre" placeholder="Tu nombre">
+                        id="floatingNombre" placeholder=" ">
                       <label for="floatingNombre"><i class="bi bi-person me-1 text-primary"></i> Nombre Completo</label>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-floating">
                       <input type="text" [(ngModel)]="profileData.alias" name="alias" class="form-control"
-                        id="floatingAlias" placeholder="Tu alias">
+                        id="floatingAlias" placeholder=" ">
                       <label for="floatingAlias"><i class="bi bi-tag me-1 text-primary"></i> Alias Público</label>
                     </div>
                   </div>
@@ -70,7 +70,7 @@
                   <div class="col-md-6">
                     <div class="form-floating">
                       <input type="text" [(ngModel)]="profileData.rut" name="rut"
-                        class="form-control opacity-75" [disabled]="rutAlreadyExists" id="floatingRut" placeholder="11.111.111-1"
+                        class="form-control opacity-75" [disabled]="rutAlreadyExists" id="floatingRut" placeholder=" "
                         title="El RUT no se puede modificar una vez registrado">
                       <label for="floatingRut"><i class="bi bi-card-text me-1 text-muted"></i> RUT</label>
                     </div>
@@ -78,7 +78,7 @@
                   <div class="col-md-6">
                     <div class="form-floating">
                       <input type="tel" [(ngModel)]="profileData.telefono" name="telefono"
-                        class="form-control" id="floatingTel" placeholder="+56 9 ...">
+                        class="form-control" id="floatingTel" placeholder=" ">
                       <label for="floatingTel"><i class="bi bi-telephone me-1 text-primary"></i> Teléfono</label>
                     </div>
                   </div>
@@ -88,7 +88,7 @@
                   <div class="col-md-7">
                     <div class="form-floating">
                       <input type="text" [(ngModel)]="profileData.direccion" name="direccion"
-                        class="form-control" id="floatingAddress" placeholder="Calle, Número">
+                        class="form-control" id="floatingAddress" placeholder=" ">
                       <label for="floatingAddress"><i class="bi bi-geo-alt me-1 text-primary"></i> Dirección de Envío</label>
                     </div>
                   </div>
@@ -125,17 +125,17 @@
 
               <form (ngSubmit)="updatePassword()" #securityForm="ngForm" class="mx-auto" style="max-width: 500px;">
                 <div class="form-floating mb-4">
-                  <input type="password" class="form-control" id="currentPass" [(ngModel)]="passwords.current" name="current" placeholder="Actual" required>
+                  <input type="password" class="form-control" id="currentPass" [(ngModel)]="passwords.current" name="current" placeholder=" " required>
                   <label for="currentPass">Contraseña Actual</label>
                 </div>
                 
                 <div class="form-floating mb-4">
-                  <input type="password" class="form-control" id="newPass" [(ngModel)]="passwords.new" name="new" placeholder="Nueva" required minlength="6">
+                  <input type="password" class="form-control" id="newPass" [(ngModel)]="passwords.new" name="new" placeholder=" " required minlength="6">
                   <label for="newPass">Nueva Contraseña</label>
                 </div>
                 
                 <div class="form-floating mb-4">
-                  <input type="password" class="form-control" id="confirmPass" [(ngModel)]="passwords.confirm" name="confirm" placeholder="Confirma" required>
+                  <input type="password" class="form-control" id="confirmPass" [(ngModel)]="passwords.confirm" name="confirm" placeholder=" " required>
                   <label for="confirmPass">Confirmar Nueva Contraseña</label>
                 </div>
 

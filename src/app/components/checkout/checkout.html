@@ -3,10 +3,15 @@
 
         <div class="col-md-7">
             <div class="card bg-card-custom mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-bank"></i> Datos para Transferir</h5>
+                <div class="card-header text-white" [ngClass]="orden.estado === 'PAGADO' ? 'bg-success' : 'bg-primary'">
+                    <h5 class="mb-0">
+                        <i class="bi" [ngClass]="orden.estado === 'PAGADO' ? 'bi-check-circle' : 'bi-bank'"></i> 
+                        {{ orden.estado === 'PAGADO' ? 'Comprobante de Pago' : 'Datos para Transferir' }}
+                    </h5>
                 </div>
                 <div class="card-body p-4">
+                    
+                    <ng-container *ngIf="orden.estado !== 'PAGADO'">
                     <p class="mb-3">Por favor, realiza la transferencia exacta a una de las siguientes cuentas del
                         vendedor:</p>
 
@@ -131,6 +136,33 @@
                         <span *ngIf="archivoComprobante && !loading">✅ Informar Pago</span>
                         <span *ngIf="loading">Enviando...</span>
                     </button>
+                    </ng-container>
+
+                    <ng-container *ngIf="orden.estado === 'PAGADO'">
+                        <div class="text-center py-4">
+                            <i class="bi bi-patch-check-fill text-success" style="font-size: 4rem;"></i>
+                            <h3 class="mt-3 text-success fw-bold">¡Pago Confirmado!</h3>
+                            <p class="text-muted">Tu orden ha sido validada exitosamente por el vendedor.</p>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted d-block">ID de Transacción</small>
+                                <span class="fw-bold">#{{ orden.id }}</span>
+                            </div>
+                            <div class="col-6 text-end">
+                                <small class="text-muted d-block">Fecha de Emisión</small>
+                                <span class="fw-bold">{{ orden.fechaCreacion | date:'medium' }}</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 rounded text-center border" style="background: var(--glass-bg);">
+                           <p class="mb-0 opacity-75 small">Este documento electrónico acredita el pago total de los productos listados.</p>
+                           <button class="btn btn-primary mt-3 rounded-pill px-4" onclick="window.print()">
+                               <i class="bi bi-printer me-2"></i> Imprimir Recibo Electrónico
+                           </button>
+                        </div>
+                    </ng-container>
+
                 </div>
             </div>
         </div>

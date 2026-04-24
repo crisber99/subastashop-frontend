@@ -65,4 +65,4 @@ export class OrdenService {
   cancelarOrden(id: number) {
     return this.http.delete<any>(`${this.apiUrl}/${id}/cancelar`);
   }
-}
+}

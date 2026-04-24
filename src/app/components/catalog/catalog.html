@@ -79,9 +79,11 @@
             </div>
             }
         } @else {
-            @for (producto of productosFiltrados; track producto.id) {
+            @for (producto of productosPaginados; track producto.id) {
         <div class="col-md-4 mb-4 animate__animated animate__fadeIn">
-            <div class="card h-100 shadow-sm border-0 hover-effect">
+            <div class="card h-100 shadow-sm border-0 hover-effect"
+                 [style.cursor]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? 'default' : 'pointer'"
+                 [routerLink]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? null : ['/producto', producto.slug || producto.id]">
 
                 <div class="position-relative overflow-hidden">
                     <img [src]="producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : 'assets/no-image.png'" 
@@ -148,8 +150,7 @@
                         {{ producto.descripcion }}
                     </p>
 
-                    <a [routerLink]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? null : ['/producto', producto.slug || producto.id]" 
-                       class="btn w-100 mb-2 rounded-pill fw-bold text-white transition-all"
+                    <div class="btn w-100 mb-2 rounded-pill fw-bold text-white transition-all"
                        [class.btn-secondary]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
                        [class.disabled]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
                        [style.background-color]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')"
@@ -157,13 +158,14 @@
                         @if (producto.estado === 'VENDIDO') { 🚫 Vendido }
                         @else if (producto.estado === 'RESERVADO') { ⏳ En Carrito }
                         @else { Ver Detalle }
-                    </a>
+                    </div>
 
                     @if (authService.isAdmin() && canEdit(producto)) {
                     <div class="border-top pt-2 mt-auto">
                         @if (producto.estado !== 'FINALIZADA' && producto.estado !== 'VENDIDO') {
                         <a [routerLink]="['/admin/editar', producto.id]"
-                            class="btn btn-outline-warning w-100 btn-sm fw-bold">
+                            class="btn btn-outline-warning w-100 btn-sm fw-bold"
+                            (click)="$event.stopPropagation()">
                             ✏️ Editar
                         </a>
                         } @else {
@@ -189,4 +191,27 @@
         }
         }
     </div>
+
+    <!-- PAGINACIÓN -->
+    @if (totalPages > 1 && !isLoading) {
+    <div class="d-flex justify-content-center mt-2 mb-5">
+        <ul class="pagination pagination-sm shadow-sm">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link shadow-none" href="javascript:void(0)" (click)="currentPage = currentPage - 1">Anterior</a>
+            </li>
+            @for (page of getPagesArray(); track page) {
+            <li class="page-item" [class.active]="currentPage === page">
+                <a class="page-link shadow-none" href="javascript:void(0)" (click)="currentPage = page"
+                   [style.background-color]="currentPage === page ? (tienda?.colorPrimario || '#0d6efd') : ''"
+                   [style.border-color]="currentPage === page ? (tienda?.colorPrimario || '#0d6efd') : ''">
+                    {{ page }}
+                </a>
+            </li>
+            }
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link shadow-none" href="javascript:void(0)" (click)="currentPage = currentPage + 1">Siguiente</a>
+            </li>
+        </ul>
+    </div>
+    }
 </div>

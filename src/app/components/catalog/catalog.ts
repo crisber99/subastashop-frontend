@@ -35,6 +35,23 @@ export class CatalogComponent implements OnInit {
   nombreTienda: string = '';
   isLoading: boolean = true; // Empieza cargando
 
+  // Paginación
+  currentPage: number = 1;
+  pageSize: number = 9;
+
+  get productosPaginados() {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.productosFiltrados.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.productosFiltrados.length / this.pageSize);
+  }
+
+  getPagesArray(): number[] {
+    return Array(this.totalPages).fill(0).map((x, i) => i + 1);
+  }
+
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.favoritoService.cargarIdsFavoritos();
@@ -125,6 +142,7 @@ export class CatalogComponent implements OnInit {
       const coincideCategoria = this.categoriaSeleccionada === null || p.categoriaId === this.categoriaSeleccionada;
       return coincideNombre && coincideCategoria;
     });
+    this.currentPage = 1; // Volver a la primera página tras filtrar
   }
 
   seleccionarCategoria(id: number | null) {

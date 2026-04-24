@@ -1,158 +1,182 @@
-<div class="container mt-5">
-  <div class="card shadow-lg p-4 mx-auto" style="max-width: 600px;">
-    <h3 class="mb-4 text-primary">✏️ Editar Producto</h3>
-
-    <form (ngSubmit)="guardarCambios()">
-      
-      <div class="mb-3">
-        <label class="form-label">Nombre del Producto</label>
-        <input type="text" class="form-control" [(ngModel)]="producto.nombre" name="nombre" required>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Descripción</label>
-        <textarea class="form-control" rows="3" [(ngModel)]="producto.descripcion" name="descripcion" required></textarea>
-      </div>
-
-      <!-- Sección: Precio (Venta Directa o Subasta) -->
-      @if (producto.tipoVenta === 'SUBASTA' || producto.tipoVenta === 'DIRECTA') {
-        <div class="mb-3">
-          <label class="form-label">Precio Base ($)</label>
-          <input type="number" class="form-control" [(ngModel)]="producto.precioBase" name="precioBase" required>
-        </div>
-      }
-
-      @if (producto.tipoVenta === 'CAJA_MISTERIOSA') {
-        <div class="card p-3 mb-4 border-warning shadow-sm" style="background: rgba(255, 193, 7, 0.05); border-radius: 12px;">
-          <h5 class="text-warning mb-3">🎁 Configuración de la Caja</h5>
+<div class="container py-5 animate__animated animate__fadeIn">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-card-custom mb-5">
+        
+        <!-- HEADER PREMIUM -->
+        <div class="card-header border-0 p-5 position-relative text-center text-white" 
+             style="background: var(--primary-gradient);">
           <div class="mb-3">
-            <label class="form-label fw-bold small">Precio de la Caja ($)</label>
-            <input type="number" class="form-control" [(ngModel)]="producto.precioTicket" name="precioTicket">
-            <div class="form-text">Este es el monto que se cobrará al cliente.</div>
-          </div>
-        </div>
-      }
-
-      <!-- Sección: Configuración de Concurso (RIFA) -->
-      @if (producto.tipoVenta === 'RIFA') {
-        <div class="card p-3 mb-4 border-info shadow-sm" style="background: rgba(13, 202, 240, 0.05); border-radius: 12px;">
-          <h5 class="text-info mb-3">🎮 Configuración del Concurso</h5>
-          <div class="row g-3">
-            <div class="col-md-12 mb-2">
-              <label class="form-label fw-bold text-success">Seleccionar Juego de Destreza</label>
-              <select class="form-select form-select-lg" [(ngModel)]="producto.tipoJuego" name="tipoJuego">
-                <option value="MEMORICE">🧠 Memorice (Agilidad Mental)</option>
-                <option value="HANOI">🗼 Torre de Hanói (Lógica Espacial)</option>
-                <option value="REACCION">⚡ Prueba de Reacción (Velocidad Visual)</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold small">Precio Inscripción ($)</label>
-              <input type="number" class="form-control" [(ngModel)]="producto.precioTicket" name="precioTicket">
-            </div>
-            <div class="col-md-6" *ngIf="producto.tipoJuego === 'MEMORICE' || producto.tipoJuego === 'HANOI'">
-              <label class="form-label fw-bold small">Dificultad {{ producto.tipoJuego === 'MEMORICE' ? '(Pares)' : '(Discos)' }}</label>
-              <select class="form-select text-center" [(ngModel)]="producto.numeroPares" name="numeroPares">
-                <ng-container *ngIf="producto.tipoJuego === 'MEMORICE'">
-                  <option [ngValue]="3">3 Pares (Fácil)</option>
-                  <option [ngValue]="5" selected>5 Pares (Normal)</option>
-                  <option [ngValue]="8">8 Pares (Intermedio)</option>
-                  <option [ngValue]="12">12 Pares (Difícil)</option>
-                  <option [ngValue]="15">15 Pares (Extremo)</option>
-                </ng-container>
-                <ng-container *ngIf="producto.tipoJuego === 'HANOI'">
-                  <option [ngValue]="3" selected>Nivel 1 (3 discos)</option>
-                  <option [ngValue]="4">Nivel 2 (4 discos)</option>
-                  <option [ngValue]="5">Nivel 3 (5 discos)</option>
-                  <option [ngValue]="6">Nivel 4 (6 discos)</option>
-                  <option [ngValue]="7">Nivel 5 (7 discos)</option>
-                </ng-container>
-              </select>
-            </div>
-            <div class="col-md-12">
-               <label class="form-label fw-bold small">Cupos Totales (Participaciones)</label>
-               <input type="number" class="form-control" [(ngModel)]="producto.cantidadNumeros" name="cantidadNumeros">
+            <div class="avatar-circle shadow-lg" 
+                 style="width: 80px; height: 80px; border-radius: 50%; background: var(--bg-color); color: var(--text-color); display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 3px solid rgba(255,255,255,0.3); margin: 0 auto;">
+              <i class="bi bi-pencil-square"></i>
             </div>
           </div>
+          <h2 class="fw-bold mb-1" style="text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Editar Producto</h2>
+          <p class="mb-0 opacity-90">Modifica los detalles de tu publicación.</p>
         </div>
-      }
 
-      <!-- Sección: Fechas (Solo Subasta) -->
-      @if (producto.tipoVenta === 'SUBASTA') {
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold text-success">Fecha de Inicio Oficial</label>
-            <input type="datetime-local" class="form-control" [(ngModel)]="producto.fechaInicioSubasta" name="fechaInicio" required>
-            <div class="form-text">¿Cuándo abre al público general?</div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold text-primary">Horas Acceso PRO</label>
-            <div class="input-group">
-              <input type="number" class="form-control" [(ngModel)]="producto.horasVentaAnticipada" name="horasVentaAnticipada" required>
-              <span class="input-group-text">H</span>
+        <div class="card-body p-4 p-md-5">
+
+          <form (ngSubmit)="guardarCambios()">
+            
+            <div class="form-floating mb-4">
+              <input type="text" class="form-control" id="floatingNombreE" [(ngModel)]="producto.nombre" name="nombre" placeholder="Nombre" required>
+              <label for="floatingNombreE"><i class="bi bi-tag-fill me-1 text-primary"></i> Nombre del Producto</label>
             </div>
-            <div class="form-text">Horas antes para PRO.</div>
-          </div>
-        </div>
 
-        <div class="mb-3">
-          <label class="form-label fw-bold text-danger">Fecha de Cierre</label>
-          <input type="datetime-local" class="form-control" [(ngModel)]="producto.fechaFinSubasta" name="fechaFinSubasta" required>
-        </div>
-      }
-
-      <div class="row g-3 mb-4">
-        <div class="col-md-12">
-            <div class="form-check form-switch p-3 bg-light rounded-4 border d-flex justify-content-between align-items-center">
-                <div>
-                    <label class="form-check-label fw-bold mb-0" for="chatHabilitadoEdit">Habilitar Chat en Vivo</label>
-                    <p class="text-muted small mb-0">Permite mensajes en tiempo real</p>
-                </div>
-                <div class="d-flex align-items-center">
-                    <span *ngIf="!isProUsuario" class="badge bg-warning text-dark me-2 small" style="font-size: 0.6rem;">PRO</span>
-                    <input class="form-check-input ms-0" type="checkbox" id="chatHabilitadoEdit" [(ngModel)]="producto.chatHabilitado" name="chatHabilitado" [disabled]="!isProUsuario" style="width: 2.5rem; height: 1.25rem;">
-                </div>
+            <div class="form-floating mb-4">
+              <textarea class="form-control" id="floatingDescE" rows="3" [(ngModel)]="producto.descripcion" name="descripcion" placeholder="Desc" required style="height: 100px; resize: none;"></textarea>
+              <label for="floatingDescE"><i class="bi bi-card-text me-1 text-primary"></i> Descripción</label>
             </div>
-            @if (!isProUsuario) {
-                <div class="small text-primary mt-1 ms-2">
-                     <i class="bi bi-star-fill"></i> <a href="/admin/configuracion" class="text-decoration-none">Hazte PRO para activar el chat</a>
-                </div>
+
+            <!-- Sección: Precio (Venta Directa o Subasta) -->
+            @if (producto.tipoVenta === 'SUBASTA' || producto.tipoVenta === 'DIRECTA') {
+              <div class="form-floating mb-4">
+                <input type="number" class="form-control" id="floatingPrecioBaseE" [(ngModel)]="producto.precioBase" name="precioBase" placeholder="1000" required>
+                <label for="floatingPrecioBaseE"><i class="bi bi-cash-stack me-1 text-primary"></i> Precio Base ($)</label>
+              </div>
             }
-        </div>
-      </div>
 
-      <div class="mb-4 card p-3 border-warning" style="background: rgba(255, 193, 7, 0.05);">
-        <div class="form-check form-switch fs-5">
-          <input class="form-check-input" type="checkbox" role="switch" id="destacadoEdit" [(ngModel)]="producto.destacado" name="destacado">
-          <label class="form-check-label fw-bold text-warning" for="destacadoEdit">⭐ Destacar en la Página Principal</label>
-        </div>
-        <div class="form-text text-muted">Tu producto aparecerá en el carrusel principal de la plataforma. Máxima visibilidad para tus ventas. 🚀</div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Imágenes (Opcional)</label>
-        <input type="file" class="form-control" (change)="onFilesSelected($event)" accept="image/*" multiple>
-        <small class="text-muted">Puedes seleccionar varias imágenes.</small>
-      </div>
-
-      @if (imagenesPreview.length > 0) {
-        <div class="mb-3">
-          <p class="text-muted small">Vista Previa:</p>
-          <div class="d-flex flex-wrap gap-2 justify-content-center">
-            @for (img of imagenesPreview; track img) {
-              <img [src]="img" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;">
+            @if (producto.tipoVenta === 'CAJA_MISTERIOSA') {
+              <div class="card p-4 border-warning shadow-sm mb-4 bg-card-custom" style="border-radius: 12px;">
+                <h5 class="text-warning mb-3 fw-bold"><i class="bi bi-box2-heart me-2"></i>Configuración de la Caja</h5>
+                <div class="form-floating">
+                  <input type="number" class="form-control" id="precioTicketCajaE" [(ngModel)]="producto.precioTicket" name="precioTicket" placeholder="5000">
+                  <label for="precioTicketCajaE">Precio de la Caja ($)</label>
+                  <div class="form-text mt-2">Monto asignado que se cobrará al cliente.</div>
+                </div>
+              </div>
             }
-          </div>
+
+            <!-- Sección: Configuración de Concurso (RIFA) -->
+            @if (producto.tipoVenta === 'RIFA') {
+              <div class="card p-4 border-info shadow-sm mb-4 bg-card-custom" style="border-radius: 12px;">
+                <h5 class="text-info mb-3 fw-bold"><i class="bi bi-controller fs-4 me-2"></i>Configuración del Concurso</h5>
+                <div class="row g-4">
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <select class="form-select" id="tipoJuegoE" [(ngModel)]="producto.tipoJuego" name="tipoJuego">
+                        <option value="MEMORICE">🧠 Memorice (Agilidad Mental)</option>
+                        <option value="HANOI">🗼 Torre de Hanói (Lógica Espacial)</option>
+                        <option value="REACCION">⚡ Prueba de Reacción (Velocidad Visual)</option>
+                      </select>
+                      <label for="tipoJuegoE" class="text-success fw-bold">Juego de Destreza</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input type="number" class="form-control" id="precioTicketE" [(ngModel)]="producto.precioTicket" name="precioTicket" placeholder="1000">
+                      <label for="precioTicketE">Precio Inscripción ($)</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6" *ngIf="producto.tipoJuego === 'MEMORICE' || producto.tipoJuego === 'HANOI'">
+                    <div class="form-floating">
+                      <select class="form-select" id="dificultadE" [(ngModel)]="producto.numeroPares" name="numeroPares">
+                        <ng-container *ngIf="producto.tipoJuego === 'MEMORICE'">
+                          <option [ngValue]="3">3 Pares (Fácil)</option>
+                          <option [ngValue]="5">5 Pares (Normal)</option>
+                          <option [ngValue]="8">8 Pares (Intermedio)</option>
+                          <option [ngValue]="12">12 Pares (Difícil)</option>
+                          <option [ngValue]="15">15 Pares (Extremo)</option>
+                        </ng-container>
+                        <ng-container *ngIf="producto.tipoJuego === 'HANOI'">
+                          <option [ngValue]="3">Nivel 1 (3 discos)</option>
+                          <option [ngValue]="4">Nivel 2 (4 discos)</option>
+                          <option [ngValue]="5">Nivel 3 (5 discos)</option>
+                          <option [ngValue]="6">Nivel 4 (6 discos)</option>
+                          <option [ngValue]="7">Nivel 5 (7 discos)</option>
+                        </ng-container>
+                      </select>
+                      <label for="dificultadE">Dificultad</label>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                     <div class="form-floating">
+                       <input type="number" class="form-control" id="cuposE" [(ngModel)]="producto.cantidadNumeros" name="cantidadNumeros" placeholder="100">
+                       <label for="cuposE">Cupos Totales (Participaciones)</label>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Sección: Fechas (Solo Subasta) -->
+            @if (producto.tipoVenta === 'SUBASTA') {
+              <div class="card p-4 border-warning shadow-sm mb-4 bg-card-custom" style="border-radius: 12px;">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input type="datetime-local" class="form-control" id="fechaIniE" [(ngModel)]="producto.fechaInicioSubasta" name="fechaInicio" required>
+                      <label for="fechaIniE" class="text-success"><i class="bi bi-calendar-check me-1"></i>Apertura Oficial</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input type="datetime-local" class="form-control" id="fechaFinE" [(ngModel)]="producto.fechaFinSubasta" name="fechaFinSubasta" required>
+                      <label for="fechaFinE" class="text-danger"><i class="bi bi-calendar-x me-1"></i>Cierre</label>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <input type="number" class="form-control" id="horasPipeE" [(ngModel)]="producto.horasVentaAnticipada" name="horasVentaAnticipada" placeholder="2" required>
+                      <label for="horasPipeE" class="text-primary"><i class="bi bi-star me-1"></i>Horas Acceso PRO</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <div class="d-flex align-items-center justify-content-between p-3 mb-4 rounded-4 border shadow-sm" style="background: var(--glass-bg);">
+              <div>
+                  <h6 class="fw-bold mb-1"><i class="bi bi-chat-dots text-primary me-2"></i>Habilitar Chat en Vivo</h6>
+                  <p class="text-muted small mb-0">Permite mensajes en tiempo real</p>
+                  @if (!isProUsuario) {
+                      <a href="/admin/configuracion" class="badge bg-warning text-dark text-decoration-none mt-2 d-inline-block">Requiere PRO para activar</a>
+                  }
+              </div>
+              <div class="form-check form-switch fs-4 mb-0">
+                  <input class="form-check-input ms-0" type="checkbox" id="chatHabilitadoEdit" [(ngModel)]="producto.chatHabilitado" name="chatHabilitado" [disabled]="!isProUsuario">
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between p-3 mb-4 rounded-4 border shadow-sm border-warning" style="background: rgba(240, 139, 132, 0.05);">
+              <div>
+                <h6 class="fw-bold text-warning mb-1"><i class="bi bi-star-fill me-2"></i>Destacar Producto</h6>
+                <p class="text-muted small mb-0">Aparecerá en el carrusel principal</p>
+              </div>
+              <div class="form-check form-switch fs-4 mb-0">
+                <input class="form-check-input" type="checkbox" id="destacadoEdit" [(ngModel)]="producto.destacado" name="destacado">
+              </div>
+            </div>
+
+            <div class="mb-5 p-4 rounded-4 border" style="background: var(--glass-bg);">
+              <h6 class="fw-bold"><i class="bi bi-images text-primary me-2"></i>Imágenes Adicionales (Opcional)</h6>
+              <input type="file" class="form-control mt-3" (change)="onFilesSelected($event)" accept="image/*" multiple>
+              
+              @if (imagenesPreview.length > 0) {
+                <div class="mt-4">
+                  <p class="text-muted small mb-2">Vista Previa:</p>
+                  <div class="d-flex flex-wrap gap-2">
+                    @for (img of imagenesPreview; track img) {
+                      <img [src]="img" class="rounded shadow-sm" style="height: 80px; width: 80px; object-fit: cover;">
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="d-flex gap-3 justify-content-end">
+              <a routerLink="/admin" class="btn btn-outline-secondary btn-lg rounded-pill px-4 shadow-sm fw-bold">Cancelar</a>
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm px-5 fw-bold transition-all" [disabled]="cargando">
+                <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+                {{ cargando ? 'GUARDANDO...' : 'GUARDAR CAMBIOS' }}
+              </button>
+            </div>
+
+          </form>
         </div>
-      }
-
-      <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-primary" [disabled]="cargando">
-          {{ cargando ? 'Guardando...' : 'Guardar Cambios 💾' }}
-        </button>
-        <a routerLink="/admin" class="btn btn-outline-secondary">Cancelar</a>
       </div>
-
-    </form>
+    </div>
   </div>
 </div>

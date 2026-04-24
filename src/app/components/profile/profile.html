@@ -1,121 +1,154 @@
-<div class="container py-5">
+<div class="container py-5 animate__animated animate__fadeIn">
   <div class="row justify-content-center">
     <div class="col-md-10 col-lg-8">
-      <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-card-custom">
-        <div class="card-header bg-primary text-white p-4">
-          <h2 class="mb-0 fw-bold"><i class="bi bi-person-circle me-3"></i>Mi Perfil</h2>
-          <p class="mb-0 opacity-75">Administra tu identidad y seguridad</p>
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-card-custom mb-4">
+        
+        <!-- HEADER PREMIUM -->
+        <div class="card-header border-0 p-5 position-relative text-center text-white" 
+             style="background: var(--primary-gradient);">
+          <div class="mb-3 position-relative d-inline-block">
+            <div class="avatar-circle shadow-lg" 
+                 style="width: 100px; height: 100px; border-radius: 50%; background: var(--bg-color); color: var(--text-color); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; border: 4px solid rgba(255,255,255,0.3); margin: 0 auto; transition: transform 0.3s ease;">
+              {{ (profileData?.nombre || 'U').charAt(0).toUpperCase() }}
+            </div>
+          </div>
+          <h2 class="mb-1 fw-bold" style="text-shadow: 0 2px 10px rgba(0,0,0,0.2);">{{ profileData?.nombre || 'Mi Perfil' }}</h2>
+          <p class="mb-0 opacity-90"><i class="bi bi-shield-check me-1"></i> Miembro de SubastaShop</p>
         </div>
 
         <div class="card-body p-0">
-          <!-- Nav Tabs -->
-          <ul class="nav nav-tabs nav-fill border-0 bg-card-custom border-bottom" style="--bs-nav-link-color: var(--text-color);">
-            <li class="nav-item">
-              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'data'"
-                (click)="activeTab = 'data'">
-                <i class="bi bi-card-list me-2"></i> Mis Datos
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="nav-link py-3 border-0 rounded-0" [class.active]="activeTab === 'security'"
-                (click)="activeTab = 'security'">
-                <i class="bi bi-shield-lock me-2"></i> Seguridad
-              </button>
-            </li>
-          </ul>
+          <!-- TABS PREMIUM -->
+          <div class="px-3 pt-3 border-bottom" style="border-color: var(--border-color) !important; background: var(--card-bg);">
+            <ul class="nav nav-tabs nav-fill border-0 mb-0">
+              <li class="nav-item">
+                <button class="nav-link py-3 border-0 transition-all fw-bold fs-6" 
+                  [class.active]="activeTab === 'data'"
+                  (click)="activeTab = 'data'"
+                  style="background: transparent;"
+                  [style.borderBottom]="activeTab === 'data' ? '3px solid var(--primary-color)' : '3px solid transparent'"
+                  [style.color]="activeTab === 'data' ? 'var(--primary-color)' : 'var(--text-muted)'">
+                  <i class="bi bi-person-lines-fill me-2"></i> Información Personal
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link py-3 border-0 transition-all fw-bold fs-6" 
+                  [class.active]="activeTab === 'security'"
+                  (click)="activeTab = 'security'"
+                  style="background: transparent;"
+                  [style.borderBottom]="activeTab === 'security' ? '3px solid var(--primary-color)' : '3px solid transparent'"
+                  [style.color]="activeTab === 'security' ? 'var(--primary-color)' : 'var(--text-muted)'">
+                  <i class="bi bi-shield-lock-fill me-2"></i> Seguridad de Cuenta
+                </button>
+              </li>
+            </ul>
+          </div>
 
-          <div class="p-4" [ngSwitch]="activeTab">
+          <!-- CONTENIDO PESTAÑAS -->
+          <div class="p-4 p-md-5" [ngSwitch]="activeTab">
+            
             <!-- PESTAÑA DATOS -->
-            <div *ngSwitchCase="'data'">
+            <div *ngSwitchCase="'data'" class="animate__animated animate__fadeIn">
               <form (ngSubmit)="updateProfile()" #profileForm="ngForm">
-                <!-- Nombre Completo y Alias -->
-                <div class="row g-3 mb-3">
+                <div class="row g-4 mb-4">
                   <div class="col-md-6">
-                    <label class="form-label fw-bold">Nombre Completo</label>
-                    <input type="text" [(ngModel)]="profileData.nombre" name="nombre" class="form-control rounded-pill"
-                      placeholder="Tu nombre">
+                    <div class="form-floating">
+                      <input type="text" [(ngModel)]="profileData.nombre" name="nombre" class="form-control"
+                        id="floatingNombre" placeholder="Tu nombre">
+                      <label for="floatingNombre"><i class="bi bi-person me-1 text-primary"></i> Nombre Completo</label>
+                    </div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-bold">Alias (Nombre Público)</label>
-                    <input type="text" [(ngModel)]="profileData.alias" name="alias" class="form-control rounded-pill"
-                      placeholder="Tu alias">
-                  </div>
-                </div>
-
-                <!-- RUT y Teléfono -->
-                <div class="row g-3 mb-3">
-                  <div class="col-md-6">
-                    <label class="form-label fw-bold">RUT (Identidad)</label>
-                    <input type="text" [(ngModel)]="profileData.rut" name="rut"
-                      class="form-control rounded-pill" [disabled]="rutAlreadyExists" placeholder="11.111.111-1"
-                      title="El RUT solo se puede registrar una vez">
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-bold">Teléfono</label>
-                    <input type="text" [(ngModel)]="profileData.telefono" name="telefono"
-                      class="form-control rounded-pill" placeholder="+56 9 ...">
+                    <div class="form-floating">
+                      <input type="text" [(ngModel)]="profileData.alias" name="alias" class="form-control"
+                        id="floatingAlias" placeholder="Tu alias">
+                      <label for="floatingAlias"><i class="bi bi-tag me-1 text-primary"></i> Alias Público</label>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Dirección y Preferencia de Envío -->
-                <div class="row g-3 mb-3">
+                <div class="row g-4 mb-4">
                   <div class="col-md-6">
-                    <label class="form-label fw-bold">Dirección</label>
-                    <input type="text" [(ngModel)]="profileData.direccion" name="direccion"
-                      class="form-control rounded-pill" placeholder="Calle, Número, Comuna">
+                    <div class="form-floating">
+                      <input type="text" [(ngModel)]="profileData.rut" name="rut"
+                        class="form-control opacity-75" [disabled]="rutAlreadyExists" id="floatingRut" placeholder="11.111.111-1"
+                        title="El RUT no se puede modificar una vez registrado">
+                      <label for="floatingRut"><i class="bi bi-card-text me-1 text-muted"></i> RUT</label>
+                    </div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-bold">Preferencia de Envío</label>
-                    <select [(ngModel)]="profileData.preferenciaEnvio" name="preferenciaEnvio"
-                      class="form-select rounded-pill">
-                      <option value="">Seleccione una opción...</option>
-                      <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
-                    </select>
+                    <div class="form-floating">
+                      <input type="tel" [(ngModel)]="profileData.telefono" name="telefono"
+                        class="form-control" id="floatingTel" placeholder="+56 9 ...">
+                      <label for="floatingTel"><i class="bi bi-telephone me-1 text-primary"></i> Teléfono</label>
+                    </div>
                   </div>
                 </div>
 
-                <div class="mt-4 text-center">
-                  <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" [disabled]="loading">
+                <div class="row g-4 mb-5">
+                  <div class="col-md-7">
+                    <div class="form-floating">
+                      <input type="text" [(ngModel)]="profileData.direccion" name="direccion"
+                        class="form-control" id="floatingAddress" placeholder="Calle, Número">
+                      <label for="floatingAddress"><i class="bi bi-geo-alt me-1 text-primary"></i> Dirección de Envío</label>
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="form-floating">
+                      <select [(ngModel)]="profileData.preferenciaEnvio" name="preferenciaEnvio"
+                        class="form-select" id="floatingEnvio">
+                        <option value="">Seleccione...</option>
+                        <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
+                      </select>
+                      <label for="floatingEnvio"><i class="bi bi-truck me-1 text-primary"></i> Preferencia Envíos</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm hover-scale" [disabled]="loading">
                     <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-                    Guardar Cambios
+                    <i class="bi bi-save2 me-2" *ngIf="!loading"></i> Guardar Cambios
                   </button>
                 </div>
               </form>
             </div>
 
             <!-- PESTAÑA SEGURIDAD -->
-            <div *ngSwitchCase="'security'">
-              <form (ngSubmit)="updatePassword()" #securityForm="ngForm">
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Contraseña Actual</label>
-                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.current"
-                    name="current" required>
+            <div *ngSwitchCase="'security'" class="animate__animated animate__fadeIn">
+              <div class="alert bg-warning-subtle text-warning border-0 rounded-4 shadow-sm mb-4 p-4 d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i> 
+                <div>
+                  <h6 class="fw-bold mb-1">Cierre de sesión automático</h6>
+                  <p class="mb-0 small opacity-75">Tus sesiones activas en otros dispositivos se cerrarán por seguridad al cambiar tu contraseña.</p>
                 </div>
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Nueva Contraseña</label>
-                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.new" name="new"
-                    required minlength="6">
+              </div>
+
+              <form (ngSubmit)="updatePassword()" #securityForm="ngForm" class="mx-auto" style="max-width: 500px;">
+                <div class="form-floating mb-4">
+                  <input type="password" class="form-control" id="currentPass" [(ngModel)]="passwords.current" name="current" placeholder="Actual" required>
+                  <label for="currentPass">Contraseña Actual</label>
                 </div>
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Confirmar Nueva Contraseña</label>
-                  <input type="password" class="form-control rounded-pill" [(ngModel)]="passwords.confirm"
-                    name="confirm" required>
+                
+                <div class="form-floating mb-4">
+                  <input type="password" class="form-control" id="newPass" [(ngModel)]="passwords.new" name="new" placeholder="Nueva" required minlength="6">
+                  <label for="newPass">Nueva Contraseña</label>
+                </div>
+                
+                <div class="form-floating mb-4">
+                  <input type="password" class="form-control" id="confirmPass" [(ngModel)]="passwords.confirm" name="confirm" placeholder="Confirma" required>
+                  <label for="confirmPass">Confirmar Nueva Contraseña</label>
                 </div>
 
-                <div class="alert alert-info rounded-4 shadow-sm text-center">
-                  <i class="bi bi-info-circle me-2"></i> Se cerrará tu sesión en otros dispositivos tras cambiar la
-                  contraseña.
-                </div>
-
-                <div class="mt-4 text-center">
-                  <button type="submit" class="btn btn-dark btn-lg rounded-pill px-5 fw-bold"
+                <div class="text-center mt-5">
+                  <button type="submit" class="btn btn-secondary btn-lg rounded-pill w-100 shadow-sm hover-scale"
                     [disabled]="loading || securityForm.invalid">
                     <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-                    Actualizar Contraseña
+                    <i class="bi bi-shield-check me-2" *ngIf="!loading"></i> Actualizar Seguridad
                   </button>
                 </div>
               </form>
             </div>
+
           </div>
         </div>
       </div>

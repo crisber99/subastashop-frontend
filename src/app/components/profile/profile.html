@@ -89,14 +89,14 @@
                     <div class="form-floating">
                       <input type="text" [(ngModel)]="profileData.rut" name="rut"
                         class="form-control opacity-75" [disabled]="rutAlreadyExists" id="floatingRut" placeholder=" "
-                        title="El RUT no se puede modificar una vez registrado">
+                        title="El RUT no se puede modificar una vez registrado" (input)="onRutInput($event)">
                       <label for="floatingRut"><i class="bi bi-card-text me-1 text-muted"></i> RUT</label>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-floating">
                       <input type="tel" [(ngModel)]="profileData.telefono" name="telefono"
-                        class="form-control" id="floatingTel" placeholder=" ">
+                        class="form-control" id="floatingTel" placeholder=" " (input)="onPhoneInput($event)">
                       <label for="floatingTel"><i class="bi bi-telephone me-1 text-primary"></i> Teléfono</label>
                     </div>
                   </div>

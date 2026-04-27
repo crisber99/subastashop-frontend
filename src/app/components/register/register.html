@@ -85,8 +85,9 @@
               <div class="col-md-6 mb-3">
                   <div class="form-floating">
                     <input type="text" class="form-control" id="floatingRut" formControlName="rut" 
-                           placeholder="12345678-9" [class.is-invalid]="registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid">
-                    <label for="floatingRut">RUT (Sin puntos y con guion)</label>
+                           placeholder="12.345.678-9" [class.is-invalid]="registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid"
+                           (input)="onRutInput($event)">
+                    <label for="floatingRut">RUT</label>
                     @if (registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid) {
                         <div class="invalid-feedback">El RUT es obligatorio.</div>
                     }
@@ -112,7 +113,7 @@
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control" id="floatingTel" formControlName="telefono" 
-                         placeholder="+56 9...">
+                         placeholder="+56 9..." (input)="onPhoneInput($event)">
                   <label for="floatingTel">Teléfono</label>
                 </div>
               </div>

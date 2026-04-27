@@ -48,23 +48,18 @@
 
                             <div class="form-floating mb-4">
                                 <input type="text" class="form-control" id="rutEmpresa" placeholder="12.345.678-9"
-                                    [(ngModel)]="config.rutEmpresa" name="rutEmpresa">
+                                    [(ngModel)]="config.rutEmpresa" name="rutEmpresa" (input)="onRutInput($event, 'config')">
                                 <label for="rutEmpresa">RUT Empresa o Personal (Para validación)</label>
-                            </div>
-
-                            <div class="form-floating mb-4">
-                                <input type="text" class="form-control" id="opcionesEnvio" 
-                                    placeholder="Ej: Blue Express, Starken, Paket" 
-                                    [(ngModel)]="config.opcionesEnvio" name="opcionesEnvio">
-                                <label for="opcionesEnvio">Opciones de Envío (Ej: Blue Express, Starken, Paket)</label>
-                                <div class="form-text mt-1">Ingresa las empresas separadas por comas. Se mostrarán al cliente al pagar.</div>
                             </div>
 
                             <!-- Datos Bancarios (Multi-Cuenta) -->
                             <div class="card p-4 border-0 shadow-sm" style="background: var(--glass-bg);">
                                 <div class="mb-3">
-                                    <label for="ownerAlias" class="form-label fw-bold">Alias del Propietario (Nombre Público)</label>
-                                    <input type="text" class="form-control" id="ownerAlias" [(ngModel)]="config.ownerAlias" name="ownerAlias" placeholder="Tu nombre público en el chat">
+                                    <label for="ownerAlias" class="form-label fw-bold">Alias del Propietario (Nombre
+                                        Público)</label>
+                                    <input type="text" class="form-control" id="ownerAlias"
+                                        [(ngModel)]="config.ownerAlias" name="ownerAlias"
+                                        placeholder="Tu nombre público en el chat">
                                 </div>
 
                                 <hr class="my-4">
@@ -168,10 +163,12 @@
 
                         <h5 class="mt-4 mb-3 border-bottom pb-2">Contacto y Logística</h5>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><i class="bi bi-whatsapp text-success me-1"></i> WhatsApp para Recepción de Comprobantes</label>
+                            <label class="form-label fw-bold"><i class="bi bi-whatsapp text-success me-1"></i> WhatsApp
+                                para Recepción de Comprobantes</label>
                             <input type="text" class="form-control" [(ngModel)]="config.whatsapp" name="whatsapp"
-                                placeholder="+56912345678">
-                            <div class="form-text">Tus clientes verán un botón para enviarte su comprobante de pago directo a este número.</div>
+                                placeholder="+56912345678" (input)="onPhoneInput($event)">
+                            <div class="form-text">Tus clientes verán un botón para enviarte su comprobante de pago
+                                directo a este número.</div>
                         </div>
 
                         <h5 class="mt-4 mb-3 border-bottom pb-2">Personalización Visual</h5>
@@ -184,20 +181,24 @@
                         <hr class="my-4">
 
                         <div class="mb-4">
-                            <h5 class="fw-bold mb-3"><i class="bi bi-file-earmark-check text-primary me-2"></i>Aceptación Legal de Operación</h5>
+                            <h5 class="fw-bold mb-3"><i
+                                    class="bi bi-file-earmark-check text-primary me-2"></i>Aceptación Legal de Operación
+                            </h5>
                             <app-legal-terms></app-legal-terms>
-                            
-                            <div class="form-check mt-3 d-flex align-items-center p-3 rounded-4 shadow-sm" 
-                                 style="background: rgba(40, 167, 69, 0.05); border: 1px dashed #28a745;">
-                                <input class="form-check-input me-3" type="checkbox" id="checkLegal" 
-                                       [(ngModel)]="aceptaTerminos" name="aceptaTerminos"
-                                       style="width: 26px; height: 26px; cursor: pointer;">
-                                <label class="form-check-label fw-bold mb-0" for="checkLegal" style="cursor: pointer; color: var(--text-color);">
+
+                            <div class="form-check mt-3 d-flex align-items-center p-3 rounded-4 shadow-sm"
+                                style="background: rgba(40, 167, 69, 0.05); border: 1px dashed #28a745;">
+                                <input class="form-check-input me-3" type="checkbox" id="checkLegal"
+                                    [(ngModel)]="aceptaTerminos" name="aceptaTerminos"
+                                    style="width: 26px; height: 26px; cursor: pointer;">
+                                <label class="form-check-label fw-bold mb-0" for="checkLegal"
+                                    style="cursor: pointer; color: var(--text-color);">
                                     He leído y acepto los Términos y Responsabilidades como Vendedor en SubastaShop
                                 </label>
                             </div>
                             <div class="form-text mt-2 px-2 small">
-                                <i class="bi bi-shield-lock me-1"></i> Se registrará su firma digital certificada con IP y marca de tiempo al guardar.
+                                <i class="bi bi-shield-lock me-1"></i> Se registrará su firma digital certificada con IP
+                                y marca de tiempo al guardar.
                             </div>
                         </div>
 

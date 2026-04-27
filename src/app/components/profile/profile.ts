@@ -100,10 +100,39 @@ export class ProfileComponent implements OnInit {
     return result + '-' + dv;
   }
 
+  formatPhone(phone: string): string {
+    return phone.replace(/\D/g, '');
+  }
 
+  onRutInput(event: any) {
+    let input = event.target.value;
+    let formatted = this.formatRut(input);
+    this.profileData.rut = formatted;
+    event.target.value = formatted;
+  }
+
+  onPhoneInput(event: any) {
+    let input = event.target.value;
+    let formatted = input.replace(/[^\d+]/g, '');
+    this.profileData.telefono = formatted;
+    event.target.value = formatted;
+  }
 
   async updateProfile() {
     this.loading = true;
+    Swal.fire({ title: 'Guardando...', didOpen: () => Swal.showLoading() });
+    
+    // Formatear Teléfono (Asegurar +56)
+    let phone = this.profileData.telefono.trim();
+    if (phone && !phone.startsWith('+')) {
+      if (phone.startsWith('56')) {
+        phone = '+' + phone;
+      } else {
+        phone = '+56' + phone;
+      }
+    }
+    this.profileData.telefono = phone;
+
     this.authService.updateProfile(this.profileData).subscribe({
       next: () => {
         this.loading = false;

@@ -53,6 +53,40 @@ export class Register implements OnInit {
     return Object.values(errors).filter(val => typeof val === 'string') as string[];
   }
 
+  // --- FORMATEO EN TIEMPO REAL ---
+
+  onRutInput(event: any) {
+    let input = event.target.value;
+    let formatted = this.formatRut(input);
+    this.registerForm.get('rut')?.setValue(formatted, { emitEvent: false });
+    event.target.value = formatted;
+  }
+
+  private formatRut(rut: string): string {
+    if (!rut) return '';
+    let value = rut.replace(/[^0-9kK]/g, '');
+    if (value.length < 2) return value;
+    
+    let cuerpo = value.slice(0, -1);
+    let dv = value.slice(-1).toUpperCase();
+    
+    let result = '';
+    while (cuerpo.length > 3) {
+      result = '.' + cuerpo.slice(-3) + result;
+      cuerpo = cuerpo.slice(0, -3);
+    }
+    result = cuerpo + result;
+    
+    return result + '-' + dv;
+  }
+
+  onPhoneInput(event: any) {
+    let input = event.target.value;
+    let formatted = input.replace(/[^\d+]/g, '');
+    this.registerForm.get('telefono')?.setValue(formatted, { emitEvent: false });
+    event.target.value = formatted;
+  }
+
   onSubmit() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -67,7 +101,20 @@ export class Register implements OnInit {
       didOpen: () => Swal.showLoading()
     });
 
-    this.authService.register(this.registerForm.value).subscribe({
+    const datos = { ...this.registerForm.value };
+    
+    // Formatear Teléfono (Asegurar +56)
+    let phone = datos.telefono.trim();
+    if (phone && !phone.startsWith('+')) {
+      if (phone.startsWith('56')) {
+        phone = '+' + phone;
+      } else {
+        phone = '+56' + phone;
+      }
+    }
+    datos.telefono = phone;
+
+    this.authService.register(datos).subscribe({
       next: () => {
         Swal.fire({
           icon: 'success',

@@ -279,6 +279,50 @@ export class AdminConfig implements OnInit {
     if (this.cuentas.length === 0) this.agregarCuenta();
   }
 
+  // --- FORMATEO EN TIEMPO REAL ---
+
+  onRutInput(event: any, type: 'config' | 'cuenta', index?: number) {
+    let input = event.target.value;
+    // Limpiar y formatear
+    let formatted = this.formatRut(input);
+    
+    if (type === 'config') {
+      this.config.rutEmpresa = formatted;
+    } else if (type === 'cuenta' && index !== undefined) {
+      this.cuentas[index].rut = formatted;
+    }
+    // Forzar el valor en el input para evitar desincronización visual
+    event.target.value = formatted;
+  }
+
+  private formatRut(rut: string): string {
+    if (!rut) return '';
+    // Limpiar todo excepto números y K
+    let value = rut.replace(/[^0-9kK]/g, '');
+    if (value.length < 2) return value;
+    
+    let cuerpo = value.slice(0, -1);
+    let dv = value.slice(-1).toUpperCase();
+    
+    // Formatear cuerpo con puntos
+    let result = '';
+    while (cuerpo.length > 3) {
+      result = '.' + cuerpo.slice(-3) + result;
+      cuerpo = cuerpo.slice(0, -3);
+    }
+    result = cuerpo + result;
+    
+    return result + '-' + dv;
+  }
+
+  onPhoneInput(event: any) {
+    let input = event.target.value;
+    // Permitir solo números y el signo +
+    let formatted = input.replace(/[^\d+]/g, '');
+    this.config.whatsapp = formatted;
+    event.target.value = formatted;
+  }
+
   convertirLegacy() {
     this.cuentas = [{
         titular: this.config.nombre,
@@ -338,7 +382,17 @@ export class AdminConfig implements OnInit {
         
         formData.append('colorPrimario', this.config.colorPrimario);
         formData.append('opcionesEnvio', this.config.opcionesEnvio);
-        formData.append('whatsapp', this.config.whatsapp);
+        
+        // Formatear WhatsApp antes de enviar (Asegurar +56)
+        let phone = this.config.whatsapp.trim();
+        if (phone && !phone.startsWith('+')) {
+          if (phone.startsWith('56')) {
+            phone = '+' + phone;
+          } else {
+            phone = '+56' + phone;
+          }
+        }
+        formData.append('whatsapp', phone);
         formData.append('aceptaTerminos', 'true');
 
         if (this.fileLogo) formData.append('fotoLogo', this.fileLogo);

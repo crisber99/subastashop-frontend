@@ -165,7 +165,9 @@
                       'bg-warning text-dark': p.estado === 'RESERVADO',
                       'bg-danger': p.estado === 'VENDIDO',
                       'bg-primary': p.estado === 'EN_SUBASTA' || p.estado === 'SUBASTA',
-                      'bg-info text-dark': p.estado === 'RIFA'
+                      'bg-info text-dark': p.estado === 'RIFA',
+                      'bg-secondary': p.estado === 'FINALIZADA',
+                      'bg-dark': p.estado === 'PAUSADO'
                     }">{{ p.estado === 'RIFA' ? 'CONCURSO' : (p.estado || 'S/E') }}</span>
                 </td>
                 <td class="text-center">

@@ -38,7 +38,7 @@ export class AdminDashboard implements OnInit {
   activeTab: string = 'resumen'; 
 
   public pieChartData: ChartConfiguration<'pie'>['data'] = {
-    labels: [ 'Subastas', 'Venta Directa', 'Rifas' ],
+    labels: [ 'Subastas', 'Venta Directa', 'Concursos' ],
     datasets: [ {
       data: [ 0, 0, 0 ] 
     } ]
@@ -59,7 +59,7 @@ export class AdminDashboard implements OnInit {
       console.log("Stats cargadas:", data); // Para verificar que llegue pagosPendientesCount
       
       this.pieChartData = {
-        labels: ['Subastas', 'Venta Directa', 'Rifas'],
+        labels: ['Subastas', 'Venta Directa', 'Concursos'],
         datasets: [{
           data: [data.totalSubastas || 0, data.totalVentaDirecta || 0, data.totalRifas || 0],
           backgroundColor: ['#6366f1', '#10b981', '#06b6d4']

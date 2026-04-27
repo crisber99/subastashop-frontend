@@ -85,7 +85,7 @@
                                         'bg-success': item.tipo === 'DIRECTA',
                                         'bg-info': item.tipo === 'RIFA',
                                         'bg-danger': item.tipo === 'SUBASTA'
-                                    }">{{ item.tipo }}</span>
+                                    }">{{ item.tipo === 'RIFA' ? 'CONCURSO' : item.tipo }}</span>
                                 </td>
                                 <td class="fw-bold text-primary">${{ item.subtotal | number }}</td>
                                 <td>

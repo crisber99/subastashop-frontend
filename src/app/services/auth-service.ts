@@ -22,6 +22,7 @@ export interface AuthUser {
   direccion?: string;      // 👈 NUEVO
   rut?: string;            // 👈 NUEVO
   preferenciaEnvio?: string; // 👈 NUEVO
+  profileImageUrl?: string;   // 👈 NUEVO
 }
 
 @Injectable({
@@ -177,8 +178,14 @@ export class AuthService {
   }
 
   // --- MI CUENTA: ACTUALIZAR PERFIL ---
-  updateProfile(updates: any): Observable<any> {
-    return this.http.put(`${environment.apiUrl}/auth/me`, updates);
+  updateProfile(datos: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/me`, datos);
+  }
+
+  uploadAvatar(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/upload-avatar`, formData);
   }
 
   // --- MI CUENTA: CAMBIAR CONTRASEÑA ---

@@ -354,7 +354,7 @@ export class Dashboard implements OnInit {
     // 2. Gráfico de Pie (Distribución por Tipo)
     if (this.stats.distribucionVentasPorTipo && this.stats.distribucionVentasPorTipo.length > 0) {
       this.pieChartData = {
-        labels: this.stats.distribucionVentasPorTipo.map((t: any) => t[0]),
+        labels: this.stats.distribucionVentasPorTipo.map((t: any) => t[0] === 'RIFA' ? 'CONCURSO' : t[0]),
         datasets: [{
           data: this.stats.distribucionVentasPorTipo.map((t: any) => t[1]),
           backgroundColor: ['#0d6efd', '#fd7e14', '#198754', '#6610f2']

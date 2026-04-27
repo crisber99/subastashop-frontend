@@ -166,7 +166,7 @@
                       'bg-danger': p.estado === 'VENDIDO',
                       'bg-primary': p.estado === 'EN_SUBASTA' || p.estado === 'SUBASTA',
                       'bg-info text-dark': p.estado === 'RIFA'
-                    }">{{ p.estado || 'S/E' }}</span>
+                    }">{{ p.estado === 'RIFA' ? 'CONCURSO' : (p.estado || 'S/E') }}</span>
                 </td>
                 <td class="text-center">
                   <div class="btn-group shadow-sm">

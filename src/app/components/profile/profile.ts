@@ -25,7 +25,8 @@ export class ProfileComponent implements OnInit {
     telefono: '',
     direccion: '',
     rut: '',
-    preferenciaEnvio: ''
+    preferenciaEnvio: '',
+    profileImageUrl: ''
   };
 
   // Seguridad
@@ -55,8 +56,28 @@ export class ProfileComponent implements OnInit {
         telefono: user.telefono || '',
         direccion: user.direccion || '',
         rut: user.rut || '',
-        preferenciaEnvio: user.preferenciaEnvio || ''
+        preferenciaEnvio: user.preferenciaEnvio || '',
+        profileImageUrl: user.profileImageUrl || ''
       };
+    }
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.loading = true;
+      this.authService.uploadAvatar(file).subscribe({
+        next: (res: any) => {
+          this.profileData.profileImageUrl = res.url;
+          this.authService.refreshSession().subscribe();
+          this.loading = false;
+          Swal.fire('¡Éxito!', 'Tu foto de perfil ha sido actualizada.', 'success');
+        },
+        error: (err) => {
+          this.loading = false;
+          Swal.fire('Error', 'No se pudo cargar la imagen.', 'error');
+        }
+      });
     }
   }
 

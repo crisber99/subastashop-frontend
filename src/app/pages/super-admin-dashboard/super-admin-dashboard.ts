@@ -190,4 +190,36 @@ export class SuperAdminDashboard implements OnInit {
       }
     });
   }
+
+  gestionarTienda(tienda: any) {
+    Swal.fire({
+      title: 'Configurar Tienda',
+      html: `
+        <div class="text-start">
+          <label class="form-label fw-bold">Nombre</label>
+          <input id="swal-tienda-nombre" class="form-control mb-3" value="${tienda.nombre}">
+          <label class="form-label fw-bold">URL Amigable (Slug)</label>
+          <input id="swal-tienda-slug" class="form-control" value="${tienda.slug}">
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar Cambios',
+      preConfirm: () => {
+        return {
+          nombre: (document.getElementById('swal-tienda-nombre') as HTMLInputElement).value,
+          slug: (document.getElementById('swal-tienda-slug') as HTMLInputElement).value
+        }
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.superAdminService.actualizarTienda(tienda.id, result.value).subscribe({
+          next: () => {
+            Swal.fire('¡Éxito!', 'Tienda actualizada.', 'success');
+            this.cargarTodo();
+          },
+          error: (err) => Swal.fire('Error', err.error?.error || 'No se pudo actualizar', 'error')
+        });
+      }
+    });
+  }
 }

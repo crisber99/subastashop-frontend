@@ -64,6 +64,10 @@ export class SuperAdminService {
     return this.http.delete(`${this.apiUrlSuperAdmin}/tiendas/${tiendaId}`);
   }
 
+  actualizarTienda(tiendaId: number, datos: any): Observable<any> {
+    return this.http.put(`${this.apiUrlSuperAdmin}/tiendas/${tiendaId}`, datos);
+  }
+
   eliminarProductoGlobal(productoId: number): Observable<any> {
     // Apunta al endpoint de admin pero con el token de Super Admin funciona igual
     return this.http.delete(`${environment.apiUrl}/admin/productos/${productoId}`);

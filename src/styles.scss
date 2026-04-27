@@ -526,3 +526,64 @@ body.dark-theme .skeleton {
 .animate-pulse-indigo {
     animation: pulse-indigo 2s infinite;
 }
+
+/* Loader Brand Premium */
+.loader-overlay {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.loader-brand-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-pulse-logo {
+    width: 120px;
+    height: 120px;
+    z-index: 2;
+    filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.3));
+    animation: branding-pulse 2s infinite ease-in-out;
+}
+
+.loader-glow {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    opacity: 0.2;
+    z-index: 1;
+    animation: glow-expand 2s infinite alternate ease-in-out;
+}
+
+@keyframes branding-pulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 30px var(--primary-color)); }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+@keyframes glow-expand {
+    0% { transform: scale(0.8); opacity: 0.1; }
+    100% { transform: scale(1.2); opacity: 0.4; }
+}
+
+.letter-spacing-2 {
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Hover Life for Logos */
+.brand-alive:hover {
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 0 10px var(--primary-color));
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+

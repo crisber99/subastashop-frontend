@@ -1,8 +1,16 @@
 <nav class="navbar navbar-expand shadow-sm px-4 sticky-top">
     
-    <button class="btn toggle-btn me-3" (click)="toggleSidebar()">
-        <i class="bi bi-list fs-3"></i>
-    </button>
+    <div class="d-flex align-items-center">
+        <button class="btn toggle-btn me-2" (click)="toggleSidebar()">
+            <i class="bi bi-list fs-3"></i>
+        </button>
+        <a routerLink="/" class="navbar-brand d-flex align-items-center ms-2 animate__animated animate__fadeIn">
+            <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop" style="width: 35px;" class="brand-alive">
+            <span class="ms-2 fw-800 fs-4 d-none d-sm-inline" style="color: var(--text-color); letter-spacing: -1px;">
+                Subasta<span style="color: var(--primary-color);">Shop</span>
+            </span>
+        </a>
+    </div>
 
     <div class="navbar-collapse collapse">
         <div class="ms-auto d-flex align-items-center">

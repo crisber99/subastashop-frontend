@@ -35,9 +35,11 @@
 }
 
 @if (loaderService.isLoading()) {
-    <div class="loader-overlay">
-        <div class="spinner-grow text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
+    <div class="loader-overlay d-flex flex-column align-items-center justify-content-center">
+        <div class="loader-brand-wrapper">
+            <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop" class="loader-pulse-logo">
+            <div class="loader-glow"></div>
         </div>
+        <h4 class="mt-4 fw-bold text-white letter-spacing-2 animate__animated animate__pulse animate__infinite">SubastaShop</h4>
     </div>
 }

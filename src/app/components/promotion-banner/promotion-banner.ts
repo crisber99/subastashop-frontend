@@ -20,6 +20,10 @@ export class PromotionBanner implements OnInit {
   mpService = inject(MercadoPagoService);
   router = inject(Router);
 
+  isVisible = computed(() => {
+    return this.mostrarBanner && !this.authService.hasActiveSubscription();
+  });
+
   mostrarBanner = true;
 
   ngOnInit() {
@@ -45,10 +49,6 @@ export class PromotionBanner implements OnInit {
 
     if (hasTienda && !isPro) {
       return '🚀 ¡Haz tu tienda PRO por solo $4.990! Mejora tus ventas hoy mismo.';
-    }
-
-    if (isPro) {
-      return '¡Felicidades! Ya eres un usuario PRO. Disfruta de tus beneficios. ⭐';
     }
 
     return '¡Únete a la comunidad Pro por solo $4.990/mes! 🚀';

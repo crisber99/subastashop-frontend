@@ -1,0 +1,52 @@
+<div class="teaser-overlay d-flex flex-column justify-content-center align-items-center" *ngIf="!bypassed() && !authService.isSuperAdmin()">
+  
+  <div class="secret-bypass" (dblclick)="secretBypass()" title="Doble clic para saltar (Dev)"></div>
+
+  <div class="teaser-content text-center px-4 animate__animated animate__fadeInUp">
+    <div class="brand-glow mb-4">
+      <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop" class="teaser-logo">
+    </div>
+    
+    <h1 class="display-3 fw-bold text-white mb-3 text-shadow">Algo Grande Se Acerca</h1>
+    <p class="lead text-white-50 mb-5">Estamos preparando la revolución de las compras y ventas en línea. <br> Únete a la lista de espera y sé el primero en entrar.</p>
+
+    <div class="countdown-container d-flex justify-content-center gap-3 gap-md-4 mb-5">
+      <div class="time-box">
+        <div class="time-value">{{ days() }}</div>
+        <div class="time-label">Días</div>
+      </div>
+      <div class="time-separator">:</div>
+      <div class="time-box">
+        <div class="time-value">{{ hours() }}</div>
+        <div class="time-label">Horas</div>
+      </div>
+      <div class="time-separator">:</div>
+      <div class="time-box">
+        <div class="time-value">{{ minutes() }}</div>
+        <div class="time-label">Minutos</div>
+      </div>
+      <div class="time-separator d-none d-sm-block">:</div>
+      <div class="time-box d-none d-sm-block">
+        <div class="time-value">{{ seconds() }}</div>
+        <div class="time-label">Segundos</div>
+      </div>
+    </div>
+
+    <div class="subscribe-form mx-auto" style="max-width: 500px;">
+      <div class="input-group input-group-lg shadow-lg">
+        <input type="email" class="form-control bg-dark text-white border-primary" 
+               placeholder="Tu correo electrónico..." 
+               [(ngModel)]="email" 
+               (keyup.enter)="subscribe()">
+        <button class="btn btn-primary fw-bold px-4 pulse-button" 
+                type="button" 
+                (click)="subscribe()"
+                [disabled]="loading()">
+          <span *ngIf="!loading()">Avisarme</span>
+          <span *ngIf="loading()"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+      </div>
+      <small class="text-white-50 mt-3 d-block"><i class="fas fa-lock me-1"></i> No enviamos spam. Solo te avisaremos cuando abramos.</small>
+    </div>
+  </div>
+</div>

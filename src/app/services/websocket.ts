@@ -12,6 +12,7 @@ export class Websocket {
   // Un Subject es como un Observable que podemos emitir manualmente
   private precioUpdates = new Subject<any>();
   private globalUpdates = new Subject<any>();
+  private foundersUpdates = new Subject<any>();
   private connectedStatus = new BehaviorSubject<boolean>(false);
 
   constructor() { }
@@ -105,12 +106,29 @@ export class Websocket {
     }
   }
 
+  suscribirseFundadores() {
+    if (this.stompClient && this.stompClient.connected) {
+      console.log(`📡 Suscribiéndose a canal de fundadores: /topic/founders`);
+      return this.stompClient.subscribe(`/topic/founders`, (mensaje) => {
+        console.log('📩 ¡Mensaje de fundadores recibido!', mensaje.body);
+        this.foundersUpdates.next(JSON.parse(mensaje.body));
+      });
+    } else {
+      console.warn('⚠️ Intentando suscribir a fundadores sin conexión activa');
+      return null;
+    }
+  }
+
   obtenerActualizaciones() {
     return this.precioUpdates.asObservable();
   }
 
   getGlobalUpdates() {
     return this.globalUpdates.asObservable();
+  }
+
+  getFoundersUpdates() {
+    return this.foundersUpdates.asObservable();
   }
 
   getConnectionStatus() {

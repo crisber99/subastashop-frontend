@@ -84,6 +84,50 @@
     }
 </div>
 
+<div class="container mb-5">
+    @if (chollosGanados.length > 0) {
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <h4 class="fw-bold m-0"><span class="text-success">💰</span> Últimos Chollos Ganados</h4>
+                <p class="text-muted small">Mira lo que se han llevado otros usuarios con descuentos increíbles.</p>
+            </div>
+        </div>
+
+        <div class="featured-carousel-container">
+            <div class="featured-carousel py-2">
+                @for (prod of chollosGanados; track prod.id) {
+                    <div class="featured-item card h-100 border border-success shadow-sm" style="min-width: 280px; max-width: 320px;">
+                        <div class="featured-badge bg-success text-white px-3 py-1 fw-bold rounded-pill" style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                            ¡VENDIDO!
+                        </div>
+                        <img [src]="prod.imagenes && prod.imagenes.length > 0 ? prod.imagenes[0] : 'assets/no-image.png'" class="card-img-top featured-img" [alt]="prod.nombre" style="height: 180px; object-fit: cover;">
+                        <div class="card-body p-3 text-center">
+                            <h6 class="card-title text-truncate mb-2 fw-bold">{{ prod.nombre }}</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                                <div class="text-start">
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Precio Retail</small>
+                                    <span class="text-decoration-line-through text-danger" style="font-size: 0.9rem;">
+                                        {{ prod.precioBase | currency:'CLP':'symbol-narrow':'1.0-0' }}
+                                    </span>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-success fw-bold d-block" style="font-size: 0.75rem;">Se lo llevó por</small>
+                                    <span class="fw-bold text-success" style="font-size: 1.2rem;">
+                                        {{ prod.precioActual | currency:'CLP':'symbol-narrow':'1.0-0' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="alert alert-success m-0 py-1 px-2 fw-bold border-0" style="font-size: 0.85rem; background-color: rgba(25, 135, 84, 0.1);">
+                                ¡Ahorró {{ (prod.precioBase - prod.precioActual) | currency:'CLP':'symbol-narrow':'1.0-0' }}!
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
 <div class="container pb-5">
     <div class="row mb-4">
         <div class="col-12 text-center">

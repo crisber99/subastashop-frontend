@@ -1,4 +1,5 @@
-<app-promotion-banner></app-promotion-banner>
+<app-landing-teaser *ngIf="launchMode"></app-landing-teaser>
+<app-promotion-banner *ngIf="!launchMode"></app-promotion-banner>
 
 @if (isAuthPage()) {
     <div class="auth-wrapper">

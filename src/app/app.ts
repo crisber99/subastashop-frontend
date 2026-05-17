@@ -11,12 +11,14 @@ import { CartFloat } from './components/cart-float/cart-float';
 import { PromotionBanner } from './components/promotion-banner/promotion-banner';
 import { AiSupportChatComponent } from './components/ai-support-chat/ai-support-chat.component';
 import { Websocket } from './services/websocket';
+import { LandingTeaser } from './components/landing-teaser/landing-teaser';
+import { environment } from '../environments/environment';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner],
+  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner, LandingTeaser],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -26,6 +28,8 @@ export class App {
   router = inject(Router);
   loaderService = inject(Loader);
   websocketService = inject(Websocket);
+
+  launchMode = environment.launchMode || false;
 
   constructor() {
     // Suscribirse a las actualizaciones globales (ej. cuando eres superado en una puja)
@@ -53,6 +57,12 @@ export class App {
       if (usuario && usuario.id) {
         this.websocketService.conectar(() => {
           this.websocketService.suscribirseGlobal(usuario.id!);
+          this.websocketService.suscribirseFundadores();
+        });
+      } else {
+        // Si no está logueado, igual necesitamos el canal público de fundadores
+        this.websocketService.conectar(() => {
+          this.websocketService.suscribirseFundadores();
         });
       }
     });

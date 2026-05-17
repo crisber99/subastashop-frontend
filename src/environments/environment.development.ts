@@ -3,5 +3,6 @@ export const environment = {
   // La URL base de tu Backend Local
   apiUrl: 'http://localhost:8080/api', 
   // La URL para WebSockets (SockJS) Local
-  wsUrl: 'http://localhost:8080/ws-subastas' 
+  wsUrl: 'http://localhost:8080/ws-subastas',
+  launchMode: true
 };

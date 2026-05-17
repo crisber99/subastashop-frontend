@@ -8,6 +8,8 @@ import { PricingService, PricingStatus } from '../../services/pricing';
 import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 
+import { Websocket } from '../../services/websocket';
+
 @Component({
   selector: 'app-promotion-banner',
   standalone: true,
@@ -20,6 +22,7 @@ export class PromotionBanner implements OnInit {
   themeService = inject(ThemeService);
   mpService = inject(MercadoPagoService);
   pricingService = inject(PricingService);
+  websocketService = inject(Websocket);
   router = inject(Router);
 
   pricingStatus: PricingStatus | null = null;
@@ -37,6 +40,32 @@ export class PromotionBanner implements OnInit {
     this.pricingService.getStatus().subscribe({
       next: (status) => this.pricingStatus = status,
       error: (err) => console.error('Error fetching pricing status', err)
+    });
+
+    this.websocketService.getFoundersUpdates().subscribe((msg: any) => {
+        if (msg && msg.tipo === 'NUEVO_FUNDADOR') {
+            // Play sound effect
+            try {
+                const audio = new Audio('assets/sounds/success.mp3');
+                audio.play();
+            } catch (e) {}
+
+            Swal.fire({
+                title: '¡Validación Social!',
+                text: msg.mensaje + ` (Solo quedan ${msg.cuposRestantes})`,
+                toast: true,
+                position: 'bottom-start',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true
+            });
+
+            if (this.pricingStatus) {
+                this.pricingStatus.cuposOcupadosFase += 1;
+                this.pricingStatus.cuposRestantes -= 1;
+            }
+        }
     });
   }
 

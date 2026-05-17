@@ -73,6 +73,10 @@ export class ProductService {
     return this.http.get<any[]>(`${this.apiUrlPublic}/productos/destacados`);
   }
 
+  getChollosGanados(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrlPublic}/chollos-ganados`);
+  }
+
   realizarPuja(productoId: number, monto: number): Observable<any> {
     const body = {
       productoId: productoId,

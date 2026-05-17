@@ -28,6 +28,7 @@ export class Landing implements OnInit {
   tiendas: any[] = [];
   tiendasFiltradas: any[] = [];
   productosDestacados: any[] = [];
+  chollosGanados: any[] = [];
   categorias: Categoria[] = [];
   busqueda: string = '';
   loading: boolean = true;
@@ -48,6 +49,7 @@ export class Landing implements OnInit {
     });
     this.cargarDestacados();
     this.cargarCategorias();
+    this.cargarChollos();
   }
 
   cargarDestacados() {
@@ -61,6 +63,15 @@ export class Landing implements OnInit {
         console.error('Error al cargar destacados:', err);
         this.loadingDestacados = false;
       }
+    });
+  }
+
+  cargarChollos() {
+    this.productService.getChollosGanados().subscribe({
+      next: (data) => {
+        this.chollosGanados = data;
+      },
+      error: (err) => console.error('Error al cargar chollos', err)
     });
   }
 

@@ -26,6 +26,7 @@ export class SuperAdminDashboard implements OnInit {
   productos: any[] = [];
   categorias: Categoria[] = [];
   reportes: any[] = [];
+  suscriptores: any[] = [];
   loading = true;
   activeTab = 'resumen';
 
@@ -60,6 +61,7 @@ export class SuperAdminDashboard implements OnInit {
     });
     this.categoriaService.getCategorias().subscribe(data => this.categorias = data);
     this.superAdminService.getReportesPendientes().subscribe(data => this.reportes = data);
+    this.superAdminService.getSuscriptoresPreLanzamiento().subscribe(data => this.suscriptores = data);
   }
 
   get productosFiltrados() {

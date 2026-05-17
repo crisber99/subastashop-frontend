@@ -72,4 +72,8 @@ export class SuperAdminService {
     // Apunta al endpoint de admin pero con el token de Super Admin funciona igual
     return this.http.delete(`${environment.apiUrl}/admin/productos/${productoId}`);
   }
+
+  getSuscriptoresPreLanzamiento(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrlSuperAdmin}/prelaunch/subscribers`);
+  }
 }

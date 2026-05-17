@@ -38,6 +38,11 @@
         <i class="bi bi-people me-2"></i>Usuarios
       </button>
     </li>
+    <li class="nav-item">
+      <button class="nav-link rounded-pill text-warning" [class.active]="activeTab === 'prelaunch'" (click)="activeTab = 'prelaunch'">
+        <i class="bi bi-rocket-takeoff me-2"></i>Lanzamiento
+      </button>
+    </li>
   </ul>
 
   <!-- CONTENIDO: RESUMEN -->
@@ -249,6 +254,40 @@
           </tr>
           <tr *ngIf="reportes.length === 0">
             <td colspan="5" class="text-center py-4 text-muted">No hay reportes pendientes. ✨</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CONTENIDO: PRE-LANZAMIENTO -->
+  <div *ngIf="activeTab === 'prelaunch'" class="card shadow-sm border-0">
+    <div class="card-header bg-warning text-dark fw-bold py-3">
+      <i class="bi bi-rocket-takeoff me-2"></i> Suscriptores del Gran Lanzamiento
+      <span class="badge bg-dark ms-2">{{ suscriptores.length }} inscritos</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Fecha de Registro</th>
+            <th>Origen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of suscriptores">
+            <td>{{ s.id }}</td>
+            <td class="fw-bold text-primary">{{ s.email }}</td>
+            <td>{{ s.fechaRegistro | date:'medium' }}</td>
+            <td><span class="badge bg-secondary">{{ s.origen }}</span></td>
+          </tr>
+          <tr *ngIf="suscriptores.length === 0">
+            <td colspan="4" class="text-center py-5 text-muted">
+              <i class="bi bi-envelope-x fs-1 d-block mb-3"></i>
+              Nadie se ha registrado todavía en la lista de espera.
+            </td>
           </tr>
         </tbody>
       </table>

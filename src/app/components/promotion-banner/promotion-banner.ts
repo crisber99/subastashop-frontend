@@ -25,7 +25,7 @@ export class PromotionBanner implements OnInit {
   pricingStatus: PricingStatus | null = null;
 
   isVisible = computed(() => {
-    return this.mostrarBanner && !this.authService.hasActiveSubscription();
+    return this.mostrarBanner && !this.authService.hasActiveSubscription() && !this.authService.isSuperAdmin();
   });
 
   mostrarBanner = true;

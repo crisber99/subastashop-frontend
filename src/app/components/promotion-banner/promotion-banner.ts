@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
@@ -28,14 +28,14 @@ export class PromotionBanner implements OnInit {
   pricingStatus: PricingStatus | null = null;
 
   isVisible = computed(() => {
-    return this.mostrarBanner && !this.authService.hasActiveSubscription() && !this.authService.isSuperAdmin();
+    return this.mostrarBanner() && !this.authService.hasActiveSubscription() && !this.authService.isSuperAdmin();
   });
 
-  mostrarBanner = true;
+  mostrarBanner = signal(true);
 
   ngOnInit() {
     if (this.authService.hasActiveSubscription()) {
-      this.mostrarBanner = false;
+      this.mostrarBanner.set(false);
     }
     this.pricingService.getStatus().subscribe({
       next: (status) => this.pricingStatus = status,
@@ -226,6 +226,6 @@ export class PromotionBanner implements OnInit {
   }
 
   cerrar() {
-    this.mostrarBanner = false;
+    this.mostrarBanner.set(false);
   }
 }

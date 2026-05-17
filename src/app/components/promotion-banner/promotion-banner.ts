@@ -34,6 +34,8 @@ export class PromotionBanner implements OnInit {
   mostrarBanner = signal(true);
 
   ngOnInit() {
+    // Reset banner visibility each page load
+    this.mostrarBanner.set(true);
     if (this.authService.hasActiveSubscription()) {
       this.mostrarBanner.set(false);
     }

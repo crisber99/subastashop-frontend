@@ -2,8 +2,10 @@
     background: var(--promo-bg, linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%));
     color: var(--promo-text, white);
     padding: 0.75rem 0;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
     z-index: 2000;
     box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
     border-bottom: 2px solid rgba(255,255,255,0.1);

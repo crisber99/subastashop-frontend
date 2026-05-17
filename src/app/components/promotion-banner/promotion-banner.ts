@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ThemeService } from '../../services/theme-service';
 import { MercadoPagoService } from '../../services/mercadopago';
+import { PricingService, PricingStatus } from '../../services/pricing';
 import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 
@@ -18,7 +19,10 @@ export class PromotionBanner implements OnInit {
   authService = inject(AuthService);
   themeService = inject(ThemeService);
   mpService = inject(MercadoPagoService);
+  pricingService = inject(PricingService);
   router = inject(Router);
+
+  pricingStatus: PricingStatus | null = null;
 
   isVisible = computed(() => {
     return this.mostrarBanner && !this.authService.hasActiveSubscription();
@@ -30,13 +34,31 @@ export class PromotionBanner implements OnInit {
     if (this.authService.hasActiveSubscription()) {
       this.mostrarBanner = false;
     }
+    this.pricingService.getStatus().subscribe({
+      next: (status) => this.pricingStatus = status,
+      error: (err) => console.error('Error fetching pricing status', err)
+    });
   }
 
   // Lógica de mensaje dinámico
   mensaje = computed(() => {
     const user = this.authService.currentUser();
+    
+    // Si no tenemos status de pricing, usamos default
+    let priceStr = '4.990';
+    let cuposStr = '';
+    
+    if (this.pricingStatus) {
+        priceStr = this.pricingStatus.precioActual.toLocaleString('es-CL');
+        if (this.pricingStatus.faseActual === 1 || this.pricingStatus.faseActual === 2) {
+            cuposStr = `(Solo quedan ${this.pricingStatus.cuposRestantes} cupos)`;
+        }
+    } else {
+        cuposStr = '(Cupos limitados)';
+    }
+
     if (!user || !this.authService.isLoggedIn()) {
-      return '¡Únete hoy por solo $4.990/mes! (Solo 100 cupos disponibles)';
+      return `¡Únete hoy por solo $${priceStr}/mes! ${cuposStr}`;
     }
 
     const role = user.role;
@@ -44,14 +66,14 @@ export class PromotionBanner implements OnInit {
     const isPro = this.authService.hasActiveSubscription();
 
     if (role === 'ROLE_COMPRADOR') {
-      return '¡Crea tu propia tienda hoy mismo! 🏪🚀 Asegura tu cupo por $4.990/mes';
+      return `¡Crea tu propia tienda hoy mismo! 🏪🚀 Asegura tu cupo por $${priceStr}/mes ${cuposStr}`;
     }
 
     if (hasTienda && !isPro) {
-      return '🚀 ¡Haz tu tienda PRO por solo $4.990! Mejora tus ventas hoy mismo.';
+      return `🚀 ¡Haz tu tienda PRO por solo $${priceStr}! Mejora tus ventas hoy mismo.`;
     }
 
-    return '¡Únete a la comunidad Pro por solo $4.990/mes! 🚀';
+    return `¡Únete a la comunidad Pro por solo $${priceStr}/mes! 🚀`;
   });
 
   action() {
@@ -92,11 +114,12 @@ export class PromotionBanner implements OnInit {
         return;
       }
 
-      this.mpService.showPricingModal().then(result => {
+      this.mpService.showPricingModal(this.pricingStatus || undefined).then(result => {
         if (result) {
           if (result.recurring) {
             const email = this.authService.currentUser()?.email || '';
-            this.mpService.showCardPaymentModal(9990, email, environment.mercadopagoPublicKey)
+            const amount = this.pricingStatus ? this.pricingStatus.precioActual : 9990;
+            this.mpService.showCardPaymentModal(amount, email, environment.mercadopagoPublicKey)
               .catch(err => console.error('Error en pago desde banner', err));
           } else {
             Swal.fire({
@@ -112,10 +135,10 @@ export class PromotionBanner implements OnInit {
         }
       });
     } else {
-      // Si no está logueado, invitamos a registrarse
+      const priceStr = this.pricingStatus ? this.pricingStatus.precioActual.toLocaleString('es-CL') : '4.990';
       Swal.fire({
-        title: '¡Asegura tu cupo de $4.990! 🚀',
-        text: 'Esta oferta es exclusiva para los primeros 100 inscritos. ¿Ya tienes una cuenta o eres nuevo?',
+        title: `¡Asegura tu cupo de $${priceStr}! 🚀`,
+        text: 'Esta oferta es exclusiva y limitada. ¿Ya tienes una cuenta o eres nuevo?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Ya tengo cuenta (Login)',

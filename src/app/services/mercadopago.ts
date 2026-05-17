@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth-service';
 import Swal from 'sweetalert2';
+import { PricingStatus } from './pricing';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,10 @@ export class MercadoPagoService {
     return this.http.post<{id: string}>(`${this.apiUrl}/create-subscription`, {});
   }
 
-  showPricingModal(): Promise<{months: number, recurring: boolean} | null> {
+  showPricingModal(pricingInfo?: PricingStatus): Promise<{months: number, recurring: boolean} | null> {
+    const precioActual = pricingInfo ? pricingInfo.precioActual.toLocaleString('es-CL') : '4.990';
+    const precioAncla = pricingInfo ? pricingInfo.precioAncla.toLocaleString('es-CL') : '9.990';
+    
     return Swal.fire({
       title: '🚀 Selecciona tu Plan Pro',
       html: `
@@ -31,8 +35,8 @@ export class MercadoPagoService {
             <div class="col-md-6 col-12">
               <div class="plan-card p-3 border rounded text-center h-100" id="plan-1" style="cursor:pointer; transition: all 0.2s;">
                 <h5 class="mb-1">1 Mes</h5>
-                <div class="h4 mb-1">$9.990</div>
-                <div class="badge bg-success-subtle text-success border border-success-subtle mb-2">Oferta: $4.990*</div>
+                <div class="h4 mb-1" style="text-decoration: line-through; opacity: 0.6;">$${precioAncla}</div>
+                <div class="badge bg-success-subtle text-success border border-success-subtle mb-2">Oferta: $${precioActual}*</div>
                 <div class="small text-muted">Ideal para empezar</div>
               </div>
             </div>
@@ -73,7 +77,7 @@ export class MercadoPagoService {
             </div>
           </div>
 
-          <p class="mt-4 small text-center" style="opacity: 0.6;">*Oferta de $4.990 vigente por lanzamiento o hasta agotar cupos.</p>
+          <p class="mt-4 small text-center" style="opacity: 0.6;">*Oferta de $${precioActual} vigente por fase actual o hasta agotar cupos.</p>
         </div>
         <style>
           .plan-card { color: inherit; background: transparent; }

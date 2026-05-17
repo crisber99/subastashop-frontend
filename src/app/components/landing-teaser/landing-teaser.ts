@@ -2,7 +2,7 @@ import { Component, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth-service';
 

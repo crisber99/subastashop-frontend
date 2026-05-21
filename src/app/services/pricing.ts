@@ -17,7 +17,7 @@ export interface PricingStatus {
   providedIn: 'root'
 })
 export class PricingService {
-  private apiUrl = `${environment.apiUrl}/api/v1/pricing`;
+  private apiUrl = `${environment.apiUrl}/v1/pricing`;
 
   constructor(private http: HttpClient) {}
 

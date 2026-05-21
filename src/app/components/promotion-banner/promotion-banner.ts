@@ -76,7 +76,7 @@ export class PromotionBanner implements OnInit {
     const user = this.authService.currentUser();
     
     // Si no tenemos status de pricing, usamos default
-    let priceStr = '4.990';
+    let priceStr = '2.490';
     let cuposStr = '';
     
     if (this.pricingStatus) {
@@ -166,7 +166,7 @@ export class PromotionBanner implements OnInit {
         }
       });
     } else {
-      const priceStr = this.pricingStatus ? this.pricingStatus.precioActual.toLocaleString('es-CL') : '4.990';
+      const priceStr = this.pricingStatus ? this.pricingStatus.precioActual.toLocaleString('es-CL') : '2.490';
       Swal.fire({
         title: `¡Asegura tu cupo de $${priceStr}! 🚀`,
         text: 'Esta oferta es exclusiva y limitada. ¿Ya tienes una cuenta o eres nuevo?',

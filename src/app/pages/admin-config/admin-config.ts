@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { TiendaService } from '../../services/tienda';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
@@ -50,7 +50,7 @@ export class AdminConfig implements OnInit {
 
   fileLogo: File | null = null;
   logoPreview: string | null = null;
-  
+
   loading = false;
   mensaje = '';
 
@@ -144,7 +144,7 @@ export class AdminConfig implements OnInit {
 
   async inicializarCardBrick() {
     this.showCardForm = true;
-    
+
     // Pequeño delay para asegurar que el contenedor #cardPaymentBrick_container ya existe en el DOM
     setTimeout(async () => {
       const mp = new (window as any).MercadoPago(environment.mercadopagoPublicKey, {
@@ -154,7 +154,7 @@ export class AdminConfig implements OnInit {
 
       const settings = {
         initialization: {
-          amount: 9990, // Valor base, MP lo usa para validaciones de tarjeta
+          amount: 6990, // Valor base, MP lo usa para validaciones de tarjeta
           payer: {
             email: this.authService.currentUser()?.email || '',
           },
@@ -235,7 +235,7 @@ export class AdminConfig implements OnInit {
   }
 
   cargarDatosActuales() {
-    Swal.fire({title: 'Cargando configuración...', didOpen: () => Swal.showLoading(), timer: 1000});
+    Swal.fire({ title: 'Cargando configuración...', didOpen: () => Swal.showLoading(), timer: 1000 });
     this.tiendaService.getMiTienda().subscribe({
       next: (data) => {
         this.config.nombre = data.nombre || '';
@@ -255,7 +255,7 @@ export class AdminConfig implements OnInit {
           } else {
             this.legacyDatosBancarios = data.datosBancarios || '';
             if (!this.legacyDatosBancarios) {
-                this.agregarCuenta(); // Iniciar con una vacía si no hay nada
+              this.agregarCuenta(); // Iniciar con una vacía si no hay nada
             }
           }
         } catch (e) {
@@ -285,7 +285,7 @@ export class AdminConfig implements OnInit {
     let input = event.target.value;
     // Limpiar y formatear
     let formatted = this.formatRut(input);
-    
+
     if (type === 'config') {
       this.config.rutEmpresa = formatted;
     } else if (type === 'cuenta' && index !== undefined) {
@@ -300,10 +300,10 @@ export class AdminConfig implements OnInit {
     // Limpiar todo excepto números y K
     let value = rut.replace(/[^0-9kK]/g, '');
     if (value.length < 2) return value;
-    
+
     let cuerpo = value.slice(0, -1);
     let dv = value.slice(-1).toUpperCase();
-    
+
     // Formatear cuerpo con puntos
     let result = '';
     while (cuerpo.length > 3) {
@@ -311,7 +311,7 @@ export class AdminConfig implements OnInit {
       cuerpo = cuerpo.slice(0, -3);
     }
     result = cuerpo + result;
-    
+
     return result + '-' + dv;
   }
 
@@ -325,11 +325,11 @@ export class AdminConfig implements OnInit {
 
   convertirLegacy() {
     this.cuentas = [{
-        titular: this.config.nombre,
-        rut: this.config.rutEmpresa,
-        banco: '',
-        tipo: '',
-        numero: ''
+      titular: this.config.nombre,
+      rut: this.config.rutEmpresa,
+      banco: '',
+      tipo: '',
+      numero: ''
     }];
     this.legacyDatosBancarios = '';
   }
@@ -346,7 +346,7 @@ export class AdminConfig implements OnInit {
       }
 
       this.fileLogo = file;
-      
+
       // Browser preview
       const reader = new FileReader();
       reader.onload = () => {
@@ -365,9 +365,9 @@ export class AdminConfig implements OnInit {
 
     this.loading = true;
     Swal.fire({
-        title: 'Guardando...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
+      title: 'Guardando...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
     });
 
     // ⚖️ Registrar aceptación legal en el nuevo sistema
@@ -376,13 +376,13 @@ export class AdminConfig implements OnInit {
         const formData = new FormData();
         formData.append('nombreTienda', this.config.nombre);
         formData.append('rutEmpresa', this.config.rutEmpresa);
-        
+
         const datosJSON = JSON.stringify(this.cuentas);
         formData.append('datosBancarios', datosJSON);
-        
+
         formData.append('colorPrimario', this.config.colorPrimario);
         formData.append('opcionesEnvio', this.config.opcionesEnvio);
-        
+
         // Formatear WhatsApp antes de enviar (Asegurar +56)
         let phone = this.config.whatsapp.trim();
         if (phone && !phone.startsWith('+')) {
@@ -396,7 +396,7 @@ export class AdminConfig implements OnInit {
         formData.append('aceptaTerminos', 'true');
 
         if (this.fileLogo) formData.append('fotoLogo', this.fileLogo);
-        
+
         // También actualizamos el alias del usuario mediante el nuevo endpoint de perfil
         this.authService.updateProfile({ alias: this.config.ownerAlias }).subscribe({
           error: (e: any) => console.error("No se pudo actualizar el alias del dueño", e)

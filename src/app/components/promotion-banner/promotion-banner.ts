@@ -45,47 +45,47 @@ export class PromotionBanner implements OnInit {
     });
 
     this.websocketService.getFoundersUpdates().subscribe((msg: any) => {
-        if (msg && msg.tipo === 'NUEVO_FUNDADOR') {
-            // Play sound effect
-            try {
-                const audio = new Audio('assets/sounds/success.mp3');
-                audio.play();
-            } catch (e) {}
+      if (msg && msg.tipo === 'NUEVO_FUNDADOR') {
+        // Play sound effect
+        try {
+          const audio = new Audio('assets/sounds/success.mp3');
+          audio.play();
+        } catch (e) { }
 
-            Swal.fire({
-                title: '¡Validación Social!',
-                text: msg.mensaje + ` (Solo quedan ${msg.cuposRestantes})`,
-                toast: true,
-                position: 'bottom-start',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 5000,
-                timerProgressBar: true
-            });
+        Swal.fire({
+          title: '¡Validación Social!',
+          text: msg.mensaje + ` (Solo quedan ${msg.cuposRestantes})`,
+          toast: true,
+          position: 'bottom-start',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 5000,
+          timerProgressBar: true
+        });
 
-            if (this.pricingStatus) {
-                this.pricingStatus.cuposOcupadosFase += 1;
-                this.pricingStatus.cuposRestantes -= 1;
-            }
+        if (this.pricingStatus) {
+          this.pricingStatus.cuposOcupadosFase += 1;
+          this.pricingStatus.cuposRestantes -= 1;
         }
+      }
     });
   }
 
   // Lógica de mensaje dinámico
   mensaje = computed(() => {
     const user = this.authService.currentUser();
-    
+
     // Si no tenemos status de pricing, usamos default
     let priceStr = '2.490';
     let cuposStr = '';
-    
+
     if (this.pricingStatus) {
-        priceStr = this.pricingStatus.precioActual.toLocaleString('es-CL');
-        if (this.pricingStatus.faseActual === 1 || this.pricingStatus.faseActual === 2) {
-            cuposStr = `(Solo quedan ${this.pricingStatus.cuposRestantes} cupos)`;
-        }
+      priceStr = this.pricingStatus.precioActual.toLocaleString('es-CL');
+      if (this.pricingStatus.faseActual === 1 || this.pricingStatus.faseActual === 2) {
+        cuposStr = `(Solo quedan ${this.pricingStatus.cuposRestantes} cupos)`;
+      }
     } else {
-        cuposStr = '(Cupos limitados)';
+      cuposStr = '(Cupos limitados)';
     }
 
     if (!user || !this.authService.isLoggedIn()) {
@@ -110,7 +110,7 @@ export class PromotionBanner implements OnInit {
   action() {
     if (this.authService.isLoggedIn()) {
       const isPro = this.authService.hasActiveSubscription();
-      
+
       if (isPro) {
         // Opción para usuarios PRO (incluyendo Compradores)
         Swal.fire({
@@ -149,7 +149,7 @@ export class PromotionBanner implements OnInit {
         if (result) {
           if (result.recurring) {
             const email = this.authService.currentUser()?.email || '';
-            const amount = this.pricingStatus ? this.pricingStatus.precioActual : 9990;
+            const amount = this.pricingStatus ? this.pricingStatus.precioActual : 6990;
             this.mpService.showCardPaymentModal(amount, email, environment.mercadopagoPublicKey)
               .catch(err => console.error('Error en pago desde banner', err));
           } else {
@@ -188,23 +188,23 @@ export class PromotionBanner implements OnInit {
   }
 
   procesarSuscripcion() {
-      Swal.fire({
-          title: 'Iniciando Suscripción Automática...',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading()
-      });
+    Swal.fire({
+      title: 'Iniciando Suscripción Automática...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
 
-      this.mpService.createSubscription().subscribe({
-          next: (res) => {
-              if (res.id) {
-                  window.location.href = res.id;
-              }
-          },
-          error: (err) => {
-              console.error(err);
-              Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
-          }
-      });
+    this.mpService.createSubscription().subscribe({
+      next: (res) => {
+        if (res.id) {
+          window.location.href = res.id;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
+      }
+    });
   }
 
   procesarPago(months: number) {

@@ -158,7 +158,7 @@
               <tr *ngFor="let p of productos">
                 <td><small class="text-muted">#{{ p.id }}</small></td>
                 <td><strong>{{ p.nombre }}</strong></td>
-                <td>${{ p.precioBase || p.precio | number }}</td>
+                <td>${{ (p.precioBase || p.precioActual || p.precioTicket || 0) | number }}</td>
                 <td>
                   <span class="badge rounded-pill" [ngClass]="{
                       'bg-success': p.estado === 'DISPONIBLE',

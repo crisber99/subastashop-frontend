@@ -271,7 +271,7 @@ export class Dashboard implements OnInit {
     });
   }
 
-  abrirCajaMisteriosa(detalleId: number) {
+  abrirCajaMisteriosa(detalle: any) {
     Swal.fire({
       title: '¡Preparando tu Caja Misteriosa!',
       text: 'La suerte está echada...',
@@ -279,56 +279,166 @@ export class Dashboard implements OnInit {
       didOpen: () => Swal.showLoading()
     });
 
-    this.ordenService.abrirCaja(detalleId).subscribe({
-      next: (res: any) => {
-        const premioText = res.premio || "Un premio misterioso";
+    this.productService.getProductoById(detalle.producto.id).subscribe({
+      next: (productoCompleto: any) => {
+        const premiosPosibles = productoCompleto.premios || [];
+        
+        this.ordenService.abrirCaja(detalle.id).subscribe({
+          next: (res: any) => {
+            const premioText = res.premio || "Un premio misterioso";
 
-        // Animación de Unboxing
-        Swal.fire({
-          title: '📦 Abriendo Caja...',
-          html: `<div class="lootbox-animation">
-                   <div class="box-shaking" style="font-size: 5rem; animation: shake 0.5s infinite;">🎁</div>
-                   <p class="mt-3 text-muted">Averiguando qué hay dentro...</p>
-                 </div>`,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: () => {
-             // Inject local CSS for shake
-             const style = document.createElement('style');
-             style.innerHTML = `
-               @keyframes shake {
-                 0% { transform: translate(1px, 1px) rotate(0deg); }
-                 10% { transform: translate(-1px, -2px) rotate(-1deg); }
-                 20% { transform: translate(-3px, 0px) rotate(1deg); }
-                 30% { transform: translate(3px, 2px) rotate(0deg); }
-                 40% { transform: translate(1px, -1px) rotate(1deg); }
-                 50% { transform: translate(-1px, 2px) rotate(-1deg); }
-                 60% { transform: translate(-3px, 1px) rotate(0deg); }
-                 70% { transform: translate(3px, 1px) rotate(-1deg); }
-                 80% { transform: translate(-1px, -1px) rotate(1deg); }
-                 90% { transform: translate(1px, 2px) rotate(0deg); }
-                 100% { transform: translate(1px, -2px) rotate(-1deg); }
-               }
-             `;
-             document.head.appendChild(style);
+            if (premiosPosibles.length === 0) {
+              this.animacionBasica(premioText);
+              return;
+            }
+
+            this.animacionRuletaMarioKart(premiosPosibles, premioText);
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Error', err.error || 'No se pudo abrir la caja.', 'error');
           }
-        }).then(() => {
-          Swal.fire({
-            title: '¡Felicidades!',
-            html: `<h3>Has ganado:</h3><br><h2 class="text-success fw-bold animate__animated animate__tada">${premioText}</h2>`,
-            icon: 'success',
-            confirmButtonText: '¡Genial!',
-            confirmButtonColor: '#3085d6'
-          }).then(() => {
-            this.cargarDatos(); // Refrescar para ver el resultado guardado
-          });
         });
       },
-      error: (err) => {
-        console.error(err);
-        Swal.fire('Error', err.error || 'No se pudo abrir la caja.', 'error');
+      error: () => {
+         // Fallback si falla la obtención del producto
+         this.ordenService.abrirCaja(detalle.id).subscribe({
+           next: (res: any) => this.animacionBasica(res.premio || "Un premio misterioso"),
+           error: (err) => Swal.fire('Error', err.error || 'No se pudo abrir la caja.', 'error')
+         });
+      }
+    });
+  }
+
+  animacionBasica(premioText: string) {
+    Swal.fire({
+      title: '📦 Abriendo Caja...',
+      html: `<div class="lootbox-animation">
+               <div class="box-shaking" style="font-size: 5rem; animation: shake 0.5s infinite;">🎁</div>
+               <p class="mt-3 text-muted">Averiguando qué hay dentro...</p>
+             </div>`,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: () => {
+         const style = document.createElement('style');
+         style.innerHTML = `
+           @keyframes shake {
+             0% { transform: translate(1px, 1px) rotate(0deg); }
+             10% { transform: translate(-1px, -2px) rotate(-1deg); }
+             20% { transform: translate(-3px, 0px) rotate(1deg); }
+             30% { transform: translate(3px, 2px) rotate(0deg); }
+             40% { transform: translate(1px, -1px) rotate(1deg); }
+             50% { transform: translate(-1px, 2px) rotate(-1deg); }
+             60% { transform: translate(-3px, 1px) rotate(0deg); }
+             70% { transform: translate(3px, 1px) rotate(-1deg); }
+             80% { transform: translate(-1px, -1px) rotate(1deg); }
+             90% { transform: translate(1px, 2px) rotate(0deg); }
+             100% { transform: translate(1px, -2px) rotate(-1deg); }
+           }
+         `;
+         document.head.appendChild(style);
+      }
+    }).then(() => {
+      Swal.fire({
+        title: '¡Felicidades!',
+        html: `<h3>Has ganado:</h3><br><h2 class="text-success fw-bold animate__animated animate__tada">${premioText}</h2>`,
+        icon: 'success',
+        confirmButtonText: '¡Genial!',
+        confirmButtonColor: '#3085d6'
+      }).then(() => {
+        this.cargarDatos(); 
+      });
+    });
+  }
+
+  animacionRuletaMarioKart(premios: any[], premioGanadoText: string) {
+    const premioGanado = premios.find(p => p.nombre.toLowerCase() === premioGanadoText.toLowerCase());
+    const imgGanador = premioGanado?.imagenUrl || '';
+
+    Swal.fire({
+      title: '🎁 Abriendo Caja Misteriosa...',
+      html: `
+        <div class="mario-kart-box">
+           <div id="roulette-item" class="roulette-item shadow-lg">
+              <i class="bi bi-question-lg" style="font-size: 5rem;"></i>
+           </div>
+           <p id="roulette-name" class="mt-3 fw-bold fs-4 text-muted">¿Qué será?</p>
+        </div>
+      `,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        const itemDiv = document.getElementById('roulette-item');
+        const nameText = document.getElementById('roulette-name');
+        
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .mario-kart-box {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+          }
+          .roulette-item {
+            width: 150px; height: 150px; 
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            transition: all 0.1s;
+            border: 4px solid #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+          }
+          .roulette-item img {
+            max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 10px;
+          }
+          .roulette-spin {
+             transform: scale(1.1);
+          }
+        `;
+        document.head.appendChild(style);
+
+        let i = 0;
+        let speed = 50; 
+        let ticks = 0;
+        
+        const spin = () => {
+           ticks++;
+           const p = premios[i % premios.length];
+           if(itemDiv && nameText) {
+               itemDiv.innerHTML = p.imagenUrl ? \`<img src="\${p.imagenUrl}">\` : \`<i class="bi bi-gift" style="font-size: 4rem; color: white;"></i>\`;
+               nameText.innerText = p.nombre;
+               itemDiv.classList.add('roulette-spin');
+               setTimeout(() => itemDiv.classList.remove('roulette-spin'), speed / 2);
+           }
+           i++;
+           
+           if(ticks > 30) { speed += 25; } 
+           
+           if(speed < 350) {
+              setTimeout(spin, speed);
+           } else {
+              setTimeout(() => {
+                 if(itemDiv && nameText) {
+                     itemDiv.innerHTML = imgGanador ? \`<img src="\${imgGanador}">\` : \`<i class="bi bi-star-fill text-warning" style="font-size: 4rem;"></i>\`;
+                     nameText.innerText = premioGanadoText;
+                     itemDiv.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                     itemDiv.classList.add('animate__animated', 'animate__tada');
+                     nameText.classList.remove('text-muted');
+                     nameText.classList.add('text-success', 'animate__animated', 'animate__bounceIn');
+                 }
+                 setTimeout(() => {
+                    Swal.fire({
+                      title: '¡Felicidades!',
+                      html: \`<h3>Has ganado:</h3><br><h2 class="text-success fw-bold animate__animated animate__tada">\${premioGanadoText}</h2>\`,
+                      icon: 'success',
+                      confirmButtonText: '¡Genial!',
+                      confirmButtonColor: '#3085d6'
+                    }).then(() => this.cargarDatos());
+                 }, 1500);
+              }, 500);
+           }
+        };
+        setTimeout(spin, speed);
       }
     });
   }

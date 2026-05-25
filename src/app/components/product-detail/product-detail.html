@@ -278,10 +278,26 @@
                         <p class="text-muted mb-1 small text-uppercase">Precio de la Caja</p>
                         <h1 class="display-4 fw-bold text-warning mb-3">${{ (producto.precioBase || producto.precioTicket) | number }}</h1>
 
-                        <div class="alert rounded-4 mb-4 py-3" style="background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);">
-                            <i class="bi bi-question-circle-fill text-warning me-2"></i>
-                            <strong>¿Qué hay dentro?</strong>
-                            <p class="mb-0 mt-1 small text-muted">Compra la caja y abre tu premio sorpresa. Puedes ganar cualquiera de los artículos configurados por la tienda.</p>
+                        <div class="alert rounded-4 mb-4 py-3 text-start" style="background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-question-circle-fill text-warning me-2 fs-5"></i>
+                                <strong class="text-dark">¿Qué hay dentro?</strong>
+                            </div>
+                            <p class="mb-3 mt-1 small text-muted">Compra la caja y descubre tu sorpresa. Podrías ganar cualquiera de estos premios:</p>
+                            
+                            <div class="row g-2" *ngIf="producto.premios && producto.premios.length > 0">
+                                <div class="col-6 col-md-4" *ngFor="let premio of producto.premios">
+                                    <div class="p-2 border rounded bg-white text-center h-100 shadow-sm d-flex flex-column justify-content-center align-items-center position-relative">
+                                        <img *ngIf="premio.imagenUrl" [src]="premio.imagenUrl" alt="{{ premio.nombre }}" class="img-fluid rounded mb-2" style="max-height: 50px; object-fit: contain;">
+                                        <i *ngIf="!premio.imagenUrl" class="bi bi-gift text-warning mb-1 fs-4"></i>
+                                        <small class="fw-bold lh-sm text-dark">{{ premio.nombre }}</small>
+                                        <span class="badge bg-danger position-absolute top-0 end-0 m-1" style="font-size: 0.65rem;">{{ premio.probabilidad }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="!producto.premios || producto.premios.length === 0" class="text-center mt-2">
+                                <span class="badge bg-secondary">Premios por revelar...</span>
+                            </div>
                         </div>
 
                         <div *ngIf="authService.isLoggedIn(); else loginParaCaja">

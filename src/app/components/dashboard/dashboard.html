@@ -240,7 +240,7 @@
                                         @if (detalle.producto?.tipoVenta === 'CAJA_MISTERIOSA' && !detalle.datosExtra?.startsWith('Premio:')) {
                                             <button 
                                                 class="btn btn-warning btn-sm fw-bold text-dark shadow-sm animate__animated animate__pulse animate__infinite" 
-                                                (click)="abrirCajaMisteriosa(detalle.id)">
+                                                (click)="abrirCajaMisteriosa(detalle)">
                                                 🎁 ABRIR CAJA
                                             </button>
                                         }

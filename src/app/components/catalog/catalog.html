@@ -129,17 +129,17 @@
                     <div class="mb-3">
                         @if (producto.tipoVenta === 'SUBASTA') {
                         <p class="card-text text-danger fw-bold fs-5 mb-0">
-                            ${{ producto.precioActual | number }}
+                            ${{ (producto.precioActual || producto.precioBase || 0) | number }}
                         </p>
                         <small class="text-muted">Oferta Actual</small>
                         } @else if (producto.tipoVenta === 'RIFA') {
                         <p class="card-text text-info fw-bold fs-5 mb-0">
-                            ${{ producto.precioTicket | number }}
+                            ${{ (producto.precioTicket || producto.precioBase || 0) | number }}
                         </p>
                         <small class="text-muted">Valor del Ticket</small>
                         } @else {
                         <p class="card-text text-success fw-bold fs-5 mb-0">
-                            ${{ producto.precioBase | number }}
+                            ${{ (producto.precioBase || producto.precioActual || producto.precioTicket || 0) | number }}
                         </p>
                         <small class="text-muted">Precio Directo</small>
                         }

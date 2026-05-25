@@ -405,7 +405,7 @@ export class Dashboard implements OnInit {
            ticks++;
            const p = premios[i % premios.length];
            if(itemDiv && nameText) {
-               itemDiv.innerHTML = p.imagenUrl ? \`<img src="\${p.imagenUrl}">\` : \`<i class="bi bi-gift" style="font-size: 4rem; color: white;"></i>\`;
+               itemDiv.innerHTML = p.imagenUrl ? `<img src="${p.imagenUrl}">` : `<i class="bi bi-gift" style="font-size: 4rem; color: white;"></i>`;
                nameText.innerText = p.nombre;
                itemDiv.classList.add('roulette-spin');
                setTimeout(() => itemDiv.classList.remove('roulette-spin'), speed / 2);
@@ -419,7 +419,7 @@ export class Dashboard implements OnInit {
            } else {
               setTimeout(() => {
                  if(itemDiv && nameText) {
-                     itemDiv.innerHTML = imgGanador ? \`<img src="\${imgGanador}">\` : \`<i class="bi bi-star-fill text-warning" style="font-size: 4rem;"></i>\`;
+                     itemDiv.innerHTML = imgGanador ? `<img src="${imgGanador}">` : `<i class="bi bi-star-fill text-warning" style="font-size: 4rem;"></i>`;
                      nameText.innerText = premioGanadoText;
                      itemDiv.style.background = 'linear-gradient(135deg, #10b981, #059669)';
                      itemDiv.classList.add('animate__animated', 'animate__tada');
@@ -429,7 +429,7 @@ export class Dashboard implements OnInit {
                  setTimeout(() => {
                     Swal.fire({
                       title: '¡Felicidades!',
-                      html: \`<h3>Has ganado:</h3><br><h2 class="text-success fw-bold animate__animated animate__tada">\${premioGanadoText}</h2>\`,
+                      html: `<h3>Has ganado:</h3><br><h2 class="text-success fw-bold animate__animated animate__tada">${premioGanadoText}</h2>`,
                       icon: 'success',
                       confirmButtonText: '¡Genial!',
                       confirmButtonColor: '#3085d6'

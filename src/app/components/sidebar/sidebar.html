@@ -20,6 +20,12 @@
                 </a>
             </li>
         </ul>
+
+        <div class="px-3 mt-4" *ngIf="isComprador">
+            <button class="btn btn-warning w-100 shadow-sm fw-bold rounded-pill" (click)="lanzarHaztePro()" style="background: linear-gradient(45deg, #FFD700, #FFA500); border: none; color: #fff;">
+                <i class="bi bi-star-fill me-1"></i> Hazte PRO
+            </button>
+        </div>
     </div>
 
     <div class="logout-container">

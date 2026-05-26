@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth-service';
 import Swal from 'sweetalert2';
-import { PricingStatus } from './pricing';
+import { PricingStatus, PricingService } from './pricing';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { PricingStatus } from './pricing';
 export class MercadoPagoService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
+  private pricingService = inject(PricingService);
   private apiUrl = `${environment.apiUrl}/mercadopago`;
 
   createSubscriptionPreference(months: number = 1): Observable<{id: string}> {
@@ -22,9 +24,21 @@ export class MercadoPagoService {
     return this.http.post<{id: string}>(`${this.apiUrl}/create-subscription`, {});
   }
 
-  showPricingModal(pricingInfo?: PricingStatus): Promise<{months: number, recurring: boolean} | null> {
-    const precioActual = pricingInfo ? pricingInfo.precioActual.toLocaleString('es-CL') : '4.990';
-    const precioAncla = pricingInfo ? pricingInfo.precioAncla.toLocaleString('es-CL') : '9.990';
+  async showPricingModal(pricingInfo?: PricingStatus): Promise<{months: number, recurring: boolean} | null> {
+    if (!pricingInfo) {
+      try {
+        pricingInfo = await firstValueFrom(this.pricingService.getStatus());
+      } catch (e) {
+        // Fallback a Fase 1 si falla el backend
+        pricingInfo = {
+          faseActual: 1, precioActual: 2490, precioAncla: 6990,
+          cuposTotalesFase: 100, cuposOcupadosFase: 0, cuposRestantes: 100, totalProUsers: 0
+        };
+      }
+    }
+
+    const precioActual = pricingInfo.precioActual.toLocaleString('es-CL');
+    const precioAncla = pricingInfo.precioAncla.toLocaleString('es-CL');
     
     return Swal.fire({
       title: '🚀 Selecciona tu Plan Pro',
@@ -37,13 +51,13 @@ export class MercadoPagoService {
                 <h5 class="mb-1">1 Mes</h5>
                 <div class="h4 mb-1" style="text-decoration: line-through; opacity: 0.6;">$${precioAncla}</div>
                 <div class="badge bg-success-subtle text-success border border-success-subtle mb-2">Oferta: $${precioActual}*</div>
-                <div class="small text-muted">Ideal para empezar</div>
+                <div class="small text-muted">Fase ${pricingInfo.faseActual} (${pricingInfo.cuposRestantes} cupos)</div>
               </div>
             </div>
             <div class="col-md-6 col-12">
               <div class="plan-card p-3 border rounded text-center h-100" id="plan-3" style="cursor:pointer; transition: all 0.2s;">
                 <h5 class="mb-1">3 Meses</h5>
-                <div class="h4 mb-2">$26.970</div>
+                <div class="h4 mb-2">$18.990</div>
                 <div class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2">Ahorra 10%</div>
                 <div class="small text-muted">Pago trimestral</div>
               </div>
@@ -51,7 +65,7 @@ export class MercadoPagoService {
             <div class="col-md-6 col-12">
               <div class="plan-card p-3 border rounded text-center h-100" id="plan-6" style="cursor:pointer; transition: all 0.2s;">
                 <h5 class="mb-1">6 Meses</h5>
-                <div class="h4 mb-2">$50.940</div>
+                <div class="h4 mb-2">$35.990</div>
                 <div class="badge bg-info-subtle text-info border border-info-subtle mb-2">Ahorra 15%</div>
                 <div class="small text-muted">Pago semestral</div>
               </div>
@@ -59,7 +73,7 @@ export class MercadoPagoService {
             <div class="col-md-6 col-12">
               <div class="plan-card p-3 border border-warning rounded text-center h-100 shadow-sm" id="plan-12" style="cursor:pointer; transition: all 0.2s;">
                 <h5 class="mb-1 fw-bold">12 Meses</h5>
-                <div class="h4 mb-2">$99.900</div>
+                <div class="h4 mb-2">$69.900</div>
                 <div class="badge bg-warning-subtle text-warning border border-warning-subtle mb-2">2 Meses Gratis 🎁</div>
                 <div class="small text-muted">Mejor valor anual</div>
               </div>

@@ -69,7 +69,7 @@ export class Sidebar implements OnInit {
       const amount = pricingInfo.precioActual;
       const user = this.authService.currentUser();
       if (user) {
-        await this.mpService.showCardPaymentModal(amount, user.email, environment.mercadopagoPublicKey);
+        await this.mpService.showCardPaymentModal(amount, user.email || '', environment.mercadopagoPublicKey);
       }
     } catch (error) {
       console.error(error);

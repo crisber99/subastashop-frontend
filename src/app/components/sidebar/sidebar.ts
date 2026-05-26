@@ -7,6 +7,9 @@ import { MenuService } from '../../services/menu';
 import { MercadoPagoService } from '../../services/mercadopago';
 import Swal from 'sweetalert2';
 import { filter } from 'rxjs/operators';
+import { PricingService } from '../../services/pricing';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-sidebar',
@@ -21,6 +24,7 @@ export class Sidebar implements OnInit {
   menuService = inject(MenuService);
   router = inject(Router);
   mpService = inject(MercadoPagoService);
+  pricingService = inject(PricingService);
 
   ngOnInit() {
     // Cerrar sidebar automáticamente en cada navegación
@@ -59,24 +63,18 @@ export class Sidebar implements OnInit {
     });
   }
 
-  procesarSuscripcion() {
-    Swal.fire({
-      title: 'Iniciando Suscripción Automática...',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
-    });
-
-    this.mpService.createSubscription().subscribe({
-      next: (res) => {
-        if (res.id) {
-          window.location.href = res.id;
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
+  async procesarSuscripcion() {
+    try {
+      const pricingInfo = await firstValueFrom(this.pricingService.getStatus());
+      const amount = pricingInfo.precioActual;
+      const user = this.authService.currentUser();
+      if (user) {
+        await this.mpService.showCardPaymentModal(amount, user.email, environment.mercadopagoPublicKey);
       }
-    });
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
+    }
   }
 
   procesarPago(months: number) {

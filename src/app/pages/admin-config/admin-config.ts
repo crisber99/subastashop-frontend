@@ -10,6 +10,8 @@ import { environment } from '../../../environments/environment';
 import { ProductService } from '../../services/product';
 import { LegalTermsComponent } from '../../components/legal-terms/legal-terms';
 import Swal from 'sweetalert2';
+import { PricingService } from '../../services/pricing';
+import { firstValueFrom } from 'rxjs';
 
 export interface CuentaBancaria {
   banco: string;
@@ -34,6 +36,7 @@ export class AdminConfig implements OnInit {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
+  private pricingService = inject(PricingService);
 
   config = {
     nombre: '',
@@ -432,24 +435,18 @@ export class AdminConfig implements OnInit {
     });
   }
 
-  procesarSuscripcion() {
-    Swal.fire({
-      title: 'Iniciando Suscripción Automática...',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
-    });
-
-    this.mpService.createSubscription().subscribe({
-      next: (res) => {
-        if (res.id) {
-          window.location.href = res.id;
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
+  async procesarSuscripcion() {
+    try {
+      const pricingInfo = await firstValueFrom(this.pricingService.getStatus());
+      const amount = pricingInfo.precioActual;
+      const user = this.authService.currentUser();
+      if (user) {
+        await this.mpService.showCardPaymentModal(amount, user.email, environment.mercadopagoPublicKey);
       }
-    });
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'No se pudo iniciar el proceso de suscripción.', 'error');
+    }
   }
 
   procesarPago(months: number) {

@@ -136,14 +136,14 @@ export class AuthService {
 
   isAdmin(): boolean {
     const user = this.currentUser();
-    console.log('Usuario actual:', user);
+    //console.log('Usuario actual:', user);
     return !!(user && user.role === 'ROLE_ADMIN');
   }
 
   isSuperAdmin(): boolean {
     const user = this.currentUser();
     // Ajusta según cómo guardes el rol en tu token/usuario
-    console.log('Super Usuario actual:', user);
+    //console.log('Super Usuario actual:', user);
     return !!(user && user.role === 'ROLE_SUPER_ADMIN');
   }
 
@@ -151,7 +151,7 @@ export class AuthService {
   getTrialDaysLeft(): number {
     const user = this.currentUser();
     if (!user || !user.fechaFinPrueba) return 0;
-    
+
     const fin = new Date(user.fechaFinPrueba);
     const hoy = new Date();
     const dif = fin.getTime() - hoy.getTime();
@@ -202,7 +202,7 @@ export class AuthService {
           const token = this.getToken();
           if (token) {
             this.guardarSesion(token, usuario);
-            console.log('🔄 Sesión refrescada correctamente con nuevos permisos.');
+            //console.log('🔄 Sesión refrescada correctamente con nuevos permisos.');
           }
         }
       })

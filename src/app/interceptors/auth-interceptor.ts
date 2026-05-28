@@ -6,8 +6,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  console.log('🛑 INTERCEPTOR EJECUTÁNDOSE. Token:', token ? 'SI TIENE' : 'NO TIENE', 'URL:', req.url);
-  
+  //console.log('🛑 INTERCEPTOR EJECUTÁNDOSE. Token:', token ? 'SI TIENE' : 'NO TIENE', 'URL:', req.url);
+
   // Si es login o registro, no enviamos el token. Para el resto de /auth/ (como /me), sí lo enviamos.
   if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
     return next(req);

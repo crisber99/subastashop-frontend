@@ -19,17 +19,17 @@ export class Websocket {
 
   conectar(onConnectedCallback?: () => void) {
     // Tu URL de Azure (¡NO LA CAMBIES!)
-    const socket = new SockJS(environment.wsUrl); 
-    
+    const socket = new SockJS(environment.wsUrl);
+
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
     });
 
     this.stompClient.onConnect = (frame) => {
-      console.log('✅ Conectado a WebSocket de Azure!');
+      //console.log('✅ Conectado a WebSocket de Azure!');
       this.connectedStatus.next(true); // Actualizamos estado a Conectado
-      
+
       // Si nos pasaron una función, la ejecutamos ahora que es seguro
       if (onConnectedCallback) {
         onConnectedCallback();
@@ -51,7 +51,7 @@ export class Websocket {
   suscribirseRifa(productoId: number) {
     if (this.stompClient && this.stompClient.connected) {
       console.log(`📡 Suscribiéndose al canal de sorteo: /topic/rifa/${productoId}`);
-      
+
       return this.stompClient.subscribe(`/topic/rifa/${productoId}`, (mensaje) => {
         console.log('📩 ¡Mensaje de sorteo recibido!', mensaje.body);
         this.precioUpdates.next(JSON.parse(mensaje.body));
@@ -65,7 +65,7 @@ export class Websocket {
   suscribirsePodio(productoId: number) {
     if (this.stompClient && this.stompClient.connected) {
       console.log(`📡 Suscribiéndose al podio: /topic/concurso/${productoId}/podio`);
-      
+
       return this.stompClient.subscribe(`/topic/concurso/${productoId}/podio`, (mensaje) => {
         console.log('📩 ¡Mensaje de podio recibido!', mensaje.body);
         const data = JSON.parse(mensaje.body);
@@ -80,7 +80,7 @@ export class Websocket {
   suscribirseProducto(productoId: number) {
     if (this.stompClient && this.stompClient.connected) {
       console.log(`📡 Suscribiéndose al canal: /topic/producto/${productoId}`);
-      
+
       return this.stompClient.subscribe(`/topic/producto/${productoId}`, (mensaje) => {
         console.log('📩 ¡Mensaje recibido!', mensaje.body);
         this.precioUpdates.next(JSON.parse(mensaje.body));
@@ -93,8 +93,8 @@ export class Websocket {
 
   suscribirseGlobal(usuarioId: number) {
     if (this.stompClient && this.stompClient.connected) {
-      console.log(`📡 Suscribiéndose a canal global de usuario: /topic/usuario/${usuarioId}`);
-      
+      //console.log(`📡 Suscribiéndose a canal global de usuario: /topic/usuario/${usuarioId}`);
+
       // Asegurarse de no tener múltiples suscripciones al mismo canal si se llama más de una vez
       return this.stompClient.subscribe(`/topic/usuario/${usuarioId}`, (mensaje) => {
         console.log('📩 ¡Mensaje global recibido!', mensaje.body);
@@ -108,9 +108,9 @@ export class Websocket {
 
   suscribirseFundadores() {
     if (this.stompClient && this.stompClient.connected) {
-      console.log(`📡 Suscribiéndose a canal de fundadores: /topic/founders`);
+      //console.log(`📡 Suscribiéndose a canal de fundadores: /topic/founders`);
       return this.stompClient.subscribe(`/topic/founders`, (mensaje) => {
-        console.log('📩 ¡Mensaje de fundadores recibido!', mensaje.body);
+        //console.log('📩 ¡Mensaje de fundadores recibido!', mensaje.body);
         this.foundersUpdates.next(JSON.parse(mensaje.body));
       });
     } else {
@@ -134,7 +134,7 @@ export class Websocket {
   getConnectionStatus() {
     return this.connectedStatus.asObservable();
   }
-  
+
   desconectar() {
     if (this.stompClient) {
       this.stompClient.deactivate();

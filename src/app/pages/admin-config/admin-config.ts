@@ -83,6 +83,7 @@ export class AdminConfig implements OnInit {
 
     this.http.post(`${environment.apiUrl}/mercadopago/sync-status`, {}).subscribe({
       next: (res: any) => {
+        console.log('--- DEBUG MERCADO PAGO ---', res);
         // Intentamos refrescar la sesión
         this.authService.refreshSession().subscribe({
           next: () => {

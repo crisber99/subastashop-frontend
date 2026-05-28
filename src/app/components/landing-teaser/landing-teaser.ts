@@ -21,7 +21,7 @@ export class LandingTeaser implements OnDestroy {
   loading = signal(false);
 
   // Fecha de lanzamiento objetivo
-  targetDate = new Date('2026-06-01T00:00:00').getTime();
+  targetDate = new Date('2026-05-31T12:00:00').getTime();
   
   days = signal('00');
   hours = signal('00');

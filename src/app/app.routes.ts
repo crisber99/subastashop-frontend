@@ -20,6 +20,7 @@ import { PrivacidadComponent } from './pages/privacidad/privacidad.component';
 import { TerminosComponent } from './pages/terminos/terminos.component';
 import { ProfileComponent } from './components/profile/profile';
 import { AdminDataAnalysisComponent } from './components/admin/admin-data-analysis/admin-data-analysis.component';
+import { HowItWorksComponent } from './components/how-it-works/how-it-works.component';
 
 export const routes: Routes = [
     // Rutes Públiques
@@ -31,6 +32,7 @@ export const routes: Routes = [
     { path: 'producto/:slug', component: ProductDetail },
     { path: 'privacidad', component: PrivacidadComponent },
     { path: 'terminos', component: TerminosComponent },
+    { path: 'como-funciona', component: HowItWorksComponent },
 
     // Rutes Privades (Protegides per el AuthGuard)
     { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },

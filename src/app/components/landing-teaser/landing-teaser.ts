@@ -22,7 +22,7 @@ export class LandingTeaser implements OnDestroy {
   loading = signal(false);
 
   // Fecha de lanzamiento objetivo
-  targetDate = new Date('2026-05-31T18:00:00').getTime();
+  targetDate = new Date('2026-05-31T20:00:00').getTime();
 
   days = signal('00');
   hours = signal('00');
@@ -36,7 +36,7 @@ export class LandingTeaser implements OnDestroy {
 
   freeWinners = signal<string[]>([]);
   discountWinners = signal<string[]>([]);
-  
+
   private productService = inject(ProductService);
 
   constructor() {

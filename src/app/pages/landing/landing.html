@@ -96,17 +96,17 @@
 </div>
 
 <div class="container mb-5">
-    @if (chollosGanados.length > 0) {
+    @if (ofertonesGanados.length > 0) {
         <div class="row mb-3">
             <div class="col-12 text-center">
-                <h4 class="fw-bold m-0"><span class="text-success">💰</span> Últimos Chollos Ganados</h4>
+                <h4 class="fw-bold m-0"><span class="text-success">💰</span> Últimos Ofertones Ganados</h4>
                 <p class="text-muted small">Mira lo que se han llevado otros usuarios con descuentos increíbles.</p>
             </div>
         </div>
 
         <div class="featured-carousel-container">
             <div class="featured-carousel py-2">
-                @for (prod of chollosGanados; track prod.id) {
+                @for (prod of ofertonesGanados; track prod.id) {
                     <div class="featured-item card h-100 border border-success shadow-sm" style="min-width: 280px; max-width: 320px;">
                         <div class="featured-badge bg-success text-white px-3 py-1 fw-bold rounded-pill" style="position: absolute; top: 10px; right: 10px; z-index: 10;">
                             ¡VENDIDO!

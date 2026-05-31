@@ -867,7 +867,16 @@ export class ProductDetail implements OnInit, OnDestroy {
   enviarMensajeChat() {
     if (!this.nuevoMensajeChat.trim()) return;
     if (!this.authService.isLoggedIn()) {
-      Swal.fire('Atención', 'Debes iniciar sesión para enviar mensajes.', 'warning');
+      Swal.fire({
+        title: 'Atención',
+        text: 'Debes iniciar sesión para enviar mensajes.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Iniciar Sesión',
+        cancelButtonText: 'Cancelar'
+      }).then(r => {
+        if (r.isConfirmed) this.router.navigate(['/login']);
+      });
       return;
     }
     const user = this.authService.currentUser();

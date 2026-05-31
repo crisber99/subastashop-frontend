@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth-service';
+import { ProductService } from '../../services/product';
 
 @Component({
   selector: 'app-landing-teaser',
@@ -33,8 +34,21 @@ export class LandingTeaser implements OnDestroy {
   // Si el usuario presiona una combinación secreta o es super admin
   bypassed = signal(false);
 
+  winners = signal<string[]>([]);
+  private productService = inject(ProductService);
+
   constructor() {
     this.startCountdown();
+    this.cargarGanadores();
+  }
+
+  cargarGanadores() {
+    this.productService.getPrelaunchWinners().subscribe({
+      next: (res) => {
+        this.winners.set(res);
+      },
+      error: (err) => console.error('Error al cargar ganadores:', err)
+    });
   }
 
   ngOnDestroy() {

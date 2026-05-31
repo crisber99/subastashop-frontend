@@ -46,7 +46,19 @@
           <span *ngIf="loading()"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
       </div>
-      <small class="text-white-50 mt-3 d-block"><i class="fas fa-lock me-1"></i> No enviamos spam. Solo te avisaremos cuando abramos.</small>
+      <small class="text-white-50 mt-3 d-block"><i class="bi bi-lock-fill me-1"></i> No enviamos spam. Solo te avisaremos cuando abramos.</small>
     </div>
+
+    <!-- GANADORES CUENTAS GRATIS -->
+    <div *ngIf="winners().length > 0" class="winners-container mt-5 pt-4 border-top border-secondary animate__animated animate__fadeIn mx-auto" style="max-width: 600px;">
+      <h5 class="text-white mb-3 fw-bold"><i class="bi bi-trophy-fill text-warning me-2"></i> Ganadores Cuenta PRO Gratis</h5>
+      <div class="d-flex flex-wrap justify-content-center gap-2" style="max-height: 130px; overflow-y: auto;">
+        <span *ngFor="let email of winners()" class="badge bg-dark border border-secondary text-light px-3 py-2 rounded-pill shadow-sm" style="font-size: 0.85rem;">
+          <i class="bi bi-person-check-fill me-1 text-success"></i> {{ email }}
+        </span>
+      </div>
+      <small class="text-info d-block mt-3 fw-bold">¡Apúrate! Los primeros 100 registrados ganan 1 año de cuenta PRO.</small>
+    </div>
+
   </div>
 </div>

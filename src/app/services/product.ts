@@ -164,4 +164,8 @@ export class ProductService {
   getStoreConfig(): Observable<any> {
     return this.http.get<any>(`${this.apiUrlPublic}/config`);
   }
+
+  getPrelaunchWinners(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrlPublic}/prelaunch/winners`);
+  }
 }

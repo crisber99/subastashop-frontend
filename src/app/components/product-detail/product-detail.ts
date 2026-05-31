@@ -828,6 +828,23 @@ export class ProductDetail implements OnInit, OnDestroy {
     return Array(5 - Math.floor(rating || 0)).fill(0);
   }
 
+  proponerIntercambio() {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    this.nuevoMensajeChat = "¡Hola! Me interesa permutar este producto. ¿Qué te parece si negociamos un intercambio?";
+    
+    setTimeout(() => {
+      const chatInput = document.querySelector('.chat-input') as HTMLInputElement;
+      if (chatInput) {
+        chatInput.focus();
+        chatInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  }
+
   // --- VALIDACIÓN DE DUEÑO ---
   esDuenoProducto(): boolean {
     if (!this.producto) return false;

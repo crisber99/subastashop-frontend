@@ -17,12 +17,6 @@ export class MenuService {
 
   private readonly ALL_ITEMS: MenuItem[] = [
     {
-      label: 'Inicio',
-      icon: 'bi-house-door',
-      route: '/',
-      roles: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_COMPRADOR']
-    },
-    {
       label: 'Mi Perfil',
       icon: 'bi-person-badge',
       route: '/mi-cuenta',

@@ -15,6 +15,12 @@
     <div class="navbar-collapse collapse">
         <div class="ms-auto d-flex align-items-center">
             
+            <!-- Cómo Funciona -->
+            <a routerLink="/como-funciona" class="btn btn-surface me-3 shadow-sm border-0 d-none d-md-inline-flex align-items-center fw-bold" 
+               style="color: var(--primary-color);" title="Guía Rápida: Cómo usar SubastaShop">
+               <i class="bi bi-info-circle-fill me-2"></i> Cómo Funciona
+            </a>
+
             <!-- Selector de Tema (Global) -->
             <button class="btn btn-surface me-3 shadow-sm border-0" (click)="themeService.toggleTheme()" 
                     [title]="themeService.isDarkMode() ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'">

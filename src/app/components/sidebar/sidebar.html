@@ -8,17 +8,34 @@
         </a>
     </div>
 
-    <div class="sidebar-content" *ngIf="menuService.fullMenu().length > 0">
+    <div class="sidebar-content">
         <ul class="sidebar-nav">
             <li class="sidebar-header">Navegación</li>
 
-            <li class="sidebar-item" *ngFor="let item of menuService.fullMenu()">
-                <a class="sidebar-link" [routerLink]="item.route" routerLinkActive="active" 
-                   [routerLinkActiveOptions]="{ exact: true }">
-                    <i class="bi" [ngClass]="item.icon"></i>
-                    <span class="align-middle">{{ item.label }}</span>
+            <!-- Enlaces Públicos -->
+            <li class="sidebar-item">
+                <a class="sidebar-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="bi bi-house-door"></i>
+                    <span class="align-middle">Inicio</span>
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" routerLink="/como-funciona" routerLinkActive="active">
+                    <i class="bi bi-info-circle-fill text-primary"></i>
+                    <span class="align-middle fw-bold">Cómo Funciona</span>
+                </a>
+            </li>
+
+            <!-- Enlaces Privados (Dinámicos) -->
+            <ng-container *ngIf="menuService.fullMenu().length > 0">
+                <li class="sidebar-item" *ngFor="let item of menuService.fullMenu()">
+                    <a class="sidebar-link" [routerLink]="item.route" routerLinkActive="active" 
+                       [routerLinkActiveOptions]="{ exact: true }">
+                        <i class="bi" [ngClass]="item.icon"></i>
+                        <span class="align-middle">{{ item.label }}</span>
+                    </a>
+                </li>
+            </ng-container>
         </ul>
 
         <div class="px-3 mt-4" *ngIf="isComprador">

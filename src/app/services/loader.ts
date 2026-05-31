@@ -4,14 +4,21 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class Loader {
-  // Usamos 'Signals' de Angular 17+ (¡Lo más moderno!)
+  private requestCount = 0;
   isLoading = signal(false);
 
   show() {
-    this.isLoading.set(true);
+    this.requestCount++;
+    if (this.requestCount > 0) {
+      this.isLoading.set(true);
+    }
   }
 
   hide() {
-    this.isLoading.set(false);
+    this.requestCount--;
+    if (this.requestCount <= 0) {
+      this.requestCount = 0;
+      this.isLoading.set(false);
+    }
   }
 }

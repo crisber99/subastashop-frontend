@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { finalize } from 'rxjs';
+import { finalize, timeout } from 'rxjs';
 import { Loader } from '../services/loader';
 
 export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
@@ -16,6 +16,8 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
   loaderService.show();
 
   return next(req).pipe(
+    // Añadimos un timeout de 30 segundos para evitar que la app se quede pegada si el servidor no responde
+    timeout(30000),
     // 2. Ocultar spinner cuando termine (ya sea éxito o error)
     finalize(() => loaderService.hide())
   );

@@ -101,7 +101,7 @@
                             <span class="badge bg-danger shadow">🔥 Subasta</span>
                             } @else if (producto.tipoVenta === 'RIFA') {
                             <span class="badge bg-info text-dark shadow">🎟️ Concurso</span>
-                            } @else if (producto.tipoVenta === 'PERMUTA') {
+                            } @else if (producto.tipoVenta === 'PERMUTA' || producto.tipoVenta === 'permuta') {
                             <span class="badge bg-info text-dark shadow" style="background-color: #0dcaf0 !important;">🔁 Permuta</span>
                             } @else {
                             <span class="badge bg-success shadow">💰 Venta</span>
@@ -139,7 +139,7 @@
                             ${{ (producto.precioTicket || producto.precioBase || 0) | number }}
                         </p>
                         <small class="text-muted">Valor del Ticket</small>
-                        } @else if (producto.tipoVenta === 'PERMUTA') {
+                        } @else if (producto.tipoVenta === 'PERMUTA' || producto.tipoVenta === 'permuta') {
                         <p class="card-text text-info fw-bold fs-5 mb-0">
                             ${{ (producto.precioBase || 0) | number }}
                         </p>

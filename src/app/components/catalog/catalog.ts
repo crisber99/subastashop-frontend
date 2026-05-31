@@ -139,7 +139,8 @@ export class CatalogComponent implements OnInit {
   filtrar() {
     this.productosFiltrados = this.productos.filter(p => {
       const coincideNombre = p.nombre.toLowerCase().includes(this.busqueda.toLowerCase());
-      const coincideCategoria = this.categoriaSeleccionada === null || p.categoriaId === this.categoriaSeleccionada;
+      const catId = p.categoriaId !== undefined ? p.categoriaId : (p.categoria ? p.categoria.id : null);
+      const coincideCategoria = this.categoriaSeleccionada === null || catId === this.categoriaSeleccionada;
       return coincideNombre && coincideCategoria;
     });
     this.currentPage = 1; // Volver a la primera página tras filtrar

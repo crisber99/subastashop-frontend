@@ -21,8 +21,8 @@ export class LandingTeaser implements OnDestroy {
   loading = signal(false);
 
   // Fecha de lanzamiento objetivo
-  targetDate = new Date('2026-05-31T12:00:00').getTime();
-  
+  targetDate = new Date('2026-05-31T18:00:00').getTime();
+
   days = signal('00');
   hours = signal('00');
   minutes = signal('00');
@@ -67,7 +67,7 @@ export class LandingTeaser implements OnDestroy {
     }
 
     this.loading.set(true);
-    this.http.post<{message: string}>(`${environment.apiUrl}/public/prelaunch/subscribe`, { email: this.email() })
+    this.http.post<{ message: string }>(`${environment.apiUrl}/public/prelaunch/subscribe`, { email: this.email() })
       .subscribe({
         next: (res) => {
           this.loading.set(false);

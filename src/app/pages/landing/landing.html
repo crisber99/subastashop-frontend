@@ -38,6 +38,17 @@
             </a>
         </div>
     }
+
+    <!-- BANNER PERMUTA -->
+    <div class="mt-5 animate__animated animate__fadeInUp mx-auto px-3" style="max-width: 700px; animation-delay: 1.5s;">
+        <div class="alert border-0 shadow-sm rounded-4 py-3 px-4 d-flex align-items-center justify-content-center" style="background: rgba(13, 202, 240, 0.15); backdrop-filter: blur(10px);">
+            <i class="bi bi-arrow-left-right text-info fs-2 me-3"></i>
+            <div class="text-start">
+                <h6 class="mb-0 fw-bold text-info">¡NUEVO! Intercambia tus artículos</h6>
+                <small class="text-light" style="opacity: 0.9;">Busca la etiqueta <span class="badge bg-info text-dark ms-1">🔁 Permuta</span> y propón un intercambio directamente.</small>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="container mb-5 mt-n4">
@@ -57,7 +68,7 @@
                          [queryParams]="prod.tienda?.slug ? { p: prod.slug } : {}"
                          style="cursor:pointer">
                         <div class="featured-badge" [ngClass]="prod.tipoVenta">
-                            {{ prod.tipoVenta === 'SUBASTA' ? '🔥 Subasta' : (prod.tipoVenta === 'RIFA' ? '🎟️ Concurso' : '🛒 Venta') }}
+                            {{ prod.tipoVenta === 'SUBASTA' ? '🔥 Subasta' : (prod.tipoVenta === 'RIFA' ? '🎟️ Concurso' : (prod.tipoVenta === 'PERMUTA' ? '🔁 Permuta' : '🛒 Venta')) }}
                         </div>
                         <img [src]="prod.imagenes && prod.imagenes.length > 0 ? prod.imagenes[0] : 'assets/no-image.png'" class="card-img-top featured-img" [alt]="prod.nombre">
                         <div class="card-body p-3">

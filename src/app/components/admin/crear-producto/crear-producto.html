@@ -59,6 +59,7 @@
                     <option value="DIRECTA">Venta Directa 🛒</option>
                     <option value="RIFA">Concurso 🎟️</option>
                     <option value="CAJA_MISTERIOSA">Caja Misteriosa 🎁</option>
+                    <option value="PERMUTA">Permuta (Intercambio) 🔁</option>
                   </select>
                   <label for="floatingTipoVenta"><i class="bi bi-shop me-1 text-primary"></i> Tipo de Venta</label>
                 </div>
@@ -80,9 +81,12 @@
               <div class="col-md-6">
                 <div class="form-floating">
                   <input type="number" class="form-control" id="floatingPrecioBase" formControlName="precioBase" placeholder="1000">
-                  <label for="floatingPrecioBase"><i class="bi bi-cash-stack me-1 text-primary"></i> Precio Base ($)</label>
-                  @if (productoForm.get('precioBase')?.invalid && (productoForm.get('precioBase')?.touched || productoForm.get('precioBase')?.dirty)) {
+                  <label for="floatingPrecioBase"><i class="bi bi-cash-stack me-1 text-primary"></i> {{ productoForm.get('tipoVenta')?.value === 'PERMUTA' ? 'Valor Estimado ($)' : 'Precio Base ($)' }}</label>
+                  @if (productoForm.get('precioBase')?.invalid && (productoForm.get('precioBase')?.touched || productoForm.get('precioBase')?.dirty) && productoForm.get('tipoVenta')?.value !== 'PERMUTA') {
                   <small class="text-danger mt-1 d-block">Monto requerido mayor a 0.</small>
+                  }
+                  @if (productoForm.get('tipoVenta')?.value === 'PERMUTA') {
+                  <small class="text-muted mt-1 d-block">Indica un valor aproximado para orientar el intercambio.</small>
                   }
                 </div>
               </div>

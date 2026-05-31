@@ -102,6 +102,8 @@ export class CrearProducto implements OnInit {
       horasVentaAnticipada?.setValidators([Validators.required, Validators.min(1)]);
     } else if (tipoVenta === 'DIRECTA') {
       precioBase?.setValidators([Validators.required, Validators.min(1)]);
+    } else if (tipoVenta === 'PERMUTA') {
+      precioBase?.setValidators([Validators.min(0)]);
     } else if (tipoVenta === 'RIFA' || tipoVenta === 'CAJA_MISTERIOSA') {
       precioTicket?.setValidators([Validators.required, Validators.min(1)]);
       if (tipoVenta === 'RIFA') {
@@ -244,10 +246,11 @@ export class CrearProducto implements OnInit {
 
     const value = this.productoForm.value;
     const esSubasta = value.tipoVenta === 'SUBASTA';
+    const esPermuta = value.tipoVenta === 'PERMUTA';
 
     Swal.fire({
       title: '¿Publicar Producto?',
-      text: `Estás creando una ${esSubasta ? 'Subasta' : 'Venta'} por $${value.precioBase || value.precioTicket}`,
+      text: `Estás creando una ${esSubasta ? 'Subasta' : (esPermuta ? 'Permuta' : 'Venta')} por $${value.precioBase || value.precioTicket || 0}`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí, Publicar',

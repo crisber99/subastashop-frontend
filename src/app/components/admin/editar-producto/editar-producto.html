@@ -31,10 +31,10 @@
             </div>
 
             <!-- Sección: Precio (Venta Directa o Subasta) -->
-            @if (producto.tipoVenta === 'SUBASTA' || producto.tipoVenta === 'DIRECTA') {
+            @if (producto.tipoVenta === 'SUBASTA' || producto.tipoVenta === 'DIRECTA' || producto.tipoVenta === 'PERMUTA') {
               <div class="form-floating mb-4">
-                <input type="number" class="form-control" id="floatingPrecioBaseE" [(ngModel)]="producto.precioBase" name="precioBase" placeholder="1000" required>
-                <label for="floatingPrecioBaseE"><i class="bi bi-cash-stack me-1 text-primary"></i> Precio Base ($)</label>
+                <input type="number" class="form-control" id="floatingPrecioBaseE" [(ngModel)]="producto.precioBase" name="precioBase" placeholder="1000" [required]="producto.tipoVenta !== 'PERMUTA'">
+                <label for="floatingPrecioBaseE"><i class="bi bi-cash-stack me-1 text-primary"></i> {{ producto.tipoVenta === 'PERMUTA' ? 'Valor Estimado ($)' : 'Precio Base ($)' }}</label>
               </div>
             }
 
@@ -131,12 +131,15 @@
               <div>
                   <h6 class="fw-bold mb-1"><i class="bi bi-chat-dots text-primary me-2"></i>Habilitar Chat en Vivo</h6>
                   <p class="text-muted small mb-0">Permite mensajes en tiempo real</p>
-                  @if (!isProUsuario) {
+                  @if (!isProUsuario && producto.tipoVenta !== 'PERMUTA') {
                       <a href="/admin/configuracion" class="badge bg-warning text-dark text-decoration-none mt-2 d-inline-block">Requiere PRO para activar</a>
+                  }
+                  @if (producto.tipoVenta === 'PERMUTA') {
+                      <span class="badge bg-info mt-2 d-inline-block">Obligatorio para Permutas</span>
                   }
               </div>
               <div class="form-check form-switch fs-4 mb-0">
-                  <input class="form-check-input ms-0" type="checkbox" id="chatHabilitadoEdit" [(ngModel)]="producto.chatHabilitado" name="chatHabilitado" [disabled]="!isProUsuario">
+                  <input class="form-check-input ms-0" type="checkbox" id="chatHabilitadoEdit" [(ngModel)]="producto.chatHabilitado" name="chatHabilitado" [disabled]="!isProUsuario || producto.tipoVenta === 'PERMUTA'">
               </div>
             </div>
 

@@ -29,8 +29,9 @@
         
         <!-- Etiqueta de Tipo Venta -->
         <span class="badge position-absolute top-0 start-0 m-3 z-3"
-              [ngClass]="{'bg-success': p.tipoVenta === 'DIRECTA', 'bg-warning text-dark': p.tipoVenta === 'SUBASTA', 'bg-info text-dark': p.tipoVenta === 'RIFA'}">
-          {{ p.tipoVenta }}
+              [ngClass]="{'bg-success': p.tipoVenta === 'DIRECTA' || !p.tipoVenta, 'bg-warning text-dark': p.tipoVenta === 'SUBASTA', 'bg-info text-dark': p.tipoVenta === 'RIFA' || p.tipoVenta === 'PERMUTA'}"
+              [style.background-color]="p.tipoVenta === 'PERMUTA' ? '#0dcaf0' : null">
+          {{ p.tipoVenta === 'PERMUTA' ? '🔁 Permuta' : (p.tipoVenta || 'VENTA') }}
         </span>
 
         <!-- Botón Eliminar Favorito Flotante -->

@@ -331,6 +331,46 @@
                     </div>
                 </div>
 
+                <!-- PERMUTA 🔁 -->
+                <div *ngIf="producto.tipoVenta === 'PERMUTA'" class="card border-0 mb-4 overflow-hidden shadow-sm">
+                    <div class="card-header py-3 border-0 text-dark text-center"
+                         style="background: #e0f8f8;">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-arrow-left-right me-2 text-info"></i> Permuta Abierta</h5>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <p class="text-muted mb-1 small text-uppercase">Valor Estimado Referencial</p>
+                        <h2 class="display-5 fw-bold text-info mb-3">${{ (producto.precioBase || 0) | number }}</h2>
+
+                        <div class="alert rounded-4 mb-4 py-3 text-start bg-light border">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-shield-exclamation text-warning me-2 fs-5"></i>
+                                <strong class="text-dark">Intercambio Bajo Tu Responsabilidad</strong>
+                            </div>
+                            <p class="mb-0 small text-muted">
+                                SubastaShop no retiene pagos ni procesa envíos en las permutas. Te recomendamos coordinar el encuentro en lugares públicos o utilizar métodos de envío confiables.
+                            </p>
+                        </div>
+
+                        <div *ngIf="authService.isLoggedIn(); else loginParaPermuta">
+                            <button class="btn btn-info text-dark btn-lg fw-bold w-100 rounded-pill py-3 shadow-sm"
+                                    (click)="proponerIntercambio()"
+                                    [disabled]="producto.estado === 'VENDIDO'">
+                                @if (producto.estado === 'VENDIDO') {
+                                    <i class="bi bi-lock-fill me-2"></i> Permuta Cerrada
+                                } @else {
+                                    💬 Proponer Intercambio por Chat
+                                }
+                            </button>
+                        </div>
+                        <ng-template #loginParaPermuta>
+                            <button routerLink="/login" class="btn btn-outline-info btn-lg rounded-pill w-100 py-3 fw-bold shadow-sm">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Inicia Sesión para Negociar
+                            </button>
+                            <p class="small text-muted mt-2">Debes tener una cuenta para usar el chat.</p>
+                        </ng-template>
+                    </div>
+                </div>
+
                 <!-- VENTA DIRECTA -->
                 <div *ngIf="producto.tipoVenta === 'DIRECTA' || !producto.tipoVenta" class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4 text-center">

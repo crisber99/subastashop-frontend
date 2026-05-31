@@ -34,7 +34,9 @@ export class LandingTeaser implements OnDestroy {
   // Si el usuario presiona una combinación secreta o es super admin
   bypassed = signal(false);
 
-  winners = signal<string[]>([]);
+  freeWinners = signal<string[]>([]);
+  discountWinners = signal<string[]>([]);
+  
   private productService = inject(ProductService);
 
   constructor() {
@@ -45,7 +47,9 @@ export class LandingTeaser implements OnDestroy {
   cargarGanadores() {
     this.productService.getPrelaunchWinners().subscribe({
       next: (res) => {
-        this.winners.set(res);
+        const all = res || [];
+        this.freeWinners.set(all.slice(0, 10));
+        this.discountWinners.set(all.slice(10, 110));
       },
       error: (err) => console.error('Error al cargar ganadores:', err)
     });

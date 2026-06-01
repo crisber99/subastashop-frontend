@@ -163,9 +163,8 @@
                 <div class="col-md-12">
                   <div class="form-floating">
                     <select class="form-select" formControlName="tipoJuego" id="tipoJuegoRifa">
-                      <option value="MEMORICE">🧠 Memorice (Agilidad Mental)</option>
-                      <option value="HANOI">🗼 Torre de Hanói (Lógica Espacial)</option>
-                      <option value="REACCION">⚡ Prueba de Reacción (Velocidad Visual)</option>
+                      <option value="MEMORICE">Juego de Memorice</option>
+                      <option value="VELOCIDAD">Prueba de Velocidad (Reacción)</option>
                     </select>
                     <label for="tipoJuegoRifa" class="text-primary fw-bold">Juego de Destreza</label>
                   </div>
@@ -178,19 +177,13 @@
                   </div>
                 </div>
 
-                <div class="col-md-6" *ngIf="productoForm.get('tipoJuego')?.value === 'MEMORICE' || productoForm.get('tipoJuego')?.value === 'HANOI'">
-                  <div class="form-floating">
-                    <select class="form-select" formControlName="numeroPares" id="dificultadJuego">
-                      <ng-container *ngIf="productoForm.get('tipoJuego')?.value === 'MEMORICE'">
-                        <option [ngValue]="3">Fácil (3 pares)</option>
-                        <option [ngValue]="5">Normal (5 pares)</option>
-                      </ng-container>
-                      <ng-container *ngIf="productoForm.get('tipoJuego')?.value === 'HANOI'">
-                        <option [ngValue]="3">Nivel 1 (3 discos - Básico)</option>
-                        <option [ngValue]="4">Nivel 2 (4 discos - Fácil)</option>
-                      </ng-container>
-                    </select>
-                    <label for="dificultadJuego">Dificultad</label>
+                <div class="col-md-6" *ngIf="productoForm.get('tipoJuego')?.value === 'MEMORICE'">
+                  <div class="alert alert-secondary mb-0">
+                    <h6 class="fw-bold"><i class="bi bi-controller"></i> Configuración del Juego</h6>
+                    <ng-container *ngIf="productoForm.get('tipoJuego')?.value === 'MEMORICE'">
+                        <p class="small text-muted mb-2">Para el Memorice, elige con cuántos pares jugarán:</p>
+                        <input type="number" class="form-control form-control-sm" formControlName="numeroPares" placeholder="Mínimo 2 pares" min="2" max="15">
+                    </ng-container>
                   </div>
                 </div>
                 <div class="col-12 mt-2">
@@ -270,18 +263,32 @@
 
               @if (imagenesPreview.length > 0) {
                 <div class="mt-4 text-start">
-                  <p class="text-muted small mb-2">Vista Previa:</p>
-                  <div class="d-flex flex-wrap gap-2">
+                  <p class="text-muted fw-bold mb-3"><i class="bi bi-star text-warning"></i> Selecciona la imagen de Portada:</p>
+                  <div class="d-flex flex-wrap gap-3">
                     @for (img of imagenesPreview; track img; let i = $index) {
-                      <div class="position-relative">
-                        <img [src]="img" class="rounded shadow-sm border" style="height: 80px; width: 80px; object-fit: cover;" [class.border-warning]="i === 0" [class.border-2]="i === 0">
-                        @if (i === 0) {
-                          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-1" style="font-size: 0.6rem;">Portada</span>
-                        } @else {
-                          <button type="button" class="btn btn-sm btn-light position-absolute bottom-0 end-0 m-1 p-0 shadow border border-warning" style="width: 24px; height: 24px; border-radius: 50%; opacity: 0.9;" (click)="hacerPrincipal(i)" title="Usar como Portada">
-                            ⭐
-                          </button>
-                        }
+                      <div class="position-relative text-center">
+                        <img [src]="img" class="rounded shadow-sm border mb-2 cursor-pointer transition-all" 
+                             style="height: 100px; width: 100px; object-fit: cover;" 
+                             [class.border-warning]="indicePortada === i" 
+                             [class.border-3]="indicePortada === i"
+                             (click)="setPortada(i)">
+                        
+                        <div class="form-check d-flex justify-content-center m-0">
+                          <input class="form-check-input border-secondary cursor-pointer" type="radio" 
+                                 name="portadaRadio" 
+                                 [id]="'portada' + i" 
+                                 [checked]="indicePortada === i"
+                                 (change)="setPortada(i)">
+                          <label class="form-check-label ms-1 small cursor-pointer" [for]="'portada' + i" [class.fw-bold]="indicePortada === i" [class.text-warning]="indicePortada === i">
+                            {{ indicePortada === i ? 'Portada' : 'Seleccionar' }}
+                          </label>
+                        </div>
+                        
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 p-0 shadow" 
+                                style="width: 22px; height: 22px; border-radius: 50%; opacity: 0.9;" 
+                                (click)="removerImagen(i)" title="Eliminar imagen">
+                          <i class="bi bi-x"></i>
+                        </button>
                       </div>
                     }
                   </div>

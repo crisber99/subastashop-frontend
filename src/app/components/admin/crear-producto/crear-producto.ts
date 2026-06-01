@@ -28,6 +28,7 @@ export class CrearProducto implements OnInit {
 
   archivosSeleccionados: File[] = [];
   imagenesPreview: string[] = [];
+  indicePortada: number = 0;
   limiteImagenes: number = 8;
   mensajeError = '';
   cargando = false;
@@ -239,6 +240,20 @@ export class CrearProducto implements OnInit {
     event.target.value = ''; 
     this.archivosSeleccionados = [];
     this.imagenesPreview = [];
+  }
+
+  setPortada(index: number) {
+    this.indicePortada = index;
+  }
+
+  removerImagen(index: number) {
+    this.archivosSeleccionados.splice(index, 1);
+    this.imagenesPreview.splice(index, 1);
+    if (this.indicePortada === index) {
+      this.indicePortada = 0;
+    } else if (this.indicePortada > index) {
+      this.indicePortada--;
+    }
   }
 
   hacerPrincipal(index: number) {

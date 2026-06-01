@@ -37,6 +37,12 @@
             </span>
           </button>
         </li>
+        <li class="nav-item">
+          <button class="nav-link rounded-pill d-flex align-items-center justify-content-center gap-2"
+            [class.active]="activeTab === 'ventas'" (click)="activeTab = 'ventas'">
+            <i class="bi bi-bag-check-fill"></i> Historial de Ventas
+          </button>
+        </li>
         <li class="nav-item" *ngIf="authService.isSuperAdmin()">
           <button class="nav-link rounded-pill d-flex align-items-center justify-content-center gap-2"
             [class.active]="activeTab === 'config'" (click)="activeTab = 'config'">
@@ -194,6 +200,59 @@
   <!-- 🏦 SECCIÓN 3: VALIDACIÓN DE PAGOS -->
   <div *ngIf="activeTab === 'pagos'">
     <app-admin-validar-pagos></app-admin-validar-pagos>
+  </div>
+
+  <!-- 🛍️ SECCIÓN NUEVA: HISTORIAL DE VENTAS -->
+  <div *ngIf="activeTab === 'ventas'">
+    <div class="card shadow-sm border-0 bg-card-custom">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-bag-check-fill me-2 text-primary"></i> Ventas Completadas</h5>
+        <button class="btn btn-sm btn-surface rounded-pill px-3" (click)="cargarVentasCompletadas()">Refrescar</button>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0 align-middle">
+            <thead style="background: var(--glass-bg);">
+              <tr>
+                <th>ID</th>
+                <th>Cliente / Envío</th>
+                <th>Monto</th>
+                <th>Contenido de la Orden</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let o of ordenesCompletadas">
+                <td><span class="badge bg-dark fw-bold">#{{ o.id }}</span><br><small class="text-muted">{{ o.fechaCreacion | date:'dd/MM/yy' }}</small></td>
+                <td>
+                  <strong>{{ o.usuario?.nombreCompleto || 'Sin Nombre' }}</strong><br>
+                  <small class="text-muted"><i class="bi bi-envelope"></i> {{ o.usuario?.email }}</small><br>
+                  <small class="text-muted"><i class="bi bi-geo-alt"></i> {{ o.usuario?.direccion || 'Sin Dirección' }}</small>
+                </td>
+                <td><strong class="text-success fs-5">${{ o.total | number }}</strong></td>
+                <td>
+                  <ul class="list-unstyled mb-0">
+                    <li *ngFor="let det of o.detalles" class="mb-2 p-2 border rounded bg-light">
+                      <div class="d-flex justify-content-between">
+                        <strong>{{ det.cantidad }}x {{ det.producto?.nombre }}</strong>
+                        <span class="text-muted">${{ det.precioUnitario | number }}</span>
+                      </div>
+                      <div *ngIf="det.producto?.tipoVenta === 'CAJA_MISTERIOSA' && det.datosExtra" class="mt-1">
+                        <span class="badge bg-warning text-dark px-2 py-1 shadow-sm" style="font-size: 0.85rem;">
+                          <i class="bi bi-gift-fill me-1"></i> {{ det.datosExtra }}
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              <tr *ngIf="ordenesCompletadas.length === 0">
+                <td colspan="4" class="text-center py-4 text-muted">No hay ventas completadas aún.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 💬 SECCIÓN 4: CHAT -->

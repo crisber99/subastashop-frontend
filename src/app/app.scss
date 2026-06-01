@@ -26,6 +26,31 @@
   padding: 2rem;
 }
 
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  z-index: 1050;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    background-color: #1ebd5a;
+    color: #fff;
+  }
+}
+
 .auth-wrapper {
   width: 100%;
   min-height: 100vh;

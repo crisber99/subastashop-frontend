@@ -15,6 +15,7 @@
               <th>TIENDA</th>
               <th>MONTO</th>
               <th>COMPROBANTE</th>
+              <th>DETALLES</th>
               <th class="text-center">VALORAR PAGO</th>
             </tr>
           </thead>
@@ -33,6 +34,16 @@
                 <button class="btn btn-sm btn-outline-info rounded-pill px-3 shadow-sm" (click)="verComprobante(o.comprobanteUrl)">
                     <i class="bi bi-paperclip me-1"></i> Ver Comprobante
                 </button>
+              </td>
+              <td>
+                <ul class="list-unstyled mb-0 small">
+                  <li *ngFor="let det of o.detalles">
+                    {{ det.cantidad }}x {{ det.producto?.nombre }}
+                    <div *ngIf="det.producto?.tipoVenta === 'CAJA_MISTERIOSA' && det.datosExtra" class="mt-1">
+                      <span class="badge bg-warning text-dark px-1"><i class="bi bi-gift-fill"></i> {{ det.datosExtra }}</span>
+                    </div>
+                  </li>
+                </ul>
               </td>
               <td class="text-center">
                 <div class="btn-group shadow-sm">

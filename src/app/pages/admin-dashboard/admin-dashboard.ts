@@ -34,6 +34,7 @@ export class AdminDashboard implements OnInit {
   };
 
   productos: any[] = [];
+  ordenesCompletadas: any[] = [];
   mostrarProductos = false;
   activeTab: string = 'resumen'; 
 
@@ -51,6 +52,7 @@ export class AdminDashboard implements OnInit {
   ngOnInit() {
     this.cargarDatos();
     this.cargarProductos();
+    this.cargarVentasCompletadas();
   }
 
   cargarDatos() {
@@ -71,6 +73,13 @@ export class AdminDashboard implements OnInit {
   cargarProductos() {
     this.http.get<any[]>(`${environment.apiUrl}/admin/productos`).subscribe(data => {
       this.productos = data;
+    });
+  }
+
+  cargarVentasCompletadas() {
+    this.http.get<any[]>(`${environment.apiUrl}/admin/ordenes/completadas`).subscribe({
+      next: (data) => this.ordenesCompletadas = data,
+      error: (err) => console.error("Error cargando ventas completadas", err)
     });
   }
 

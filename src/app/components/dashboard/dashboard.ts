@@ -75,6 +75,15 @@ export class Dashboard implements OnInit {
     datasets: [{ data: [], label: 'Ingresos por Producto' }]
   };
 
+  public barChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: { beginAtZero: true },
+      x: { ticks: { autoSkip: false } }
+    }
+  };
+
   ngOnInit() {
     this.cargarDatos();
 
@@ -464,10 +473,14 @@ export class Dashboard implements OnInit {
     // 2. Gráfico de Pie (Distribución por Tipo)
     if (this.stats.distribucionVentasPorTipo && this.stats.distribucionVentasPorTipo.length > 0) {
       this.pieChartData = {
-        labels: this.stats.distribucionVentasPorTipo.map((t: any) => t[0] === 'RIFA' ? 'CONCURSO' : t[0]),
+        labels: this.stats.distribucionVentasPorTipo.map((t: any) => {
+          if(t[0] === 'RIFA') return 'CONCURSO';
+          if(t[0] === 'CAJA_MISTERIOSA') return 'CAJA MISTERIOSA';
+          return t[0];
+        }),
         datasets: [{
           data: this.stats.distribucionVentasPorTipo.map((t: any) => t[1]),
-          backgroundColor: ['#0d6efd', '#fd7e14', '#198754', '#6610f2']
+          backgroundColor: ['#0d6efd', '#fd7e14', '#198754', '#6610f2', '#ffc107', '#0dcaf0']
         }]
       };
     }

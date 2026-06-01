@@ -2,53 +2,53 @@
 <app-promotion-banner *ngIf="!launchMode"></app-promotion-banner>
 
 @if (isAuthPage()) {
-    <div class="auth-wrapper">
-        <router-outlet></router-outlet>
-    </div>
+<div class="auth-wrapper">
+    <router-outlet></router-outlet>
+</div>
 } @else {
-    <div class="app-wrapper" [class.sidebar-collapsed]="!layoutService.sidebarOpen()">
-        
+<div class="app-wrapper" [class.sidebar-collapsed]="!layoutService.sidebarOpen()">
+
+    @if (authService.isLoggedIn()) {
+    <app-sidebar></app-sidebar>
+    }
+
+    <div class="main-content">
         @if (authService.isLoggedIn()) {
-            <app-sidebar></app-sidebar>
+        <app-navbar></app-navbar>
         }
 
-        <div class="main-content">
-            @if (authService.isLoggedIn()) {
-                <app-navbar></app-navbar>
-            }
-            
-            <div class="content-body">
-                <router-outlet></router-outlet>
-            </div>
-
-            <app-footer></app-footer>
+        <div class="content-body">
+            <router-outlet></router-outlet>
         </div>
 
-        <!-- Carrito Flotante Global -->
-        <app-cart-float></app-cart-float>
+        <app-footer></app-footer>
+    </div>
 
-        <!-- Botón de Feedback / Soporte WhatsApp Beta -->
-        <a href="https://wa.me/56912345678?text=Hola,%20estoy%20probando%20la%20beta%20de%20SubastaShop%20y%20tengo%20un%20comentario..." 
-           target="_blank" 
-           class="whatsapp-float shadow-lg animate__animated animate__pulse animate__infinite" 
-           title="Soporte Beta (WhatsApp)">
-            <i class="bi bi-whatsapp"></i>
-        </a>
+    <!-- Carrito Flotante Global -->
+    <app-cart-float></app-cart-float>
 
-        <!-- Chat de Soporte IA (CONGELADO TEMPORALMENTE)
+    <!-- Botón de Feedback / Soporte WhatsApp Beta -->
+    <a href="https://wa.me/56943449827?text=Hola.%20Me%20contacto%20desde%20SubastaShop.%20Necesito%20realizar%20una%20consulta%20o%20reportar%20una%20incidencia."
+        target="_blank" class="whatsapp-float shadow-lg animate__animated animate__pulse animate__infinite"
+        title="Soporte Beta (WhatsApp)">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <!-- Chat de Soporte IA (CONGELADO TEMPORALMENTE)
         @if (authService.isLoggedIn()) {
             <app-ai-support-chat></app-ai-support-chat>
         }
         -->
-    </div>
+</div>
 }
 
 @if (loaderService.isLoading()) {
-    <div class="loader-overlay d-flex flex-column align-items-center justify-content-center">
-        <div class="loader-brand-wrapper">
-            <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop" class="loader-pulse-logo">
-            <div class="loader-glow"></div>
-        </div>
-        <h4 class="mt-4 fw-bold text-white letter-spacing-2 animate__animated animate__pulse animate__infinite">SubastaShop</h4>
+<div class="loader-overlay d-flex flex-column align-items-center justify-content-center">
+    <div class="loader-brand-wrapper">
+        <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop" class="loader-pulse-logo">
+        <div class="loader-glow"></div>
     </div>
+    <h4 class="mt-4 fw-bold text-white letter-spacing-2 animate__animated animate__pulse animate__infinite">SubastaShop
+    </h4>
+</div>
 }

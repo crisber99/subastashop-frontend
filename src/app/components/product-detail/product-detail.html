@@ -304,13 +304,13 @@
                             <!-- BLOQUEO POR UNICIDAD: Si está reservado o vendido, deshabilitar -->
                             <button class="btn btn-warning btn-lg fw-bold w-100 rounded-pill py-3 shadow-lg"
                                     (click)="comprarCajaMisteriosa()"
-                                    [disabled]="procesandoCompra || producto.estado === 'RESERVADO' || producto.estado === 'VENDIDO'">
+                                    [disabled]="procesandoCompra || producto.estado === 'RESERVADO' || producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO'">
                                 
                                 <span *ngIf="procesandoCompra" class="spinner-border spinner-border-sm me-2"></span>
                                 
                                 @if (producto.estado === 'RESERVADO') {
                                     <i class="bi bi-hourglass-split me-2"></i> Caja Reservada (Esperando Pago)
-                                } @else if (producto.estado === 'VENDIDO') {
+                                } @else if (producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO') {
                                     <i class="bi bi-lock-fill me-2"></i> Caja Agotada / Vendida
                                 } @else {
                                     🎁 Comprar Caja Misteriosa
@@ -354,8 +354,8 @@
                         <div *ngIf="authService.isLoggedIn(); else loginParaPermuta">
                             <button class="btn btn-info text-dark btn-lg fw-bold w-100 rounded-pill py-3 shadow-sm"
                                     (click)="proponerIntercambio()"
-                                    [disabled]="producto.estado === 'VENDIDO'">
-                                @if (producto.estado === 'VENDIDO') {
+                                    [disabled]="producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO'">
+                                @if (producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO') {
                                     <i class="bi bi-lock-fill me-2"></i> Permuta Cerrada
                                 } @else {
                                     💬 Proponer Intercambio por Chat

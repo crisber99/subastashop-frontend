@@ -267,6 +267,26 @@
               <small class="d-block mt-2" [ngClass]="{'text-danger': archivosSeleccionados.length > limiteImagenes, 'text-muted': archivosSeleccionados.length <= limiteImagenes}">
                 Seleccionados: {{ archivosSeleccionados.length }} / {{ limiteImagenes }} máx.
               </small>
+
+              @if (imagenesPreview.length > 0) {
+                <div class="mt-4 text-start">
+                  <p class="text-muted small mb-2">Vista Previa:</p>
+                  <div class="d-flex flex-wrap gap-2">
+                    @for (img of imagenesPreview; track img; let i = $index) {
+                      <div class="position-relative">
+                        <img [src]="img" class="rounded shadow-sm border" style="height: 80px; width: 80px; object-fit: cover;" [class.border-warning]="i === 0" [class.border-2]="i === 0">
+                        @if (i === 0) {
+                          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-1" style="font-size: 0.6rem;">Portada</span>
+                        } @else {
+                          <button type="button" class="btn btn-sm btn-light position-absolute bottom-0 end-0 m-1 p-0 shadow border border-warning" style="width: 24px; height: 24px; border-radius: 50%; opacity: 0.9;" (click)="hacerPrincipal(i)" title="Usar como Portada">
+                            ⭐
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
             </div>
 
             <div class="d-grid mt-4">

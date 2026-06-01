@@ -30,6 +30,23 @@
               <label for="floatingDescE"><i class="bi bi-card-text me-1 text-primary"></i> Descripción</label>
             </div>
 
+            <!-- Sección: Estado Manual -->
+            <div class="card p-4 border-primary shadow-sm mb-4 bg-card-custom" style="border-radius: 12px;">
+              <h6 class="fw-bold mb-3"><i class="bi bi-toggle-on text-primary me-2"></i>Estado del Producto (Manual)</h6>
+              <div class="form-floating">
+                <select class="form-select text-primary fw-bold" id="estadoManualE" [(ngModel)]="producto.estado" name="estado">
+                  <option value="DISPONIBLE">🟢 Disponible</option>
+                  <option value="RESERVADO">⏳ Reservado (En carrito)</option>
+                  <option value="EN_SUBASTA">🔥 En Subasta</option>
+                  <option value="ADJUDICADO">🏆 Adjudicado (Fin subasta)</option>
+                  <option value="PAGADO">✅ Pagado</option>
+                  <option value="VENDIDO">🚫 Vendido</option>
+                  <option value="OCULTO">👻 Oculto</option>
+                </select>
+                <label for="estadoManualE">Forzar Estado</label>
+              </div>
+            </div>
+
             <!-- Sección: Precio (Venta Directa o Subasta) -->
             @if (producto.tipoVenta === 'SUBASTA' || producto.tipoVenta === 'DIRECTA' || producto.tipoVenta === 'PERMUTA') {
               <div class="form-floating mb-4">
@@ -161,8 +178,17 @@
                 <div class="mt-4">
                   <p class="text-muted small mb-2">Vista Previa:</p>
                   <div class="d-flex flex-wrap gap-2">
-                    @for (img of imagenesPreview; track img) {
-                      <img [src]="img" class="rounded shadow-sm" style="height: 80px; width: 80px; object-fit: cover;">
+                    @for (img of imagenesPreview; track img; let i = $index) {
+                      <div class="position-relative">
+                        <img [src]="img" class="rounded shadow-sm border" style="height: 80px; width: 80px; object-fit: cover;" [class.border-warning]="i === 0" [class.border-2]="i === 0">
+                        @if (i === 0) {
+                          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-1" style="font-size: 0.6rem;">Portada</span>
+                        } @else {
+                          <button type="button" class="btn btn-sm btn-light position-absolute bottom-0 end-0 m-1 p-0 shadow border border-warning" style="width: 24px; height: 24px; border-radius: 50%; opacity: 0.9;" (click)="hacerPrincipal(i)" title="Usar como Portada">
+                            ⭐
+                          </button>
+                        }
+                      </div>
                     }
                   </div>
                 </div>

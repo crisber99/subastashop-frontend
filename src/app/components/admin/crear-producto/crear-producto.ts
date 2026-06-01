@@ -27,6 +27,7 @@ export class CrearProducto implements OnInit {
   categorias: Categoria[] = [];
 
   archivosSeleccionados: File[] = [];
+  imagenesPreview: string[] = [];
   limiteImagenes: number = 8;
   mensajeError = '';
   cargando = false;
@@ -215,6 +216,16 @@ export class CrearProducto implements OnInit {
       }
 
       this.archivosSeleccionados = compressedFiles;
+      
+      this.imagenesPreview = [];
+      this.archivosSeleccionados.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagenesPreview.push(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      });
+
       Swal.close(); // Cerramos el loading modal
 
     } catch (err) {
@@ -227,6 +238,21 @@ export class CrearProducto implements OnInit {
   private resetInput(event: any) {
     event.target.value = ''; 
     this.archivosSeleccionados = [];
+    this.imagenesPreview = [];
+  }
+
+  hacerPrincipal(index: number) {
+    if (index > 0 && index < this.archivosSeleccionados.length) {
+      // Intercambiar en preview
+      const tempPreview = this.imagenesPreview[0];
+      this.imagenesPreview[0] = this.imagenesPreview[index];
+      this.imagenesPreview[index] = tempPreview;
+
+      // Intercambiar en archivos
+      const tempArchivo = this.archivosSeleccionados[0];
+      this.archivosSeleccionados[0] = this.archivosSeleccionados[index];
+      this.archivosSeleccionados[index] = tempArchivo;
+    }
   }
 
   onSubmit() {

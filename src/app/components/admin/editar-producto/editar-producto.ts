@@ -88,16 +88,16 @@ export class EditarProducto implements OnInit {
         }
 
         // Validar si es editable antes de mostrar el formulario
-        if (['SUBASTA', 'ADJUDICADO', 'PAGADO'].includes(data.estado)) {
+        if (['SUBASTA', 'ADJUDICADO', 'PAGADO', 'VENDIDO'].includes(data.estado)) {
           Swal.fire({
-            icon: 'error',
-            title: 'Acción Bloqueada',
-            text: '⛔ Este producto no se puede editar porque la subasta ya inició o finalizó.',
-            confirmButtonText: 'Volver'
-          }).then(() => {
-            this.router.navigate(['/admin']);
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Este producto está en una fase avanzada o vendido. Edita con precaución.',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4000
           });
-          return;
         }
 
         this.producto = data;
@@ -180,6 +180,34 @@ export class EditarProducto implements OnInit {
     event.target.value = '';
     this.archivosSeleccionados = [];
     // Nota: Mantener imagenesPreview para que no desaparezcan las viejas si hay error en la selección nueva
+  }
+
+  hacerPrincipal(index: number) {
+    if (index > 0 && index < this.imagenesPreview.length) {
+      // Intercambiar en preview
+      const tempPreview = this.imagenesPreview[0];
+      this.imagenesPreview[0] = this.imagenesPreview[index];
+      this.imagenesPreview[index] = tempPreview;
+
+      // Si también tenemos archivos seleccionados nuevos (por ejemplo, el usuario subió varias fotos)
+      // tendríamos que intercambiarlos, pero en editar-producto los archivos se mezclan con las URL en el backend de forma distinta.
+      // Para editar, el backend descarta las URLs y sube los `archivosSeleccionados` de nuevo, o las mantiene si `archivosSeleccionados` está vacío.
+      // Sin embargo, como el backend en `editarProducto` ignora las URLs antiguas si envías nuevos archivos,
+      // esto sólo ordenará las imágenes si el usuario decide no cambiar los archivos, y espera que el backend lo respete.
+      // Espera, el backend no recibe `imagenesUrls` reordenadas, solo recibe las nuevas.
+      // Para que se reordenen, tendríamos que enviar el array `imagenesPreview`.
+      // Enviar un array de `imagenesExistentes` reordenadas podría requerir un cambio en el backend.
+      // Por ahora, intercambiaremos los `archivosSeleccionados` si corresponde.
+      if (this.archivosSeleccionados.length === this.imagenesPreview.length) {
+          const tempArchivo = this.archivosSeleccionados[0];
+          this.archivosSeleccionados[0] = this.archivosSeleccionados[index];
+          this.archivosSeleccionados[index] = tempArchivo;
+      } else {
+         // Si son urls antiguas, el backend actual no las reordena. Tendremos que avisar.
+         // Lo ideal es enviar el array reordenado.
+         this.producto.imagenes = this.imagenesPreview;
+      }
+    }
   }
 
   guardarCambios() {

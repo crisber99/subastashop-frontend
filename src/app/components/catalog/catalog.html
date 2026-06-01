@@ -82,17 +82,17 @@
             @for (producto of productosPaginados; track producto.id) {
         <div class="col-md-4 mb-4 animate__animated animate__fadeIn">
             <div class="card h-100 shadow-sm border-0 hover-effect"
-                 [style.cursor]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? 'default' : 'pointer'"
-                 [routerLink]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? null : ['/producto', producto.slug || producto.id]">
+                 [style.cursor]="(producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO') ? 'default' : 'pointer'"
+                 [routerLink]="(producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO') ? null : ['/producto', producto.slug || producto.id]">
 
                 <div class="position-relative overflow-hidden">
                     <img [src]="producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : 'assets/no-image.png'" 
                          class="card-img-top" alt="Producto"
-                         [class.grayscale]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
+                         [class.grayscale]="producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO'"
                          style="height: 220px; object-fit: cover;">
 
                     <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-2 align-items-end z-3">
-                        @if (producto.estado === 'VENDIDO') {
+                        @if (producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO') {
                             <span class="badge bg-secondary shadow">🚫 Vendido</span>
                         } @else if (producto.estado === 'RESERVADO') {
                             <span class="badge bg-warning text-dark shadow">⏳ Reservado</span>
@@ -158,18 +158,18 @@
                     </p>
 
                     <div class="btn w-100 mb-2 rounded-pill fw-bold text-white transition-all"
-                       [class.btn-secondary]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
-                       [class.disabled]="producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO'"
-                       [style.background-color]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')"
-                       [style.border-color]="(producto.estado === 'VENDIDO' || producto.estado === 'RESERVADO') ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')">
-                        @if (producto.estado === 'VENDIDO') { 🚫 Vendido }
+                       [class.btn-secondary]="producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO'"
+                       [class.disabled]="producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO'"
+                       [style.background-color]="(producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO') ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')"
+                       [style.border-color]="(producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO') ? '#6c757d' : (tienda?.colorPrimario || '#0d6efd')">
+                        @if (producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO') { 🚫 Vendido }
                         @else if (producto.estado === 'RESERVADO') { ⏳ En Carrito }
                         @else { Ver Detalle }
                     </div>
 
                     @if (authService.isAdmin() && canEdit(producto)) {
                     <div class="border-top pt-2 mt-auto">
-                        @if (producto.estado !== 'FINALIZADA' && producto.estado !== 'VENDIDO') {
+                        @if (producto.estado !== 'FINALIZADA' && producto.estado !== 'VENDIDO' && producto.estado !== 'ADJUDICADO' && producto.estado !== 'PAGADO') {
                         <a [routerLink]="['/admin/editar', producto.id]"
                             class="btn btn-outline-warning w-100 btn-sm fw-bold"
                             (click)="$event.stopPropagation()">

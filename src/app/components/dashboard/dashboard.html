@@ -142,7 +142,7 @@
                                 <span class="badge bg-warning text-dark rounded-pill">PENDIENTE</span>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted small mb-2">Fecha: {{ orden.fechaCreacion | date:'medium' }}</p>
+                                <p class="text-muted small mb-2">Fecha: {{ (orden.fechaCreacion + 'Z') | date:'medium' }}</p>
                                 <h4 class="card-title fw-bold mb-3">Total: ${{ orden.total | number }}</h4>
                                 <div class="alert alert-warning small py-2 mb-3">
                                     <i class="bi bi-info-circle"></i> Tienes productos reservados. Paga pronto para no perderlos.
@@ -180,7 +180,7 @@
                                 <span class="badge bg-info text-dark rounded-pill">EN REVISIÓN</span>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted small mb-2">Fecha: {{ orden.fechaCreacion | date:'medium' }}</p>
+                                <p class="text-muted small mb-2">Fecha: {{ (orden.fechaCreacion + 'Z') | date:'medium' }}</p>
                                 <h4 class="card-title fw-bold text-info mb-3">Total: ${{ orden.total | number }}</h4>
                                 <div class="alert alert-info small py-2 mb-3">
                                     <i class="bi bi-info-circle"></i> Has enviado tu comprobante. El vendedor debe validarlo para activar tu compra.
@@ -209,7 +209,7 @@
                             </div>
                             <!-- ... card body content kept as is ... -->
                         <div class="card-body">
-                            <p class="text-muted small mb-2">Fecha Pago: {{ orden.fechaCreacion | date:'medium' }}</p>
+                            <p class="text-muted small mb-2">Fecha Pago: {{ (orden.fechaCreacion + 'Z') | date:'medium' }}</p>
                             <h4 class="card-title fw-bold text-success mb-3">Total: ${{ orden.total | number }}</h4>
                             <div class="alert alert-success-light border border-success extra-small p-2 rounded mb-3">
                                 <i class="bi bi-check-circle-fill"></i> ¡Pago confirmado con éxito!
@@ -277,7 +277,7 @@
                             <span class="badge bg-primary rounded-pill">CONCURSO</span>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted small mb-2">Comprado el: {{ p.createdAt | date:'short' }}</p>
+                            <p class="text-muted small mb-2">Comprado el: {{ (p.createdAt + 'Z') | date:'short' }}</p>
 
                             @if (p.durationMs) {
                                 <div class="alert alert-success mt-3 py-2 mb-3">
@@ -323,7 +323,7 @@
                                     {{ puja.producto.nombre }}
                                 </a>
                             </td>
-                            <td>{{ puja.fechaPuja | date:'short' }}</td>
+                            <td>{{ (puja.fechaPuja + 'Z') | date:'short' }}</td>
                             <td class="text-primary fw-bold">${{ puja.monto | number }}</td>
                             <td>
                                 <span class="badge" [ngClass]="{

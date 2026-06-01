@@ -62,20 +62,31 @@ export class LandingTeaser implements OnDestroy {
   }
 
   startCountdown() {
-    this.timerInterval = setInterval(() => {
+    const checkTime = () => {
       const now = new Date().getTime();
       const distance = this.targetDate - now;
 
-      if (distance < 0) {
-        clearInterval(this.timerInterval);
-        return;
+      if (distance <= 0) {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.days.set('00');
+        this.hours.set('00');
+        this.minutes.set('00');
+        this.seconds.set('00');
+        // Cuando llega a 0, ocultamos el teaser para que entren a la página
+        this.bypassed.set(true);
+        return false;
       }
 
       this.days.set(Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0'));
       this.hours.set(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0'));
       this.minutes.set(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0'));
       this.seconds.set(Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0'));
-    }, 1000);
+      return true;
+    };
+
+    if (checkTime()) {
+      this.timerInterval = setInterval(checkTime, 1000);
+    }
   }
 
   subscribe() {

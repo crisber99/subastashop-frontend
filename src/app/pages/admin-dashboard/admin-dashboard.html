@@ -206,7 +206,7 @@
   <div *ngIf="activeTab === 'ventas'">
     <div class="card shadow-sm border-0 bg-card-custom">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold"><i class="bi bi-bag-check-fill me-2 text-primary"></i> Ventas Completadas</h5>
+        <h5 class="mb-0 fw-bold"><i class="bi bi-bag-check-fill me-2 text-primary"></i> Historial General de Órdenes</h5>
         <button class="btn btn-sm btn-surface rounded-pill px-3" (click)="cargarVentasCompletadas()">Refrescar</button>
       </div>
       <div class="card-body p-0">
@@ -214,7 +214,7 @@
           <table class="table mb-0 align-middle">
             <thead style="background: var(--glass-bg);">
               <tr>
-                <th>ID</th>
+                <th>ID / Estado</th>
                 <th>Cliente / Envío</th>
                 <th>Monto</th>
                 <th>Contenido de la Orden</th>
@@ -222,7 +222,19 @@
             </thead>
             <tbody>
               <tr *ngFor="let o of ordenesCompletadas">
-                <td><span class="badge bg-dark fw-bold">#{{ o.id }}</span><br><small class="text-muted">{{ o.fechaCreacion | date:'dd/MM/yy' }}</small></td>
+                <td>
+                  <span class="badge bg-dark fw-bold mb-1">#{{ o.id }}</span><br>
+                  <span class="badge rounded-pill shadow-sm" [ngClass]="{
+                    'bg-success': o.estado === 'PAGADO' || o.estado === 'COMPLETADA' || o.estado === 'ENTREGADO',
+                    'bg-warning text-dark': o.estado === 'ESPERANDO_APROBACION',
+                    'bg-secondary': o.estado === 'PENDIENTE_PAGO',
+                    'bg-danger': o.estado === 'CANCELADA' || o.estado === 'RECHAZADA'
+                  }" style="font-size: 0.75rem;">
+                    {{ o.estado }}
+                  </span>
+                  <br>
+                  <small class="text-muted d-block mt-1">{{ o.fechaCreacion | date:'dd/MM/yy HH:mm' }}</small>
+                </td>
                 <td>
                   <strong>{{ o.usuario?.nombreCompleto || 'Sin Nombre' }}</strong><br>
                   <small class="text-muted"><i class="bi bi-envelope"></i> {{ o.usuario?.email }}</small><br>

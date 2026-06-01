@@ -72,4 +72,14 @@ export class App {
     const url = this.router.url;
     return url === '/login' || url === '/registro';
   }
+
+  getWhatsAppUrl(): string {
+    const user = this.authService.currentUser();
+    let text = "Hola. Me contacto desde SubastaShop. Necesito realizar una consulta o reportar una incidencia.";
+    if (user && (user.nombre || user.nombreCompleto)) {
+      const nombreMostrar = user.nombreCompleto || user.nombre;
+      text = `Hola, soy ${nombreMostrar} y me contacto desde SubastaShop. Necesito realizar una consulta o reportar una incidencia.`;
+    }
+    return `https://wa.me/56943449827?text=${encodeURIComponent(text)}`;
+  }
 }

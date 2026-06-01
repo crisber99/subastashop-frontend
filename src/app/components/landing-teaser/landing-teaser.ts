@@ -41,7 +41,7 @@ export class LandingTeaser implements OnDestroy {
 
   constructor() {
     this.startCountdown();
-    this.cargarGanadores();
+    //this.cargarGanadores();
   }
 
   cargarGanadores() {

@@ -28,7 +28,7 @@
     <app-cart-float></app-cart-float>
 
     <!-- Botón de Feedback / Soporte WhatsApp Beta -->
-    <a href="https://wa.me/56943449827?text=Hola.%20Me%20contacto%20desde%20SubastaShop.%20Necesito%20realizar%20una%20consulta%20o%20reportar%20una%20incidencia."
+    <a [href]="getWhatsAppUrl()"
         target="_blank" class="whatsapp-float shadow-lg animate__animated animate__pulse animate__infinite"
         title="Soporte Beta (WhatsApp)">
         <i class="bi bi-whatsapp"></i>

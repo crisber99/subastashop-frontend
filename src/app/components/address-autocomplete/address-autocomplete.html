@@ -1,0 +1,35 @@
+<div class="address-autocomplete-container">
+  <div class="input-group">
+    <span class="input-group-text bg-transparent border-end-0 text-muted">
+      <i class="bi bi-geo-alt-fill"></i>
+    </span>
+    <input 
+      type="text" 
+      class="form-control border-start-0 ps-0" 
+      [formControl]="searchControl" 
+      [placeholder]="placeholderText"
+      (blur)="onBlur()"
+      autocomplete="off"
+    >
+    <span *ngIf="cargando" class="input-group-text bg-transparent border-start-0">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Buscando...</span>
+      </div>
+    </span>
+  </div>
+
+  <!-- Lista flotante de sugerencias -->
+  <ul class="suggestions-list shadow" *ngIf="mostrandoSugerencias && sugerencias.length > 0">
+    <li *ngFor="let item of sugerencias" (click)="seleccionarDireccion(item)" class="suggestion-item">
+      <div class="d-flex align-items-start">
+        <i class="bi bi-geo text-primary mt-1 me-2"></i>
+        <div>
+          <!-- Nombre principal (ej. calle o lugar) -->
+          <span class="fw-bold d-block">{{ item.name || item.address?.road || 'Ubicación' }}</span>
+          <!-- Dirección completa detallada -->
+          <small class="text-muted">{{ item.display_name }}</small>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

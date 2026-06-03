@@ -118,10 +118,14 @@
                 </div>
               </div>
               <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingDir" formControlName="direccion" 
-                         placeholder="Calle, Ciudad">
-                  <label for="floatingDir">Dirección</label>
+                <div class="form-floating-custom mb-3" style="position: relative;">
+                  <label class="form-label text-muted small fw-bold mb-1" style="font-size: 0.85rem;"><i class="bi bi-geo-alt me-1 text-primary"></i>Dirección de Envío</label>
+                  <app-address-autocomplete 
+                    placeholderText="Calle, Comuna..."
+                    (direccionSeleccionada)="registerForm.get('direccion')?.setValue($event.direccionCompleta)">
+                  </app-address-autocomplete>
+                  <!-- Input oculto para validaciones si fuera necesario -->
+                  <input type="hidden" formControlName="direccion">
                 </div>
               </div>
             </div>

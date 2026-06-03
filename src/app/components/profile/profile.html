@@ -104,10 +104,14 @@
 
                 <div class="row g-4 mb-5">
                   <div class="col-md-7">
-                    <div class="form-floating">
-                      <input type="text" [(ngModel)]="profileData.direccion" name="direccion"
-                        class="form-control" id="floatingAddress" placeholder=" ">
-                      <label for="floatingAddress"><i class="bi bi-geo-alt me-1 text-primary"></i> Dirección de Envío</label>
+                    <div class="form-floating-custom" style="position: relative;">
+                      <label class="form-label text-muted small fw-bold mb-1" style="font-size: 0.85rem;"><i class="bi bi-geo-alt me-1 text-primary"></i> Dirección de Envío</label>
+                      <app-address-autocomplete 
+                        [initialValue]="profileData.direccion"
+                        placeholderText="Calle, Comuna..."
+                        (direccionSeleccionada)="profileData.direccion = $event.direccionCompleta">
+                      </app-address-autocomplete>
+                      <input type="hidden" [(ngModel)]="profileData.direccion" name="direccion">
                     </div>
                   </div>
                   <div class="col-md-5">

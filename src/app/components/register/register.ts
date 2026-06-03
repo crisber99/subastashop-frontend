@@ -6,12 +6,13 @@ import { AuthService } from '../../services/auth-service';
 import { passwordValidator, noPersonalDataValidator } from '../../validators/pswd-validator';
 import { LegalTermsComponent } from '../legal-terms/legal-terms';
 import { ProductService } from '../../services/product';
+import { AddressAutocompleteComponent } from '../address-autocomplete/address-autocomplete';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LegalTermsComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LegalTermsComponent, AddressAutocompleteComponent],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })

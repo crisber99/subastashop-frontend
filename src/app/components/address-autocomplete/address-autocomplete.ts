@@ -21,6 +21,7 @@ export interface DireccionEstructurada {
 })
 export class AddressAutocompleteComponent implements OnInit {
   @Input() placeholderText: string = 'Ingresa tu dirección...';
+  @Input() initialValue: string = '';
   @Output() direccionSeleccionada = new EventEmitter<DireccionEstructurada>();
 
   searchControl = new FormControl('');
@@ -31,6 +32,10 @@ export class AddressAutocompleteComponent implements OnInit {
   private addressService = inject(AddressService);
 
   ngOnInit() {
+    if (this.initialValue) {
+      this.searchControl.setValue(this.initialValue, { emitEvent: false });
+    }
+
     this.searchControl.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),

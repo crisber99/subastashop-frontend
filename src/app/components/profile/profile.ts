@@ -5,10 +5,12 @@ import { AuthService } from '../../services/auth-service';
 import { ProductService } from '../../services/product';
 import Swal from 'sweetalert2';
 
+import { AddressAutocompleteComponent } from '../address-autocomplete/address-autocomplete';
+
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AddressAutocompleteComponent],
   templateUrl: './profile.html',
   styleUrl: './profile.scss'
 })

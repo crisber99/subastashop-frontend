@@ -15,14 +15,12 @@ export class AddressService {
       .set('format', 'json')
       .set('countrycodes', 'cl') // Restringir a Chile
       .set('addressdetails', '1') // Crucial para obtener calle, comuna, región
+      .set('email', 'soporte@subastashop.com') // Requerido por Nominatim para no bloquear por User-Agent
       .set('limit', '5');
 
     // Headers recomendados por Nominatim (User-Agent) para no ser bloqueados
     return this.http.get<any[]>(this.NOMINATIM_URL, { 
-      params,
-      headers: {
-        'Accept-Language': 'es'
-      }
+      params
     });
   }
 }

@@ -8,8 +8,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   //console.log('🛑 INTERCEPTOR EJECUTÁNDOSE. Token:', token ? 'SI TIENE' : 'NO TIENE', 'URL:', req.url);
 
-  // Si es login o registro, no enviamos el token. Para el resto de /auth/ (como /me), sí lo enviamos.
-  if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
+  // Si es login, registro o una API externa como Nominatim, no enviamos el token
+  if (req.url.includes('/auth/login') || req.url.includes('/auth/register') || req.url.includes('nominatim.openstreetmap.org')) {
     return next(req);
   }
 

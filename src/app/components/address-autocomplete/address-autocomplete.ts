@@ -64,27 +64,43 @@ export class AddressAutocompleteComponent implements OnInit {
   }
 
   seleccionarDireccion(item: any) {
-    // 1. Actualizar el input visible únicamente con display_name
-    this.searchControl.setValue(item.display_name, { emitEvent: false });
+    const userInput = this.searchControl.value || '';
+    const numberMatch = userInput.match(/\d+/);
+    const houseNumber = numberMatch ? numberMatch[0] : '';
+
+    let displayName = item.display_name;
+    const addr = item.address || {};
+    let calle = addr.road || addr.pedestrian || item.name || '';
+
+    // 🌟 EL HACK PARA LATINOAMÉRICA: OpenStreetMap suele no tener los números de casa mapeados.
+    // Si el usuario escribió un número, pero OSM no lo devolvió, se lo inyectamos de vuelta a la fuerza.
+    if (houseNumber && !displayName.includes(houseNumber)) {
+      if (calle && displayName.includes(calle)) {
+        displayName = displayName.replace(calle, `${calle} ${houseNumber}`);
+      } else {
+        displayName = `${calle} ${houseNumber}, ${displayName}`;
+      }
+      calle = `${calle} ${houseNumber}`.trim();
+    }
+
+    // 1. Actualizar el input visible
+    this.searchControl.setValue(displayName, { emitEvent: false });
     
     // 2. Ocultar la lista flotante
     this.mostrandoSugerencias = false;
 
     // 3. Extraer y mapear los campos (El "Secreto" del Backend)
-    const addr = item.address || {};
-    
-    // Nominatim varía la comuna dependiendo del tamaño del asentamiento
     const comuna = addr.city || addr.town || addr.village || addr.municipality || addr.suburb || '';
     
     const estructurada: DireccionEstructurada = {
-      direccionCompleta: item.display_name,
-      calle: addr.road || addr.pedestrian || '',
+      direccionCompleta: displayName,
+      calle: calle,
       comuna: comuna,
       region: addr.state || addr.region || ''
     };
 
     // Imprimir por consola para confirmar
-    console.log('Dirección Estructurada Extraída:', estructurada);
+    console.log('Dirección Estructurada Extraída (Con Numeración Corregida):', estructurada);
 
     // Emitir mediante @Output
     this.direccionSeleccionada.emit(estructurada);

@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { CartService } from '../../services/cart';
 import { OrdenService } from '../../services/orden';
-import Swal from 'sweetalert2'; // 👈 Importar
+import Swal from 'sweetalert2';
+import confetti from 'canvas-confetti'; // 👈 Importar Confetti
 
 declare var bootstrap: any;
 
@@ -66,21 +67,11 @@ export class CartFloat {
         this.loading = false;
         Swal.close(); // Cerramos loader
 
-        // Cerrar Modal Bootstrap y asegurar limpieza de backdrop
-        const modalEl = document.getElementById('modalCarrito');
-        if (modalEl) {
-          const modal = bootstrap.Modal.getInstance(modalEl);
-          modal?.hide();
+        // Disparar confeti (Gamificación)
+        this.lanzarConfeti();
 
-          // Forzamos la eliminación de cualquier residuo gris
-          setTimeout(() => {
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(b => b.remove());
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-          }, 300);
-        }
+        // Cerrar Offcanvas
+        this.cerrarOffcanvas();
 
         // Limpiar Carrito
         this.cartService.limpiarCarrito();
@@ -108,28 +99,59 @@ export class CartFloat {
             confirmButtonText: 'Entendido'
           }).then(() => {
             this.cartService.limpiarCarrito();
-            const modalEl = document.getElementById('modalCarrito');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            modal?.hide();
+            this.cerrarOffcanvas();
           });
         } else {
           Swal.fire('Error', mensajeError, 'error');
         }
 
-        // --- LIMPIEZA DE SEGURIDAD (Para que no se quede pegado) ---
-        const modalEl = document.getElementById('modalCarrito');
-        if (modalEl) {
-          const modal = bootstrap.Modal.getInstance(modalEl);
-          modal?.hide();
-
-          setTimeout(() => {
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(b => b.remove());
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-          }, 500);
-        }
+        // --- LIMPIEZA DE SEGURIDAD ---
+        this.cerrarOffcanvas();
       }
     });
+  }
+
+  private lanzarConfeti() {
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+
+    const frame = () => {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff']
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff']
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+  }
+
+  private cerrarOffcanvas() {
+    const offcanvasEl = document.getElementById('offcanvasCarrito');
+    if (offcanvasEl) {
+      const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl) || new bootstrap.Offcanvas(offcanvasEl);
+      offcanvas.hide();
+
+      // Forzar limpieza de backdrop
+      setTimeout(() => {
+        const backdrops = document.querySelectorAll('.offcanvas-backdrop');
+        backdrops.forEach(b => b.remove());
+        document.body.classList.remove('offcanvas-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }, 300);
+    }
   }
 }

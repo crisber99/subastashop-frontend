@@ -1,6 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, inject, effect, HostListener, PLATFORM_ID } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from './services/auth-service';
 import { LayoutService } from './services/layout';
 import { Loader } from './services/loader';
@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner, LandingTeaser],
+  imports: [CommonModule, RouterModule, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner, LandingTeaser],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

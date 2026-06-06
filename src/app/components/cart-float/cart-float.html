@@ -1,63 +1,67 @@
 @if (cartService.cantidadItems() > 0) {
-  <div class="position-fixed bottom-0 end-0 m-4 z-3">
-    <button class="btn btn-primary rounded-circle shadow-lg p-3 position-relative" 
-            style="width: 60px; height: 60px;" 
-            data-bs-toggle="modal" data-bs-target="#modalCarrito">
+  <div class="position-fixed bottom-0 end-0 m-4 z-3 d-none d-md-block"> <!-- Hidden on mobile because of bottom nav -->
+    <button class="btn btn-primary rounded-circle shadow-lg p-3 position-relative cart-float-btn" 
+            data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito">
       <i class="bi bi-cart-fill fs-4"></i>
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm bounce-in">
         {{ cartService.cantidadItems() }}
       </span>
     </button>
   </div>
 }
 
-<div class="modal fade" id="modalCarrito" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); overflow: hidden;">
-      <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-        <h5 class="modal-title fw-bold" style="color: var(--text-color);">🛒 Tu Carrito</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" 
-          [ngStyle]="{'filter': 'invert(var(--is-dark, 1))'}"></button>
-      </div>
-      <div class="modal-body">
-        
-        <ul class="list-group mb-3">
-          @for (item of cartService.items(); track $index) {
-            <li class="list-group-item d-flex justify-content-between align-items-center" 
-                style="background: transparent; color: var(--text-color); border-color: var(--border-color);">
-              <div class="d-flex align-items-center">
-                <img [src]="item.producto.imagenUrl || (item.producto.imagenes && item.producto.imagenes[0])" width="50" class="rounded me-3">
-                <div>
-                  <h6 class="my-0">{{ item.producto.nombre }}</h6>
-                  <small class="text-muted">{{ item.tipo }} 
-                    {{ item.extra ? '(Ticket #' + item.extra + ')' : '' }}
-                  </small>
-                </div>
-              </div>
-              <div class="d-flex align-items-center">
-                <span class="fw-bold me-3">${{ item.subtotal | number }}</span>
-                <button class="btn btn-sm btn-outline-danger" (click)="cartService.eliminarItem($index)">
-                    <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </li>
-          }
-        </ul>
-        
-        <h4 class="text-end fw-bold" style="color: var(--text-color);">Total: ${{ cartService.total() | number }}</h4>
+<div class="offcanvas offcanvas-end shadow-lg" tabindex="-1" id="offcanvasCarrito" 
+     style="background: var(--card-bg); color: var(--text-color); border-left: 1px solid var(--glass-border);">
+  <div class="offcanvas-header" style="border-bottom: 1px solid var(--border-color);">
+    <h5 class="offcanvas-title fw-bold">🛒 Tu Carrito</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" 
+      [ngStyle]="{'filter': 'invert(var(--is-dark, 1))'}"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    
+    <ul class="list-group mb-auto">
+      @for (item of cartService.items(); track $index) {
+        <li class="list-group-item d-flex justify-content-between align-items-center mb-2 rounded shadow-sm border-0" 
+            style="background: var(--bg-color); color: var(--text-color);">
+          <div class="d-flex align-items-center">
+            <img [src]="item.producto.imagenUrl || (item.producto.imagenes && item.producto.imagenes[0])" width="50" class="rounded me-3 object-fit-cover" style="height: 50px;">
+            <div>
+              <h6 class="my-0 text-truncate" style="max-width: 150px;">{{ item.producto.nombre }}</h6>
+              <small class="text-muted">{{ item.tipo }} 
+                {{ item.extra ? '(#' + item.extra + ')' : '' }}
+              </small>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="fw-bold me-2" style="color: var(--primary-color);">${{ item.subtotal | number }}</span>
+            <button class="btn btn-sm btn-light text-danger rounded-circle p-2" (click)="cartService.eliminarItem($index)">
+                <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </li>
+      }
+      @empty {
+        <div class="text-center text-muted my-5">
+          <i class="bi bi-cart-x" style="font-size: 3rem; opacity: 0.5;"></i>
+          <p class="mt-2">Tu carrito está vacío</p>
+        </div>
+      }
+    </ul>
+    
+    @if (cartService.cantidadItems() > 0) {
+      <div class="mt-4">
+        <h4 class="text-end fw-bold mb-3">Total: ${{ cartService.total() | number }}</h4>
 
-        <div class="alert small shadow-sm" style="background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">
+        <div class="alert small shadow-sm rounded-3" style="background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">
             <i class="bi bi-clock-history me-2"></i> Al confirmar, los productos quedarán <strong>RESERVADOS</strong> 
-            hasta que subas el comprobante de pago.
+            hasta que pagues.
         </div>
 
-      </div>
-      <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Seguir mirando</button>
-        <button class="btn btn-success" (click)="confirmarReserva()" style="background: var(--primary-gradient);">
+        <button class="btn btn-success w-100 py-3 fw-bold rounded-pill shadow-sm hover-lift" 
+                (click)="confirmarReserva()" style="background: var(--primary-gradient);">
             ✅ Confirmar y Pagar
         </button>
       </div>
-    </div>
+    }
   </div>
 </div>

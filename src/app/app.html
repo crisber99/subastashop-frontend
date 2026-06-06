@@ -50,6 +50,29 @@
             <app-ai-support-chat></app-ai-support-chat>
         }
         -->
+
+    <!-- Bottom Navigation Bar (Mobile Only) -->
+    @if (authService.isLoggedIn()) {
+        <nav class="bottom-nav d-md-none">
+            <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="bottom-nav-item">
+                <i class="bi bi-house-door-fill"></i>
+                <span>Inicio</span>
+            </a>
+            <a routerLink="/dashboard" fragment="search" class="bottom-nav-item">
+                <i class="bi bi-search"></i>
+                <span>Buscar</span>
+            </a>
+            <a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito" class="bottom-nav-item position-relative">
+                <i class="bi bi-cart-fill"></i>
+                <span>Carrito</span>
+                <!-- Optional notification dot if items in cart could go here -->
+            </a>
+            <a routerLink="/perfil" routerLinkActive="active" class="bottom-nav-item">
+                <i class="bi bi-person-circle"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    }
 </div>
 }
 

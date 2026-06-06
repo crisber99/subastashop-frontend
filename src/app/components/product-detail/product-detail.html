@@ -40,7 +40,7 @@
                     <div class="carousel-inner h-100">
                         <div class="carousel-item h-100" *ngFor="let img of producto.imagenes; let i = index"
                             [class.active]="i === 0">
-                            <img [src]="img" class="detalle-imagen-limitada shadow-sm" alt="{{ producto.nombre }}">
+                            <img [src]="img" class="detalle-imagen-limitada shadow-sm" alt="{{ producto.nombre }}" loading="lazy">
                         </div>
                     </div>
 

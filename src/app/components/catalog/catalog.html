@@ -87,6 +87,7 @@
 
                 <div class="position-relative overflow-hidden">
                     <img [src]="producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : 'assets/no-image.png'" 
+                         loading="lazy"
                          class="card-img-top" alt="Producto"
                          [class.grayscale]="producto.estado === 'VENDIDO' || producto.estado === 'ADJUDICADO' || producto.estado === 'PAGADO' || producto.estado === 'RESERVADO'"
                          style="height: 220px; object-fit: cover;">

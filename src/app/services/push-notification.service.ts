@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { environment } from '../../environments/environment';
@@ -9,11 +10,16 @@ import Swal from 'sweetalert2';
 export class PushNotificationService {
   private http = inject(HttpClient);
   private swPush = inject(SwPush);
+  private platformId = inject(PLATFORM_ID);
   
   // VAPID Public Key matched with the backend application.properties
   private readonly VAPID_PUBLIC_KEY = 'BBz5RsE31badnMbRaKxRRwvhMAE2YPlBoUD_A4w--zN6cKgcx5KBv2WDEavc4yYqKMT03v_TG2VZluUolJd-GR8';
 
   suscribirAMensajes() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     if (!this.swPush.isEnabled) {
       Swal.fire('Atención', 'Las notificaciones Push no están disponibles en este navegador o modo (se requiere HTTPS o PWA instalada).', 'info');
       return;

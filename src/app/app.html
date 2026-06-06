@@ -8,8 +8,19 @@
 } @else {
 <div class="app-wrapper" [class.sidebar-collapsed]="!layoutService.sidebarOpen()">
 
+    <!-- BANNER PWA INSTALL -->
+    <div *ngIf="showInstallButton" class="alert alert-info alert-dismissible fade show m-0 text-center rounded-0 border-0 d-flex align-items-center justify-content-center gap-3" style="background: linear-gradient(90deg, #4f46e5, #6366f1); color: white; z-index: 1050; position: relative;">
+      <i class="bi bi-download fs-4"></i>
+      <div>
+        <strong>¡Instala SubastaShop!</strong> 
+        <span class="d-none d-md-inline ms-1">Disfruta de una mejor experiencia y acceso rápido.</span>
+      </div>
+      <button (click)="installPwa()" class="btn btn-light btn-sm fw-bold rounded-pill px-3 shadow-sm ms-3">Instalar</button>
+      <button type="button" class="btn-close btn-close-white" (click)="showInstallButton = false" aria-label="Close"></button>
+    </div>
+
     @if (authService.isLoggedIn()) {
-    <app-sidebar></app-sidebar>
+      <app-sidebar></app-sidebar>
     }
 
     <div class="main-content">

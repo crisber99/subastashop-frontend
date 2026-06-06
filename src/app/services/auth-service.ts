@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -32,6 +33,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private cartService = inject(CartService);
+  private platformId = inject(PLATFORM_ID);
 
   // URL de tu Backend en Azure
   private apiUrl = `${environment.apiUrl}/auth`;
@@ -84,8 +86,10 @@ export class AuthService {
   // --- CERRAR SESIÓN ---
   logout() {
     // 1. Borrar de disco
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(this.tokenKey);
+      localStorage.removeItem(this.userKey);
+    }
     this.cartService.limpiarCarrito();
 
     // 2. Borrar de memoria (Señales)
@@ -99,39 +103,46 @@ export class AuthService {
   // --- MÉTODOS PRIVADOS Y AUXILIARES ---
 
   private guardarSesion(token: string, usuario: any) {
-    // Guardar Token
-    localStorage.setItem(this.tokenKey, token);
+    if (isPlatformBrowser(this.platformId)) {
+      // Guardar Token
+      localStorage.setItem(this.tokenKey, token);
 
-    // Normalizar variable de rol que viene del Backend
-    if (usuario && usuario.rol && !usuario.role) {
-      usuario.role = usuario.rol;
+      // Normalizar variable de rol que viene del Backend
+      if (usuario && usuario.rol && !usuario.role) {
+        usuario.role = usuario.rol;
+      }
+
+      // Guardar Usuario (si viene nulo, guardamos un objeto vacío para que no rompa)
+      const usuarioAGuardar = usuario || { nombre: 'Usuario', role: 'ROLE_USER' };
+      localStorage.setItem(this.userKey, JSON.stringify(usuarioAGuardar));
+
+      // Actualizar Señales
+      this.currentUser.set(usuarioAGuardar);
+      this.isLoggedIn.set(true);
     }
-
-    // Guardar Usuario (si viene nulo, guardamos un objeto vacío para que no rompa)
-    const usuarioAGuardar = usuario || { nombre: 'Usuario', role: 'ROLE_USER' };
-    localStorage.setItem(this.userKey, JSON.stringify(usuarioAGuardar));
-
-    // Actualizar Señales
-    this.currentUser.set(usuarioAGuardar);
-    this.isLoggedIn.set(true);
   }
 
   private recuperarSesion() {
-    const token = localStorage.getItem(this.tokenKey);
-    const userStr = localStorage.getItem(this.userKey);
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem(this.tokenKey);
+      const userStr = localStorage.getItem(this.userKey);
 
-    if (token && userStr) {
-      this.isLoggedIn.set(true);
-      try {
-        this.currentUser.set(JSON.parse(userStr));
-      } catch (e) {
-        console.error("Error al leer usuario del storage", e);
+      if (token && userStr) {
+        this.isLoggedIn.set(true);
+        try {
+          this.currentUser.set(JSON.parse(userStr));
+        } catch (e) {
+          console.error("Error al leer usuario del storage", e);
+        }
       }
     }
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.tokenKey);
+    }
+    return null;
   }
 
   isAdmin(): boolean {

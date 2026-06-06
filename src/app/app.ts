@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, effect } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, inject, effect, HostListener, PLATFORM_ID } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth-service';
 import { LayoutService } from './services/layout';
@@ -28,8 +28,32 @@ export class App {
   router = inject(Router);
   loaderService = inject(Loader);
   websocketService = inject(Websocket);
+  platformId = inject(PLATFORM_ID);
 
   launchMode = environment.launchMode || false;
+  
+  // PWA Install
+  deferredPrompt: any;
+  showInstallButton = false;
+
+  @HostListener('window:beforeinstallprompt', ['$event'])
+  onbeforeinstallprompt(e: any) {
+    if (isPlatformBrowser(this.platformId)) {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      this.showInstallButton = true;
+    }
+  }
+
+  installPwa() {
+    if (this.deferredPrompt) {
+      this.showInstallButton = false;
+      this.deferredPrompt.prompt();
+      this.deferredPrompt.userChoice.then((choiceResult: any) => {
+        this.deferredPrompt = null;
+      });
+    }
+  }
 
   constructor() {
     // Suscribirse a las actualizaciones globales (ej. cuando eres superado en una puja)

@@ -11,6 +11,7 @@ import { loaderInterceptor } from './interceptors/loader-interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideServiceWorker } from '@angular/service-worker';
 import { SOCIAL_AUTH_CONFIG, SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +38,9 @@ export const appConfig: ApplicationConfig = {
           console.error("Error Social Auth:", err);
         }
       } as SocialAuthServiceConfig,
-    }
+    }, provideClientHydration(withEventReplay()), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
   ]
 };

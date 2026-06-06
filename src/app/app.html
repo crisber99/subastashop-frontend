@@ -9,14 +9,14 @@
 <div class="app-wrapper" [class.sidebar-collapsed]="!layoutService.sidebarOpen()">
 
     <!-- BANNER PWA INSTALL -->
-    <div *ngIf="showInstallButton" class="alert alert-info alert-dismissible fade show m-0 text-center rounded-0 border-0 d-flex align-items-center justify-content-center gap-3" style="background: linear-gradient(90deg, #4f46e5, #6366f1); color: white; z-index: 1050; position: relative;">
+    <div *ngIf="showInstallButton" class="alert alert-info alert-dismissible fade show text-center shadow" style="background: linear-gradient(90deg, #4f46e5, #6366f1); color: white; z-index: 1050; position: fixed; bottom: 80px; left: 10px; right: 10px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
       <i class="bi bi-download fs-4"></i>
-      <div>
+      <div style="flex: 1; text-align: left; line-height: 1.2;">
         <strong>¡Instala SubastaShop!</strong> 
-        <span class="d-none d-md-inline ms-1">Disfruta de una mejor experiencia y acceso rápido.</span>
+        <small class="d-block" style="font-size: 0.8rem; opacity: 0.9;">Acceso rápido y mejor experiencia.</small>
       </div>
-      <button (click)="installPwa()" class="btn btn-light btn-sm fw-bold rounded-pill px-3 shadow-sm ms-3">Instalar</button>
-      <button type="button" class="btn-close btn-close-white" (click)="showInstallButton = false" aria-label="Close"></button>
+      <button (click)="installPwa()" class="btn btn-light btn-sm fw-bold rounded-pill px-3 shadow-sm">Instalar</button>
+      <button type="button" class="btn-close btn-close-white ms-2" style="position: relative; top: auto; right: auto; padding: 0;" (click)="showInstallButton = false" aria-label="Close"></button>
     </div>
 
     @if (authService.isLoggedIn()) {
@@ -40,16 +40,15 @@
 
     <!-- Botón de Feedback / Soporte WhatsApp Beta -->
     <a [href]="getWhatsAppUrl()"
-        target="_blank" class="whatsapp-float shadow-lg animate__animated animate__pulse animate__infinite"
+        target="_blank" class="whatsapp-float shadow-lg animate__animated animate__pulse animate__infinite d-none d-md-flex"
         title="Soporte Beta (WhatsApp)">
         <i class="bi bi-whatsapp"></i>
     </a>
-
-    <!-- Chat de Soporte IA (CONGELADO TEMPORALMENTE)
-        @if (authService.isLoggedIn()) {
-            <app-ai-support-chat></app-ai-support-chat>
-        }
-        -->
+    <a [href]="getWhatsAppUrl()"
+        target="_blank" class="whatsapp-float whatsapp-mobile shadow-lg animate__animated animate__pulse animate__infinite d-md-none"
+        title="Soporte Beta (WhatsApp)">
+        <i class="bi bi-whatsapp"></i>
+    </a>
 
     <!-- Bottom Navigation Bar (Mobile Only) -->
     @if (authService.isLoggedIn()) {
@@ -58,16 +57,18 @@
                 <i class="bi bi-house-door-fill"></i>
                 <span>Inicio</span>
             </a>
-            <a routerLink="/dashboard" fragment="search" class="bottom-nav-item">
+            <a routerLink="/catalogo-global" routerLinkActive="active" class="bottom-nav-item">
                 <i class="bi bi-search"></i>
                 <span>Buscar</span>
             </a>
             <a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito" class="bottom-nav-item position-relative">
                 <i class="bi bi-cart-fill"></i>
                 <span>Carrito</span>
-                <!-- Optional notification dot if items in cart could go here -->
+                <span *ngIf="cartService.cantidadItems() > 0" class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger" style="margin-left: 10px; font-size: 0.6rem;">
+                    {{ cartService.cantidadItems() }}
+                </span>
             </a>
-            <a routerLink="/perfil" routerLinkActive="active" class="bottom-nav-item">
+            <a routerLink="/mi-cuenta" routerLinkActive="active" class="bottom-nav-item">
                 <i class="bi bi-person-circle"></i>
                 <span>Perfil</span>
             </a>

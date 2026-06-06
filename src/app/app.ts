@@ -12,6 +12,7 @@ import { PromotionBanner } from './components/promotion-banner/promotion-banner'
 import { AiSupportChatComponent } from './components/ai-support-chat/ai-support-chat.component';
 import { Websocket } from './services/websocket';
 import { LandingTeaser } from './components/landing-teaser/landing-teaser';
+import { CartService } from './services/cart';
 import { environment } from '../environments/environment';
 import Swal from 'sweetalert2';
 
@@ -28,6 +29,7 @@ export class App {
   router = inject(Router);
   loaderService = inject(Loader);
   websocketService = inject(Websocket);
+  cartService = inject(CartService);
   platformId = inject(PLATFORM_ID);
 
   launchMode = environment.launchMode || false;

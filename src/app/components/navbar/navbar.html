@@ -28,8 +28,8 @@
             </button>
 
             <!-- Botón Carrito en Navbar -->
-            <button class="btn btn-surface position-relative me-4 shadow-sm border-0" 
-                    data-bs-toggle="modal" data-bs-target="#modalCarrito">
+            <button class="btn btn-surface position-relative me-4 shadow-sm border-0 d-none d-md-block" 
+                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito">
                 <i class="bi bi-cart3 fs-5"></i>
                 <span *ngIf="cartService.cantidadItems() > 0"
                       class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border-2 border-danger-subtle">

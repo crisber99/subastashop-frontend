@@ -72,7 +72,7 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img [src]="item.producto.imagenUrl || 'assets/no-image.png'" 
+                                        <img [src]="item.producto.imagenUrl || (item.producto.imagenes && item.producto.imagenes[0]) || 'assets/no-image.png'" 
                                              class="rounded me-3" width="60" height="60" style="object-fit: cover;">
                                         <div>
                                             <h6 class="mb-0 fw-bold">{{ item.producto.nombre }}</h6>

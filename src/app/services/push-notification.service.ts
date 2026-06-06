@@ -10,8 +10,8 @@ export class PushNotificationService {
   private http = inject(HttpClient);
   private swPush = inject(SwPush);
   
-  // VAPID Public Key matched with the backend WebPushService
-  private readonly VAPID_PUBLIC_KEY = 'BCLHRuRpwpS3uapi0tPnXbuElZhKNm4HqSGuceJoSsW9kpPHDBsWQY8e0d7bIuABlo9otkYVM_wA0C05vX7oMbU';
+  // VAPID Public Key matched with the backend application.properties
+  private readonly VAPID_PUBLIC_KEY = 'BBz5RsE31badnMbRaKxRRwvhMAE2YPlBoUD_A4w--zN6cKgcx5KBv2WDEavc4yYqKMT03v_TG2VZluUolJd-GR8';
 
   suscribirAMensajes() {
     if (!this.swPush.isEnabled) {
@@ -35,6 +35,6 @@ export class PushNotificationService {
   }
 
   private enviarSuscripcionBackend(sub: PushSubscription): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/api/push/suscribir`, sub);
+    return this.http.post(`${environment.apiUrl}/push/suscribir`, sub);
   }
 }

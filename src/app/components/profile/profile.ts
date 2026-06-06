@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
 import { ProductService } from '../../services/product';
+import { PushNotificationService } from '../../services/push-notification.service';
 import Swal from 'sweetalert2';
 
 import { AddressAutocompleteComponent } from '../address-autocomplete/address-autocomplete';
@@ -17,6 +18,7 @@ import { AddressAutocompleteComponent } from '../address-autocomplete/address-au
 export class ProfileComponent implements OnInit {
   authService = inject(AuthService);
   private productService = inject(ProductService);
+  pushService = inject(PushNotificationService);
 
   activeTab: 'data' | 'security' = 'data';
 

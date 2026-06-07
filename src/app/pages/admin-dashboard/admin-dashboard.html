@@ -55,6 +55,12 @@
             <i class="bi bi-chat-dots"></i> Chat
           </button>
         </li>
+        <li class="nav-item">
+          <button class="nav-link rounded-pill d-flex align-items-center justify-content-center gap-2"
+            [class.active]="activeTab === 'cupones'" (click)="activeTab = 'cupones'">
+            <i class="bi bi-ticket-perforated"></i> Cupones
+          </button>
+        </li>
       </ul>
     </div>
   </div>
@@ -277,9 +283,102 @@
         </span>
       </div>
       <div class="card-body p-0">
-        <app-admin-chat-inbox></app-admin-chat-inbox>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎟️ SECCIÓN 5: CUPONES DE DESCUENTO -->
+  <div *ngIf="activeTab === 'cupones'">
+    <div class="card shadow-sm border-0 bg-card-custom mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-ticket-perforated me-2 text-primary"></i> Mis Cupones de Descuento</h5>
+        <button class="btn btn-sm btn-success rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalCrearCupon">
+          <i class="bi bi-plus-lg"></i> Crear Cupón
+        </button>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0 align-middle">
+            <thead style="background: var(--glass-bg);">
+              <tr>
+                <th>Código</th>
+                <th>Descuento</th>
+                <th>Expiración</th>
+                <th>Usos</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of cupones">
+                <td><strong class="text-primary">{{ c.codigo }}</strong></td>
+                <td>
+                  <span *ngIf="c.tipo === 'PORCENTAJE'" class="badge bg-info text-dark">{{ c.descuento }}% OFF</span>
+                  <span *ngIf="c.tipo === 'FIJO'" class="badge bg-success">-${{ c.descuento | number }} OFF</span>
+                </td>
+                <td>{{ c.fechaExpiracion ? (c.fechaExpiracion | date:'dd/MM/yy HH:mm') : 'Sin Límite' }}</td>
+                <td>{{ c.usosActuales }} / {{ c.limiteUso ? c.limiteUso : '∞' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="c.activo ? 'bg-success' : 'bg-danger'">
+                    {{ c.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-sm" [ngClass]="c.activo ? 'btn-outline-danger' : 'btn-outline-success'" (click)="toggleEstadoCupon(c.id!)">
+                    <i class="bi" [ngClass]="c.activo ? 'bi-x-circle' : 'bi-check-circle'"></i> {{ c.activo ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="cupones.length === 0">
+                <td colspan="6" class="text-center py-4 text-muted">No has creado ningún cupón aún.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
 </div>
+
+<!-- MODAL CREAR CUPÓN -->
+<div class="modal fade" id="modalCrearCupon" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background: var(--card-bg); color: var(--text-color);">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title"><i class="bi bi-ticket-detailed"></i> Crear Nuevo Cupón</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Código del Cupón</label>
+          <input type="text" class="form-control text-uppercase" [(ngModel)]="nuevoCupon.codigo" placeholder="Ej: VERANO20">
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label">Tipo de Descuento</label>
+            <select class="form-select" [(ngModel)]="nuevoCupon.tipo">
+              <option value="PORCENTAJE">Porcentaje (%)</option>
+              <option value="FIJO">Monto Fijo ($)</option>
+            </select>
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label">Valor del Descuento</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevoCupon.descuento">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Límite de Usos Totales (Opcional)</label>
+          <input type="number" class="form-control" [(ngModel)]="nuevoCupon.limiteUso" placeholder="Dejar vacío para ilimitados">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Fecha de Expiración (Opcional)</label>
+          <input type="datetime-local" class="form-control" [(ngModel)]="nuevoCupon.fechaExpiracion">
+        </div>
+      </div>
+      <div class="modal-footer border-top">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="crearCupon()">Guardar Cupón</button>
+      </div>
+    </div>
+  </div>

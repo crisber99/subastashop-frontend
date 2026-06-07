@@ -15,9 +15,20 @@ export interface CartItem {
 export class CartService {
   // Usamos SIGNALS de Angular (más moderno y reactivo)
   items = signal<CartItem[]>([]);
+  descuentoCupon = signal<{monto: number, codigo: string} | null>(null);
 
   // Totales calculados automáticamente
-  total = computed(() => this.items().reduce((acc, item) => acc + item.subtotal, 0));
+  subtotal = computed(() => this.items().reduce((acc, item) => acc + item.subtotal, 0));
+  
+  total = computed(() => {
+    const sub = this.subtotal();
+    const desc = this.descuentoCupon();
+    if (desc) {
+      return Math.max(0, sub - desc.monto);
+    }
+    return sub;
+  });
+
   cantidadItems = computed(() => this.items().length);
 
   agregarItem(producto: any, tipo: 'DIRECTA' | 'SUBASTA' | 'RIFA', cantidad: number = 1, extra: any = null) {
@@ -73,6 +84,7 @@ export class CartService {
 
   limpiarCarrito() {
     this.items.set([]);
+    this.descuentoCupon.set(null);
   }
 
   estaEnCarrito(productoId: number): boolean {

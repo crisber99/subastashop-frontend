@@ -14,6 +14,7 @@ import { Websocket } from './services/websocket';
 import { LandingTeaser } from './components/landing-teaser/landing-teaser';
 import { CartService } from './services/cart';
 import { environment } from '../environments/environment';
+import { OnboardingService } from './services/onboarding.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -23,7 +24,7 @@ import Swal from 'sweetalert2';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   authService = inject(AuthService);
   layoutService = inject(LayoutService);
   router = inject(Router);
@@ -31,6 +32,7 @@ export class App {
   websocketService = inject(Websocket);
   cartService = inject(CartService);
   platformId = inject(PLATFORM_ID);
+  onboardingService = inject(OnboardingService);
 
   launchMode = environment.launchMode || false;
   
@@ -54,6 +56,12 @@ export class App {
       this.deferredPrompt.userChoice.then((choiceResult: any) => {
         this.deferredPrompt = null;
       });
+    }
+  }
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.onboardingService.iniciarTour();
     }
   }
 

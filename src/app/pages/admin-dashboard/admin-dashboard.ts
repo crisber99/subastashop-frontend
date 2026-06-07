@@ -9,12 +9,14 @@ import { AuthService } from '../../services/auth-service';
 import { ThemeService } from '../../services/theme-service';
 import { AdminValidarPagos } from '../../components/admin-validar-pagos/admin-validar-pagos';
 import { AdminChatInbox } from '../../components/admin-users-component/admin-chat-inbox';
+import { CuponService, CuponDTO } from '../../services/cupon.service';
+import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective, RouterModule, AdminValidarPagos, AdminChatInbox],
+  imports: [CommonModule, BaseChartDirective, RouterModule, AdminValidarPagos, AdminChatInbox, FormsModule],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.scss',
 })
@@ -22,6 +24,7 @@ export class AdminDashboard implements OnInit {
   private http = inject(HttpClient);
   public authService = inject(AuthService); // Hacerlo public para el HTML
   public themeService = inject(ThemeService); 
+  private cuponService = inject(CuponService);
   
   stats: any = {
     totalSubastas: 0,
@@ -35,6 +38,9 @@ export class AdminDashboard implements OnInit {
 
   productos: any[] = [];
   ordenesCompletadas: any[] = [];
+  cupones: CuponDTO[] = [];
+  nuevoCupon: CuponDTO = { codigo: '', descuento: 0, tipo: 'PORCENTAJE' };
+  
   mostrarProductos = false;
   activeTab: string = 'resumen'; 
 
@@ -53,6 +59,26 @@ export class AdminDashboard implements OnInit {
     this.cargarDatos();
     this.cargarProductos();
     this.cargarVentasCompletadas();
+    this.cargarCupones();
+  }
+
+  cargarCupones() {
+    this.cuponService.obtenerMisCupones().subscribe(res => this.cupones = res);
+  }
+
+  crearCupon() {
+    if (!this.nuevoCupon.codigo || this.nuevoCupon.descuento <= 0) return;
+    this.cuponService.crearCupon(this.nuevoCupon).subscribe(() => {
+      this.cargarCupones();
+      this.nuevoCupon = { codigo: '', descuento: 0, tipo: 'PORCENTAJE' };
+      const modal = (window as any).bootstrap.Modal.getInstance(document.getElementById('modalCrearCupon'));
+      if (modal) modal.hide();
+      Swal.fire('Cupón Creado', 'Tu cupón ya está listo para usarse', 'success');
+    });
+  }
+
+  toggleEstadoCupon(id: number) {
+    this.cuponService.toggleEstado(id).subscribe(() => this.cargarCupones());
   }
 
   cargarDatos() {

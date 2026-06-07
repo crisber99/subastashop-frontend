@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { CartService } from '../../services/cart';
 import { OrdenService } from '../../services/orden';
+import { CuponService } from '../../services/cupon.service';
 import Swal from 'sweetalert2';
 import confetti from 'canvas-confetti'; // 👈 Importar Confetti
 
@@ -11,7 +13,7 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-cart-float',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './cart-float.html',
   styleUrl: './cart-float.scss',
 })
@@ -20,8 +22,53 @@ export class CartFloat {
   public cartService = inject(CartService);
   private ordenService = inject(OrdenService);
   private router = inject(Router);
+  private cuponService = inject(CuponService);
 
   loading = false;
+  codigoCuponStr = '';
+  cuponCargando = false;
+
+  aplicarCupon() {
+    if (!this.codigoCuponStr.trim()) return;
+    
+    // Asumimos que todos los items en el carrito pertenecen a la misma tienda por ahora
+    const tiendaId = this.cartService.items()[0].producto.tienda.id;
+
+    this.cuponCargando = true;
+    this.cuponService.validarCupon(this.codigoCuponStr, tiendaId).subscribe({
+      next: (cupon) => {
+        this.cuponCargando = false;
+        let montoDescuento = 0;
+        const subtotal = this.cartService.subtotal();
+        if (cupon.tipo === 'PORCENTAJE') {
+          montoDescuento = subtotal * (cupon.descuento / 100);
+        } else {
+          montoDescuento = cupon.descuento;
+        }
+
+        this.cartService.descuentoCupon.set({ monto: montoDescuento, codigo: cupon.codigo });
+        Swal.fire({
+          icon: 'success',
+          title: '¡Cupón Aplicado!',
+          text: `Descuento aplicado con éxito.`,
+          toast: true,
+          position: 'top-end',
+          timer: 3000,
+          showConfirmButton: false
+        });
+      },
+      error: (err) => {
+        this.cuponCargando = false;
+        this.cartService.descuentoCupon.set(null);
+        Swal.fire('Cupón Inválido', err.error || 'El cupón no es válido o ya expiró', 'error');
+      }
+    });
+  }
+
+  removerCupon() {
+    this.cartService.descuentoCupon.set(null);
+    this.codigoCuponStr = '';
+  }
 
   confirmarReserva() {
     if (this.cartService.items().length === 0) return;
@@ -60,7 +107,10 @@ export class CartFloat {
       datosExtra: item.extra 
     }));
 
-    const request = { detalles: detallesBackend };
+    const request: any = { detalles: detallesBackend };
+    if (this.cartService.descuentoCupon()) {
+      request.codigoCupon = this.cartService.descuentoCupon()!.codigo;
+    }
 
     this.ordenService.crearOrden(request).subscribe({
       next: (ordenCreada: any) => {

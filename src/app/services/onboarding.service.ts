@@ -30,22 +30,16 @@ export class OnboardingService {
           intro: 'Te daremos un rápido tour para que aprendas a usar la plataforma.',
         },
         {
-          element: '#navbar-search', // Asumimos que el buscador tiene este ID o lo agregaremos
-          title: 'Busca Productos',
-          intro: 'Aquí puedes encontrar subastas, rifas y ventas directas al instante.',
-          position: 'bottom'
+          element: '#sidebar-toggle-btn', 
+          title: 'Menú Principal',
+          intro: 'Abre este menú para acceder a todas las opciones, incluyendo tu perfil y configuración de tienda.',
+          position: 'right'
         },
         {
-          element: '#cart-button-mobile, .cart-float-btn', // Botón de carrito
+          element: '#cart-button-desktop', 
           title: 'Tu Carrito',
           intro: 'Aquí aparecerán tus reservas y compras directas.',
-          position: 'left'
-        },
-        {
-          element: '#perfil-menu', // Menú de perfil
-          title: 'Tu Panel',
-          intro: 'Accede a tus pujas, compras, y configura tu tienda desde tu perfil.',
-          position: 'left'
+          position: 'bottom'
         }
       ]
     });

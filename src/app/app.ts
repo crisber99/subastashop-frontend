@@ -61,7 +61,7 @@ export class App implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.onboardingService.iniciarTour();
+      // Tour removed from here. Will be handled in dashboard.ts
     }
   }
 

@@ -9,6 +9,7 @@ import { PushNotificationService } from '../../services/push-notification.servic
 import Swal from 'sweetalert2'; 
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { OnboardingService } from '../../services/onboarding.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,6 +27,7 @@ export class Dashboard implements OnInit {
   public pushService = inject(PushNotificationService);
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
+  private onboardingService = inject(OnboardingService);
 
   pujas: any[] = [];
   ordenes: any[] = [];
@@ -86,6 +88,9 @@ export class Dashboard implements OnInit {
 
   ngOnInit() {
     this.cargarDatos();
+    
+    // Iniciar tour si corresponde (ahora con los elementos DOM presentes)
+    this.onboardingService.iniciarTour();
 
     if (this.cartService.items().length > 0) {
         this.verificarDisponibilidadCarrito();

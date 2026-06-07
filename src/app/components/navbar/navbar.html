@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand shadow-sm px-4 sticky-top">
     
     <div class="d-flex align-items-center">
-        <button class="btn toggle-btn me-2" (click)="toggleSidebar()">
+        <button id="sidebar-toggle-btn" class="btn toggle-btn me-2" (click)="toggleSidebar()">
             <i class="bi bi-list fs-3"></i>
         </button>
         <a routerLink="/" class="navbar-brand d-flex align-items-center ms-2 animate__animated animate__fadeIn">
@@ -28,7 +28,7 @@
             </button>
 
             <!-- Botón Carrito en Navbar -->
-            <button class="btn btn-surface position-relative me-4 shadow-sm border-0 d-none d-md-block" 
+            <button id="cart-button-desktop" class="btn btn-surface position-relative me-4 shadow-sm border-0 d-none d-md-block" 
                     data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito">
                 <i class="bi bi-cart3 fs-5"></i>
                 <span *ngIf="cartService.cantidadItems() > 0"

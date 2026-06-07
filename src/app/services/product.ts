@@ -59,6 +59,8 @@ export class ProductService {
     if (producto.tipoJuego) {
       formData.append('tipoJuego', producto.tipoJuego);
     }
+    
+    console.log("Enviando estado al backend:", producto.estado);
     if (producto.estado) {
       formData.append('estado', producto.estado);
     }

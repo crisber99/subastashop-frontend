@@ -240,7 +240,12 @@ export class EditarProducto implements OnInit {
                 timer: 2000,
                 showConfirmButton: false
               }).then(() => {
-                this.router.navigate(['/admin']);
+                const user = this.authService.currentUser();
+                if (user && (user.role === 'SUPER_ADMIN' || user.rol === 'SUPER_ADMIN' || user.role === 'ROLE_SUPER_ADMIN')) {
+                  this.router.navigate(['/super-admin']);
+                } else {
+                  this.router.navigate(['/admin']);
+                }
               });
             },
             error: (err) => {

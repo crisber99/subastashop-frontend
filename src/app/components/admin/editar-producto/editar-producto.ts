@@ -213,7 +213,7 @@ export class EditarProducto implements OnInit {
   guardarCambios() {
     Swal.fire({
       title: '¿Guardar Cambios?',
-      text: 'Se actualizará la información del producto.',
+      html: `Se actualizará la información del producto.<br><br><div style="text-align:left; background:#f4f4f4; padding:10px; border-radius:5px; font-size:12px; color:#333;"><b>Debug para Postman:</b><br>URL: PUT /productos/${this.idProducto}<br>Estado a enviar: <b>${this.producto.estado}</b></div>`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí, Guardar',

@@ -1,22 +1,24 @@
 <div class="login-page"> <!-- Reutilizamos la clase para coherencia -->
   <img src="assets/img/hero-banner.png" class="login-hero-bg" alt="SubastaShop Hero">
   <div class="login-bg-overlay"></div>
-  
+
   <div class="container-fluid h-100 p-0">
-    <div class="row g-0 h-100">
-      
+    <div class="row g-0 h-100">hola
+
       <!-- Lado Izquierdo: Bienvenida (Desktop) -->
       <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center p-5 bg-welcome">
         <div class="welcome-content animate__animated animate__fadeInLeft">
           <div class="logo-wrapper mb-4">
-            <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162456.png'">
+            <img src="assets/img/subasta_shop_icon.png" alt="SubastaShop Logo" class="logo-img"
+              onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162456.png'">
             <span class="logo-text">Subasta<span>Shop</span></span>
           </div>
-          <h1 class="display-4 fw-bold mb-4">Crea tu cuenta <br> <span class="text-gradient">y empieza a ganar.</span></h1>
+          <h1 class="display-4 fw-bold mb-4">Crea tu cuenta <br> <span class="text-gradient">y empieza a ganar.</span>
+          </h1>
           <p class="lead mb-5 text-muted-custom">
             Únete hoy mismo a la comunidad más grande de subastas premium. Compra, vende y disfruta con total seguridad.
           </p>
-          
+
           <div class="features-list">
             <div class="feature-item">
               <div class="f-icon">⭐</div>
@@ -40,31 +42,33 @@
       <!-- Lado Derecho: Formulario de Registro -->
       <div class="col-lg-6 col-12 d-flex align-items-center justify-content-center p-4">
         <div class="auth-card glass-panel animate__animated animate__zoomIn">
-          
+
           <div class="auth-header text-center mb-4">
             <h2 class="fw-800">Crear Cuenta</h2>
             <p class="text-secondary">Regístrate en segundos y descubre ofertas únicas</p>
           </div>
 
           <div *ngIf="mensajeError" class="alert-custom animate__animated animate__headShake mb-3">
-             {{ mensajeError }}
+            {{ mensajeError }}
           </div>
 
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingNombre" formControlName="nombre" 
-                     placeholder="Nombre Completo">
+              <input type="text" class="form-control" id="floatingNombre" formControlName="nombre"
+                placeholder="Nombre Completo">
               <label for="floatingNombre">Nombre Completo</label>
-              <div *ngIf="registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid" class="text-danger small ms-2 mt-1">
+              <div *ngIf="registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid"
+                class="text-danger small ms-2 mt-1">
                 El nombre es obligatorio.
               </div>
             </div>
 
             <div class="form-floating mb-3">
-              <input type="email" class="form-control" id="floatingEmail" formControlName="email" 
-                     placeholder="correo@ejemplo.com">
+              <input type="email" class="form-control" id="floatingEmail" formControlName="email"
+                placeholder="correo@ejemplo.com">
               <label for="floatingEmail">Correo Electrónico</label>
-              <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-danger small ms-2 mt-1">
+              <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+                class="text-danger small ms-2 mt-1">
                 Ingresa un correo válido.
               </div>
             </div>
@@ -72,38 +76,41 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="floatingAlias" formControlName="alias" 
-                         placeholder="Tu Alias">
+                  <input type="text" class="form-control" id="floatingAlias" formControlName="alias"
+                    placeholder="Tu Alias">
                   <label for="floatingAlias">Alias (Nombre Público)</label>
-                  <div *ngIf="registerForm.get('alias')?.touched && registerForm.get('alias')?.invalid" class="text-danger small ms-2 mt-1">
+                  <div *ngIf="registerForm.get('alias')?.touched && registerForm.get('alias')?.invalid"
+                    class="text-danger small ms-2 mt-1">
                     Mínimo 3 caracteres.
                   </div>
                 </div>
               </div>
-              
+
               <!-- RUT -->
               <div class="col-md-6 mb-3">
-                  <div class="form-floating">
-                    <input type="text" class="form-control" id="floatingRut" formControlName="rut" 
-                           placeholder="12.345.678-9" [class.is-invalid]="registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid"
-                           (input)="onRutInput($event)">
-                    <label for="floatingRut">RUT</label>
-                    @if (registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid) {
-                        <div class="invalid-feedback">El RUT es obligatorio.</div>
-                    }
-                  </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingRut" formControlName="rut"
+                    placeholder="12.345.678-9"
+                    [class.is-invalid]="registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid"
+                    (input)="onRutInput($event)">
+                  <label for="floatingRut">RUT</label>
+                  @if (registerForm.get('rut')?.touched && registerForm.get('rut')?.invalid) {
+                  <div class="invalid-feedback">El RUT es obligatorio.</div>
+                  }
+                </div>
               </div>
 
               <!-- Preferencia de Envío -->
               <div class="col-md-12 mb-3">
                 <div class="form-floating">
-                  <select class="form-select" id="floatingShipping" formControlName="opcionEnvio" [class.is-invalid]="registerForm.get('opcionEnvio')?.touched && registerForm.get('opcionEnvio')?.invalid">
+                  <select class="form-select" id="floatingShipping" formControlName="opcionEnvio"
+                    [class.is-invalid]="registerForm.get('opcionEnvio')?.touched && registerForm.get('opcionEnvio')?.invalid">
                     <option value="" disabled selected>Selecciona una opción</option>
                     <option *ngFor="let opt of shippingOptions" [value]="opt">{{ opt }}</option>
                   </select>
                   <label for="floatingShipping">Preferencia de Envío</label>
                   @if (registerForm.get('opcionEnvio')?.touched && registerForm.get('opcionEnvio')?.invalid) {
-                      <div class="invalid-feedback">Debe seleccionar una opción de envío.</div>
+                  <div class="invalid-feedback">Debe seleccionar una opción de envío.</div>
                   }
                 </div>
               </div>
@@ -112,16 +119,16 @@
             <div class="row g-2">
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingTel" formControlName="telefono" 
-                         placeholder="+56 9..." (input)="onPhoneInput($event)">
+                  <input type="text" class="form-control" id="floatingTel" formControlName="telefono"
+                    placeholder="+56 9..." (input)="onPhoneInput($event)">
                   <label for="floatingTel">Teléfono</label>
                 </div>
               </div>
               <div class="col-md-6 mb-3">
                 <div class="form-floating-custom mb-3" style="position: relative;">
-                  <label class="form-label text-muted small fw-bold mb-1" style="font-size: 0.85rem;"><i class="bi bi-geo-alt me-1 text-primary"></i>Dirección de Envío</label>
-                  <app-address-autocomplete 
-                    placeholderText="Calle, Comuna..."
+                  <label class="form-label text-muted small fw-bold mb-1" style="font-size: 0.85rem;"><i
+                      class="bi bi-geo-alt me-1 text-primary"></i>Dirección de Envío</label>
+                  <app-address-autocomplete placeholderText="Calle, Comuna..."
                     (direccionSeleccionada)="registerForm.get('direccion')?.setValue($event.direccionCompleta)">
                   </app-address-autocomplete>
                   <!-- Input oculto para validaciones si fuera necesario -->
@@ -131,22 +138,24 @@
             </div>
 
             <div class="form-floating mb-3">
-              <input type="password" class="form-control" id="floatingPass" formControlName="password" 
-                     placeholder="Contraseña" [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+              <input type="password" class="form-control" id="floatingPass" formControlName="password"
+                placeholder="Contraseña"
+                [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
               <label for="floatingPass">Contraseña</label>
-              
+
               <!-- Lista dinámica de requisitos faltantes -->
-              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="mt-2 p-2 bg-light rounded border border-danger-subtle">
+              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+                class="mt-2 p-2 bg-light rounded border border-danger-subtle">
                 <p class="text-danger fw-bold small mb-1">Tu contraseña aún no cumple con:</p>
                 <ul class="mb-0 ps-3">
                   @for (error of getPasswordErrors(); track error) {
-                    <li class="text-danger-emphasis small">{{ error }}</li>
+                  <li class="text-danger-emphasis small">{{ error }}</li>
                   }
                   @if (registerForm.get('password')?.errors?.['containsEmail']) {
-                    <li class="text-danger-emphasis small">No puede contener parte de tu email</li>
+                  <li class="text-danger-emphasis small">No puede contener parte de tu email</li>
                   }
                   @if (registerForm.get('password')?.errors?.['containsAlias']) {
-                    <li class="text-danger-emphasis small">No puede contener tu alias</li>
+                  <li class="text-danger-emphasis small">No puede contener tu alias</li>
                   }
                 </ul>
               </div>
@@ -155,16 +164,17 @@
             <div class="mb-4 pt-2">
               <h6 class="fw-bold mb-3 small text-muted-custom uppercase">Cumplimiento Legal</h6>
               <app-legal-terms></app-legal-terms>
-              
-              <div class="form-check mt-3 d-flex align-items-center p-2 rounded border border-success-subtle bg-success-light">
-                <input class="form-check-input me-2" type="checkbox" id="checkLegal" 
-                       formControlName="aceptaTerminos" style="width: 20px; height: 20px; cursor: pointer;">
+
+              <div
+                class="form-check mt-3 d-flex align-items-center p-2 rounded border border-success-subtle bg-success-light">
+                <input class="form-check-input me-2" type="checkbox" id="checkLegal" formControlName="aceptaTerminos"
+                  style="width: 20px; height: 20px; cursor: pointer;">
                 <label class="form-check-label small fw-bold mb-0" for="checkLegal" style="cursor: pointer;">
                   Acepto los Términos y Condiciones Legales de SubastaShop
                 </label>
               </div>
-              <div *ngIf="registerForm.get('aceptaTerminos')?.touched && registerForm.get('aceptaTerminos')?.invalid" 
-                   class="text-danger small ms-1 mt-1 animate__animated animate__headShake">
+              <div *ngIf="registerForm.get('aceptaTerminos')?.touched && registerForm.get('aceptaTerminos')?.invalid"
+                class="text-danger small ms-1 mt-1 animate__animated animate__headShake">
                 Dato obligatorio para registrar su firma digital y participar.
               </div>
             </div>

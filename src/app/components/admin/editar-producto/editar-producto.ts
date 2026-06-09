@@ -229,6 +229,11 @@ export class EditarProducto implements OnInit {
           didOpen: () => Swal.showLoading()
         });
 
+        // Imprimir el objeto completo en la consola con console.warn para que no se borre en producción
+        console.warn('============= DUMP DE LA VARIABLE PRODUCTO =============');
+        console.warn(JSON.parse(JSON.stringify(this.producto)));
+        console.warn('========================================================');
+
         this.productService.updateProducto(this.idProducto, this.producto, this.archivosSeleccionados)
           .subscribe({
             next: () => {

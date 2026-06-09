@@ -213,7 +213,7 @@ export class EditarProducto implements OnInit {
   guardarCambios() {
     Swal.fire({
       title: '¿Guardar Cambios?',
-      html: `Se actualizará la información del producto.<br><br><div style="text-align:left; background:#f4f4f4; padding:10px; border-radius:5px; font-size:12px; color:#333;"><b>Debug para Postman:</b><br>URL: PUT /productos/${this.idProducto}<br>Estado a enviar: <b>${this.producto.estado}</b></div>`,
+      text: 'Se actualizará la información del producto.',
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí, Guardar',
@@ -228,15 +228,6 @@ export class EditarProducto implements OnInit {
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading()
         });
-
-        // Imprimir el objeto completo en la consola con console.warn para que no se borre en producción
-        console.warn('============= DUMP DE LA VARIABLE PRODUCTO =============');
-        console.warn(JSON.parse(JSON.stringify(this.producto)));
-        console.warn('========================================================');
-
-        console.log('============= DUMP DE LA VARIABLE PRODUCTO =============');
-        console.log(JSON.parse(JSON.stringify(this.producto)));
-        console.log('========================================================');
 
         this.productService.updateProducto(this.idProducto, this.producto, this.archivosSeleccionados)
           .subscribe({

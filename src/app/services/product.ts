@@ -71,17 +71,6 @@ export class ProductService {
       });
     }
 
-    // --- LOG PARA REPLICAR EN POSTMAN ---
-    console.warn(`=================================================`);
-    console.warn(`[POSTMAN] Método: PUT`);
-    console.warn(`[POSTMAN] URL: ${this.apiUrlProductos}/${id}`);
-    console.warn(`[POSTMAN] Body (form-data):`);
-    formData.forEach((value, key) => {
-      console.warn(`  ${key}:`, value);
-    });
-    console.warn(`=================================================`);
-    // ------------------------------------
-
     return this.http.put(`${this.apiUrlProductos}/${id}`, formData);
   }
 

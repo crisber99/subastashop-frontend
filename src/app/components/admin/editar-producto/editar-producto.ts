@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../services/product';
 import { AuthService } from '../../../services/auth-service';
 import { ImageCompressorService } from '../../../services/image-compressor';
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editar-producto',
@@ -101,7 +101,7 @@ export class EditarProducto implements OnInit {
         }
 
         this.producto = data;
-        
+
         if (!this.isProUsuario) {
           this.producto.chatHabilitado = false;
         }
@@ -124,7 +124,7 @@ export class EditarProducto implements OnInit {
 
   private formatearFechaParaInput(fechaIso: string): string {
     if (!fechaIso) return '';
-    return fechaIso.substring(0, 16); 
+    return fechaIso.substring(0, 16);
   }
 
   async onFilesSelected(event: any) {
@@ -133,7 +133,7 @@ export class EditarProducto implements OnInit {
 
     if (files && files.length > 0) {
       const filesArr = Array.from(files) as File[];
-      
+
       Swal.fire({ title: 'Optimizando imágenes...', text: 'Procesando para mayor velocidad', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
       try {
@@ -158,7 +158,7 @@ export class EditarProducto implements OnInit {
 
         this.archivosSeleccionados = compressedFiles;
         this.imagenesPreview = [];
-        
+
         this.archivosSeleccionados.forEach(file => {
           const reader = new FileReader();
           reader.onload = () => {
@@ -199,13 +199,13 @@ export class EditarProducto implements OnInit {
       // Enviar un array de `imagenesExistentes` reordenadas podría requerir un cambio en el backend.
       // Por ahora, intercambiaremos los `archivosSeleccionados` si corresponde.
       if (this.archivosSeleccionados.length === this.imagenesPreview.length) {
-          const tempArchivo = this.archivosSeleccionados[0];
-          this.archivosSeleccionados[0] = this.archivosSeleccionados[index];
-          this.archivosSeleccionados[index] = tempArchivo;
+        const tempArchivo = this.archivosSeleccionados[0];
+        this.archivosSeleccionados[0] = this.archivosSeleccionados[index];
+        this.archivosSeleccionados[index] = tempArchivo;
       } else {
-         // Si son urls antiguas, el backend actual no las reordena. Tendremos que avisar.
-         // Lo ideal es enviar el array reordenado.
-         this.producto.imagenes = this.imagenesPreview;
+        // Si son urls antiguas, el backend actual no las reordena. Tendremos que avisar.
+        // Lo ideal es enviar el array reordenado.
+        this.producto.imagenes = this.imagenesPreview;
       }
     }
   }
@@ -219,10 +219,10 @@ export class EditarProducto implements OnInit {
       confirmButtonText: 'Sí, Guardar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      
+
       if (result.isConfirmed) {
         this.cargando = true;
-        
+
         Swal.fire({
           title: 'Actualizando...',
           allowOutsideClick: false,
@@ -233,6 +233,10 @@ export class EditarProducto implements OnInit {
         console.warn('============= DUMP DE LA VARIABLE PRODUCTO =============');
         console.warn(JSON.parse(JSON.stringify(this.producto)));
         console.warn('========================================================');
+
+        console.log('============= DUMP DE LA VARIABLE PRODUCTO =============');
+        console.log(JSON.parse(JSON.stringify(this.producto)));
+        console.log('========================================================');
 
         this.productService.updateProducto(this.idProducto, this.producto, this.archivosSeleccionados)
           .subscribe({

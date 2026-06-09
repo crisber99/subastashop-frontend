@@ -71,6 +71,17 @@ export class ProductService {
       });
     }
 
+    // --- LOG PARA REPLICAR EN POSTMAN ---
+    console.log(`=================================================`);
+    console.log(`[POSTMAN] Método: PUT`);
+    console.log(`[POSTMAN] URL: ${this.apiUrlProductos}/${id}`);
+    console.log(`[POSTMAN] Body (form-data):`);
+    formData.forEach((value, key) => {
+      console.log(`  ${key}:`, value);
+    });
+    console.log(`=================================================`);
+    // ------------------------------------
+
     return this.http.put(`${this.apiUrlProductos}/${id}`, formData);
   }
 

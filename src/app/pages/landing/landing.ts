@@ -27,6 +27,7 @@ export class Landing implements OnInit {
 
   tiendas: any[] = [];
   tiendasFiltradas: any[] = [];
+  tiendasEnVivo: any[] = [];
   productosDestacados: any[] = [];
   ofertonesGanados: any[] = [];
   categorias: Categoria[] = [];
@@ -50,6 +51,14 @@ export class Landing implements OnInit {
     this.cargarDestacados();
     this.cargarCategorias();
     this.cargarOfertones();
+    this.cargarTiendasEnVivo();
+  }
+
+  cargarTiendasEnVivo() {
+    this.shopService.getTiendasEnVivo().subscribe({
+      next: (data) => this.tiendasEnVivo = data,
+      error: (err) => console.error('Error al cargar tiendas en vivo:', err)
+    });
   }
 
   cargarDestacados() {

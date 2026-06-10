@@ -39,6 +39,30 @@
         </div>
     }
 
+    <!-- TIENDAS EN VIVO 🔴 -->
+    @if (tiendasEnVivo.length > 0) {
+        <div class="mt-5 px-3 mx-auto animate__animated animate__fadeInUp" style="max-width: 900px; text-align: left;">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-broadcast text-danger fs-4 animation-blink" style="animation: pulse 1.5s infinite;"></i>
+                <h5 class="mb-0 fw-bold">Transmisiones en Vivo</h5>
+            </div>
+            <div class="d-flex gap-4 overflow-auto pb-3 px-2" style="scrollbar-width: thin;">
+                @for (tienda of tiendasEnVivo; track tienda.id) {
+                    <a [href]="tienda.urlStream" target="_blank" class="text-decoration-none text-center" style="width: 80px; flex-shrink: 0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="rounded-circle mb-2 position-relative d-inline-block shadow-sm" style="padding: 3px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
+                            <div class="bg-white rounded-circle p-1 w-100 h-100 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; overflow: hidden;">
+                                <img *ngIf="tienda.logoUrl" [src]="tienda.logoUrl" class="w-100 h-100 rounded-circle" style="object-fit: cover;" [alt]="tienda.nombre">
+                                <span *ngIf="!tienda.logoUrl" class="fw-bold fs-3 text-dark">{{ tienda.nombre.charAt(0) }}</span>
+                            </div>
+                            <span class="position-absolute bottom-0 start-50 translate-middle-x badge bg-danger rounded-pill shadow border border-white" style="font-size: 0.6rem; padding: 2px 6px; transform: translateY(20%) translateX(-50%);">EN VIVO</span>
+                        </div>
+                        <small class="d-block text-truncate fw-bold" style="font-size: 0.75rem; color: var(--text-color);">{{ tienda.nombre }}</small>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
     <!-- BANNER PERMUTA -->
     <div class="mt-5 animate__animated animate__fadeInUp mx-auto px-3" style="max-width: 700px; animation-delay: 1.5s;">
         <div class="alert border-0 shadow-sm rounded-4 py-3 px-4 d-flex align-items-center justify-content-center" style="background: rgba(13, 202, 240, 0.15); backdrop-filter: blur(10px);">

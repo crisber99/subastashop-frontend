@@ -44,6 +44,9 @@ export class AdminDashboard implements OnInit {
   mostrarProductos = false;
   activeTab: string = 'resumen'; 
 
+  isProUsuario: boolean = false;
+  liveStatus = { enVivo: false, urlStream: '' };
+
   public pieChartData: ChartConfiguration<'pie'>['data'] = {
     labels: [ 'Subastas', 'Venta Directa', 'Concursos' ],
     datasets: [ {
@@ -56,10 +59,51 @@ export class AdminDashboard implements OnInit {
   public pieChartLegend = true;
 
   ngOnInit() {
+    this.checkProStatus();
     this.cargarDatos();
     this.cargarProductos();
     this.cargarVentasCompletadas();
     this.cargarCupones();
+    if (this.isProUsuario) {
+      this.cargarMiTienda();
+    }
+  }
+
+  checkProStatus() {
+    const user = this.authService.currentUser();
+    if (user?.role === 'ROLE_SUPER_ADMIN' || user?.rol === 'ROLE_SUPER_ADMIN' || user?.role === 'SUPER_ADMIN') {
+      this.isProUsuario = true;
+    } else {
+      this.isProUsuario = !!(user?.suscripcionActiva || user?.pagoAutomatico);
+    }
+  }
+
+  cargarMiTienda() {
+    this.http.get<any>(`${environment.apiUrl}/tiendas/mi-tienda`).subscribe(data => {
+      this.liveStatus.enVivo = data.enVivo || false;
+      this.liveStatus.urlStream = data.urlStream || '';
+    });
+  }
+
+  guardarLiveStatus() {
+    this.http.post(`${environment.apiUrl}/tiendas/live-status`, this.liveStatus).subscribe({
+      next: (res: any) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Estado Actualizado',
+          text: res.mensaje || 'Tu estado de transmisión se ha actualizado',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      },
+      error: (err) => {
+        Swal.fire('Error', 'No se pudo actualizar el estado de transmisión.', 'error');
+        // Revertir el toggle
+        this.liveStatus.enVivo = !this.liveStatus.enVivo;
+      }
+    });
   }
 
   cargarCupones() {

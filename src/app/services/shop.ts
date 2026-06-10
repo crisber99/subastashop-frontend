@@ -14,4 +14,8 @@ export class Shop {
   getTiendas() {
     return this.http.get<any[]>(`${this.apiUrl}/public/tiendas`);
   }
+
+  getTiendasEnVivo() {
+    return this.http.get<any[]>(`${this.apiUrl}/public/tiendas/en-vivo`);
+  }
 }

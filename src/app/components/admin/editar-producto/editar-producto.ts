@@ -1,16 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../services/product';
 import { AuthService } from '../../../services/auth-service';
 import { ImageCompressorService } from '../../../services/image-compressor';
+import { ImageBlurModalComponent } from '../../shared/image-blur-modal/image-blur-modal';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editar-producto',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ImageBlurModalComponent],
   templateUrl: './editar-producto.html',
   styleUrl: './editar-producto.scss',
 })
@@ -20,6 +21,8 @@ export class EditarProducto implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private imageCompressor = inject(ImageCompressorService);
+
+  @ViewChild('blurModal') blurModal!: ImageBlurModalComponent;
 
   producto: any = {
     nombre: '',
@@ -208,6 +211,31 @@ export class EditarProducto implements OnInit {
         this.producto.imagenes = this.imagenesPreview;
       }
     }
+  }
+
+  abrirBlurModal(index: number) {
+    // Si la imagen es una URL (antigua), necesitamos convertirla a File primero. 
+    // Por simplicidad, el difuminado debería hacerse sobre archivos nuevos subidos.
+    // Sin embargo, podemos convertir la URL base64 a File si es un base64, 
+    // pero si es http URL hay problemas de CORS.
+    // Lo más sencillo es verificar si existe en archivosSeleccionados.
+    const file = this.archivosSeleccionados[index];
+    if (file) {
+      this.blurModal.open(file, index);
+    } else {
+      // Si el archivo no está en archivosSeleccionados, significa que es una imagen ya subida (URL de Azure).
+      // Sería complejo difuminar URLs remotas debido al CORS en el Canvas.
+      Swal.fire('Aviso', 'Solo puedes difuminar imágenes que acabas de subir en esta sesión. Para difuminar una imagen antigua, vuelve a subirla.', 'info');
+    }
+  }
+
+  onBlurSave(event: { file: File, index: number }) {
+    this.archivosSeleccionados[event.index] = event.file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenesPreview[event.index] = reader.result as string;
+    };
+    reader.readAsDataURL(event.file);
   }
 
   guardarCambios() {

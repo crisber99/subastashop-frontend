@@ -289,6 +289,12 @@
                                 (click)="removerImagen(i)" title="Eliminar imagen">
                           <i class="bi bi-x"></i>
                         </button>
+
+                        <button type="button" class="btn btn-sm btn-info position-absolute bottom-0 end-0 m-1 p-0 shadow text-white" 
+                                style="width: 26px; height: 26px; border-radius: 50%; opacity: 0.9;" 
+                                (click)="abrirBlurModal(i)" title="Difuminar / Blur">
+                          <i class="bi bi-magic"></i>
+                        </button>
                       </div>
                     }
                   </div>
@@ -312,3 +318,5 @@
     </div>
   </div>
 </div>
+
+<app-image-blur-modal #blurModal (onSave)="onBlurSave($event)"></app-image-blur-modal>

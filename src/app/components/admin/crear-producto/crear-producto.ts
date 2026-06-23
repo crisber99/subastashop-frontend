@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,12 +7,13 @@ import { AuthService } from '../../../services/auth-service';
 import { CategoriaService } from '../../../services/categoria';
 import { Categoria } from '../../../models/categoria';
 import { ImageCompressorService } from '../../../services/image-compressor';
+import { ImageBlurModalComponent } from '../../shared/image-blur-modal/image-blur-modal';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-crear-producto',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ImageBlurModalComponent],
   templateUrl: './crear-producto.html',
   styleUrl: './crear-producto.scss',
 })
@@ -22,6 +23,8 @@ export class CrearProducto implements OnInit {
   categoriaService = inject(CategoriaService);
   router = inject(Router);
   fb = inject(FormBuilder);
+
+  @ViewChild('blurModal') blurModal!: ImageBlurModalComponent;
 
   productoForm!: FormGroup;
   categorias: Categoria[] = [];
@@ -268,6 +271,22 @@ export class CrearProducto implements OnInit {
       this.archivosSeleccionados[0] = this.archivosSeleccionados[index];
       this.archivosSeleccionados[index] = tempArchivo;
     }
+  }
+
+  abrirBlurModal(index: number) {
+    const file = this.archivosSeleccionados[index];
+    if (file) {
+      this.blurModal.open(file, index);
+    }
+  }
+
+  onBlurSave(event: { file: File, index: number }) {
+    this.archivosSeleccionados[event.index] = event.file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenesPreview[event.index] = reader.result as string;
+    };
+    reader.readAsDataURL(event.file);
   }
 
   onSubmit() {

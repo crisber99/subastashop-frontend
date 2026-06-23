@@ -1,0 +1,44 @@
+<div class="modal fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'" tabindex="-1" aria-hidden="true" style="background: rgba(0,0,0,0.8);">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark text-white rounded-4 border-0 shadow-lg">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title"><i class="bi bi-magic text-warning me-2"></i>Difuminar Imagen</h5>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="cancel()"></button>
+      </div>
+      <div class="modal-body p-0 d-flex flex-column align-items-center position-relative overflow-hidden" style="min-height: 300px; background: #111;">
+        
+        <!-- Contenedor del Canvas -->
+        <div class="canvas-container w-100 h-100 d-flex justify-content-center align-items-center position-relative" #container>
+          <canvas #mainCanvas 
+                  class="touch-action-none shadow" 
+                  (mousedown)="startDrawing($event)" 
+                  (mousemove)="draw($event)" 
+                  (mouseup)="stopDrawing()" 
+                  (mouseleave)="stopDrawing()"
+                  (touchstart)="startDrawing($event)" 
+                  (touchmove)="draw($event)" 
+                  (touchend)="stopDrawing()"></canvas>
+        </div>
+
+      </div>
+      <div class="modal-footer border-secondary flex-wrap justify-content-between">
+        <div class="d-flex align-items-center gap-3 w-100 w-md-auto mb-3 mb-md-0">
+          <label class="form-label mb-0 text-nowrap"><i class="bi bi-circle-fill me-1"></i>Pincel:</label>
+          <input type="range" class="form-range" min="5" max="50" [(ngModel)]="brushSize" style="max-width: 150px;">
+          <span class="badge bg-secondary">{{ brushSize }}px</span>
+          
+          <button class="btn btn-sm btn-outline-light ms-2" (click)="clearMask()" title="Limpiar trazos">
+            <i class="bi bi-eraser-fill"></i> Limpiar
+          </button>
+        </div>
+        
+        <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
+          <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="cancel()">Cancelar</button>
+          <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" (click)="save()">
+            <i class="bi bi-check-circle-fill me-1"></i> Aplicar y Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

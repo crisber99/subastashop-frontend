@@ -165,17 +165,28 @@
               <h6 class="fw-bold mb-3 small text-muted-custom uppercase">Cumplimiento Legal</h6>
               <app-legal-terms></app-legal-terms>
 
+              <!-- Checkbox 1: Legal / Privacidad (Requerido) -->
               <div
                 class="form-check mt-3 d-flex align-items-center p-2 rounded border border-success-subtle bg-success-light">
                 <input class="form-check-input me-2" type="checkbox" id="checkLegal" formControlName="aceptaTerminos"
                   style="width: 20px; height: 20px; cursor: pointer;">
                 <label class="form-check-label small fw-bold mb-0" for="checkLegal" style="cursor: pointer;">
-                  Acepto los Términos y Condiciones Legales de SubastaShop
+                  He leído y acepto los Términos y Condiciones y la Política de Privacidad
                 </label>
               </div>
               <div *ngIf="registerForm.get('aceptaTerminos')?.touched && registerForm.get('aceptaTerminos')?.invalid"
                 class="text-danger small ms-1 mt-1 animate__animated animate__headShake">
-                Dato obligatorio para registrar su firma digital y participar.
+                Debe aceptar los términos y la política de privacidad para registrarse.
+              </div>
+
+              <!-- Checkbox 2: Marketing (Opcional) -->
+              <div
+                class="form-check mt-3 d-flex align-items-center p-2 rounded border border-info-subtle" style="background-color: rgba(13, 202, 240, 0.05);">
+                <input class="form-check-input me-2" type="checkbox" id="checkMarketing" formControlName="aceptaMarketing"
+                  style="width: 20px; height: 20px; cursor: pointer;">
+                <label class="form-check-label small fw-bold mb-0" for="checkMarketing" style="cursor: pointer;">
+                  Acepto recibir correos con ofertas y promociones (Marketing)
+                </label>
               </div>
             </div>
 

@@ -39,7 +39,8 @@ export class Register implements OnInit {
       direccion: [''],
       rut: ['', [Validators.required]],
       opcionEnvio: ['', [Validators.required]], // 👈 NUEVO: Selección obligatoria
-      aceptaTerminos: [false, [Validators.requiredTrue]]
+      aceptaTerminos: [false, [Validators.requiredTrue]],
+      aceptaMarketing: [false]
     }, {
       validators: [noPersonalDataValidator('email', 'alias', 'password')]
     });

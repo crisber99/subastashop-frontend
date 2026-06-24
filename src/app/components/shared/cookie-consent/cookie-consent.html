@@ -1,0 +1,74 @@
+<!-- BANNER PRINCIPAL -->
+<div *ngIf="mostrarBanner" class="cookie-banner-wrapper animate__animated animate__fadeInUp">
+  <div class="container">
+    <div class="cookie-banner-content shadow-lg rounded-4 p-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 bg-dark text-white border border-secondary">
+      <div class="cookie-text flex-grow-1">
+        <h5 class="fw-bold mb-2"><i class="bi bi-cookie text-warning me-2"></i>Tu Privacidad en SubastaShop</h5>
+        <p class="mb-0 text-light opacity-75" style="font-size: 0.95rem;">
+          Usamos cookies propias y de terceros para mejorar tu experiencia, analizar el tráfico y personalizar los anuncios de SubastaShop. 
+          Al hacer clic en "Aceptar Todas", aceptas su uso. Puedes configurar tus preferencias o rechazarlas.
+        </p>
+      </div>
+      <div class="cookie-actions d-flex flex-wrap gap-2 justify-content-center justify-content-md-end">
+        <button class="btn btn-outline-light btn-sm rounded-pill px-3" (click)="abrirConfiguracion()">Configurar</button>
+        <button class="btn btn-secondary btn-sm rounded-pill px-3" (click)="aceptarEsenciales()">Solo Esenciales</button>
+        <button class="btn btn-warning btn-sm rounded-pill px-4 fw-bold" (click)="aceptarTodas()">Aceptar Todas</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIGURACIÓN -->
+<div class="modal fade" [class.show]="mostrarConfiguracion" [style.display]="mostrarConfiguracion ? 'block' : 'none'" tabindex="-1" style="background: rgba(0,0,0,0.8);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white rounded-4 border-0 shadow-lg">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title fw-bold"><i class="bi bi-sliders text-primary me-2"></i>Configuración de Cookies</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarConfiguracion()"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-4">
+          Selecciona qué tipos de cookies aceptas usar. Las cookies esenciales no se pueden desactivar ya que son necesarias para el funcionamiento de la plataforma.
+        </p>
+
+        <!-- Esenciales -->
+        <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-secondary bg-opacity-25 rounded-3">
+          <div>
+            <h6 class="mb-1 fw-bold text-success">Cookies Esenciales</h6>
+            <p class="mb-0 small text-muted">Necesarias para iniciar sesión y navegar.</p>
+          </div>
+          <div class="form-check form-switch fs-4 mb-0">
+            <input class="form-check-input" type="checkbox" checked disabled>
+          </div>
+        </div>
+
+        <!-- Analíticas -->
+        <div class="d-flex justify-content-between align-items-center p-3 mb-3 border border-secondary rounded-3">
+          <div>
+            <h6 class="mb-1 fw-bold text-info">Analíticas (Google Analytics)</h6>
+            <p class="mb-0 small text-muted">Nos ayuda a medir el tráfico y mejorar la web.</p>
+          </div>
+          <div class="form-check form-switch fs-4 mb-0">
+            <input class="form-check-input" type="checkbox" [checked]="preferencias.analiticas" (change)="toggleAnaliticas()" style="cursor: pointer;">
+          </div>
+        </div>
+
+        <!-- Marketing -->
+        <div class="d-flex justify-content-between align-items-center p-3 border border-secondary rounded-3">
+          <div>
+            <h6 class="mb-1 fw-bold text-warning">Marketing y Publicidad</h6>
+            <p class="mb-0 small text-muted">Para mostrarte anuncios relevantes (Meta Pixel, etc).</p>
+          </div>
+          <div class="form-check form-switch fs-4 mb-0">
+            <input class="form-check-input" type="checkbox" [checked]="preferencias.marketing" (change)="toggleMarketing()" style="cursor: pointer;">
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-outline-light rounded-pill px-4" (click)="aceptarEsenciales()">Rechazar Opcionales</button>
+        <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" (click)="guardarConfiguracion()">Guardar Preferencias</button>
+      </div>
+    </div>
+  </div>
+</div>

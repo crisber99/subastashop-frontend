@@ -15,12 +15,13 @@ import { LandingTeaser } from './components/landing-teaser/landing-teaser';
 import { CartService } from './services/cart';
 import { environment } from '../environments/environment';
 import { OnboardingService } from './services/onboarding.service';
+import { CookieConsentComponent } from './components/shared/cookie-consent/cookie-consent';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner, LandingTeaser],
+  imports: [CommonModule, RouterModule, Sidebar, Navbar, FooterComponent, CartFloat, PromotionBanner, LandingTeaser, CookieConsentComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

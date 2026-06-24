@@ -1,0 +1,32 @@
+.cookie-banner-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  padding-bottom: 1rem;
+  pointer-events: none; // Allow clicks behind it where the banner isn't present
+  
+  .container {
+    pointer-events: auto;
+  }
+}
+
+.cookie-banner-content {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+// Ensure proper spacing on mobile
+@media (max-width: 768px) {
+  .cookie-actions {
+    width: 100%;
+    justify-content: stretch;
+    
+    button {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+}

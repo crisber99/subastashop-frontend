@@ -22,69 +22,45 @@
 
 .table-hover tbody tr:hover {
     background-color: #f8f9fa;
-    color: #212529; /* Forzar legibilidad en modo claro */
+    color: #212529;
 }
 
 /* Soporte seguro para modo oscuro en Angular */
 :host-context(.dark-theme) .table-hover tbody tr:hover,
 :host-context([data-bs-theme="dark"]) .table-hover tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #f8f9fa; /* Texto blanco en hover oscuro */
+    color: #f8f9fa;
 }
 
 /* ========================================
    RESPONSIVE TABLE OPTIMIZATIONS
    ======================================== */
 
-// 1. Contenedor con scroll horizontal
+// Contenedor con scroll horizontal
 .table-responsive-wrapper {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        height: 4px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+    }
 }
 
+// La tabla necesita un ancho mínimo absoluto para NO comprimirse
 .users-table {
-    min-width: 900px;
-    table-layout: fixed;
+    min-width: 860px;
+    width: 100%;
 }
 
-// Anchos fijos por columna para evitar solapamiento
-.users-table thead th:nth-child(1),
-.users-table tbody td:nth-child(1) {
-    width: 280px;
-    min-width: 250px;
-}
-
-.users-table thead th:nth-child(2),
-.users-table tbody td:nth-child(2) {
-    width: 150px;
-    min-width: 130px;
-}
-
-.users-table thead th:nth-child(3),
-.users-table tbody td:nth-child(3) {
-    width: 120px;
-    min-width: 100px;
-}
-
-.users-table thead th:nth-child(4),
-.users-table tbody td:nth-child(4) {
-    width: 180px;
-    min-width: 160px;
-}
-
-.users-table thead th:nth-child(5),
-.users-table tbody td:nth-child(5) {
-    width: 150px;
-    min-width: 130px;
-}
-
-// Evitar que cualquier celda del body colapse su texto
-.users-table tbody td {
-    white-space: nowrap;
-}
-
-// 2. Headers - evitar corte de texto
+// Headers: nunca deben cortarse
 .users-table thead th {
     white-space: nowrap;
     padding: 12px 16px;
@@ -95,16 +71,24 @@
     border-bottom: 2px solid #e9ecef;
 }
 
-// 3. Celda de usuario: layout flex-column para nombre + badge
+// Celdas del body: nowrap general
+.users-table tbody td {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 10px 16px;
+}
+
+// Celda de usuario: layout flex-column para nombre + badge
 .user-info-cell {
-    min-width: 0; // Necesario para que truncamiento funcione dentro de flex
+    min-width: 0;
+    max-width: 220px;
 }
 
 .user-name-row {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 3px;
 
     @media (min-width: 768px) {
         flex-direction: row;
@@ -113,10 +97,10 @@
     }
 }
 
-// 4. Truncamiento de textos largos (ellipsis)
+// Truncamiento de textos largos (ellipsis)
 .text-truncate-name {
     display: block;
-    max-width: 180px;
+    max-width: 160px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -124,57 +108,8 @@
 
 .text-truncate-email {
     display: block;
-    max-width: 200px;
+    max-width: 180px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-// 5. Primera columna sticky
-.th-sticky,
-.td-sticky {
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    background-color: #ffffff;
-    box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.1);
-}
-
-.th-sticky {
-    z-index: 2; // Header por encima de las celdas
-    background-color: #ffffff;
-}
-
-// Soporte modo oscuro para sticky
-:host-context(.dark-theme),
-:host-context([data-bs-theme="dark"]) {
-    .th-sticky,
-    .td-sticky {
-        background-color: #1a1d21;
-        box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.4);
-    }
-}
-
-// Hover row: sticky cells deben heredar el color de hover
-.table-hover tbody tr:hover .td-sticky {
-    background-color: #f8f9fa;
-}
-
-:host-context(.dark-theme) .table-hover tbody tr:hover .td-sticky,
-:host-context([data-bs-theme="dark"]) .table-hover tbody tr:hover .td-sticky {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-// Scrollbar sutil en mobile
-.table-responsive-wrapper::-webkit-scrollbar {
-    height: 4px;
-}
-
-.table-responsive-wrapper::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.table-responsive-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
 }

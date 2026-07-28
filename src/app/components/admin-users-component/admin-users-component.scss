@@ -31,3 +31,113 @@
     background-color: rgba(255, 255, 255, 0.1);
     color: #f8f9fa; /* Texto blanco en hover oscuro */
 }
+
+/* ========================================
+   RESPONSIVE TABLE OPTIMIZATIONS
+   ======================================== */
+
+// 1. Contenedor con scroll horizontal
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.users-table {
+    min-width: 700px;
+}
+
+// 2. Headers - evitar corte de texto
+.users-table thead th {
+    white-space: nowrap;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #6c757d;
+    border-bottom: 2px solid #e9ecef;
+}
+
+// 3. Celda de usuario: layout flex-column para nombre + badge
+.user-info-cell {
+    min-width: 0; // Necesario para que truncamiento funcione dentro de flex
+}
+
+.user-name-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    @media (min-width: 768px) {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+// 4. Truncamiento de textos largos (ellipsis)
+.text-truncate-name {
+    display: block;
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-truncate-email {
+    display: block;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// 5. Primera columna sticky
+.th-sticky,
+.td-sticky {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: #ffffff;
+    box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.1);
+}
+
+.th-sticky {
+    z-index: 2; // Header por encima de las celdas
+    background-color: #ffffff;
+}
+
+// Soporte modo oscuro para sticky
+:host-context(.dark-theme),
+:host-context([data-bs-theme="dark"]) {
+    .th-sticky,
+    .td-sticky {
+        background-color: #1a1d21;
+        box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.4);
+    }
+}
+
+// Hover row: sticky cells deben heredar el color de hover
+.table-hover tbody tr:hover .td-sticky {
+    background-color: #f8f9fa;
+}
+
+:host-context(.dark-theme) .table-hover tbody tr:hover .td-sticky,
+:host-context([data-bs-theme="dark"]) .table-hover tbody tr:hover .td-sticky {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+// Scrollbar sutil en mobile
+.table-responsive-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
